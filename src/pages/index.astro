@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="null hype" description="Plain Astro site for null hype.">
+	<section class="hero">
+		<div>
+			<p class="kicker">Plain Astro</p>
+			<h1>Starlight is gone.</h1>
+		</div>
+		<p class="lede">
+			This repo is back to a normal Astro site: no docs framework, no generated
+			sidebar, no starter-kit filler. Just a small static site that can grow in
+			whatever direction you want next.
+		</p>
+		<div class="summary">
+			<div class="card">
+				<strong>Simple routing</strong>
+				Pages now live under <code>src/pages</code> like a standard Astro project.
+			</div>
+			<div class="card">
+				<strong>Lean dependencies</strong>
+				The Starlight integration and its content wiring are removed.
+			</div>
+			<div class="card">
+				<strong>GitHub Pages ready</strong>
+				The existing Astro build flow still works with the site and base env vars.
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="section-header">
+			<span class="label">What changed</span>
+			<h2>Clean Astro baseline</h2>
+			<p class="copy">
+				The new setup keeps the repo focused on a plain static site while leaving
+				your other project files and scripts alone.
+			</p>
+		</div>
+		<div class="grid">
+			<div class="card">
+				<strong>Removed</strong>
+				<ul class="list">
+					<li>Starlight integration from <code>astro.config.mjs</code></li>
+					<li><code>src/content</code> docs starter content</li>
+					<li><code>src/content.config.ts</code> loader/schema plumbing</li>
+				</ul>
+			</div>
+			<div class="card">
+				<strong>Added</strong>
+				<ul class="list">
+					<li>A standard page at <code>src/pages/index.astro</code></li>
+					<li>A shared layout at <code>src/layouts/BaseLayout.astro</code></li>
+					<li>Small, self-contained global styling</li>
+				</ul>
+			</div>
+			<div class="card">
+				<strong>Kept</strong>
+				<ul class="list">
+					<li>Astro build scripts</li>
+					<li>GitHub Pages base-path compatibility</li>
+					<li>Your local <code>linear-agent</code> work and scripts</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<p class="footer">
+		If you want to expand this into a fuller site, the next step is adding more
+		routes under <code>src/pages</code> and moving the inline styles into a CSS
+		file or component library.
+	</p>
+</BaseLayout>
