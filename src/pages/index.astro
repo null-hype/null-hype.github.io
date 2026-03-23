@@ -1,74 +1,937 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Deterministic pseudo-random so the graph doesn't flicker on hot-reload
+function seededRand(seed: number): number {
+  const x = Math.sin(seed + 9301) * 49297;
+  return x - Math.floor(x);
+}
+
+// Build ~53 weeks of contribution data ending today
+const today = new Date('2026-03-23');
+const weeks: Array<Array<{ date: string; count: number }>> = [];
+
+for (let w = 52; w >= 0; w--) {
+  const days: Array<{ date: string; count: number }> = [];
+  for (let d = 6; d >= 0; d--) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - (w * 7 + d));
+    const seed = w * 7 + d;
+    const r = seededRand(seed);
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const active = r > (isWeekend ? 0.55 : 0.30);
+    const count = active ? Math.floor(seededRand(seed + 1000) * 14) + 1 : 0;
+    days.push({ date: date.toISOString().split('T')[0], count });
+  }
+  weeks.push(days);
+}
+
+const totalContributions = weeks.flat().reduce((s, d) => s + d.count, 0);
+
+function level(count: number): string {
+  if (count === 0) return 'l0';
+  if (count < 3)  return 'l1';
+  if (count < 7)  return 'l2';
+  if (count < 11) return 'l3';
+  return 'l4';
+}
+
+// Month labels: find first week of each month
+const monthLabels: Array<{ label: string; col: number }> = [];
+let lastMonth = -1;
+weeks.forEach((week, wi) => {
+  const m = new Date(week[0].date).getMonth();
+  if (m !== lastMonth) {
+    monthLabels.push({
+      label: new Date(week[0].date).toLocaleString('en-US', { month: 'short' }),
+      col: wi,
+    });
+    lastMonth = m;
+  }
+});
+
+const pinnedRepos = [
+  {
+    name: 'null-hype.github.io',
+    desc: 'Personal site & playground — built with Astro, deployed on GitHub Pages.',
+    lang: 'Astro',
+    color: '#FF5A03',
+    stars: 12,
+    forks: 2,
+  },
+  {
+    name: 'linear-agent',
+    desc: 'Webhook-driven agent that syncs Linear issues to a local dev environment.',
+    lang: 'JavaScript',
+    color: '#f7df1e',
+    stars: 34,
+    forks: 7,
+  },
+  {
+    name: 'obsidian-daily',
+    desc: 'Minimal Obsidian plugin for opinionated daily note scaffolding.',
+    lang: 'TypeScript',
+    color: '#3178c6',
+    stars: 89,
+    forks: 14,
+  },
+  {
+    name: 'dotfiles',
+    desc: 'Curated shell config, Neovim setup, and dev-env bootstrap scripts.',
+    lang: 'Shell',
+    color: '#89e051',
+    stars: 56,
+    forks: 9,
+  },
+  {
+    name: 'til',
+    desc: 'Today I Learned — a running log of small discoveries and snippets.',
+    lang: 'Markdown',
+    color: '#083fa1',
+    stars: 21,
+    forks: 3,
+  },
+  {
+    name: 'advent-of-code',
+    desc: 'AoC puzzle solutions, mostly TypeScript with the occasional Rust.',
+    lang: 'TypeScript',
+    color: '#3178c6',
+    stars: 8,
+    forks: 1,
+  },
+];
+
+const feed = [
+  { icon: '⬆', label: 'push',   repo: 'null-hype/linear-agent',         text: 'Pushed 3 commits to main',                   time: '2 hours ago' },
+  { icon: '⤴', label: 'pr',     repo: 'null-hype/obsidian-daily',        text: 'Opened PR #18 — Add weekly rollup view',      time: 'yesterday' },
+  { icon: '✓', label: 'issue',  repo: 'null-hype/dotfiles',              text: 'Closed issue #4 — zsh startup regression',    time: '2 days ago' },
+  { icon: '★', label: 'star',   repo: 'vitejs/vite',                     text: 'Starred vitejs/vite',                         time: '3 days ago' },
+  { icon: '⬆', label: 'push',   repo: 'null-hype/null-hype.github.io',   text: 'Pushed 7 commits to master',                 time: '4 days ago' },
+  { icon: '⎇', label: 'fork',   repo: 'sindresorhus/awesome',            text: 'Forked sindresorhus/awesome',                 time: '5 days ago' },
+  { icon: '⬆', label: 'push',   repo: 'null-hype/til',                   text: 'Pushed 1 commit to main',                    time: '1 week ago' },
+  { icon: '!', label: 'issue',  repo: 'null-hype/advent-of-code',        text: 'Opened issue #2 — Day 12 part 2 perf',       time: '1 week ago' },
+];
 ---
 
-<BaseLayout title="null hype" description="Plain Astro site for null hype.">
-	<section class="hero">
-		<div>
-			<p class="kicker">Plain Astro</p>
-			<h1>Starlight is gone.</h1>
-		</div>
-		<p class="lede">
-			This repo is back to a normal Astro site: no docs framework, no generated
-			sidebar, no starter-kit filler. Just a small static site that can grow in
-			whatever direction you want next.
-		</p>
-		<div class="summary">
-			<div class="card">
-				<strong>Simple routing</strong>
-				Pages now live under <code>src/pages</code> like a standard Astro project.
-			</div>
-			<div class="card">
-				<strong>Lean dependencies</strong>
-				The Starlight integration and its content wiring are removed.
-			</div>
-			<div class="card">
-				<strong>GitHub Pages ready</strong>
-				The existing Astro build flow still works with the site and base env vars.
-			</div>
-		</div>
-	</section>
+<BaseLayout title="null-hype · GitHub Profile" description="null-hype's GitHub profile">
+  <div class="profile-layout">
 
-	<section class="section">
-		<div class="section-header">
-			<span class="label">What changed</span>
-			<h2>Clean Astro baseline</h2>
-			<p class="copy">
-				The new setup keeps the repo focused on a plain static site while leaving
-				your other project files and scripts alone.
-			</p>
-		</div>
-		<div class="grid">
-			<div class="card">
-				<strong>Removed</strong>
-				<ul class="list">
-					<li>Starlight integration from <code>astro.config.mjs</code></li>
-					<li><code>src/content</code> docs starter content</li>
-					<li><code>src/content.config.ts</code> loader/schema plumbing</li>
-				</ul>
-			</div>
-			<div class="card">
-				<strong>Added</strong>
-				<ul class="list">
-					<li>A standard page at <code>src/pages/index.astro</code></li>
-					<li>A shared layout at <code>src/layouts/BaseLayout.astro</code></li>
-					<li>Small, self-contained global styling</li>
-				</ul>
-			</div>
-			<div class="card">
-				<strong>Kept</strong>
-				<ul class="list">
-					<li>Astro build scripts</li>
-					<li>GitHub Pages base-path compatibility</li>
-					<li>Your local <code>linear-agent</code> work and scripts</li>
-				</ul>
-			</div>
-		</div>
-	</section>
+    <!-- ── LEFT SIDEBAR ─────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="avatar-wrap">
+        <div class="avatar">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="50" cy="38" r="24" fill="#6e7681"/>
+            <ellipse cx="50" cy="96" rx="38" ry="28" fill="#6e7681"/>
+          </svg>
+        </div>
+      </div>
 
-	<p class="footer">
-		If you want to expand this into a fuller site, the next step is adding more
-		routes under <code>src/pages</code> and moving the inline styles into a CSS
-		file or component library.
-	</p>
+      <div class="identity">
+        <h1 class="display-name">null hype</h1>
+        <p class="username">null-hype</p>
+      </div>
+
+      <p class="bio">
+        Building things in the open. Interested in developer tooling, local-first
+        software, and making the feedback loop shorter.
+      </p>
+
+      <a class="follow-btn" href="#">Follow</a>
+
+      <ul class="stat-row">
+        <li><strong>247</strong> <span>followers</span></li>
+        <li><strong>84</strong> <span>following</span></li>
+        <li><strong>3</strong> <span>sponsors</span></li>
+      </ul>
+
+      <ul class="meta-list">
+        <li>
+          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"/></svg>
+          <span>Somewhere on the internet</span>
+        </li>
+        <li>
+          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M7.775 3.275a.75.75 0 0 0 1.06 1.06l1.25-1.25a2 2 0 1 1 2.83 2.83l-2.5 2.5a2 2 0 0 1-2.83 0 .75.75 0 0 0-1.06 1.06 3.5 3.5 0 0 0 4.95 0l2.5-2.5a3.5 3.5 0 0 0-4.95-4.95l-1.25 1.25Zm-4.69 9.64a2 2 0 0 1 0-2.83l2.5-2.5a2 2 0 0 1 2.83 0 .75.75 0 0 0 1.06-1.06 3.5 3.5 0 0 0-4.95 0l-2.5 2.5a3.5 3.5 0 0 0 4.95 4.95l1.25-1.25a.75.75 0 0 0-1.06-1.06l-1.25 1.25a2 2 0 0 1-2.83 0Z"/></svg>
+          <a href="#">null-hype.github.io</a>
+        </li>
+        <li>
+          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003Zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002Zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92Zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217Zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334Z"/></svg>
+          <a href="#">@null_hype</a>
+        </li>
+        <li>
+          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8a6.5 6.5 0 1 1 13 0A6.5 6.5 0 0 1 1.5 8ZM8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM7 6.75C7 6.336 7.336 6 7.75 6h.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-.5A.75.75 0 0 1 7 11.25Zm1-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
+          <span>Member since <strong>2021</strong></span>
+        </li>
+      </ul>
+
+      <div class="sidebar-section">
+        <h3 class="sidebar-heading">Organizations</h3>
+        <div class="org-list">
+          <div class="org-avatar" title="acme-corp">AC</div>
+          <div class="org-avatar" title="open-tools">OT</div>
+          <div class="org-avatar" title="devrel-guild">DG</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN COLUMN ───────────────────────────────────────── -->
+    <main class="main-col">
+
+      <!-- Tabs (decorative) -->
+      <nav class="profile-tabs" aria-label="Profile sections">
+        <a class="tab active" href="#">Overview</a>
+        <a class="tab" href="#">Repositories <span class="tab-count">32</span></a>
+        <a class="tab" href="#">Projects <span class="tab-count">4</span></a>
+        <a class="tab" href="#">Stars <span class="tab-count">312</span></a>
+      </nav>
+
+      <!-- ── README ──────────────────────────────────────────── -->
+      <section class="readme-box">
+        <header class="readme-header">
+          <svg class="readme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+          <span class="readme-filename">null-hype / <strong>null-hype</strong></span>
+        </header>
+        <div class="readme-body">
+          <h2 class="readme-title">Hey, I'm null&nbsp;hype 👋</h2>
+          <p>
+            I build developer tools, automation scripts, and the occasional side project
+            that scratches an itch nobody else knew they had. By day I ship product; by
+            night I push to repos nobody asked for.
+          </p>
+
+          <div class="readme-badges">
+            <span class="badge badge-blue">TypeScript</span>
+            <span class="badge badge-orange">Rust (learning)</span>
+            <span class="badge badge-green">Astro</span>
+            <span class="badge badge-purple">Neovim</span>
+            <span class="badge badge-gray">Linux</span>
+          </div>
+
+          <h3>What I'm working on</h3>
+          <ul>
+            <li>🔧 <strong>linear-agent</strong> — wiring Linear tickets to local dev workflows</li>
+            <li>📓 <strong>obsidian-daily</strong> — opinionated daily notes plugin</li>
+            <li>🌐 <strong>this site</strong> — slowly replacing the placeholder copy</li>
+          </ul>
+
+          <h3>Stats</h3>
+          <div class="stat-cards">
+            <div class="stat-card">
+              <span class="stat-num">{totalContributions.toLocaleString()}</span>
+              <span class="stat-label">contributions this year</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">32</span>
+              <span class="stat-label">public repos</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">247</span>
+              <span class="stat-label">followers</span>
+            </div>
+          </div>
+
+          <blockquote class="readme-quote">
+            "Make it work, make it right, make it fast — then write the README."
+          </blockquote>
+        </div>
+      </section>
+
+      <!-- ── PINNED REPOS ────────────────────────────────────── -->
+      <section class="pinned-section">
+        <header class="section-heading-row">
+          <h2 class="section-heading">Pinned</h2>
+          <a class="link-btn" href="#">Customize your pins</a>
+        </header>
+        <div class="pinned-grid">
+          {pinnedRepos.map(repo => (
+            <article class="repo-card">
+              <div class="repo-card-top">
+                <svg class="repo-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z"/></svg>
+                <a class="repo-name" href="#">{repo.name}</a>
+              </div>
+              <p class="repo-desc">{repo.desc}</p>
+              <footer class="repo-meta">
+                <span class="lang-dot" style={`background:${repo.color}`}></span>
+                <span class="lang-name">{repo.lang}</span>
+                <span class="repo-stat">
+                  <svg viewBox="0 0 16 16" aria-label="stars"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>
+                  {repo.stars}
+                </span>
+                <span class="repo-stat">
+                  <svg viewBox="0 0 16 16" aria-label="forks"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"/></svg>
+                  {repo.forks}
+                </span>
+              </footer>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- ── CONTRIBUTION GRAPH ──────────────────────────────── -->
+      <section class="contrib-section">
+        <header class="section-heading-row">
+          <h2 class="section-heading">
+            {totalContributions.toLocaleString()} contributions in the last year
+          </h2>
+        </header>
+        <div class="contrib-box">
+          <div class="contrib-graph" style={`--weeks: ${weeks.length}`}>
+            <!-- Month labels -->
+            <div class="month-row">
+              {monthLabels.map(m => (
+                <span class="month-label" style={`grid-column: ${m.col + 1}`}>{m.label}</span>
+              ))}
+            </div>
+            <!-- Day grid -->
+            <div class="day-grid">
+              {weeks.map((week) =>
+                week.map((day) => (
+                  <div
+                    class={`day ${level(day.count)}`}
+                    title={`${day.count} contribution${day.count !== 1 ? 's' : ''} on ${day.date}`}
+                  ></div>
+                ))
+              )}
+            </div>
+          </div>
+          <div class="contrib-legend">
+            <span>Less</span>
+            <div class="day l0"></div>
+            <div class="day l1"></div>
+            <div class="day l2"></div>
+            <div class="day l3"></div>
+            <div class="day l4"></div>
+            <span>More</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ACTIVITY FEED ───────────────────────────────────── -->
+      <section class="activity-section">
+        <header class="section-heading-row">
+          <h2 class="section-heading">Recent activity</h2>
+        </header>
+        <ol class="activity-list">
+          {feed.map(event => (
+            <li class={`activity-item activity-${event.label}`}>
+              <span class="activity-icon">{event.icon}</span>
+              <div class="activity-body">
+                <span class="activity-text">{event.text}</span>
+                <a class="activity-repo" href="#">{event.repo}</a>
+              </div>
+              <time class="activity-time">{event.time}</time>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+    </main>
+  </div>
 </BaseLayout>
+
+<style>
+  /* ── Layout ─────────────────────────────────────────────────── */
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 296px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  /* ── Sidebar ─────────────────────────────────────────────────── */
+  .sidebar {
+    position: sticky;
+    top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .avatar-wrap { width: 100%; }
+
+  .avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #21262d;
+  }
+
+  .avatar svg { width: 100%; height: 100%; display: block; }
+
+  .identity { margin-top: 0.5rem; }
+
+  .display-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .username {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin: 0.15rem 0 0;
+    font-weight: 300;
+  }
+
+  .bio {
+    font-size: 0.9rem;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .follow-btn {
+    display: block;
+    width: 100%;
+    padding: 0.3rem 0.75rem;
+    text-align: center;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #21262d;
+    color: var(--text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .follow-btn:hover { background: #30363d; border-color: #8b949e; }
+
+  .stat-row {
+    display: flex;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.875rem;
+    flex-wrap: wrap;
+  }
+  .stat-row strong { color: var(--text); font-weight: 600; }
+  .stat-row span   { color: var(--muted); }
+
+  .meta-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .meta-list li { display: flex; align-items: center; gap: 0.5rem; }
+  .meta-list a  { color: var(--text); text-decoration: none; }
+  .meta-list a:hover { color: var(--accent); text-decoration: underline; }
+
+  .meta-icon {
+    width: 1rem;
+    height: 1rem;
+    fill: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .sidebar-heading {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--text);
+  }
+
+  .org-list {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .org-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    background: #21262d;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .org-avatar:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Tabs ─────────────────────────────────────────────────────── */
+  .profile-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .tab:hover   { color: var(--text); }
+  .tab.active  { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+
+  .tab-count {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  /* ── README ──────────────────────────────────────────────────── */
+  .readme-box {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+
+  .readme-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--line);
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .readme-icon {
+    width: 1rem; height: 1rem;
+    fill: var(--muted);
+  }
+
+  .readme-filename { color: var(--muted); }
+  .readme-filename strong { color: var(--text); }
+
+  .readme-body {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .readme-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .readme-body p    { margin: 0 0 1rem; color: var(--muted); }
+  .readme-body h3   { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+  .readme-body ul   { margin: 0 0 1rem; padding-left: 1.25rem; color: var(--muted); }
+  .readme-body li   { margin-bottom: 0.35rem; }
+  .readme-body li strong { color: var(--text); }
+
+  .readme-badges {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .badge-blue   { background: rgba(49,120,198,0.2); color: #79c0ff; }
+  .badge-orange { background: rgba(249,115,22,0.16); color: #ffa657; }
+  .badge-green  { background: rgba(63,185,80,0.2); color: #56d364; }
+  .badge-purple { background: rgba(163,113,247,0.2); color: #d2a8ff; }
+  .badge-gray   { background: rgba(255,255,255,0.08); color: var(--muted); }
+
+  .stat-cards {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    min-width: 7rem;
+  }
+
+  .stat-num   { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1; }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; }
+
+  .readme-quote {
+    margin: 1rem 0 0;
+    padding: 0.5rem 1rem;
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  /* ── Pinned repos ─────────────────────────────────────────────── */
+  .pinned-section { margin-bottom: 1.25rem; }
+
+  .section-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-heading {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .link-btn {
+    font-size: 0.8125rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .link-btn:hover { text-decoration: underline; }
+
+  .pinned-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 0.75rem;
+  }
+
+  .repo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.02);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .repo-card:hover { border-color: #8b949e; background: rgba(255,255,255,0.04); }
+
+  .repo-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .repo-icon {
+    width: 0.875rem; height: 0.875rem;
+    fill: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .repo-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .repo-name:hover { text-decoration: underline; }
+
+  .repo-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .repo-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: auto;
+  }
+
+  .lang-dot {
+    width: 0.7rem; height: 0.7rem;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .repo-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .repo-stat svg {
+    width: 0.8rem; height: 0.8rem;
+    fill: var(--muted);
+  }
+
+  /* ── Contribution graph ─────────────────────────────────────── */
+  .contrib-section { margin-bottom: 1.25rem; }
+
+  .contrib-box {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    background: rgba(255,255,255,0.02);
+    overflow-x: auto;
+  }
+
+  .contrib-graph {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 640px;
+  }
+
+  .month-row {
+    display: grid;
+    grid-template-columns: repeat(var(--weeks), 1fr);
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+    height: 1rem;
+  }
+
+  .month-label {
+    grid-row: 1;
+    white-space: nowrap;
+  }
+
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--weeks, 53), 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-flow: column;
+    gap: 2px;
+  }
+
+  .day {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 2px;
+    min-width: 10px;
+  }
+
+  .l0 { background: #161b22; }
+  .l1 { background: #0e4429; }
+  .l2 { background: #006d32; }
+  .l3 { background: #26a641; }
+  .l4 { background: #39d353; }
+
+  .contrib-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  .contrib-legend .day {
+    width: 10px;
+    min-width: 10px;
+    aspect-ratio: 1;
+  }
+
+  /* ── Activity feed ──────────────────────────────────────────── */
+  .activity-section { margin-bottom: 1.25rem; }
+
+  .activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.875rem;
+  }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-item:hover { background: rgba(255,255,255,0.03); }
+
+  .activity-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    margin-top: 0.1rem;
+  }
+
+  .activity-push   .activity-icon { background: rgba(63,185,80,0.15);  color: #56d364; }
+  .activity-pr     .activity-icon { background: rgba(163,113,247,0.15); color: #d2a8ff; }
+  .activity-issue  .activity-icon { background: rgba(248,81,73,0.15);   color: #ff7b72; }
+  .activity-star   .activity-icon { background: rgba(210,153,34,0.15);  color: #e3b341; }
+  .activity-fork   .activity-icon { background: rgba(49,120,198,0.15);  color: #79c0ff; }
+
+  .activity-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .activity-text  { color: var(--text); }
+  .activity-repo  { color: var(--accent); text-decoration: none; font-size: 0.8125rem; }
+  .activity-repo:hover { text-decoration: underline; }
+
+  .activity-time {
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+
+  /* Tablet & below: stack sidebar on top of main content */
+  @media (max-width: 768px) {
+    .profile-layout {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    /* Sidebar: compact avatar + name/bio side-by-side */
+    .sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      grid-template-rows: auto auto auto;
+      column-gap: 1rem;
+      row-gap: 0.5rem;
+    }
+
+    .avatar-wrap {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      width: 72px;
+    }
+
+    .identity {
+      grid-column: 2;
+      grid-row: 1;
+      margin-top: 0;
+      align-self: end;
+    }
+
+    .bio {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+    }
+
+    .follow-btn,
+    .stat-row,
+    .meta-list,
+    .sidebar-section {
+      grid-column: 1 / -1;
+    }
+
+    .display-name { font-size: 1.25rem; }
+    .username     { font-size: 0.95rem; }
+
+    /* Stat cards fill available width */
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .stat-card { min-width: 0; }
+
+    /* Pinned grid: single column */
+    .pinned-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* Tabs: smaller padding */
+    .tab { padding: 0.5rem 0.6rem; }
+
+    /* Contribution box: add scroll hint shadow */
+    .contrib-box {
+      padding: 0.75rem;
+      background:
+        linear-gradient(to right, rgba(13,17,23,0) 90%, rgba(13,17,23,0.9)) right,
+        rgba(255,255,255,0.02);
+      background-size: 100% 100%, auto;
+    }
+  }
+
+  /* Mobile: tighten further */
+  @media (max-width: 480px) {
+    /* Activity: wrap timestamp below text */
+    .activity-item {
+      flex-wrap: wrap;
+    }
+    .activity-time {
+      white-space: normal;
+      flex-basis: 100%;
+      padding-left: calc(1.5rem + 0.75rem); /* icon width + gap */
+      margin-top: -0.1rem;
+    }
+
+    /* README body padding */
+    .readme-body {
+      padding: 1rem;
+    }
+
+    /* Stat cards: wrap to 2+1 if needed */
+    .stat-cards {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    /* Section heading row: stack */
+    .section-heading-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+
+    /* Sidebar avatar column tighter */
+    .sidebar {
+      grid-template-columns: 56px 1fr;
+      column-gap: 0.75rem;
+    }
+    .avatar-wrap { width: 56px; }
+  }
+</style>
