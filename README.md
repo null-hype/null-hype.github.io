@@ -13,6 +13,14 @@ All commands are run from the project root:
 | `npm run build` | Build the production site into `dist/` |
 | `npm run preview` | Preview the production build locally |
 
+## Devcontainer Setup
+
+This repo now includes the devcontainer and MCP setup from `null-hype/null-hype`'s `development` and `codespace-claude-linear-verification-gpv6jvr7pr629j9v` branches.
+
+Set `ANTHROPIC_API_KEY`, `LINEAR_API_KEY`, and `GITHUB_PERSONAL_ACCESS_TOKEN` in your local environment or Codespaces secrets before creating or rebuilding the devcontainer.
+
+Because `.devcontainer/devcontainer.json` maps those values from `${localEnv:...}` into `containerEnv`, changing them usually requires a rebuild or restart of the devcontainer/Codespace to take effect.
+
 ## Structure
 
 The site now follows a normal Astro layout:

@@ -1,0 +1,59 @@
+{
+  "name": "null-hype.github.io",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "overrideFeatureInstallOrder": [
+    "ghcr.io/devcontainers/features/docker-in-docker",
+    "ghcr.io/devcontainers/features/desktop-lite",
+    "ghcr.io/devcontainers/features/sshd"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/sshd:1": {
+      "version": "latest"
+    }
+  },
+  "forwardPorts": [
+    4321,
+    6080
+  ],
+  "secrets": {
+    "ANTHROPIC_API_KEY": {
+      "description": "Anthropic API key for Claude Code inside the devcontainer."
+    },
+    "LINEAR_API_KEY": {
+      "description": "Linear API key used by the Linear MCP server."
+    },
+    "GITHUB_PERSONAL_ACCESS_TOKEN": {
+      "description": "GitHub personal access token used by the GitHub MCP server."
+    }
+  },
+  "containerEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "LINEAR_API_KEY": "${localEnv:LINEAR_API_KEY}",
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "${localEnv:GITHUB_PERSONAL_ACCESS_TOKEN}"
+  },
+  "portsAttributes": {
+    "4321": {
+      "label": "astro"
+    },
+    "6080": {
+      "label": "desktop"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "astro-build.astro-vscode",
+        "anthropic.claude-code",
+        "GitHub.codespaces",
+        "CodeSandbox-io.codesandbox-projects"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "sudo mkdir -p /run/sshd && (sudo service ssh start || sudo /usr/sbin/sshd)"
+}

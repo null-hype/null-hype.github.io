@@ -1,0 +1,22 @@
+{
+  "coreTools": [],
+  "mcpServers": {
+    "container-use": {
+      "command": "container-use",
+      "args": [
+        "stdio"
+      ],
+      "timeout": 60000,
+      "trust": true
+    },
+    "linear": {
+      "httpUrl": "https://mcp.linear.app/mcp",
+      "headers": {
+        "Authorization": "Bearer ${LINEAR_API_KEY}",
+        "Accept": "application/json, text/event-stream"
+      },
+      "timeout": 60000,
+      "trust": true
+    }
+  }
+}

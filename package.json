@@ -7,7 +7,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "agent:start": "node --env-file=.env linear-agent/server.mjs",
+    "agent:test": "node --env-file=.env --test linear-agent/server.test.mjs"
   },
   "dependencies": {
     "astro": "^6.0.1",
