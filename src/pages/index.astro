@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LiveClock from '../components/LiveClock';
+import SwipeActions from '../components/SwipeActions';
+import TypewriterBio from '../components/TypewriterBio';
 
-// Deterministic pseudo-random so the graph doesn't flicker on hot-reload
 function seededRand(seed: number): number {
   const x = Math.sin(seed + 9301) * 49297;
   return x - Math.floor(x);
 }
 
-// Build ~53 weeks of contribution data ending today
 const today = new Date('2026-03-23');
 const weeks: Array<Array<{ date: string; count: number }>> = [];
 
@@ -19,7 +20,7 @@ for (let w = 52; w >= 0; w--) {
     const seed = w * 7 + d;
     const r = seededRand(seed);
     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-    const active = r > (isWeekend ? 0.55 : 0.30);
+    const active = r > (isWeekend ? 0.58 : 0.32);
     const count = active ? Math.floor(seededRand(seed + 1000) * 14) + 1 : 0;
     days.push({ date: date.toISOString().split('T')[0], count });
   }
@@ -36,7 +37,6 @@ function level(count: number): string {
   return 'l4';
 }
 
-// Month labels: find first week of each month
 const monthLabels: Array<{ label: string; col: number }> = [];
 let lastMonth = -1;
 weeks.forEach((week, wi) => {
@@ -50,18 +50,33 @@ weeks.forEach((week, wi) => {
   }
 });
 
-const pinnedRepos = [
-  {
-    name: 'null-hype.github.io',
-    desc: 'Personal site & playground — built with Astro, deployed on GitHub Pages.',
-    lang: 'Astro',
-    color: '#FF5A03',
-    stars: 12,
-    forks: 2,
-  },
+const highlights = [
+  { emoji: '☕', label: 'Coffee' },
+  { emoji: '🦀', label: 'Rust' },
+  { emoji: '🎵', label: 'Music' },
+  { emoji: '🐈', label: 'Cats' },
+  { emoji: '🏔️', label: 'Hiking' },
+  { emoji: '🌙', label: 'Night owl' },
+];
+
+const interests = [
+  { tag: 'TypeScript', kind: 'tech' },
+  { tag: 'Neovim', kind: 'tech' },
+  { tag: 'Linux', kind: 'tech' },
+  { tag: 'Local-first', kind: 'tech' },
+  { tag: 'Specialty coffee', kind: 'life' },
+  { tag: 'Post-rock', kind: 'life' },
+  { tag: 'Long walks', kind: 'life' },
+  { tag: 'Sci-fi novels', kind: 'life' },
+  { tag: 'Rust (learning)', kind: 'tech' },
+  { tag: 'Home lab', kind: 'tech' },
+];
+
+const projects = [
   {
     name: 'linear-agent',
-    desc: 'Webhook-driven agent that syncs Linear issues to a local dev environment.',
+    tagline: 'My most-swiped project',
+    desc: 'Webhook-driven agent that syncs Linear issues to local dev.',
     lang: 'JavaScript',
     color: '#f7df1e',
     stars: 34,
@@ -69,7 +84,8 @@ const pinnedRepos = [
   },
   {
     name: 'obsidian-daily',
-    desc: 'Minimal Obsidian plugin for opinionated daily note scaffolding.',
+    tagline: 'This one has a personality',
+    desc: 'Opinionated daily note plugin. Yes I have opinions about notes.',
     lang: 'TypeScript',
     color: '#3178c6',
     stars: 89,
@@ -77,7 +93,8 @@ const pinnedRepos = [
   },
   {
     name: 'dotfiles',
-    desc: 'Curated shell config, Neovim setup, and dev-env bootstrap scripts.',
+    tagline: 'Basically my love language',
+    desc: 'Curated shell config, Neovim setup, bootstrap scripts.',
     lang: 'Shell',
     color: '#89e051',
     stars: 56,
@@ -85,645 +102,928 @@ const pinnedRepos = [
   },
   {
     name: 'til',
-    desc: 'Today I Learned — a running log of small discoveries and snippets.',
+    tagline: "I'm a good listener",
+    desc: 'Today I Learned — snippets, discoveries, and rabbit holes.',
     lang: 'Markdown',
     color: '#083fa1',
     stars: 21,
     forks: 3,
   },
-  {
-    name: 'advent-of-code',
-    desc: 'AoC puzzle solutions, mostly TypeScript with the occasional Rust.',
-    lang: 'TypeScript',
-    color: '#3178c6',
-    stars: 8,
-    forks: 1,
-  },
 ];
 
 const feed = [
-  { icon: '⬆', label: 'push',   repo: 'null-hype/linear-agent',         text: 'Pushed 3 commits to main',                   time: '2 hours ago' },
-  { icon: '⤴', label: 'pr',     repo: 'null-hype/obsidian-daily',        text: 'Opened PR #18 — Add weekly rollup view',      time: 'yesterday' },
-  { icon: '✓', label: 'issue',  repo: 'null-hype/dotfiles',              text: 'Closed issue #4 — zsh startup regression',    time: '2 days ago' },
-  { icon: '★', label: 'star',   repo: 'vitejs/vite',                     text: 'Starred vitejs/vite',                         time: '3 days ago' },
-  { icon: '⬆', label: 'push',   repo: 'null-hype/null-hype.github.io',   text: 'Pushed 7 commits to master',                 time: '4 days ago' },
-  { icon: '⎇', label: 'fork',   repo: 'sindresorhus/awesome',            text: 'Forked sindresorhus/awesome',                 time: '5 days ago' },
-  { icon: '⬆', label: 'push',   repo: 'null-hype/til',                   text: 'Pushed 1 commit to main',                    time: '1 week ago' },
-  { icon: '!', label: 'issue',  repo: 'null-hype/advent-of-code',        text: 'Opened issue #2 — Day 12 part 2 perf',       time: '1 week ago' },
+  { icon: '⬆', kind: 'push',  repo: 'null-hype/linear-agent',       text: 'pushed 3 commits',  time: '14:22:10' },
+  { icon: '⤴', kind: 'pr',    repo: 'null-hype/obsidian-daily',      text: 'opened PR #18',     time: '11:05:45' },
+  { icon: '✓', kind: 'close', repo: 'null-hype/dotfiles',            text: 'closed issue #4',   time: '03:44:02' },
+  { icon: '★', kind: 'star',  repo: 'vitejs/vite',                   text: 'starred',           time: 'yesterday' },
+  { icon: '⬆', kind: 'push',  repo: 'null-hype/null-hype.github.io', text: 'pushed 7 commits',  time: '2d ago' },
+  { icon: '⎇', kind: 'fork',  repo: 'sindresorhus/awesome',          text: 'forked',            time: '5d ago' },
 ];
 ---
 
-<BaseLayout title="null-hype · GitHub Profile" description="null-hype's GitHub profile">
-  <div class="profile-layout">
+<BaseLayout title="null-hype · profile" description="null-hype's profile">
 
-    <!-- ── LEFT SIDEBAR ─────────────────────────────────────── -->
-    <aside class="sidebar">
-      <div class="avatar-wrap">
-        <div class="avatar">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="50" cy="38" r="24" fill="#6e7681"/>
-            <ellipse cx="50" cy="96" rx="38" ry="28" fill="#6e7681"/>
-          </svg>
+  <!-- ── FIXED TOP NAV ──────────────────────────────────────── -->
+  <header class="top-nav">
+    <div class="top-nav-left">
+      <span class="material-symbols-outlined nav-icon">terminal</span>
+      <span class="top-nav-title">system_terminal_v1.0.4</span>
+    </div>
+    <LiveClock client:load />
+  </header>
+
+  <div class="page">
+
+    <!-- ── HERO CARD ─────────────────────────────────────────── -->
+    <div class="hero-card">
+      <div class="hero-photo" aria-hidden="true">
+        <svg viewBox="0 0 400 560" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="bg-grad" cx="50%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#1a0a3e"/>
+              <stop offset="100%" stop-color="#050510"/>
+            </radialGradient>
+            <radialGradient id="skin" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#c8956c"/>
+              <stop offset="100%" stop-color="#a0714f"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="560" fill="url(#bg-grad)"/>
+          <!-- Glow orbs -->
+          <circle cx="320" cy="80" r="90" fill="#00f5ff" opacity="0.08"/>
+          <circle cx="60" cy="420" r="70" fill="#ff4d80" opacity="0.10"/>
+          <!-- Grid lines -->
+          <line x1="0" y1="100" x2="400" y2="100" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
+          <line x1="0" y1="200" x2="400" y2="200" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
+          <line x1="0" y1="300" x2="400" y2="300" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
+          <line x1="0" y1="400" x2="400" y2="400" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
+          <line x1="100" y1="0" x2="100" y2="560" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
+          <line x1="200" y1="0" x2="200" y2="560" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
+          <line x1="300" y1="0" x2="300" y2="560" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
+          <!-- Body -->
+          <ellipse cx="200" cy="620" rx="130" ry="100" fill="#0d0d19"/>
+          <!-- Head -->
+          <circle cx="200" cy="210" r="80" fill="url(#skin)"/>
+          <!-- Hair -->
+          <ellipse cx="200" cy="145" rx="82" ry="48" fill="#0a0a1a"/>
+          <ellipse cx="134" cy="182" rx="22" ry="38" fill="#0a0a1a"/>
+          <ellipse cx="266" cy="182" rx="22" ry="38" fill="#0a0a1a"/>
+          <!-- Eyes -->
+          <circle cx="175" cy="208" r="9" fill="#0a0a1a"/>
+          <circle cx="225" cy="208" r="9" fill="#0a0a1a"/>
+          <circle cx="178" cy="205" r="3" fill="#00f5ff" opacity="0.8"/>
+          <circle cx="228" cy="205" r="3" fill="#00f5ff" opacity="0.8"/>
+          <!-- Smile -->
+          <path d="M182 232 Q200 248 218 232" stroke="#7a4a2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- Hoodie -->
+          <path d="M100 340 Q130 290 200 280 Q270 290 300 340 L320 480 L80 480 Z" fill="#0d0d19"/>
+          <!-- Laptop -->
+          <rect x="130" y="380" width="140" height="90" rx="2" fill="#050510" stroke="#00f5ff" stroke-width="1" opacity="0.9"/>
+          <rect x="138" y="388" width="124" height="70" rx="1" fill="#0a0a1a"/>
+          <!-- Code lines -->
+          <rect x="148" y="400" width="60" height="3" rx="1" fill="#00f5ff" opacity="0.7"/>
+          <rect x="148" y="411" width="90" height="3" rx="1" fill="#ff4d80" opacity="0.5"/>
+          <rect x="148" y="422" width="45" height="3" rx="1" fill="#00f5ff" opacity="0.4"/>
+          <rect x="148" y="433" width="75" height="3" rx="1" fill="#ff4d80" opacity="0.3"/>
+          <rect x="148" y="444" width="55" height="3" rx="1" fill="#00f5ff" opacity="0.5"/>
+          <!-- Laptop glow -->
+          <ellipse cx="200" cy="470" rx="70" ry="8" fill="#00f5ff" opacity="0.07"/>
+        </svg>
+      </div>
+
+      <!-- Scanline overlay -->
+      <div class="scanline" aria-hidden="true"></div>
+
+      <!-- Gradient + identity -->
+      <div class="hero-overlay">
+        <div class="hero-status">
+          <span class="badge-online">
+            <span class="online-dot"></span>ONLINE
+          </span>
+          <span class="badge-compat">94% MATCH</span>
+        </div>
+        <div class="hero-identity">
+          <div class="hero-name-row">
+            <h1 class="hero-name">null hype</h1>
+            <span class="hero-age">27</span>
+          </div>
+          <p class="hero-sub">he/him · @null-hype · [LFM] Full Stack Engineer</p>
+          <p class="hero-location">📍 Somewhere on the internet</p>
         </div>
       </div>
 
-      <div class="identity">
-        <h1 class="display-name">null hype</h1>
-        <p class="username">null-hype</p>
-      </div>
+      <!-- Action buttons -->
+      <SwipeActions client:load />
+    </div>
 
-      <p class="bio">
-        Building things in the open. Interested in developer tooling, local-first
-        software, and making the feedback loop shorter.
-      </p>
+    <!-- ── PROFILE CONTENT ──────────────────────────────────── -->
+    <div class="content">
 
-      <a class="follow-btn" href="#">Follow</a>
+      <!-- Story highlights -->
+      <section class="highlights-section">
+        {highlights.map(h => (
+          <div class="highlight">
+            <div class="highlight-ring">
+              <div class="highlight-inner">{h.emoji}</div>
+            </div>
+            <span class="highlight-label">{h.label}</span>
+          </div>
+        ))}
+      </section>
 
-      <ul class="stat-row">
-        <li><strong>247</strong> <span>followers</span></li>
-        <li><strong>84</strong> <span>following</span></li>
-        <li><strong>3</strong> <span>sponsors</span></li>
-      </ul>
-
-      <ul class="meta-list">
-        <li>
-          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"/></svg>
-          <span>Somewhere on the internet</span>
-        </li>
-        <li>
-          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M7.775 3.275a.75.75 0 0 0 1.06 1.06l1.25-1.25a2 2 0 1 1 2.83 2.83l-2.5 2.5a2 2 0 0 1-2.83 0 .75.75 0 0 0-1.06 1.06 3.5 3.5 0 0 0 4.95 0l2.5-2.5a3.5 3.5 0 0 0-4.95-4.95l-1.25 1.25Zm-4.69 9.64a2 2 0 0 1 0-2.83l2.5-2.5a2 2 0 0 1 2.83 0 .75.75 0 0 0 1.06-1.06 3.5 3.5 0 0 0-4.95 0l-2.5 2.5a3.5 3.5 0 0 0 4.95 4.95l1.25-1.25a.75.75 0 0 0-1.06-1.06l-1.25 1.25a2 2 0 0 1-2.83 0Z"/></svg>
-          <a href="#">null-hype.github.io</a>
-        </li>
-        <li>
-          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003Zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002Zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92Zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217Zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334Z"/></svg>
-          <a href="#">@null_hype</a>
-        </li>
-        <li>
-          <svg class="meta-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8a6.5 6.5 0 1 1 13 0A6.5 6.5 0 0 1 1.5 8ZM8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM7 6.75C7 6.336 7.336 6 7.75 6h.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-.5A.75.75 0 0 1 7 11.25Zm1-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
-          <span>Member since <strong>2021</strong></span>
-        </li>
-      </ul>
-
-      <div class="sidebar-section">
-        <h3 class="sidebar-heading">Organizations</h3>
-        <div class="org-list">
-          <div class="org-avatar" title="acme-corp">AC</div>
-          <div class="org-avatar" title="open-tools">OT</div>
-          <div class="org-avatar" title="devrel-guild">DG</div>
+      <!-- Bio / README terminal window -->
+      <section class="card terminal-card">
+        <div class="terminal-chrome">
+          <div class="terminal-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <span class="terminal-filename">README.md</span>
         </div>
-      </div>
-    </aside>
-
-    <!-- ── MAIN COLUMN ───────────────────────────────────────── -->
-    <main class="main-col">
-
-      <!-- Tabs (decorative) -->
-      <nav class="profile-tabs" aria-label="Profile sections">
-        <a class="tab active" href="#">Overview</a>
-        <a class="tab" href="#">Repositories <span class="tab-count">32</span></a>
-        <a class="tab" href="#">Projects <span class="tab-count">4</span></a>
-        <a class="tab" href="#">Stars <span class="tab-count">312</span></a>
-      </nav>
-
-      <!-- ── README ──────────────────────────────────────────── -->
-      <section class="readme-box">
-        <header class="readme-header">
-          <svg class="readme-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
-          <span class="readme-filename">null-hype / <strong>null-hype</strong></span>
-        </header>
-        <div class="readme-body">
-          <h2 class="readme-title">Hey, I'm null&nbsp;hype 👋</h2>
-          <p>
-            I build developer tools, automation scripts, and the occasional side project
-            that scratches an itch nobody else knew they had. By day I ship product; by
-            night I push to repos nobody asked for.
-          </p>
-
-          <div class="readme-badges">
-            <span class="badge badge-blue">TypeScript</span>
-            <span class="badge badge-orange">Rust (learning)</span>
-            <span class="badge badge-green">Astro</span>
-            <span class="badge badge-purple">Neovim</span>
-            <span class="badge badge-gray">Linux</span>
-          </div>
-
-          <h3>What I'm working on</h3>
-          <ul>
-            <li>🔧 <strong>linear-agent</strong> — wiring Linear tickets to local dev workflows</li>
-            <li>📓 <strong>obsidian-daily</strong> — opinionated daily notes plugin</li>
-            <li>🌐 <strong>this site</strong> — slowly replacing the placeholder copy</li>
-          </ul>
-
-          <h3>Stats</h3>
-          <div class="stat-cards">
-            <div class="stat-card">
-              <span class="stat-num">{totalContributions.toLocaleString()}</span>
-              <span class="stat-label">contributions this year</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-num">32</span>
-              <span class="stat-label">public repos</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-num">247</span>
-              <span class="stat-label">followers</span>
-            </div>
-          </div>
-
-          <blockquote class="readme-quote">
-            "Make it work, make it right, make it fast — then write the README."
+        <div class="terminal-body">
+          <TypewriterBio client:load />
+          <blockquote class="bio-quote">
+            "Make it work, make it right, make it fast — then argue about tabs vs spaces."
           </blockquote>
         </div>
       </section>
 
-      <!-- ── PINNED REPOS ────────────────────────────────────── -->
-      <section class="pinned-section">
-        <header class="section-heading-row">
-          <h2 class="section-heading">Pinned</h2>
-          <a class="link-btn" href="#">Customize your pins</a>
-        </header>
-        <div class="pinned-grid">
-          {pinnedRepos.map(repo => (
-            <article class="repo-card">
-              <div class="repo-card-top">
-                <svg class="repo-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z"/></svg>
-                <a class="repo-name" href="#">{repo.name}</a>
+      <!-- Looking for -->
+      <section class="card">
+        <div class="card-label">Looking for</div>
+        <ul class="looking-list">
+          <li>
+            <span class="looking-icon">🤝</span>
+            Open source collaborators who review PRs within a decade
+          </li>
+          <li>
+            <span class="looking-icon">💡</span>
+            Side-project co-founders with strong opinions and weak sleep schedules
+          </li>
+          <li>
+            <span class="looking-icon">☕</span>
+            People who understand that "it works on my machine" is valid
+          </li>
+        </ul>
+      </section>
+
+      <!-- Stats grid -->
+      <section class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-val cyan">{totalContributions.toLocaleString()}</span>
+          <span class="stat-key">Commits</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val pink">247</span>
+          <span class="stat-key">Followers</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val cyan">32</span>
+          <span class="stat-key">Repos</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val pink">312</span>
+          <span class="stat-key">Stars Given</span>
+        </div>
+      </section>
+
+      <!-- Interests -->
+      <section class="card">
+        <div class="card-label">Interests</div>
+        <div class="chip-cloud">
+          {interests.map(i => {
+            const slug = i.tag.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
+            const label = i.kind === 'tech' ? `@null-hype/${slug}` : `feature/${slug}`;
+            return <span class={`chip chip-${i.kind}`}>{label}</span>;
+          })}
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section class="projects-section">
+        <div class="section-heading-row">
+          <h2 class="section-heading">Open Source Projects</h2>
+          <span class="section-sub">things I'm proud of, mostly</span>
+        </div>
+        <div class="projects-grid">
+          {projects.map(p => (
+            <article class="project-card">
+              <div class="terminal-chrome">
+                <div class="terminal-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="material-symbols-outlined" style="font-size:12px;color:#343341">terminal</span>
               </div>
-              <p class="repo-desc">{repo.desc}</p>
-              <footer class="repo-meta">
-                <span class="lang-dot" style={`background:${repo.color}`}></span>
-                <span class="lang-name">{repo.lang}</span>
-                <span class="repo-stat">
-                  <svg viewBox="0 0 16 16" aria-label="stars"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>
-                  {repo.stars}
-                </span>
-                <span class="repo-stat">
-                  <svg viewBox="0 0 16 16" aria-label="forks"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"/></svg>
-                  {repo.forks}
-                </span>
-              </footer>
+              <div class="project-body">
+                <p class="project-tagline">{p.tagline}</p>
+                <a class="project-name" href="#">{p.name}</a>
+                <p class="project-desc">{p.desc}</p>
+                <footer class="project-meta">
+                  <span class="lang-dot" style={`background:${p.color}`}></span>
+                  <span class="lang-name">{p.lang}</span>
+                  <span class="project-stat">★ {p.stars}</span>
+                  <span class="project-stat">⎇ {p.forks}</span>
+                </footer>
+              </div>
             </article>
           ))}
         </div>
       </section>
 
-      <!-- ── CONTRIBUTION GRAPH ──────────────────────────────── -->
-      <section class="contrib-section">
-        <header class="section-heading-row">
-          <h2 class="section-heading">
-            {totalContributions.toLocaleString()} contributions in the last year
-          </h2>
-        </header>
-        <div class="contrib-box">
+      <!-- Contribution graph -->
+      <section class="card graph-card">
+        <div class="card-label">365_days_activity.log</div>
+        <p class="graph-subtitle">
+          {totalContributions.toLocaleString()} contributions this year · pretty consistent 💪
+        </p>
+        <div class="graph-scroll">
           <div class="contrib-graph" style={`--weeks: ${weeks.length}`}>
-            <!-- Month labels -->
             <div class="month-row">
               {monthLabels.map(m => (
                 <span class="month-label" style={`grid-column: ${m.col + 1}`}>{m.label}</span>
               ))}
             </div>
-            <!-- Day grid -->
             <div class="day-grid">
-              {weeks.map((week) =>
-                week.map((day) => (
+              {weeks.map(week =>
+                week.map(day => (
                   <div
                     class={`day ${level(day.count)}`}
-                    title={`${day.count} contribution${day.count !== 1 ? 's' : ''} on ${day.date}`}
+                    title={`${day.count} on ${day.date}`}
                   ></div>
                 ))
               )}
             </div>
           </div>
-          <div class="contrib-legend">
-            <span>Less</span>
-            <div class="day l0"></div>
-            <div class="day l1"></div>
-            <div class="day l2"></div>
-            <div class="day l3"></div>
-            <div class="day l4"></div>
-            <span>More</span>
-          </div>
+        </div>
+        <div class="graph-legend">
+          <span>Less</span>
+          <div class="day l0"></div>
+          <div class="day l1"></div>
+          <div class="day l2"></div>
+          <div class="day l3"></div>
+          <div class="day l4"></div>
+          <span>More</span>
         </div>
       </section>
 
-      <!-- ── ACTIVITY FEED ───────────────────────────────────── -->
-      <section class="activity-section">
-        <header class="section-heading-row">
-          <h2 class="section-heading">Recent activity</h2>
-        </header>
-        <ol class="activity-list">
-          {feed.map(event => (
-            <li class={`activity-item activity-${event.label}`}>
-              <span class="activity-icon">{event.icon}</span>
-              <div class="activity-body">
-                <span class="activity-text">{event.text}</span>
-                <a class="activity-repo" href="#">{event.repo}</a>
-              </div>
-              <time class="activity-time">{event.time}</time>
-            </li>
+      <!-- Activity feed — System Logs -->
+      <section class="card">
+        <div class="card-label">System Logs</div>
+        <div class="activity-log">
+          {feed.map(e => (
+            <div class={`log-entry log-${e.kind}`}>
+              <span class="log-time">[{e.time}]</span>
+              <span class="log-icon">{e.icon}</span>
+              <span class="log-body">
+                <span class="log-action">{e.text}</span>
+                {' → '}
+                <a class="log-repo" href="#">{e.repo}</a>
+              </span>
+            </div>
           ))}
-        </ol>
+        </div>
       </section>
 
-    </main>
+      <!-- Footer -->
+      <footer class="profile-footer">
+        <p>null-hype · member since 2021 · building in the open</p>
+        <div class="footer-links">
+          <a href="#">GitHub</a>
+          <a href="#">Blog</a>
+          <a href="#">RSS</a>
+        </div>
+      </footer>
+
+    </div>
   </div>
+
+  <!-- ── FIXED BOTTOM NAV ───────────────────────────────────── -->
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button class="nav-btn" aria-label="Terminal">
+      <span class="material-symbols-outlined">terminal</span>
+    </button>
+    <button class="nav-btn" aria-label="Likes">
+      <span class="material-symbols-outlined">favorite</span>
+    </button>
+    <button class="nav-btn" aria-label="Code">
+      <span class="material-symbols-outlined">code</span>
+    </button>
+    <button class="nav-btn nav-active" aria-label="Profile">
+      <span class="material-symbols-outlined">person_search</span>
+    </button>
+  </nav>
+
 </BaseLayout>
 
 <style>
-  /* ── Layout ─────────────────────────────────────────────────── */
-  .profile-layout {
-    display: grid;
-    grid-template-columns: 296px 1fr;
-    gap: 2rem;
-    align-items: start;
+  /* ═══════════════════════════════════════════════════════════
+     TOKENS
+  ═══════════════════════════════════════════════════════════ */
+  :root {
+    --bg:          #050510;
+    --surface:     #0d0d19;
+    --surface-lo:  #1a1a27;
+    --surface-mid: #1f1e2b;
+    --surface-hi:  #292936;
+    --border:      #343341;
+    --text:        #e3e0f3;
+    --muted:       rgba(233,254,255,0.45);
+    --cyan:        #00f5ff;
+    --pink:        #ff4d80;
+    --cyan-dim:    rgba(0,245,255,0.10);
+    --pink-dim:    rgba(255,77,128,0.10);
   }
 
-  /* ── Sidebar ─────────────────────────────────────────────────── */
-  .sidebar {
-    position: sticky;
-    top: 1.5rem;
+  /* ═══════════════════════════════════════════════════════════
+     FIXED TOP NAV
+  ═══════════════════════════════════════════════════════════ */
+  .top-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 3rem;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    box-shadow: 0 0 20px rgba(0,245,255,0.08);
+  }
+
+  .top-nav-left { display: flex; align-items: center; gap: 0.5rem; }
+
+  .nav-icon { color: var(--cyan); font-size: 1.1rem; }
+
+  .top-nav-title,
+  .top-nav-clock {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--cyan);
+    font-weight: 700;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     FIXED BOTTOM NAV
+  ═══════════════════════════════════════════════════════════ */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 4rem;
+    background: rgba(5,5,16,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 2px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -10px 30px rgba(0,245,255,0.08);
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--border);
+    padding: 0.75rem;
+    transition: color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-btn:hover { color: var(--pink); }
+  .nav-btn.nav-active {
+    background: var(--cyan);
+    color: var(--bg);
+    box-shadow: 0 0 10px var(--cyan);
+  }
+  .nav-btn .material-symbols-outlined { font-size: 1.5rem; }
+
+  /* ═══════════════════════════════════════════════════════════
+     PAGE SHELL
+  ═══════════════════════════════════════════════════════════ */
+  .page {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
-  .avatar-wrap { width: 100%; }
-
-  .avatar {
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 50%;
+  /* ═══════════════════════════════════════════════════════════
+     HERO CARD
+  ═══════════════════════════════════════════════════════════ */
+  .hero-card {
+    position: relative;
     overflow: hidden;
-    border: 1px solid var(--line);
-    background: #21262d;
+    height: min(60vh, 520px);
+    background: var(--surface);
+    flex-shrink: 0;
+    box-shadow: 0 0 40px rgba(0,245,255,0.06);
   }
 
-  .avatar svg { width: 100%; height: 100%; display: block; }
-
-  .identity { margin-top: 0.5rem; }
-
-  .display-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    margin: 0;
-    color: var(--text);
+  .hero-photo {
+    position: absolute;
+    inset: 0;
   }
-
-  .username {
-    font-size: 1.1rem;
-    color: var(--muted);
-    margin: 0.15rem 0 0;
-    font-weight: 300;
-  }
-
-  .bio {
-    font-size: 0.9rem;
-    color: var(--text);
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  .follow-btn {
-    display: block;
+  .hero-photo svg {
     width: 100%;
-    padding: 0.3rem 0.75rem;
-    text-align: center;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: #21262d;
-    color: var(--text);
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
-  .follow-btn:hover { background: #30363d; border-color: #8b949e; }
 
-  .stat-row {
-    display: flex;
-    gap: 0.75rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-size: 0.875rem;
-    flex-wrap: wrap;
+  /* Scanline overlay */
+  .scanline {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, rgba(18,16,16,0) 50%, rgba(0,0,0,0.22) 50%),
+      linear-gradient(90deg, rgba(255,0,0,0.04), rgba(0,255,0,0.01), rgba(0,0,255,0.04));
+    background-size: 100% 4px, 3px 100%;
+    opacity: 0.35;
   }
-  .stat-row strong { color: var(--text); font-weight: 600; }
-  .stat-row span   { color: var(--muted); }
 
-  .meta-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* Gradient overlay */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      to top,
+      rgba(5,5,16,0.97) 0%,
+      rgba(5,5,16,0.55) 45%,
+      transparent 70%
+    );
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    font-size: 0.875rem;
-    color: var(--muted);
+    justify-content: flex-end;
+    padding: 1.25rem 1.25rem 5.5rem;
+    gap: 0.5rem;
   }
-  .meta-list li { display: flex; align-items: center; gap: 0.5rem; }
-  .meta-list a  { color: var(--text); text-decoration: none; }
-  .meta-list a:hover { color: var(--accent); text-decoration: underline; }
 
-  .meta-icon {
-    width: 1rem;
-    height: 1rem;
-    fill: var(--muted);
+  .hero-status { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .badge-online,
+  .badge-compat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid;
+  }
+
+  .badge-online {
+    background: rgba(74,222,128,0.1);
+    color: #4ade80;
+    border-color: rgba(74,222,128,0.35);
+  }
+
+  .online-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.35; }
+  }
+
+  .badge-compat {
+    background: var(--pink-dim);
+    color: var(--pink);
+    border-color: rgba(255,77,128,0.35);
+  }
+
+  .hero-identity { display: flex; flex-direction: column; gap: 0.15rem; }
+
+  .hero-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .hero-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 10vw, 3.5rem);
+    font-weight: 900;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    text-shadow: 0 0 24px rgba(0,245,255,0.45);
+  }
+
+  .hero-age {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: rgba(0,245,255,0.55);
+  }
+
+  .hero-sub {
+    margin: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(0,245,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-location { margin: 0; font-size: 0.82rem; color: var(--muted); }
+
+  /* Action buttons — keyboard key style */
+  .hero-actions {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 3;
+  }
+
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.65rem 1.1rem;
+    border: none;
+    border-bottom: 4px solid;
+    cursor: pointer;
+    background: var(--surface-hi);
+    transition: transform 0.1s, border-bottom-width 0.1s;
+  }
+  .action-btn:hover  { filter: brightness(1.15); }
+  .action-btn:active { transform: translateY(3px); border-bottom-width: 1px; }
+
+  .action-btn .material-symbols-outlined { font-size: 1.4rem; }
+
+  .action-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+  }
+
+  .action-pass   { color: #f87171; border-color: rgba(248,113,113,0.5); }
+  .action-super  { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,245,255,0.25); }
+  .action-like   { color: var(--pink); border-color: var(--pink); }
+
+  /* ═══════════════════════════════════════════════════════════
+     CONTENT
+  ═══════════════════════════════════════════════════════════ */
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  /* ── Shared card ───────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+  }
+
+  .card-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.5rem;
+    background: var(--cyan-dim);
+    color: var(--cyan);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    border-left: 3px solid var(--cyan);
+  }
+
+  /* ── Story highlights ─────────────────────────────────── */
+  .highlights-section {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .highlights-section::-webkit-scrollbar { display: none; }
+
+  .highlight {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
     flex-shrink: 0;
   }
 
-  .sidebar-heading {
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem;
-    color: var(--text);
+  .highlight-ring {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--cyan), var(--pink));
   }
 
-  .org-list {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-
-  .org-avatar {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 6px;
-    background: #21262d;
-    border: 1px solid var(--line);
+  .highlight-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: var(--surface);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--muted);
-    cursor: pointer;
-  }
-  .org-avatar:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ── Tabs ─────────────────────────────────────────────────────── */
-  .profile-tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 1.25rem;
-    overflow-x: auto;
-  }
-
-  .tab {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    color: var(--muted);
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-  .tab:hover   { color: var(--text); }
-  .tab.active  { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
-
-  .tab-count {
-    display: inline-flex;
-    align-items: center;
-    padding: 0 0.4rem;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.08);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted);
-  }
-
-  /* ── README ──────────────────────────────────────────────────── */
-  .readme-box {
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 1.25rem;
-  }
-
-  .readme-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid var(--line);
-    font-size: 0.875rem;
-    color: var(--muted);
-  }
-
-  .readme-icon {
-    width: 1rem; height: 1rem;
-    fill: var(--muted);
-  }
-
-  .readme-filename { color: var(--muted); }
-  .readme-filename strong { color: var(--text); }
-
-  .readme-body {
-    padding: 1.25rem 1.5rem;
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--text);
-  }
-
-  .readme-title {
     font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 0.75rem;
-    letter-spacing: -0.02em;
+    border: 2px solid var(--surface);
   }
 
-  .readme-body p    { margin: 0 0 1rem; color: var(--muted); }
-  .readme-body h3   { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
-  .readme-body ul   { margin: 0 0 1rem; padding-left: 1.25rem; color: var(--muted); }
-  .readme-body li   { margin-bottom: 0.35rem; }
-  .readme-body li strong { color: var(--text); }
-
-  .readme-badges {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-  }
-
-  .badge {
-    display: inline-flex;
-    padding: 0.15rem 0.6rem;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 600;
-  }
-  .badge-blue   { background: rgba(49,120,198,0.2); color: #79c0ff; }
-  .badge-orange { background: rgba(249,115,22,0.16); color: #ffa657; }
-  .badge-green  { background: rgba(63,185,80,0.2); color: #56d364; }
-  .badge-purple { background: rgba(163,113,247,0.2); color: #d2a8ff; }
-  .badge-gray   { background: rgba(255,255,255,0.08); color: var(--muted); }
-
-  .stat-cards {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin: 0.5rem 0 1rem;
-  }
-
-  .stat-card {
-    display: flex;
-    flex-direction: column;
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: rgba(255,255,255,0.03);
-    min-width: 7rem;
-  }
-
-  .stat-num   { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1; }
-  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; }
-
-  .readme-quote {
-    margin: 1rem 0 0;
-    padding: 0.5rem 1rem;
-    border-left: 3px solid var(--accent);
+  .highlight-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--muted);
-    font-style: italic;
-    font-size: 0.9rem;
+    text-align: center;
+    white-space: nowrap;
   }
 
-  /* ── Pinned repos ─────────────────────────────────────────────── */
-  .pinned-section { margin-bottom: 1.25rem; }
+  /* ── Terminal card (bio) ──────────────────────────────── */
+  .terminal-card { padding: 0; }
 
-  .section-heading-row {
+  .terminal-chrome {
+    background: var(--surface-hi);
+    padding: 0.45rem 0.75rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal-dots { display: flex; gap: 0.3rem; align-items: center; }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red    { background: rgba(239,68,68,0.65); }
+  .dot-yellow { background: rgba(234,179,8,0.65); }
+  .dot-green  { background: rgba(34,197,94,0.65); }
+
+  .terminal-filename {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(0,245,255,0.38);
+  }
+
+  .terminal-body {
+    padding: 1.25rem;
+  }
+
+  .bio-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    color: var(--pink);
+  }
+
+  .bio-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text);
+    margin: 0 0 0.65rem;
+    line-height: 1.65;
+  }
+
+  .bio-quote {
+    margin: 0.75rem 0;
+    padding: 0.5rem 0.85rem;
+    border-left: 4px solid rgba(0,245,255,0.3);
+    font-style: italic;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(0,245,255,0.65);
+    background: var(--cyan-dim);
+  }
+
+  /* ── Looking for ─────────────────────────────────────── */
+  .looking-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .looking-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .looking-icon { flex-shrink: 0; }
+
+  /* ── Stats ────────────────────────────────────────────── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 1.25rem 0.5rem;
+    background: var(--surface-lo);
+    border: 1px solid var(--border);
+  }
+
+  .stat-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .stat-val.cyan { color: var(--cyan); text-shadow: 0 0 14px rgba(0,245,255,0.4); }
+  .stat-val.pink { color: var(--pink); text-shadow: 0 0 14px rgba(255,77,128,0.4); }
+
+  .stat-key {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  /* ── Interests ───────────────────────────────────────── */
+  .chip-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    padding: 0.28rem 0.6rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    background: var(--surface-hi);
+    border-left: 3px solid;
+  }
+
+  .chip-tech { color: var(--cyan); border-color: var(--cyan); }
+  .chip-life { color: var(--pink); border-color: var(--pink); }
+
+  /* ── Projects ────────────────────────────────────────── */
+  .projects-section { display: flex; flex-direction: column; gap: 0.65rem; }
+
+  .section-heading-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
   }
 
   .section-heading {
-    font-size: 0.9375rem;
-    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: var(--text);
   }
 
-  .link-btn {
-    font-size: 0.8125rem;
-    color: var(--accent);
-    text-decoration: none;
+  .section-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
   }
-  .link-btn:hover { text-decoration: underline; }
 
-  .pinned-grid {
+  .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-    gap: 0.75rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
   }
 
-  .repo-card {
+  .project-card {
+    background: var(--surface-lo);
+    border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    padding: 1rem;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: rgba(255,255,255,0.02);
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.15s;
   }
-  .repo-card:hover { border-color: #8b949e; background: rgba(255,255,255,0.04); }
+  .project-card:hover { border-color: var(--cyan); }
 
-  .repo-card-top {
+  .project-card .terminal-chrome {
+    padding: 0.35rem 0.6rem;
+  }
+
+  .project-body {
+    padding: 0.85rem;
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
   }
 
-  .repo-icon {
-    width: 0.875rem; height: 0.875rem;
-    fill: var(--muted);
-    flex-shrink: 0;
+  .project-tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--pink);
+    margin: 0;
+    font-style: italic;
   }
 
-  .repo-name {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--accent);
+  .project-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--cyan);
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .repo-name:hover { text-decoration: underline; }
+  .project-name:hover { text-decoration: underline; }
 
-  .repo-desc {
-    font-size: 0.8rem;
+  .project-desc {
+    font-size: 0.75rem;
     color: var(--muted);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.45;
     flex: 1;
   }
 
-  .repo-meta {
+  .project-meta {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-size: 0.78rem;
+    gap: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
     color: var(--muted);
-    margin-top: auto;
+    margin-top: 0.25rem;
   }
 
-  .lang-dot {
-    width: 0.7rem; height: 0.7rem;
-    border-radius: 50%;
-    display: inline-block;
-    flex-shrink: 0;
+  .lang-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; flex-shrink: 0; }
+  .lang-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .project-stat { white-space: nowrap; }
+
+  /* ── Contribution graph ──────────────────────────────── */
+  .graph-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0 0 1rem;
+    line-height: 1.4;
   }
 
-  .repo-stat {
-    display: flex;
-    align-items: center;
-    gap: 0.2rem;
-  }
-  .repo-stat svg {
-    width: 0.8rem; height: 0.8rem;
-    fill: var(--muted);
-  }
-
-  /* ── Contribution graph ─────────────────────────────────────── */
-  .contrib-section { margin-bottom: 1.25rem; }
-
-  .contrib-box {
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 1rem 1.25rem;
-    background: rgba(255,255,255,0.02);
+  .graph-scroll {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .graph-scroll::-webkit-scrollbar { display: none; }
 
   .contrib-graph {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    min-width: 640px;
+    min-width: 580px;
   }
 
   .month-row {
     display: grid;
     grid-template-columns: repeat(var(--weeks), 1fr);
-    font-size: 0.7rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
     color: var(--muted);
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.15rem;
     height: 1rem;
   }
 
-  .month-label {
-    grid-row: 1;
-    white-space: nowrap;
-  }
+  .month-label { grid-row: 1; white-space: nowrap; }
 
   .day-grid {
     display: grid;
@@ -736,202 +1036,110 @@ const feed = [
   .day {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 2px;
-    min-width: 10px;
+    border-radius: 1px;
+    min-width: 9px;
   }
 
-  .l0 { background: #161b22; }
-  .l1 { background: #0e4429; }
-  .l2 { background: #006d32; }
-  .l3 { background: #26a641; }
-  .l4 { background: #39d353; }
+  /* Cyan contribution levels */
+  .l0 { background: #0d0d19; }
+  .l1 { background: rgba(0,245,255,0.14); }
+  .l2 { background: rgba(0,245,255,0.35); }
+  .l3 { background: rgba(0,245,255,0.62); }
+  .l4 { background: #00f5ff; }
 
-  .contrib-legend {
+  .graph-legend {
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    font-size: 0.72rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
     color: var(--muted);
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
     justify-content: flex-end;
   }
 
-  .contrib-legend .day {
-    width: 10px;
-    min-width: 10px;
-    aspect-ratio: 1;
-  }
+  .graph-legend .day { width: 9px; min-width: 9px; }
 
-  /* ── Activity feed ──────────────────────────────────────────── */
-  .activity-section { margin-bottom: 1.25rem; }
-
-  .activity-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-
-  .activity-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--line);
-    font-size: 0.875rem;
-  }
-  .activity-item:last-child { border-bottom: none; }
-  .activity-item:hover { background: rgba(255,255,255,0.03); }
-
-  .activity-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-    background: rgba(255,255,255,0.06);
-    color: var(--muted);
-    margin-top: 0.1rem;
-  }
-
-  .activity-push   .activity-icon { background: rgba(63,185,80,0.15);  color: #56d364; }
-  .activity-pr     .activity-icon { background: rgba(163,113,247,0.15); color: #d2a8ff; }
-  .activity-issue  .activity-icon { background: rgba(248,81,73,0.15);   color: #ff7b72; }
-  .activity-star   .activity-icon { background: rgba(210,153,34,0.15);  color: #e3b341; }
-  .activity-fork   .activity-icon { background: rgba(49,120,198,0.15);  color: #79c0ff; }
-
-  .activity-body {
-    flex: 1;
+  /* ── Activity feed — System Logs ─────────────────────── */
+  .activity-log {
+    border-left: 2px solid var(--cyan);
+    padding-left: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
-    min-width: 0;
+    gap: 0.7rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
   }
 
-  .activity-text  { color: var(--text); }
-  .activity-repo  { color: var(--accent); text-decoration: none; font-size: 0.8125rem; }
-  .activity-repo:hover { text-decoration: underline; }
+  .log-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    line-height: 1.4;
+  }
 
-  .activity-time {
-    font-size: 0.78rem;
+  .log-time { color: var(--border); flex-shrink: 0; font-size: 0.68rem; }
+  .log-icon  { flex-shrink: 0; }
+  .log-body  { color: var(--text); }
+  .log-action { color: var(--text); }
+  .log-repo  { color: var(--cyan); text-decoration: none; font-style: italic; }
+  .log-repo:hover { text-decoration: underline; }
+
+  .log-push  .log-icon { color: #4ade80; }
+  .log-pr    .log-icon { color: var(--cyan); }
+  .log-close .log-icon { color: #38bdf8; }
+  .log-star  .log-icon { color: #fbbf24; }
+  .log-fork  .log-icon { color: var(--pink); }
+
+  /* ── Footer ──────────────────────────────────────────── */
+  .profile-footer {
+    text-align: center;
+    padding: 1rem 0 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
     color: var(--muted);
-    white-space: nowrap;
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  /* ── Responsive ─────────────────────────────────────────────── */
+  .footer-links { display: flex; justify-content: center; gap: 1rem; }
+  .footer-links a { color: var(--cyan); text-decoration: none; }
+  .footer-links a:hover { text-decoration: underline; }
 
-  /* Tablet & below: stack sidebar on top of main content */
-  @media (max-width: 768px) {
-    .profile-layout {
-      grid-template-columns: 1fr;
-      gap: 1.25rem;
-    }
-
-    /* Sidebar: compact avatar + name/bio side-by-side */
-    .sidebar {
-      position: static;
-      display: grid;
-      grid-template-columns: 72px 1fr;
-      grid-template-rows: auto auto auto;
-      column-gap: 1rem;
-      row-gap: 0.5rem;
-    }
-
-    .avatar-wrap {
-      grid-column: 1;
-      grid-row: 1 / 3;
-      width: 72px;
-    }
-
-    .identity {
-      grid-column: 2;
-      grid-row: 1;
-      margin-top: 0;
-      align-self: end;
-    }
-
-    .bio {
-      grid-column: 2;
-      grid-row: 2;
-      align-self: start;
-    }
-
-    .follow-btn,
-    .stat-row,
-    .meta-list,
-    .sidebar-section {
-      grid-column: 1 / -1;
-    }
-
-    .display-name { font-size: 1.25rem; }
-    .username     { font-size: 0.95rem; }
-
-    /* Stat cards fill available width */
-    .stat-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .stat-card { min-width: 0; }
-
-    /* Pinned grid: single column */
-    .pinned-grid {
-      grid-template-columns: 1fr;
-    }
-
-    /* Tabs: smaller padding */
-    .tab { padding: 0.5rem 0.6rem; }
-
-    /* Contribution box: add scroll hint shadow */
-    .contrib-box {
-      padding: 0.75rem;
-      background:
-        linear-gradient(to right, rgba(13,17,23,0) 90%, rgba(13,17,23,0.9)) right,
-        rgba(255,255,255,0.02);
-      background-size: 100% 100%, auto;
-    }
-  }
-
-  /* Mobile: tighten further */
-  @media (max-width: 480px) {
-    /* Activity: wrap timestamp below text */
-    .activity-item {
-      flex-wrap: wrap;
-    }
-    .activity-time {
-      white-space: normal;
-      flex-basis: 100%;
-      padding-left: calc(1.5rem + 0.75rem); /* icon width + gap */
-      margin-top: -0.1rem;
-    }
-
-    /* README body padding */
-    .readme-body {
-      padding: 1rem;
-    }
-
-    /* Stat cards: wrap to 2+1 if needed */
-    .stat-cards {
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
-
-    /* Section heading row: stack */
-    .section-heading-row {
-      flex-direction: column;
+  /* ═══════════════════════════════════════════════════════════
+     DESKTOP  (≥ 860px): sticky hero left, content scrolls right
+  ═══════════════════════════════════════════════════════════ */
+  @media (min-width: 860px) {
+    .page {
+      flex-direction: row;
       align-items: flex-start;
-      gap: 0.25rem;
+      max-width: 1060px;
+      margin: 0 auto;
+      gap: 1.5rem;
     }
 
-    /* Sidebar avatar column tighter */
-    .sidebar {
-      grid-template-columns: 56px 1fr;
-      column-gap: 0.75rem;
+    .hero-card {
+      position: sticky;
+      top: 3.5rem;
+      width: 340px;
+      flex-shrink: 0;
+      height: min(85vh, 640px);
     }
-    .avatar-wrap { width: 56px; }
+
+    .content { flex: 1; min-width: 0; }
+
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     VERY SMALL  (< 380px)
+  ═══════════════════════════════════════════════════════════ */
+  @media (max-width: 380px) {
+    .projects-grid { grid-template-columns: 1fr; }
+    .hero-name { font-size: 1.8rem; }
+    .card { padding: 1rem; }
+    .terminal-body { padding: 1rem; }
   }
 </style>
