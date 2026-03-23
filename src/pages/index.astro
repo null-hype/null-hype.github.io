@@ -1,1145 +1,178 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LiveClock from '../components/LiveClock';
-import SwipeActions from '../components/SwipeActions';
-import TypewriterBio from '../components/TypewriterBio';
-
-function seededRand(seed: number): number {
-  const x = Math.sin(seed + 9301) * 49297;
-  return x - Math.floor(x);
-}
-
-const today = new Date('2026-03-23');
-const weeks: Array<Array<{ date: string; count: number }>> = [];
-
-for (let w = 52; w >= 0; w--) {
-  const days: Array<{ date: string; count: number }> = [];
-  for (let d = 6; d >= 0; d--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - (w * 7 + d));
-    const seed = w * 7 + d;
-    const r = seededRand(seed);
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-    const active = r > (isWeekend ? 0.58 : 0.32);
-    const count = active ? Math.floor(seededRand(seed + 1000) * 14) + 1 : 0;
-    days.push({ date: date.toISOString().split('T')[0], count });
-  }
-  weeks.push(days);
-}
-
-const totalContributions = weeks.flat().reduce((s, d) => s + d.count, 0);
-
-function level(count: number): string {
-  if (count === 0) return 'l0';
-  if (count < 3)  return 'l1';
-  if (count < 7)  return 'l2';
-  if (count < 11) return 'l3';
-  return 'l4';
-}
-
-const monthLabels: Array<{ label: string; col: number }> = [];
-let lastMonth = -1;
-weeks.forEach((week, wi) => {
-  const m = new Date(week[0].date).getMonth();
-  if (m !== lastMonth) {
-    monthLabels.push({
-      label: new Date(week[0].date).toLocaleString('en-US', { month: 'short' }),
-      col: wi,
-    });
-    lastMonth = m;
-  }
-});
-
-const highlights = [
-  { emoji: '☕', label: 'Coffee' },
-  { emoji: '🦀', label: 'Rust' },
-  { emoji: '🎵', label: 'Music' },
-  { emoji: '🐈', label: 'Cats' },
-  { emoji: '🏔️', label: 'Hiking' },
-  { emoji: '🌙', label: 'Night owl' },
-];
-
-const interests = [
-  { tag: 'TypeScript', kind: 'tech' },
-  { tag: 'Neovim', kind: 'tech' },
-  { tag: 'Linux', kind: 'tech' },
-  { tag: 'Local-first', kind: 'tech' },
-  { tag: 'Specialty coffee', kind: 'life' },
-  { tag: 'Post-rock', kind: 'life' },
-  { tag: 'Long walks', kind: 'life' },
-  { tag: 'Sci-fi novels', kind: 'life' },
-  { tag: 'Rust (learning)', kind: 'tech' },
-  { tag: 'Home lab', kind: 'tech' },
-];
-
-const projects = [
-  {
-    name: 'linear-agent',
-    tagline: 'My most-swiped project',
-    desc: 'Webhook-driven agent that syncs Linear issues to local dev.',
-    lang: 'JavaScript',
-    color: '#f7df1e',
-    stars: 34,
-    forks: 7,
-  },
-  {
-    name: 'obsidian-daily',
-    tagline: 'This one has a personality',
-    desc: 'Opinionated daily note plugin. Yes I have opinions about notes.',
-    lang: 'TypeScript',
-    color: '#3178c6',
-    stars: 89,
-    forks: 14,
-  },
-  {
-    name: 'dotfiles',
-    tagline: 'Basically my love language',
-    desc: 'Curated shell config, Neovim setup, bootstrap scripts.',
-    lang: 'Shell',
-    color: '#89e051',
-    stars: 56,
-    forks: 9,
-  },
-  {
-    name: 'til',
-    tagline: "I'm a good listener",
-    desc: 'Today I Learned — snippets, discoveries, and rabbit holes.',
-    lang: 'Markdown',
-    color: '#083fa1',
-    stars: 21,
-    forks: 3,
-  },
-];
-
-const feed = [
-  { icon: '⬆', kind: 'push',  repo: 'null-hype/linear-agent',       text: 'pushed 3 commits',  time: '14:22:10' },
-  { icon: '⤴', kind: 'pr',    repo: 'null-hype/obsidian-daily',      text: 'opened PR #18',     time: '11:05:45' },
-  { icon: '✓', kind: 'close', repo: 'null-hype/dotfiles',            text: 'closed issue #4',   time: '03:44:02' },
-  { icon: '★', kind: 'star',  repo: 'vitejs/vite',                   text: 'starred',           time: 'yesterday' },
-  { icon: '⬆', kind: 'push',  repo: 'null-hype/null-hype.github.io', text: 'pushed 7 commits',  time: '2d ago' },
-  { icon: '⎇', kind: 'fork',  repo: 'sindresorhus/awesome',          text: 'forked',            time: '5d ago' },
-];
+import '../styles/editorial.css';
+import AnalystCallout from '../components/AnalystCallout';
+import ArchiveEntry from '../components/ArchiveEntry';
+import CaseNode from '../components/CaseNode';
+import EpistemicFrame from '../components/EpistemicFrame';
+import EvidenceCard from '../components/EvidenceCard';
+import InlineFigure from '../components/InlineFigure';
+import PullQuote from '../components/PullQuote';
+import SectionBreak from '../components/SectionBreak';
+import WatchlistPanel from '../components/WatchlistPanel';
+import {
+	analystCalloutContent,
+	archiveEntries,
+	caseNodes,
+	evidenceCards,
+	epistemicFrameContent,
+	footerLinks,
+	inlineFigureContent,
+	pullQuoteContent,
+	sectionBreakContent,
+	sideRailItems,
+	synthesisContent,
+	topNavItems,
+	watchlistContent,
+} from '../data/editorialContent';
 ---
 
-<BaseLayout title="null-hype · profile" description="null-hype's profile">
+<BaseLayout
+	title="jungle.roaring.wave | Archival Intelligence Unit"
+	description="Editorial prototype for the jungle.roaring.wave longform essay."
+>
+	<div class="editorial-page">
+		<div class="editorial-grain" aria-hidden="true"></div>
 
-  <!-- ── FIXED TOP NAV ──────────────────────────────────────── -->
-  <header class="top-nav">
-    <div class="top-nav-left">
-      <span class="material-symbols-outlined nav-icon">terminal</span>
-      <span class="top-nav-title">system_terminal_v1.0.4</span>
-    </div>
-    <LiveClock client:load />
-  </header>
+		<header class="editorial-topbar">
+			<div class="editorial-topbar__inner">
+				<div class="editorial-topbar__group">
+					<span class="editorial-topbar__brand">jungle.roaring.wave</span>
+					<nav class="editorial-nav" aria-label="Primary dossier sections">
+						{
+							topNavItems.map((item) => (
+								<a href={item.href} class:list={{ 'is-active': Boolean(item.active) }}>
+									{item.label}
+								</a>
+							))
+						}
+					</nav>
+				</div>
 
-  <div class="page">
+				<div class="editorial-topbar__actions">
+					<button class="editorial-icon-button" type="button" aria-label="Share this dossier">
+						<span class="material-symbols-outlined" aria-hidden="true">share</span>
+					</button>
+					<button class="editorial-icon-button" type="button" aria-label="Bookmark this dossier">
+						<span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
+					</button>
+					<a class="editorial-pdf-link" href="#classified-index">Dossier PDF</a>
+				</div>
+			</div>
+		</header>
 
-    <!-- ── HERO CARD ─────────────────────────────────────────── -->
-    <div class="hero-card">
-      <div class="hero-photo" aria-hidden="true">
-        <svg viewBox="0 0 400 560" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="bg-grad" cx="50%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#1a0a3e"/>
-              <stop offset="100%" stop-color="#050510"/>
-            </radialGradient>
-            <radialGradient id="skin" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stop-color="#c8956c"/>
-              <stop offset="100%" stop-color="#a0714f"/>
-            </radialGradient>
-          </defs>
-          <rect width="400" height="560" fill="url(#bg-grad)"/>
-          <!-- Glow orbs -->
-          <circle cx="320" cy="80" r="90" fill="#00f5ff" opacity="0.08"/>
-          <circle cx="60" cy="420" r="70" fill="#ff4d80" opacity="0.10"/>
-          <!-- Grid lines -->
-          <line x1="0" y1="100" x2="400" y2="100" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
-          <line x1="0" y1="200" x2="400" y2="200" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
-          <line x1="0" y1="300" x2="400" y2="300" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
-          <line x1="0" y1="400" x2="400" y2="400" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
-          <line x1="100" y1="0" x2="100" y2="560" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
-          <line x1="200" y1="0" x2="200" y2="560" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
-          <line x1="300" y1="0" x2="300" y2="560" stroke="#00f5ff" stroke-width="0.5" opacity="0.08"/>
-          <!-- Body -->
-          <ellipse cx="200" cy="620" rx="130" ry="100" fill="#0d0d19"/>
-          <!-- Head -->
-          <circle cx="200" cy="210" r="80" fill="url(#skin)"/>
-          <!-- Hair -->
-          <ellipse cx="200" cy="145" rx="82" ry="48" fill="#0a0a1a"/>
-          <ellipse cx="134" cy="182" rx="22" ry="38" fill="#0a0a1a"/>
-          <ellipse cx="266" cy="182" rx="22" ry="38" fill="#0a0a1a"/>
-          <!-- Eyes -->
-          <circle cx="175" cy="208" r="9" fill="#0a0a1a"/>
-          <circle cx="225" cy="208" r="9" fill="#0a0a1a"/>
-          <circle cx="178" cy="205" r="3" fill="#00f5ff" opacity="0.8"/>
-          <circle cx="228" cy="205" r="3" fill="#00f5ff" opacity="0.8"/>
-          <!-- Smile -->
-          <path d="M182 232 Q200 248 218 232" stroke="#7a4a2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <!-- Hoodie -->
-          <path d="M100 340 Q130 290 200 280 Q270 290 300 340 L320 480 L80 480 Z" fill="#0d0d19"/>
-          <!-- Laptop -->
-          <rect x="130" y="380" width="140" height="90" rx="2" fill="#050510" stroke="#00f5ff" stroke-width="1" opacity="0.9"/>
-          <rect x="138" y="388" width="124" height="70" rx="1" fill="#0a0a1a"/>
-          <!-- Code lines -->
-          <rect x="148" y="400" width="60" height="3" rx="1" fill="#00f5ff" opacity="0.7"/>
-          <rect x="148" y="411" width="90" height="3" rx="1" fill="#ff4d80" opacity="0.5"/>
-          <rect x="148" y="422" width="45" height="3" rx="1" fill="#00f5ff" opacity="0.4"/>
-          <rect x="148" y="433" width="75" height="3" rx="1" fill="#ff4d80" opacity="0.3"/>
-          <rect x="148" y="444" width="55" height="3" rx="1" fill="#00f5ff" opacity="0.5"/>
-          <!-- Laptop glow -->
-          <ellipse cx="200" cy="470" rx="70" ry="8" fill="#00f5ff" opacity="0.07"/>
-        </svg>
-      </div>
+		<aside class="editorial-sidebar" aria-label="Dossier shortcuts">
+			<div class="editorial-sidebar__inner">
+				<div class="editorial-sidebar__brand">
+					<span class="editorial-sidebar__brand-mark">AIU</span>
+					<span class="editorial-sidebar__ref">Ref: JRW-24</span>
+				</div>
 
-      <!-- Scanline overlay -->
-      <div class="scanline" aria-hidden="true"></div>
+				<nav class="editorial-sidebar__nav" aria-label="Section shortcuts">
+					{
+						sideRailItems.map((item) => (
+							<a href={item.href} class:list={{ 'is-active': Boolean(item.active) }}>
+								<span class="editorial-sidebar__icon material-symbols-outlined" aria-hidden="true">
+									{item.icon}
+								</span>
+								<span>{item.label}</span>
+							</a>
+						))
+					}
+				</nav>
+			</div>
+		</aside>
 
-      <!-- Gradient + identity -->
-      <div class="hero-overlay">
-        <div class="hero-status">
-          <span class="badge-online">
-            <span class="online-dot"></span>ONLINE
-          </span>
-          <span class="badge-compat">94% MATCH</span>
-        </div>
-        <div class="hero-identity">
-          <div class="hero-name-row">
-            <h1 class="hero-name">null hype</h1>
-            <span class="hero-age">27</span>
-          </div>
-          <p class="hero-sub">he/him · @null-hype · [LFM] Full Stack Engineer</p>
-          <p class="hero-location">📍 Somewhere on the internet</p>
-        </div>
-      </div>
+		<main class="editorial-main">
+			<section id="epistemic" class="editorial-section editorial-section--bordered">
+				<div class="editorial-container">
+					<EpistemicFrame {...epistemicFrameContent} />
+				</div>
+			</section>
 
-      <!-- Action buttons -->
-      <SwipeActions client:load />
-    </div>
+			<div class="editorial-block">
+				<div class="editorial-container">
+					<InlineFigure {...inlineFigureContent} />
+				</div>
+			</div>
 
-    <!-- ── PROFILE CONTENT ──────────────────────────────────── -->
-    <div class="content">
+			<section id="cases" class="editorial-section">
+				<div class="editorial-container">
+					<header class="editorial-section-heading">
+						<h2 class="editorial-section-heading__title">Case Sequence</h2>
+						<p class="editorial-section-heading__eyebrow">
+							A chronological analysis of actor-driven disruptions.
+						</p>
+					</header>
 
-      <!-- Story highlights -->
-      <section class="highlights-section">
-        {highlights.map(h => (
-          <div class="highlight">
-            <div class="highlight-ring">
-              <div class="highlight-inner">{h.emoji}</div>
-            </div>
-            <span class="highlight-label">{h.label}</span>
-          </div>
-        ))}
-      </section>
+					<div class="editorial-case-stack">
+						<CaseNode {...caseNodes[0]} />
+						<PullQuote {...pullQuoteContent} />
+						<CaseNode {...caseNodes[1]} />
+						<div class="evidence-grid">
+							{evidenceCards.map((card) => <EvidenceCard {...card} />)}
+						</div>
+						<CaseNode {...caseNodes[2]} />
+						<AnalystCallout {...analystCalloutContent} />
+						<CaseNode {...caseNodes[3]} />
+					</div>
+				</div>
+			</section>
 
-      <!-- Bio / README terminal window -->
-      <section class="card terminal-card">
-        <div class="terminal-chrome">
-          <div class="terminal-dots">
-            <span class="dot dot-red"></span>
-            <span class="dot dot-yellow"></span>
-            <span class="dot dot-green"></span>
-          </div>
-          <span class="terminal-filename">README.md</span>
-        </div>
-        <div class="terminal-body">
-          <TypewriterBio client:load />
-          <blockquote class="bio-quote">
-            "Make it work, make it right, make it fast — then argue about tabs vs spaces."
-          </blockquote>
-        </div>
-      </section>
+			<div id="deep-archives" class="editorial-section-break-wrap">
+				<div class="editorial-container">
+					<SectionBreak {...sectionBreakContent} />
+				</div>
+			</div>
 
-      <!-- Looking for -->
-      <section class="card">
-        <div class="card-label">Looking for</div>
-        <ul class="looking-list">
-          <li>
-            <span class="looking-icon">🤝</span>
-            Open source collaborators who review PRs within a decade
-          </li>
-          <li>
-            <span class="looking-icon">💡</span>
-            Side-project co-founders with strong opinions and weak sleep schedules
-          </li>
-          <li>
-            <span class="looking-icon">☕</span>
-            People who understand that "it works on my machine" is valid
-          </li>
-        </ul>
-      </section>
+			<section class="editorial-section archive-section">
+				<div class="editorial-container archive-section__grid">
+					<div class="archive-section__intro">
+						<h2 class="archive-section__title">Historical Analogues</h2>
+						<p class="archive-section__eyebrow">Comparative Signal Analysis.</p>
+					</div>
+					<div class="archive-section__list">
+						{archiveEntries.map((entry) => <ArchiveEntry {...entry} />)}
+					</div>
+				</div>
+			</section>
 
-      <!-- Stats grid -->
-      <section class="stats-grid">
-        <div class="stat-box">
-          <span class="stat-val cyan">{totalContributions.toLocaleString()}</span>
-          <span class="stat-key">Commits</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-val pink">247</span>
-          <span class="stat-key">Followers</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-val cyan">32</span>
-          <span class="stat-key">Repos</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-val pink">312</span>
-          <span class="stat-key">Stars Given</span>
-        </div>
-      </section>
+			<section id="synthesis" class="editorial-section">
+				<div class="editorial-container synthesis-section__grid">
+					<div class="synthesis-section__copy">
+						<h2 class="synthesis-section__title">{synthesisContent.title}</h2>
+						<div class="synthesis-copy">
+							<p>{synthesisContent.paragraphs[0]}</p>
+							<p class="is-muted">{synthesisContent.paragraphs[1]}</p>
+						</div>
+					</div>
+					<div class="synthesis-section__panel">
+						<WatchlistPanel {...watchlistContent} />
+					</div>
+				</div>
+			</section>
+		</main>
 
-      <!-- Interests -->
-      <section class="card">
-        <div class="card-label">Interests</div>
-        <div class="chip-cloud">
-          {interests.map(i => {
-            const slug = i.tag.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
-            const label = i.kind === 'tech' ? `@null-hype/${slug}` : `feature/${slug}`;
-            return <span class={`chip chip-${i.kind}`}>{label}</span>;
-          })}
-        </div>
-      </section>
+		<footer class="editorial-footer">
+			<div class="editorial-container editorial-footer__grid">
+				<div class="editorial-footer__copy">
+					<span class="editorial-footer__brand">jungle.roaring.wave</span>
+					<p class="editorial-footer__meta">© 2024 Archival Intelligence Unit.</p>
+					<p class="editorial-footer__legal">
+						All data points remain provisional and subject to classified revision without prior notice.
+					</p>
+				</div>
 
-      <!-- Projects -->
-      <section class="projects-section">
-        <div class="section-heading-row">
-          <h2 class="section-heading">Open Source Projects</h2>
-          <span class="section-sub">things I'm proud of, mostly</span>
-        </div>
-        <div class="projects-grid">
-          {projects.map(p => (
-            <article class="project-card">
-              <div class="terminal-chrome">
-                <div class="terminal-dots">
-                  <span class="dot dot-red"></span>
-                  <span class="dot dot-yellow"></span>
-                  <span class="dot dot-green"></span>
-                </div>
-                <span class="material-symbols-outlined" style="font-size:12px;color:#343341">terminal</span>
-              </div>
-              <div class="project-body">
-                <p class="project-tagline">{p.tagline}</p>
-                <a class="project-name" href="#">{p.name}</a>
-                <p class="project-desc">{p.desc}</p>
-                <footer class="project-meta">
-                  <span class="lang-dot" style={`background:${p.color}`}></span>
-                  <span class="lang-name">{p.lang}</span>
-                  <span class="project-stat">★ {p.stars}</span>
-                  <span class="project-stat">⎇ {p.forks}</span>
-                </footer>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <!-- Contribution graph -->
-      <section class="card graph-card">
-        <div class="card-label">365_days_activity.log</div>
-        <p class="graph-subtitle">
-          {totalContributions.toLocaleString()} contributions this year · pretty consistent 💪
-        </p>
-        <div class="graph-scroll">
-          <div class="contrib-graph" style={`--weeks: ${weeks.length}`}>
-            <div class="month-row">
-              {monthLabels.map(m => (
-                <span class="month-label" style={`grid-column: ${m.col + 1}`}>{m.label}</span>
-              ))}
-            </div>
-            <div class="day-grid">
-              {weeks.map(week =>
-                week.map(day => (
-                  <div
-                    class={`day ${level(day.count)}`}
-                    title={`${day.count} on ${day.date}`}
-                  ></div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-        <div class="graph-legend">
-          <span>Less</span>
-          <div class="day l0"></div>
-          <div class="day l1"></div>
-          <div class="day l2"></div>
-          <div class="day l3"></div>
-          <div class="day l4"></div>
-          <span>More</span>
-        </div>
-      </section>
-
-      <!-- Activity feed — System Logs -->
-      <section class="card">
-        <div class="card-label">System Logs</div>
-        <div class="activity-log">
-          {feed.map(e => (
-            <div class={`log-entry log-${e.kind}`}>
-              <span class="log-time">[{e.time}]</span>
-              <span class="log-icon">{e.icon}</span>
-              <span class="log-body">
-                <span class="log-action">{e.text}</span>
-                {' → '}
-                <a class="log-repo" href="#">{e.repo}</a>
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <!-- Footer -->
-      <footer class="profile-footer">
-        <p>null-hype · member since 2021 · building in the open</p>
-        <div class="footer-links">
-          <a href="#">GitHub</a>
-          <a href="#">Blog</a>
-          <a href="#">RSS</a>
-        </div>
-      </footer>
-
-    </div>
-  </div>
-
-  <!-- ── FIXED BOTTOM NAV ───────────────────────────────────── -->
-  <nav class="bottom-nav" aria-label="Main navigation">
-    <button class="nav-btn" aria-label="Terminal">
-      <span class="material-symbols-outlined">terminal</span>
-    </button>
-    <button class="nav-btn" aria-label="Likes">
-      <span class="material-symbols-outlined">favorite</span>
-    </button>
-    <button class="nav-btn" aria-label="Code">
-      <span class="material-symbols-outlined">code</span>
-    </button>
-    <button class="nav-btn nav-active" aria-label="Profile">
-      <span class="material-symbols-outlined">person_search</span>
-    </button>
-  </nav>
-
+				<div class="editorial-footer__links" id="classified-index">
+					{
+						footerLinks.map((link) => (
+							<a id={link.href.slice(1)} href={link.href}>
+								{link.label}
+							</a>
+						))
+					}
+				</div>
+			</div>
+		</footer>
+	</div>
 </BaseLayout>
-
-<style>
-  /* ═══════════════════════════════════════════════════════════
-     TOKENS
-  ═══════════════════════════════════════════════════════════ */
-  :root {
-    --bg:          #050510;
-    --surface:     #0d0d19;
-    --surface-lo:  #1a1a27;
-    --surface-mid: #1f1e2b;
-    --surface-hi:  #292936;
-    --border:      #343341;
-    --text:        #e3e0f3;
-    --muted:       rgba(233,254,255,0.45);
-    --cyan:        #00f5ff;
-    --pink:        #ff4d80;
-    --cyan-dim:    rgba(0,245,255,0.10);
-    --pink-dim:    rgba(255,77,128,0.10);
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     FIXED TOP NAV
-  ═══════════════════════════════════════════════════════════ */
-  .top-nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    height: 3rem;
-    background: var(--surface);
-    border-bottom: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1rem;
-    box-shadow: 0 0 20px rgba(0,245,255,0.08);
-  }
-
-  .top-nav-left { display: flex; align-items: center; gap: 0.5rem; }
-
-  .nav-icon { color: var(--cyan); font-size: 1.1rem; }
-
-  .top-nav-title,
-  .top-nav-clock {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--cyan);
-    font-weight: 700;
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     FIXED BOTTOM NAV
-  ═══════════════════════════════════════════════════════════ */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 100;
-    height: 4rem;
-    background: rgba(5,5,16,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 2px solid var(--border);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 -10px 30px rgba(0,245,255,0.08);
-  }
-
-  .nav-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--border);
-    padding: 0.75rem;
-    transition: color 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .nav-btn:hover { color: var(--pink); }
-  .nav-btn.nav-active {
-    background: var(--cyan);
-    color: var(--bg);
-    box-shadow: 0 0 10px var(--cyan);
-  }
-  .nav-btn .material-symbols-outlined { font-size: 1.5rem; }
-
-  /* ═══════════════════════════════════════════════════════════
-     PAGE SHELL
-  ═══════════════════════════════════════════════════════════ */
-  .page {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     HERO CARD
-  ═══════════════════════════════════════════════════════════ */
-  .hero-card {
-    position: relative;
-    overflow: hidden;
-    height: min(60vh, 520px);
-    background: var(--surface);
-    flex-shrink: 0;
-    box-shadow: 0 0 40px rgba(0,245,255,0.06);
-  }
-
-  .hero-photo {
-    position: absolute;
-    inset: 0;
-  }
-  .hero-photo svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* Scanline overlay */
-  .scanline {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background:
-      linear-gradient(to bottom, rgba(18,16,16,0) 50%, rgba(0,0,0,0.22) 50%),
-      linear-gradient(90deg, rgba(255,0,0,0.04), rgba(0,255,0,0.01), rgba(0,0,255,0.04));
-    background-size: 100% 4px, 3px 100%;
-    opacity: 0.35;
-  }
-
-  /* Gradient overlay */
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(
-      to top,
-      rgba(5,5,16,0.97) 0%,
-      rgba(5,5,16,0.55) 45%,
-      transparent 70%
-    );
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 1.25rem 1.25rem 5.5rem;
-    gap: 0.5rem;
-  }
-
-  .hero-status { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-  .badge-online,
-  .badge-compat {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.15rem 0.5rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    border: 1px solid;
-  }
-
-  .badge-online {
-    background: rgba(74,222,128,0.1);
-    color: #4ade80;
-    border-color: rgba(74,222,128,0.35);
-  }
-
-  .online-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 6px #4ade80;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.35; }
-  }
-
-  .badge-compat {
-    background: var(--pink-dim);
-    color: var(--pink);
-    border-color: rgba(255,77,128,0.35);
-  }
-
-  .hero-identity { display: flex; flex-direction: column; gap: 0.15rem; }
-
-  .hero-name-row {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-  }
-
-  .hero-name {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(2rem, 10vw, 3.5rem);
-    font-weight: 900;
-    margin: 0;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
-    color: var(--cyan);
-    text-shadow: 0 0 24px rgba(0,245,255,0.45);
-  }
-
-  .hero-age {
-    font-family: 'Space Mono', monospace;
-    font-size: 1rem;
-    color: rgba(0,245,255,0.55);
-  }
-
-  .hero-sub {
-    margin: 0;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    color: rgba(0,245,255,0.45);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .hero-location { margin: 0; font-size: 0.82rem; color: var(--muted); }
-
-  /* Action buttons — keyboard key style */
-  .hero-actions {
-    position: absolute;
-    bottom: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    z-index: 3;
-  }
-
-  .action-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem;
-    padding: 0.65rem 1.1rem;
-    border: none;
-    border-bottom: 4px solid;
-    cursor: pointer;
-    background: var(--surface-hi);
-    transition: transform 0.1s, border-bottom-width 0.1s;
-  }
-  .action-btn:hover  { filter: brightness(1.15); }
-  .action-btn:active { transform: translateY(3px); border-bottom-width: 1px; }
-
-  .action-btn .material-symbols-outlined { font-size: 1.4rem; }
-
-  .action-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.52rem;
-    letter-spacing: 0.1em;
-  }
-
-  .action-pass   { color: #f87171; border-color: rgba(248,113,113,0.5); }
-  .action-super  { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,245,255,0.25); }
-  .action-like   { color: var(--pink); border-color: var(--pink); }
-
-  /* ═══════════════════════════════════════════════════════════
-     CONTENT
-  ═══════════════════════════════════════════════════════════ */
-  .content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-
-  /* ── Shared card ───────────────────────────────────────── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 1.25rem;
-  }
-
-  .card-label {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.15rem 0.5rem;
-    background: var(--cyan-dim);
-    color: var(--cyan);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-    border-left: 3px solid var(--cyan);
-  }
-
-  /* ── Story highlights ─────────────────────────────────── */
-  .highlights-section {
-    display: flex;
-    gap: 0.75rem;
-    overflow-x: auto;
-    padding-bottom: 0.25rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .highlights-section::-webkit-scrollbar { display: none; }
-
-  .highlight {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.35rem;
-    flex-shrink: 0;
-  }
-
-  .highlight-ring {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    padding: 2px;
-    background: linear-gradient(135deg, var(--cyan), var(--pink));
-  }
-
-  .highlight-inner {
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    border: 2px solid var(--surface);
-  }
-
-  .highlight-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.58rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  /* ── Terminal card (bio) ──────────────────────────────── */
-  .terminal-card { padding: 0; }
-
-  .terminal-chrome {
-    background: var(--surface-hi);
-    padding: 0.45rem 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .terminal-dots { display: flex; gap: 0.3rem; align-items: center; }
-
-  .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-red    { background: rgba(239,68,68,0.65); }
-  .dot-yellow { background: rgba(234,179,8,0.65); }
-  .dot-green  { background: rgba(34,197,94,0.65); }
-
-  .terminal-filename {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: rgba(0,245,255,0.38);
-  }
-
-  .terminal-body {
-    padding: 1.25rem;
-  }
-
-  .bio-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin: 0 0 0.75rem;
-    color: var(--pink);
-  }
-
-  .bio-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--text);
-    margin: 0 0 0.65rem;
-    line-height: 1.65;
-  }
-
-  .bio-quote {
-    margin: 0.75rem 0;
-    padding: 0.5rem 0.85rem;
-    border-left: 4px solid rgba(0,245,255,0.3);
-    font-style: italic;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.78rem;
-    color: rgba(0,245,255,0.65);
-    background: var(--cyan-dim);
-  }
-
-  /* ── Looking for ─────────────────────────────────────── */
-  .looking-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-  }
-
-  .looking-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    font-size: 0.875rem;
-    color: var(--text);
-    line-height: 1.5;
-  }
-
-  .looking-icon { flex-shrink: 0; }
-
-  /* ── Stats ────────────────────────────────────────────── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-  }
-
-  .stat-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 1.25rem 0.5rem;
-    background: var(--surface-lo);
-    border: 1px solid var(--border);
-  }
-
-  .stat-val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 2rem;
-    font-weight: 900;
-    line-height: 1;
-  }
-
-  .stat-val.cyan { color: var(--cyan); text-shadow: 0 0 14px rgba(0,245,255,0.4); }
-  .stat-val.pink { color: var(--pink); text-shadow: 0 0 14px rgba(255,77,128,0.4); }
-
-  .stat-key {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.58rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-  }
-
-  /* ── Interests ───────────────────────────────────────── */
-  .chip-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
-  .chip {
-    display: inline-flex;
-    padding: 0.28rem 0.6rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    background: var(--surface-hi);
-    border-left: 3px solid;
-  }
-
-  .chip-tech { color: var(--cyan); border-color: var(--cyan); }
-  .chip-life { color: var(--pink); border-color: var(--pink); }
-
-  /* ── Projects ────────────────────────────────────────── */
-  .projects-section { display: flex; flex-direction: column; gap: 0.65rem; }
-
-  .section-heading-row {
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-  }
-
-  .section-heading {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text);
-  }
-
-  .section-sub {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-style: italic;
-  }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
-  }
-
-  .project-card {
-    background: var(--surface-lo);
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    transition: border-color 0.15s;
-  }
-  .project-card:hover { border-color: var(--cyan); }
-
-  .project-card .terminal-chrome {
-    padding: 0.35rem 0.6rem;
-  }
-
-  .project-body {
-    padding: 0.85rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    flex: 1;
-  }
-
-  .project-tagline {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    color: var(--pink);
-    margin: 0;
-    font-style: italic;
-  }
-
-  .project-name {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--cyan);
-    text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .project-name:hover { text-decoration: underline; }
-
-  .project-desc {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin: 0;
-    line-height: 1.45;
-    flex: 1;
-  }
-
-  .project-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--muted);
-    margin-top: 0.25rem;
-  }
-
-  .lang-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; flex-shrink: 0; }
-  .lang-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .project-stat { white-space: nowrap; }
-
-  /* ── Contribution graph ──────────────────────────────── */
-  .graph-subtitle {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin: 0 0 1rem;
-    line-height: 1.4;
-  }
-
-  .graph-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .graph-scroll::-webkit-scrollbar { display: none; }
-
-  .contrib-graph {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 580px;
-  }
-
-  .month-row {
-    display: grid;
-    grid-template-columns: repeat(var(--weeks), 1fr);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--muted);
-    margin-bottom: 0.15rem;
-    height: 1rem;
-  }
-
-  .month-label { grid-row: 1; white-space: nowrap; }
-
-  .day-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--weeks, 53), 1fr);
-    grid-template-rows: repeat(7, 1fr);
-    grid-auto-flow: column;
-    gap: 2px;
-  }
-
-  .day {
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 1px;
-    min-width: 9px;
-  }
-
-  /* Cyan contribution levels */
-  .l0 { background: #0d0d19; }
-  .l1 { background: rgba(0,245,255,0.14); }
-  .l2 { background: rgba(0,245,255,0.35); }
-  .l3 { background: rgba(0,245,255,0.62); }
-  .l4 { background: #00f5ff; }
-
-  .graph-legend {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--muted);
-    margin-top: 0.6rem;
-    justify-content: flex-end;
-  }
-
-  .graph-legend .day { width: 9px; min-width: 9px; }
-
-  /* ── Activity feed — System Logs ─────────────────────── */
-  .activity-log {
-    border-left: 2px solid var(--cyan);
-    padding-left: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-  }
-
-  .log-entry {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    line-height: 1.4;
-  }
-
-  .log-time { color: var(--border); flex-shrink: 0; font-size: 0.68rem; }
-  .log-icon  { flex-shrink: 0; }
-  .log-body  { color: var(--text); }
-  .log-action { color: var(--text); }
-  .log-repo  { color: var(--cyan); text-decoration: none; font-style: italic; }
-  .log-repo:hover { text-decoration: underline; }
-
-  .log-push  .log-icon { color: #4ade80; }
-  .log-pr    .log-icon { color: var(--cyan); }
-  .log-close .log-icon { color: #38bdf8; }
-  .log-star  .log-icon { color: #fbbf24; }
-  .log-fork  .log-icon { color: var(--pink); }
-
-  /* ── Footer ──────────────────────────────────────────── */
-  .profile-footer {
-    text-align: center;
-    padding: 1rem 0 0.5rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--muted);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .footer-links { display: flex; justify-content: center; gap: 1rem; }
-  .footer-links a { color: var(--cyan); text-decoration: none; }
-  .footer-links a:hover { text-decoration: underline; }
-
-  /* ═══════════════════════════════════════════════════════════
-     DESKTOP  (≥ 860px): sticky hero left, content scrolls right
-  ═══════════════════════════════════════════════════════════ */
-  @media (min-width: 860px) {
-    .page {
-      flex-direction: row;
-      align-items: flex-start;
-      max-width: 1060px;
-      margin: 0 auto;
-      gap: 1.5rem;
-    }
-
-    .hero-card {
-      position: sticky;
-      top: 3.5rem;
-      width: 340px;
-      flex-shrink: 0;
-      height: min(85vh, 640px);
-    }
-
-    .content { flex: 1; min-width: 0; }
-
-    .stats-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  /* ═══════════════════════════════════════════════════════════
-     VERY SMALL  (< 380px)
-  ═══════════════════════════════════════════════════════════ */
-  @media (max-width: 380px) {
-    .projects-grid { grid-template-columns: 1fr; }
-    .hero-name { font-size: 1.8rem; }
-    .card { padding: 1rem; }
-    .terminal-body { padding: 1rem; }
-  }
-</style>

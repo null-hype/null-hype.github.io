@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>jungle.roaring.wave | Archival Intelligence Unit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400;1,700&amp;family=Public+Sans:wght@300;400;700;900&amp;family=Inter:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-shift-surface-container-low {
+            background-color: #f6f3ee;
+        }
+        .vertical-rule-0.5px {
+            border-right-width: 0.5px;
+            border-color: rgba(28, 28, 25, 0.1);
+        }
+        .paper-grain {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+        }
+        ::selection {
+            background-color: #9B3018;
+            color: #ffffff;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-secondary-fixed-variant": "#364959",
+                "on-secondary-container": "#526576",
+                "primary-container": "#1b1b1c",
+                "on-primary": "#ffffff",
+                "tertiary-fixed": "#ffdad2",
+                "primary": "#000000",
+                "background": "#fcf9f4",
+                "surface-container-highest": "#e5e2dd",
+                "tertiary-container": "#3d0600",
+                "primary-fixed-dim": "#c8c6c7",
+                "on-secondary": "#ffffff",
+                "primary-fixed": "#e5e2e3",
+                "on-tertiary-container": "#d95d41",
+                "surface-tint": "#5f5e5f",
+                "error-container": "#ffdad6",
+                "error": "#ba1a1a",
+                "secondary-fixed": "#d1e5f9",
+                "tertiary": "#000000",
+                "outline": "#76777b",
+                "secondary": "#4d6072",
+                "on-tertiary-fixed": "#3d0600",
+                "on-background": "#1c1c19",
+                "secondary-fixed-dim": "#b5c9dd",
+                "inverse-primary": "#c8c6c7",
+                "inverse-surface": "#31302d",
+                "inverse-on-surface": "#f3f0eb",
+                "outline-variant": "#c7c6ca",
+                "surface-dim": "#dcdad5",
+                "surface": "#fcf9f4",
+                "on-tertiary": "#ffffff",
+                "surface-bright": "#fcf9f4",
+                "tertiary-fixed-dim": "#ffb4a3",
+                "surface-container-high": "#ebe8e3",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-fixed-variant": "#474647",
+                "on-error": "#ffffff",
+                "on-primary-fixed": "#1b1b1c",
+                "on-tertiary-fixed-variant": "#86210a",
+                "surface-container": "#f0ede8",
+                "surface-container-low": "#f6f3ee",
+                "on-error-container": "#93000a",
+                "on-secondary-fixed": "#081d2c",
+                "surface-variant": "#e5e2dd",
+                "on-surface-variant": "#46474a",
+                "secondary-container": "#cee2f6",
+                "on-surface": "#1c1c19",
+                "on-primary-container": "#858384"
+              },
+              fontFamily: {
+                "headline": ["Newsreader"],
+                "body": ["Newsreader", "serif"],
+                "label": ["Public Sans", "sans-serif"],
+                "mono": ["Inter", "monospace"]
+              },
+              borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-on-tertiary-fixed-variant selection:text-white">
+<div class="paper-grain fixed inset-0 z-[-1]"></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 border-b border-[#1c1c19]/10 bg-[#fcf9f4]/90 backdrop-blur-md">
+<div class="flex justify-between items-center px-12 h-16 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold italic text-[#1c1c19] font-['Newsreader'] tracking-tight">jungle.roaring.wave</span>
+<nav class="hidden md:flex gap-8">
+<a class="text-[#9B3018] border-b-2 border-[#9B3018] pb-1 font-['Newsreader'] tracking-tight" href="#epistemic">Epistemic Frame</a>
+<a class="text-[#4d6072] hover:text-[#1c1c19] transition-colors font-['Newsreader'] tracking-tight" href="#cases">Cases</a>
+<a class="text-[#4d6072] hover:text-[#1c1c19] transition-colors font-['Newsreader'] tracking-tight" href="#precedents">Precedents</a>
+<a class="text-[#4d6072] hover:text-[#1c1c19] transition-colors font-['Newsreader'] tracking-tight" href="#synthesis">Synthesis</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<a class="flex items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:text-on-tertiary-fixed-variant transition-colors">share</span>
+</a>
+<a class="flex items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-xl group-hover:text-on-tertiary-fixed-variant transition-colors">bookmark</span>
+</a>
+<a class="border border-primary px-4 py-2 text-[10px] font-label uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all" href="#">
+                Dossier PDF
+            </a>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-full w-20 border-r border-[#1c1c19]/5 bg-[#fcf9f4] hidden lg:flex flex-col items-center py-8 gap-8 z-40">
+<div class="flex flex-col items-center mb-8">
+<span class="font-black text-lg text-[#1c1c19] font-label">AIU</span>
+<span class="font-label uppercase text-[9px] tracking-[0.2em] text-secondary mt-1">REF: JRW-24</span>
+</div>
+<div class="flex flex-col gap-10">
+<a class="flex flex-col items-center gap-1 group" href="#epistemic">
+<div class="p-2 bg-[#9B3018] text-white">
+<span class="material-symbols-outlined text-lg">analytics</span>
+</div>
+<span class="font-label uppercase text-[9px] tracking-widest text-[#9B3018] font-bold">Thesis</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#cases">
+<div class="p-2 text-[#4d6072] group-hover:bg-[#4d6072]/10">
+<span class="material-symbols-outlined text-lg">database</span>
+</div>
+<span class="font-label uppercase text-[9px] tracking-widest text-secondary">Evidence</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#synthesis">
+<div class="p-2 text-[#4d6072] group-hover:bg-[#4d6072]/10">
+<span class="material-symbols-outlined text-lg">security</span>
+</div>
+<span class="font-label uppercase text-[9px] tracking-widest text-secondary">Counter</span>
+</a>
+</div>
+</aside>
+<main class="lg:pl-20 pt-16 min-h-screen">
+<!-- Section 1: Epistemic Frame -->
+<section class="grid grid-cols-12 max-w-screen-2xl mx-auto px-12 py-24 gap-12 border-b border-outline/10" id="epistemic">
+<div class="col-span-12 lg:col-span-4 sticky top-32 h-fit">
+<div class="space-y-6">
+<span class="font-label uppercase tracking-[0.3em] text-[10px] text-on-tertiary-fixed-variant font-bold border-l-2 border-on-tertiary-fixed-variant pl-4">Document IA-0422</span>
+<h1 class="font-headline text-6xl font-extrabold tracking-tight leading-[0.9] text-on-background">The Jungle <br/>Roars <br/>Back.</h1>
+<div class="pt-8 flex flex-wrap gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-1 text-[10px] font-label uppercase tracking-widest">PROBABLE</span>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-1 text-[10px] font-label uppercase tracking-widest">Contested</span>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-1 text-[10px] font-label uppercase tracking-widest">Ref: J.R.W-2024</span>
+</div>
+<!-- Boundary Block -->
+<div class="mt-12 p-6 border border-on-background/20 bg-surface-container-low">
+<span class="font-label text-[10px] uppercase font-bold text-on-tertiary-fixed-variant mb-4 block tracking-tighter">Boundary Condition // What this is NOT claiming</span>
+<ul class="space-y-3 font-body text-sm text-on-surface-variant italic">
+<li>• Not a prediction of inevitable structural collapse.</li>
+<li>• Not a moral endorsement of asymmetric tactics.</li>
+<li>• Not a dismissal of institutional agency.</li>
+<li>• Not a linear projection of historical patterns.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-8">
+<div class="max-w-3xl">
+<p class="font-headline italic text-2xl text-on-surface-variant leading-relaxed mb-12 border-b border-outline/10 pb-12">
+                    "The garden is a myth of the late 20th century. What we are witnessing is not a temporary lapse in order, but the re-emergence of the primordial strategic environment—a thicket of competing wills where noise is the only constant."
+                </p>
+<div class="prose prose-lg max-w-none font-body text-on-surface leading-loose space-y-8 text-xl">
+<p>
+                        In the archival tradition of intelligence analysis, we often speak of 'the signal and the noise.' Yet this binary fails to capture the contemporary shift toward a multi-scalar, non-linear warfare state. The <strong>Epistemic Frame</strong> through which we view global instability has cracked. We are no longer observing a chessboard; we are traversing a jungle.
+                    </p>
+<p>
+                        Our analysis suggests that the current erosion of international norms is not a descent into darkness, but a return to a historical mean. The post-Cold War 'garden' was an anomaly supported by unprecedented unipolar hegemony. As that hegemony thins, the vegetative growth of regional ambitions reclaims the landscape.
+                    </p>
+<div class="pt-8 flex gap-4">
+<a class="text-[11px] font-label uppercase tracking-widest font-bold underline decoration-on-tertiary-fixed-variant underline-offset-4" href="#technical-annex-1">Open Technical Annex A-1</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Figure Interruption -->
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-12 gap-12">
+<div class="col-span-12 lg:col-start-5 lg:col-span-8">
+<figure class="bg-surface-container-low p-8 border-l border-on-tertiary-fixed-variant">
+<div class="aspect-[21/9] bg-surface-dim overflow-hidden grayscale contrast-125 mb-4">
+<img alt="visualizing strategic thicket" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr24t1NC10Hckuq3gzaeBCFXc3A83RNYEwiYeZbhCXXp_8pXUZLibD92gF4xZoH8Gbsb0ZBIlspOCDoQImBVDHEKlFnxS009Qn0NLL9o34lKsN7vutZcgJA5_AbmSvkRgWip9ty3UoRn6foDf1cfjF8HfZdu5E9rk39SDAiRv8fCjRGdzivuGqYI3ET2Q13xXQ9WqQDf7fGF0smn836SSLw4mU7RzdLcLgMhluomYx4uYq5BI_XJm2eON9cvWKSEK6l0QP4uowFW0"/>
+</div>
+<figcaption class="font-label text-[11px] uppercase tracking-widest text-on-surface-variant">
+                    Fig 1.1: Visualizing the 'Strategic Thicket' - Topological mapping of grey-zone actor influence.
+                </figcaption>
+</figure>
+</div>
+</div>
+<!-- Section 2: Case Sequence -->
+<section class="max-w-screen-2xl mx-auto px-12 py-24" id="cases">
+<div class="grid grid-cols-12 gap-12 mb-20">
+<div class="col-span-12 lg:col-span-4">
+<h2 class="font-headline text-4xl font-bold border-t-4 border-on-background pt-4">Case Sequence</h2>
+<p class="mt-4 font-label text-secondary text-[11px] uppercase tracking-widest">A chronological analysis of actor-driven disruptions.</p>
+</div>
+</div>
+<div class="relative">
+<!-- Timeline Spine -->
+<div class="absolute left-0 lg:left-1/3 top-0 bottom-0 w-[0.5px] bg-outline/30 hidden lg:block"></div>
+<!-- Case 01: Assad -->
+<div class="grid grid-cols-12 gap-12 mb-32 relative">
+<div class="col-span-12 lg:col-span-4 lg:text-right pr-8">
+<span class="font-label text-[10px] tracking-widest uppercase text-secondary">Node 01 // 2011-Present</span>
+<h3 class="font-headline text-3xl font-bold mt-2">The Assad Resilience</h3>
+</div>
+<div class="absolute left-1/3 -ml-[4px] top-4 w-2 h-2 bg-on-tertiary-fixed-variant hidden lg:block"></div>
+<div class="col-span-12 lg:col-span-5">
+<div class="bg-surface-container p-8 space-y-6">
+<p class="font-body text-lg leading-relaxed italic">The survival of the Damascus regime represents the first major rupture in the liberal interventionist consensus. By leveraging localized attrition and external patrons, the regime maintained its core structure.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="border-t border-outline/20 pt-2">
+<span class="font-label text-[9px] uppercase font-bold text-on-tertiary-fixed-variant">Signal-7 Homs</span>
+<p class="text-[11px] font-label text-on-surface-variant mt-1">Status: Persistent Noise</p>
+</div>
+<div class="border-t border-outline/20 pt-2">
+<span class="font-label text-[9px] uppercase font-bold text-on-tertiary-fixed-variant">Dossier: Urban</span>
+<p class="text-[11px] font-label text-on-surface-variant mt-1">Ref: SY-11-LOGS</p>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3">
+<div class="border-l-2 border-on-tertiary-fixed-variant pl-6 py-2">
+<span class="font-label text-[10px] tracking-widest uppercase text-on-tertiary-fixed-variant font-bold">Red Team: Counter-Op</span>
+<p class="text-[14px] mt-2 font-body text-on-surface-variant leading-snug italic">Assumes regime survival is synonymous with control. Intelligence indicates fragmented sovereignty where central authority is purely performative.</p>
+</div>
+</div>
+</div>
+<!-- Body River Interruption: PullQuote -->
+<div class="grid grid-cols-12 gap-12 mb-32">
+<div class="col-span-12 lg:col-start-5 lg:col-span-7">
+<blockquote class="font-headline text-5xl italic text-on-surface leading-tight relative">
+<span class="absolute -left-16 -top-4 text-on-tertiary-fixed-variant opacity-10 text-[120px] font-serif">"</span>
+                        The goal is not to win, but to outlast the observer's attention span.
+                    </blockquote>
+</div>
+</div>
+<!-- Case 02: Valdai -->
+<div class="grid grid-cols-12 gap-12 mb-32 relative">
+<div class="col-span-12 lg:col-span-4 lg:text-right pr-8">
+<span class="font-label text-[10px] tracking-widest uppercase text-secondary">Node 02 // 2022-Present</span>
+<h3 class="font-headline text-3xl font-bold mt-2">The Valdai Pivot</h3>
+</div>
+<div class="absolute left-1/3 -ml-[4px] top-4 w-2 h-2 bg-on-tertiary-fixed-variant hidden lg:block"></div>
+<div class="col-span-12 lg:col-span-5">
+<div class="bg-surface-container p-8 space-y-6">
+<p class="font-body text-lg leading-relaxed italic">The shift toward a "Civilizational State" model marks an explicit rejection of universalist norms. Deployment of kinetic force combined with extreme economic insulation.</p>
+<a class="inline-flex items-center gap-3 text-[10px] font-label uppercase tracking-widest border border-on-surface/10 px-4 py-2 hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">link</span>
+                            Annex-C: Pipeline Topology
+                        </a>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3">
+<div class="border-l-2 border-on-tertiary-fixed-variant pl-6 py-2">
+<span class="font-label text-[10px] tracking-widest uppercase text-on-tertiary-fixed-variant font-bold">Red Team: Counter-Op</span>
+<p class="text-[14px] mt-2 font-body text-on-surface-variant leading-snug italic">The pivot is resource-dependent. Exhaustion rates suggest a terminal failure within 36 months unless secondary fronts materialize.</p>
+</div>
+</div>
+</div>
+<!-- Interruption: Evidence Card Cluster -->
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-12 gap-8 mb-32">
+<div class="col-span-12 lg:col-start-5 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-[#1c1c19] text-[#fcf9f4] p-5">
+<span class="font-label text-[9px] uppercase tracking-widest block mb-4 opacity-50">Data Entry // 042</span>
+<span class="font-headline text-2xl font-bold block mb-2 italic">1.4B</span>
+<p class="font-label text-[10px] uppercase opacity-70">Sanctioned entities in shadow fleet networks.</p>
+</div>
+<div class="bg-surface-container-high p-5 border border-on-background/10">
+<span class="font-label text-[9px] uppercase tracking-widest block mb-4">Citation // Ref. 88</span>
+<p class="font-body text-sm leading-snug italic">"The geography of power is now defined by the reach of the un-trackable transaction."</p>
+</div>
+<div class="bg-surface-container-high p-5 border border-on-background/10">
+<span class="font-label text-[9px] uppercase tracking-widest block mb-4">Signal // Polar-X</span>
+<div class="flex flex-col gap-2">
+<div class="h-1 bg-on-tertiary-fixed-variant w-full"></div>
+<div class="h-1 bg-on-tertiary-fixed-variant w-2/3"></div>
+<div class="h-1 bg-on-tertiary-fixed-variant w-4/5"></div>
+</div>
+<p class="font-label text-[9px] mt-4 uppercase">Arctic Buoy Alpha-7 Status: ACTIVE</p>
+</div>
+</div>
+</div>
+<!-- Case 03: Maduro -->
+<div class="grid grid-cols-12 gap-12 mb-32 relative">
+<div class="col-span-12 lg:col-span-4 lg:text-right pr-8">
+<span class="font-label text-[10px] tracking-widest uppercase text-secondary">Node 03 // 2018-Present</span>
+<h3 class="font-headline text-3xl font-bold mt-2">The Maduro Endurance</h3>
+</div>
+<div class="absolute left-1/3 -ml-[4px] top-4 w-2 h-2 bg-on-tertiary-fixed-variant hidden lg:block"></div>
+<div class="col-span-12 lg:col-span-5">
+<div class="bg-surface-container p-8 space-y-6">
+<p class="font-body text-lg leading-relaxed italic">Defying total economic de-coupling through the creation of 'Parallel Value Lanes'. A masterclass in survival through intentional institutional opacity.</p>
+<ul class="text-[11px] font-label uppercase tracking-tighter space-y-1 text-on-surface-variant">
+<li>• ILLEGAL MINING REVENUE: [REDACTED]</li>
+<li>• CRYPTO-LIQUIDITY NODES: 14 PRIMARY</li>
+</ul>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3">
+<div class="border-l-2 border-on-tertiary-fixed-variant pl-6 py-2">
+<span class="font-label text-[10px] tracking-widest uppercase text-on-tertiary-fixed-variant font-bold">Red Team: Counter-Op</span>
+<p class="text-[14px] mt-2 font-body text-on-surface-variant leading-snug italic">Survival is bought at the cost of total infrastructural rot. The state is no longer a state, but a collection of fortified extraction zones.</p>
+</div>
+</div>
+</div>
+<!-- Interruption: Small Callout Note -->
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-12 mb-32">
+<div class="col-span-12 lg:col-start-9 lg:col-span-4">
+<div class="bg-on-tertiary-fixed-variant text-white p-6 relative">
+<span class="font-label text-[9px] uppercase tracking-[0.3em] font-black absolute -top-3 left-6 bg-background text-on-tertiary-fixed-variant px-2 border border-on-tertiary-fixed-variant">Analyst Note</span>
+<p class="font-body text-sm italic">"Notice the shift from territorial defense to 'Network Persistence'. The geography is secondary to the uptime of the clandestine transaction."</p>
+</div>
+</div>
+</div>
+<!-- Case 04: Khamenei -->
+<div class="grid grid-cols-12 gap-12 mb-32 relative">
+<div class="col-span-12 lg:col-span-4 lg:text-right pr-8">
+<span class="font-label text-[10px] tracking-widest uppercase text-secondary">Node 04 // 1979-Present</span>
+<h3 class="font-headline text-3xl font-bold mt-2">The Khamenei Doctrine</h3>
+</div>
+<div class="absolute left-1/3 -ml-[4px] top-4 w-2 h-2 bg-on-tertiary-fixed-variant hidden lg:block"></div>
+<div class="col-span-12 lg:col-span-5">
+<div class="bg-surface-container p-8 space-y-6">
+<p class="font-body text-lg leading-relaxed italic">The longest-running experiment in anti-unipolar posture. Strategic depth maintained via proxy thickets and calculated 'controlled escalations'.</p>
+<div class="pt-4">
+<a class="text-[11px] font-label uppercase tracking-widest font-bold underline" href="#">Review Proxy Map 04-B</a>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-3">
+<div class="border-l-2 border-on-tertiary-fixed-variant pl-6 py-2">
+<span class="font-label text-[10px] tracking-widest uppercase text-on-tertiary-fixed-variant font-bold">Red Team: Counter-Op</span>
+<p class="text-[14px] mt-2 font-body text-on-surface-variant leading-snug italic">Demographic fatigue is the invisible counter-signal. The doctrine fails to account for the internal noise of a 70% urbanized youth population.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Deep Archives Header -->
+<div class="max-w-screen-2xl mx-auto px-12 py-16">
+<div class="border-y-4 border-on-background py-8 flex justify-between items-center">
+<h2 class="font-headline text-5xl font-black uppercase tracking-tighter">Section III: Deep Archives</h2>
+<span class="font-label text-[11px] uppercase tracking-[0.4em] text-on-tertiary-fixed-variant font-bold">Authorized Access Only</span>
+</div>
+</div>
+<!-- Section 3: Precedents -->
+<section class="max-w-screen-2xl mx-auto px-12 py-24 bg-surface-container-low" id="precedents">
+<div class="grid grid-cols-12 gap-12">
+<div class="col-span-12 lg:col-span-3">
+<h3 class="font-headline text-2xl font-bold">Historical Analogues</h3>
+<p class="text-[12px] font-label uppercase tracking-widest text-secondary mt-4">Comparative Signal Analysis.</p>
+</div>
+<div class="col-span-12 lg:col-span-9">
+<div class="space-y-0">
+<a class="group border-b border-outline/20 py-8 flex justify-between items-baseline hover:bg-surface transition-colors cursor-crosshair px-4" href="#">
+<div class="flex items-baseline gap-8">
+<span class="font-label text-xs text-secondary">001</span>
+<span class="font-headline text-3xl font-bold group-hover:text-on-tertiary-fixed-variant transition-colors">Desert Storm / Sovereignty Myth</span>
+</div>
+<span class="font-label text-[10px] uppercase tracking-widest">Archival-ID: DS-91-X</span>
+</a>
+<a class="group border-b border-outline/20 py-8 flex justify-between items-baseline hover:bg-surface transition-colors cursor-crosshair px-4" href="#">
+<div class="flex items-baseline gap-8">
+<span class="font-label text-xs text-secondary">002</span>
+<span class="font-headline text-3xl font-bold group-hover:text-on-tertiary-fixed-variant transition-colors">Beirut Barracks / Asymmetric Dawn</span>
+</div>
+<span class="font-label text-[10px] uppercase tracking-widest">Archival-ID: LB-83-M</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Synthesis -->
+<section class="max-w-screen-2xl mx-auto px-12 py-24 grid grid-cols-12 gap-12" id="synthesis">
+<div class="col-span-12 lg:col-span-7">
+<div class="max-w-2xl">
+<h2 class="font-headline text-4xl font-bold mb-8">Synthesis: The Roar as Equilibrium</h2>
+<div class="prose prose-lg font-body text-xl text-on-surface leading-loose space-y-8">
+<p>
+                        We conclude that the 'Jungle' is not a failure of system design, but the default state of human strategic interaction. The roars we hear—the populist uprisings, the revanchist state maneuvers—are not glitches.
+                    </p>
+<p>
+                        Stability is not found in walls, but in the ability to swim through the roaring wave of the future. The analyst must become a navigator of noise.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Forward Looking Test Set Panel -->
+<div class="col-span-12 lg:col-span-5">
+<div class="sticky top-32 bg-primary text-on-primary p-12">
+<span class="font-label text-[10px] uppercase tracking-[0.4em] text-on-tertiary-container font-bold mb-6 block">Forward-Looking Test Set // 2025-2028</span>
+<h4 class="font-headline text-3xl font-bold mb-8 italic">Watchlist Indicators</h4>
+<ul class="space-y-10">
+<li class="border-l-2 border-on-tertiary-container pl-6">
+<span class="font-label text-[10px] uppercase text-on-tertiary-container font-bold">Indicator 01 // Financial Decoupling</span>
+<p class="font-body text-sm mt-2 font-bold uppercase tracking-tighter">De-Dollarization of Grey Markets</p>
+<p class="text-xs text-on-primary/60 mt-2 italic leading-relaxed">Watch for the emergence of a 'Shadow IMF'—a series of bilateral swap lines between SE Asian nodes and Gulf patrons, bypassing SWIFT audit trails completely.</p>
+</li>
+<li class="border-l-2 border-on-tertiary-container pl-6">
+<span class="font-label text-[10px] uppercase text-on-tertiary-container font-bold">Indicator 02 // Resource Sovereignty</span>
+<p class="font-body text-sm mt-2 font-bold uppercase tracking-tighter">Arctic "No-Fly" Claims</p>
+<p class="text-xs text-on-primary/60 mt-2 italic leading-relaxed">Satellite imagery confirms fortification of Alpha-7 buoy fields. This represents a transition from territorial claims to 'Area Access Denial' via autonomous maritime sensors.</p>
+</li>
+<li class="border-l-2 border-on-tertiary-container pl-6">
+<span class="font-label text-[10px] uppercase text-on-tertiary-container font-bold">Indicator 03 // Biometric Hardening</span>
+<p class="font-body text-sm mt-2 font-bold uppercase tracking-tighter">Sahelian Digital Enclosures</p>
+<p class="text-xs text-on-primary/60 mt-2 italic leading-relaxed">Synthesis of NGO data points to a total surveillance grid in the Sahel. Look for the deployment of proprietary biometric databases as the new currency of local governance.</p>
+</li>
+</ul>
+<div class="mt-12 pt-8 border-t border-on-primary/10">
+<a class="w-full inline-block text-center border border-on-tertiary-container py-4 font-label uppercase text-[10px] tracking-[0.3em] font-black hover:bg-on-tertiary-container hover:text-white transition-all" href="#">
+                        Submit Analysis Feedback
+                    </a>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-12 border-t border-[#fcf9f4]/10 bg-[#1c1c19] text-[#fcf9f4]">
+<div class="max-w-screen-2xl mx-auto grid grid-cols-12 gap-8 w-full">
+<div class="col-span-12 lg:col-span-6">
+<span class="text-[#9B3018] font-bold font-headline text-2xl italic tracking-tight">jungle.roaring.wave</span>
+<p class="font-label text-[10px] tracking-[0.05rem] uppercase mt-4 text-[#76777b]">
+                © 2024 ARCHIVAL INTELLIGENCE UNIT. <br/>
+                ALL DATA POINTS SUBJECT TO CLASSIFIED REVISION.
+            </p>
+</div>
+<div class="col-span-12 lg:col-span-6 flex flex-wrap gap-8 lg:justify-end items-end">
+<a class="font-label text-[10px] tracking-[0.05rem] uppercase text-[#76777b] hover:text-[#fcf9f4] underline decoration-[#9B3018] underline-offset-4 transition-all" href="#">Classified Index</a>
+<a class="font-label text-[10px] tracking-[0.05rem] uppercase text-[#76777b] hover:text-[#fcf9f4] underline decoration-[#9B3018] underline-offset-4 transition-all" href="#">Methodology</a>
+<a class="font-label text-[10px] tracking-[0.05rem] uppercase text-[#76777b] hover:text-[#fcf9f4] underline decoration-[#9B3018] underline-offset-4 transition-all" href="#">Source Map</a>
+<a class="font-label text-[10px] tracking-[0.05rem] uppercase text-[#76777b] hover:text-[#fcf9f4] underline decoration-[#9B3018] underline-offset-4 transition-all" href="#">Red Team Protocols</a>
+</div>
+</div>
+</footer>
+</body></html>

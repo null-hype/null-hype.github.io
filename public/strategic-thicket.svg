@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 800" role="img" aria-labelledby="title desc">
+  <title id="title">Strategic Thicket</title>
+  <desc id="desc">Abstract monochrome wave forms suggesting dense overlapping routes and topologies.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f0ede8" />
+      <stop offset="100%" stop-color="#d5d0c8" />
+    </linearGradient>
+    <linearGradient id="ink" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#2b2b2d" />
+      <stop offset="60%" stop-color="#0f0f10" />
+      <stop offset="100%" stop-color="#4a4a4d" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="800" fill="url(#bg)" />
+  <g fill="none" stroke="url(#ink)" stroke-width="22" stroke-linecap="round" opacity="0.94">
+    <path d="M-60 590c120-120 274-141 416-80 112 48 232 52 355 12 83-28 184-88 338-195 141-98 282-130 551-68" />
+    <path d="M-80 660c161-103 299-121 433-70 118 45 228 40 343-2 92-33 219-115 374-232 137-102 282-137 547-94" />
+    <path d="M70 742c135-112 257-136 389-94 124 40 245 26 381-31 104-43 230-126 395-247 108-79 220-116 366-113" />
+    <path d="M-50 464c118-79 239-97 359-66 100 26 214 24 332-7 104-27 227-83 370-163 165-93 312-120 589-84" />
+    <path d="M0 346c124-69 225-77 319-48 88 27 195 31 311 11 102-19 234-63 399-128 181-71 362-93 571-62" />
+    <path d="M130 251c103-49 204-56 301-34 85 18 177 19 277 3 109-18 241-54 407-105 162-49 322-62 485-35" />
+  </g>
+  <g fill="url(#ink)" opacity="0.9">
+    <path d="M0 800c160-54 272-118 351-184 76-63 125-148 162-239 45-111 117-174 241-205 96-24 180-27 253-15-124 64-203 143-242 237-49 118-48 252-141 345-88 88-206 126-624 61Z" />
+    <path d="M717 800c113-58 182-141 205-246 23-101 9-208 41-306 39-119 116-205 242-248 99-33 221-36 395-3-154 33-273 92-354 180-75 81-114 182-137 304-21 112-54 202-117 267-58 59-140 78-275 52Z" />
+    <path d="M1098 800c80-58 132-135 152-234 17-84 8-180 29-270 23-97 73-185 157-250 62-49 123-73 164-80v834H1098Z" />
+  </g>
+</svg>
