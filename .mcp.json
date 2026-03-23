@@ -20,6 +20,10 @@
       "headers": {
         "Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}"
       }
+    },
+    "storybook-mcp": {
+      "url": "http://localhost:6006/mcp",
+      "type": "http"
     }
   }
 }
