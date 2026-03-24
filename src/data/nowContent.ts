@@ -1,3 +1,12 @@
+import type { TidelaneListItem, TidelaneListSection } from '../components/TidelaneList';
+import { generateTidelaneNodes, type TidelaneNode } from './tidelane';
+
+interface NowEntry {
+	readonly title: string;
+	readonly body: string;
+	readonly references: string;
+}
+
 export const nowPageMeta = {
 	lastUpdated: 'March 24, 2026',
 	title: 'What I am doing now',
@@ -9,7 +18,7 @@ export const nowPageMeta = {
 		'If this page looks stale, it probably is. The backlog moves faster than the prose.',
 } as const;
 
-export const nowItems = [
+const nowItemsBase: readonly NowEntry[] = [
 	{
 		title: 'Turn the essay into the artifact',
 		body:
@@ -36,7 +45,7 @@ export const nowItems = [
 	},
 ] as const;
 
-export const recentlyDoneItems = [
+const recentlyDoneItemsBase: readonly NowEntry[] = [
 	{
 		title: 'The first full editorial prototype exists',
 		body:
@@ -45,7 +54,7 @@ export const recentlyDoneItems = [
 	},
 ] as const;
 
-export const notNowItems = [
+const notNowItemsBase: readonly NowEntry[] = [
 	{
 		title: 'Collecting more parallel projects for their own sake',
 		body:
@@ -59,3 +68,63 @@ export const notNowItems = [
 		references: 'Linear: PLAN-26, PLAN-115, PLAN-116',
 	},
 ] as const;
+
+export const nowPageTidelaneSeed = 26;
+
+const tidelaneNodes = generateTidelaneNodes(nowPageTidelaneSeed);
+
+function projectItemsToPhase(
+	items: readonly NowEntry[],
+	phaseName: TidelaneNode['phase']['name'],
+): TidelaneListItem[] {
+	const phaseNodes = tidelaneNodes.filter((node) => node.phase.name === phaseName);
+
+	if (phaseNodes.length < items.length) {
+		throw new Error(`Not enough tidelane nodes for phase "${phaseName}"`);
+	}
+
+	return items.map((item, index) => {
+		const node = phaseNodes[index];
+
+		if (!node) {
+			throw new Error(`Missing tidelane node at index ${index} for phase "${phaseName}"`);
+		}
+
+		return {
+			...item,
+			lane: {
+				slug: node.slug,
+				w3w: node.w3w,
+				moon: node.moon,
+				phase: node.phase,
+			},
+		};
+	});
+}
+
+export const nowItems = projectItemsToPhase(nowItemsBase, 'full');
+
+export const recentlyDoneItems = projectItemsToPhase(recentlyDoneItemsBase, 'waning');
+
+export const notNowItems = projectItemsToPhase(notNowItemsBase, 'waxing');
+
+export const nowSections = [
+	{
+		id: 'now',
+		title: 'Now',
+		summary: 'Full lane / EMEA / live work that is currently consuming the week',
+		items: nowItems,
+	},
+	{
+		id: 'recently-done',
+		title: 'Recently done',
+		summary: 'Waning lane / Americas / loops that closed cleanly enough to free capacity',
+		items: recentlyDoneItems,
+	},
+	{
+		id: 'not-now',
+		title: 'Not now',
+		summary: 'Waxing lane / APAC / deliberately deferred so the center of gravity stays intact',
+		items: notNowItems,
+	},
+] satisfies readonly TidelaneListSection[];

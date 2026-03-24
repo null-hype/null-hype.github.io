@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TidelaneList from './TidelaneList';
 import '../styles/editorial.css';
 import '../styles/now-page.css';
-import { nowItems, notNowItems, nowPageMeta, recentlyDoneItems } from '../data/nowContent';
+import { nowPageMeta, nowSections } from '../data/nowContent';
 ---
 
 <BaseLayout
@@ -31,50 +32,7 @@ import { nowItems, notNowItems, nowPageMeta, recentlyDoneItems } from '../data/n
 				{nowPageMeta.intro.map((paragraph) => <p>{paragraph}</p>)}
 			</div>
 
-			<section class="now-section" id="now" aria-labelledby="now-heading">
-				<h2 id="now-heading">Now</h2>
-				<ul class="now-list">
-					{
-						nowItems.map((item) => (
-							<li class="now-item">
-								<h3 class="now-item__title">{item.title}</h3>
-								<p class="now-item__body">{item.body}</p>
-								<p class="now-item__refs">{item.references}</p>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-
-			<section class="now-section" id="recently-done" aria-labelledby="recently-done-heading">
-				<h2 id="recently-done-heading">Recently done</h2>
-				<ul class="now-list">
-					{
-						recentlyDoneItems.map((item) => (
-							<li class="now-item">
-								<h3 class="now-item__title">{item.title}</h3>
-								<p class="now-item__body">{item.body}</p>
-								<p class="now-item__refs">{item.references}</p>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-
-			<section class="now-section" aria-labelledby="not-now-heading">
-				<h2 id="not-now-heading">Not now</h2>
-				<ul class="now-list">
-					{
-						notNowItems.map((item) => (
-							<li class="now-item">
-								<h3 class="now-item__title">{item.title}</h3>
-								<p class="now-item__body">{item.body}</p>
-								<p class="now-item__refs">{item.references}</p>
-							</li>
-						))
-					}
-				</ul>
-			</section>
+			<TidelaneList sections={nowSections} />
 
 			<footer class="now-footer">
 				<p>{nowPageMeta.footer}</p>
