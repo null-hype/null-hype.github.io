@@ -14,10 +14,13 @@ import {
 	analystCalloutContent,
 	archiveEntries,
 	caseNodes,
+	caseSectionContent,
+	comparisonNotes,
 	evidenceCards,
 	epistemicFrameContent,
 	footerLinks,
 	inlineFigureContent,
+	leadParagraphs,
 	pullQuoteContent,
 	sectionBreakContent,
 	sideRailItems,
@@ -28,8 +31,8 @@ import {
 ---
 
 <BaseLayout
-	title="jungle.roaring.wave | Archival Intelligence Unit"
-	description="Editorial prototype for the jungle.roaring.wave longform essay."
+	title="jungle.roaring.wave | PLAN-26 v3.5 dossier"
+	description="PLAN-26 v3.5 rendered as an editorial dossier using the Storybook component library."
 >
 	<div class="editorial-page">
 		<div class="editorial-grain" aria-hidden="true"></div>
@@ -37,7 +40,7 @@ import {
 		<header class="editorial-topbar">
 			<div class="editorial-topbar__inner">
 				<div class="editorial-topbar__group">
-					<span class="editorial-topbar__brand">jungle.roaring.wave</span>
+					<a class="editorial-topbar__brand" href="/now">jungle.roaring.wave</a>
 					<nav class="editorial-nav" aria-label="Primary dossier sections">
 						{
 							topNavItems.map((item) => (
@@ -50,13 +53,7 @@ import {
 				</div>
 
 				<div class="editorial-topbar__actions">
-					<button class="editorial-icon-button" type="button" aria-label="Share this dossier">
-						<span class="material-symbols-outlined" aria-hidden="true">share</span>
-					</button>
-					<button class="editorial-icon-button" type="button" aria-label="Bookmark this dossier">
-						<span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
-					</button>
-					<a class="editorial-pdf-link" href="#classified-index">Dossier PDF</a>
+					<a class="editorial-pdf-link" href="/now">Now page</a>
 				</div>
 			</div>
 		</header>
@@ -64,8 +61,8 @@ import {
 		<aside class="editorial-sidebar" aria-label="Dossier shortcuts">
 			<div class="editorial-sidebar__inner">
 				<div class="editorial-sidebar__brand">
-					<span class="editorial-sidebar__brand-mark">AIU</span>
-					<span class="editorial-sidebar__ref">Ref: JRW-24</span>
+					<span class="editorial-sidebar__brand-mark">JRW</span>
+					<span class="editorial-sidebar__ref">Ref: PLAN-26 v3.5</span>
 				</div>
 
 				<nav class="editorial-sidebar__nav" aria-label="Section shortcuts">
@@ -96,14 +93,22 @@ import {
 				</div>
 			</div>
 
+			<div class="editorial-block editorial-block--tight">
+				<div class="editorial-container editorial-prose editorial-prose--lead">
+					{leadParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+				</div>
+			</div>
+
 			<section id="cases" class="editorial-section">
 				<div class="editorial-container">
 					<header class="editorial-section-heading">
-						<h2 class="editorial-section-heading__title">Case Sequence</h2>
-						<p class="editorial-section-heading__eyebrow">
-							A chronological analysis of actor-driven disruptions.
-						</p>
+						<h2 class="editorial-section-heading__title">{caseSectionContent.title}</h2>
+						<p class="editorial-section-heading__eyebrow">{caseSectionContent.eyebrow}</p>
 					</header>
+
+					<div class="editorial-prose editorial-prose--case-intro">
+						{caseSectionContent.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+					</div>
 
 					<div class="editorial-case-stack">
 						<CaseNode {...caseNodes[0]} />
@@ -112,14 +117,14 @@ import {
 						<div class="evidence-grid">
 							{evidenceCards.map((card) => <EvidenceCard {...card} />)}
 						</div>
-						<CaseNode {...caseNodes[2]} />
 						<AnalystCallout {...analystCalloutContent} />
+						<CaseNode {...caseNodes[2]} />
 						<CaseNode {...caseNodes[3]} />
 					</div>
 				</div>
 			</section>
 
-			<div id="deep-archives" class="editorial-section-break-wrap">
+			<div id="comparisons" class="editorial-section-break-wrap">
 				<div class="editorial-container">
 					<SectionBreak {...sectionBreakContent} />
 				</div>
@@ -128,8 +133,20 @@ import {
 			<section class="editorial-section archive-section">
 				<div class="editorial-container archive-section__grid">
 					<div class="archive-section__intro">
-						<h2 class="archive-section__title">Historical Analogues</h2>
-						<p class="archive-section__eyebrow">Comparative Signal Analysis.</p>
+						<h2 class="archive-section__title">Comparative Baselines</h2>
+						<p class="archive-section__eyebrow">Historical precedent, red-team warning, forecast layer.</p>
+						<div class="archive-section__copy">
+							<p>
+								A sequence like this only becomes durable if it survives comparison. That means
+								looking for both historical forms that make it more plausible and warning labels that
+								make overreach easier to spot.
+							</p>
+							<p>
+								The goal is not to flatten everything into one chain. The goal is to locate where the
+								argument gains traction, where it starts flattering itself, and where it can be forced
+								into real questions.
+							</p>
+						</div>
 					</div>
 					<div class="archive-section__list">
 						{archiveEntries.map((entry) => <ArchiveEntry {...entry} />)}
@@ -137,13 +154,27 @@ import {
 				</div>
 			</section>
 
-			<section id="synthesis" class="editorial-section">
+			<section class="editorial-section editorial-section--bordered">
+				<div class="editorial-container editorial-note-stack">
+					{
+						comparisonNotes.map((note) => (
+							<article id={note.id} class="editorial-note">
+								<h3 class="editorial-note__title">{note.title}</h3>
+								<div class="editorial-note__copy">
+									{note.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+								</div>
+							</article>
+						))
+					}
+				</div>
+			</section>
+
+			<section id="forecast" class="editorial-section">
 				<div class="editorial-container synthesis-section__grid">
 					<div class="synthesis-section__copy">
 						<h2 class="synthesis-section__title">{synthesisContent.title}</h2>
 						<div class="synthesis-copy">
-							<p>{synthesisContent.paragraphs[0]}</p>
-							<p class="is-muted">{synthesisContent.paragraphs[1]}</p>
+							{synthesisContent.paragraphs.map((paragraph, index) => <p class:list={{ 'is-muted': index === synthesisContent.paragraphs.length - 1 }}>{paragraph}</p>)}
 						</div>
 					</div>
 					<div class="synthesis-section__panel">
@@ -157,16 +188,18 @@ import {
 			<div class="editorial-container editorial-footer__grid">
 				<div class="editorial-footer__copy">
 					<span class="editorial-footer__brand">jungle.roaring.wave</span>
-					<p class="editorial-footer__meta">© 2024 Archival Intelligence Unit.</p>
+					<p class="editorial-footer__meta">PLAN-26 v3.5 rendered March 24, 2026.</p>
 					<p class="editorial-footer__legal">
-						All data points remain provisional and subject to classified revision without prior notice.
+						This version treats the sequence as a candidate signal that must survive comparison,
+						counterargument, and future scoring before it earns anything stronger than disciplined
+						suspicion.
 					</p>
 				</div>
 
-				<div class="editorial-footer__links" id="classified-index">
+				<div class="editorial-footer__links">
 					{
 						footerLinks.map((link) => (
-							<a id={link.href.slice(1)} href={link.href}>
+							<a href={link.href}>
 								{link.label}
 							</a>
 						))
