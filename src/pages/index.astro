@@ -1,178 +1,274 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/editorial.css';
+import '../styles/profile-landing.css';
 import AnalystCallout from '../components/AnalystCallout';
 import ArchiveEntry from '../components/ArchiveEntry';
 import CaseNode from '../components/CaseNode';
-import EpistemicFrame from '../components/EpistemicFrame';
 import EvidenceCard from '../components/EvidenceCard';
 import InlineFigure from '../components/InlineFigure';
+import LiveClock from '../components/LiveClock';
 import PullQuote from '../components/PullQuote';
 import SectionBreak from '../components/SectionBreak';
+import SwipeActions from '../components/SwipeActions';
+import TypewriterBio from '../components/TypewriterBio';
 import WatchlistPanel from '../components/WatchlistPanel';
-import {
-	analystCalloutContent,
-	archiveEntries,
-	caseNodes,
-	evidenceCards,
-	epistemicFrameContent,
-	footerLinks,
-	inlineFigureContent,
-	pullQuoteContent,
-	sectionBreakContent,
-	sideRailItems,
-	synthesisContent,
-	topNavItems,
-	watchlistContent,
-} from '../data/editorialContent';
+
+const profileStats = [
+	{
+		variant: 'metric',
+		label: 'Match Rate // Signal',
+		value: '87%',
+		description: 'Strong overlap with people who like dense essays, open tabs, and suspiciously neat commit histories.',
+	},
+	{
+		variant: 'quote',
+		label: 'Pinned Motto // README',
+		quote:
+			'“Half profile card, half field report, fully committed to making the weird internet feel intentional again.”',
+	},
+	{
+		variant: 'signal',
+		label: 'Activity // This Week',
+		bars: [1, 0.9, 0.72],
+		status: 'Build energy stable, curiosity spiking, attention span operational.',
+	},
+] as const;
+
+const pinnedRoutes = [
+	{
+		index: '001',
+		title: 'Open Full Dossier',
+		href: '/dossier#epistemic',
+		archivalId: 'Route: /dossier#epistemic',
+		status: 'Status: Live',
+		statusTone: 'default',
+	},
+	{
+		index: '002',
+		title: 'Jump To Case Sequence',
+		href: '/dossier#cases',
+		archivalId: 'Route: /dossier#cases',
+		status: 'Status: Field Notes',
+		statusTone: 'restricted',
+	},
+	{
+		index: '003',
+		title: 'Read The Watchlist',
+		href: '/dossier#synthesis',
+		archivalId: 'Route: /dossier#synthesis',
+		status: 'Status: Forward Scan',
+		statusTone: 'default',
+	},
+] as const;
+
+const compatibilityPanel = {
+	eyebrow: 'Compatibility Scan',
+	version: 'Build 03-24',
+	title: 'Green Flags',
+	indicators: [
+		{
+			label: 'Signal 01 // Shared Taste',
+			title: 'Likes profiles with actual point of view',
+			description:
+				'Prefers people and projects with a thesis, not just immaculate gradients and placeholder sincerity.',
+		},
+		{
+			label: 'Signal 02 // Working Style',
+			title: 'Can flirt in changelog format',
+			description:
+				'Comfortable moving between a vibe check, a bug report, and a long-form argument without breaking cadence.',
+		},
+		{
+			label: 'Signal 03 // Follow Through',
+			title: 'Actually clicks through to the dossier',
+			description:
+				'Understands that the landing page is the teaser trailer and the dossier is where the real context lives.',
+		},
+	],
+	ctaLabel: 'Dossier route below',
+	dossierId: 'Primary route: /dossier',
+} as const;
+
+const featuredThread = {
+	nodeLabel: 'Pinned Thread // 01',
+	title: 'The Full Dossier',
+	summary:
+		'The landing page handles first impressions. The dossier handles the evidence trail, the long-form thesis, and the archive-grade context.',
+	supportingBlock: {
+		type: 'button',
+		label: 'Open full dossier',
+		href: '/dossier#epistemic',
+	},
+	counterargument:
+		'If all you needed was a fast impression, stop at the profile card. If you want the argument underneath it, click through.',
+} as const;
+
+const landingFigure = {
+	plateLabel: 'Profile Cover // 01',
+	imageSrc: '/strategic-thicket.svg',
+	imageAlt: 'Abstract monochrome terrain used as a profile cover image.',
+	caption:
+		'Profile cover for the dossier-era internet: equal parts romantic signal, field note, and suspiciously polished README header.',
+} as const;
+
+const profileNote = {
+	label: 'Analyst Note // Availability',
+	text: 'Open to sharp collaborators, attractive weirdos, and anyone whose ideal first date sounds suspiciously like a debugging session with better lighting.',
+	tone: 'dark',
+} as const;
+
+const heatmapRows = [
+	[1, 2, 3, 1, 0, 2, 4, 3],
+	[0, 1, 3, 4, 2, 1, 3, 2],
+	[2, 4, 2, 1, 3, 4, 2, 1],
+	[1, 3, 4, 2, 1, 2, 4, 3],
+] as const;
+
+const tags = ['Longform dossier', 'Open source', 'High-context charm', 'UTC-friendly', 'Reads footnotes'] as const;
 ---
 
 <BaseLayout
-	title="jungle.roaring.wave | Archival Intelligence Unit"
-	description="Editorial prototype for the jungle.roaring.wave longform essay."
+	title="jungle.roaring.wave | Profile Landing"
+	description="Landing page for jungle.roaring.wave, bridging the profile-card vibe and the full dossier."
 >
-	<div class="editorial-page">
-		<div class="editorial-grain" aria-hidden="true"></div>
+	<div class="profile-page">
+		<div class="profile-page__grain" aria-hidden="true"></div>
 
-		<header class="editorial-topbar">
-			<div class="editorial-topbar__inner">
-				<div class="editorial-topbar__group">
-					<span class="editorial-topbar__brand">jungle.roaring.wave</span>
-					<nav class="editorial-nav" aria-label="Primary dossier sections">
-						{
-							topNavItems.map((item) => (
-								<a href={item.href} class:list={{ 'is-active': Boolean(item.active) }}>
-									{item.label}
-								</a>
-							))
-						}
-					</nav>
-				</div>
-
-				<div class="editorial-topbar__actions">
-					<button class="editorial-icon-button" type="button" aria-label="Share this dossier">
-						<span class="material-symbols-outlined" aria-hidden="true">share</span>
-					</button>
-					<button class="editorial-icon-button" type="button" aria-label="Bookmark this dossier">
-						<span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
-					</button>
-					<a class="editorial-pdf-link" href="#classified-index">Dossier PDF</a>
+		<header class="profile-topbar">
+			<div class="profile-shell profile-topbar__inner">
+				<a class="profile-wordmark" href="#profile">jungle.roaring.wave</a>
+				<nav class="profile-nav" aria-label="Primary landing sections">
+					<a href="#profile">Profile</a>
+					<a href="#pinned">Pinned</a>
+					<a href="#signals">Signals</a>
+					<a href="/dossier">Dossier</a>
+				</nav>
+				<div class="profile-topbar__status">
+					<LiveClock client:load />
+					<a class="profile-topbar__dossier-link" href="/dossier">Open dossier</a>
 				</div>
 			</div>
 		</header>
 
-		<aside class="editorial-sidebar" aria-label="Dossier shortcuts">
-			<div class="editorial-sidebar__inner">
-				<div class="editorial-sidebar__brand">
-					<span class="editorial-sidebar__brand-mark">AIU</span>
-					<span class="editorial-sidebar__ref">Ref: JRW-24</span>
-				</div>
-
-				<nav class="editorial-sidebar__nav" aria-label="Section shortcuts">
-					{
-						sideRailItems.map((item) => (
-							<a href={item.href} class:list={{ 'is-active': Boolean(item.active) }}>
-								<span class="editorial-sidebar__icon material-symbols-outlined" aria-hidden="true">
-									{item.icon}
-								</span>
-								<span>{item.label}</span>
-							</a>
-						))
-					}
-				</nav>
-			</div>
-		</aside>
-
-		<main class="editorial-main">
-			<section id="epistemic" class="editorial-section editorial-section--bordered">
-				<div class="editorial-container">
-					<EpistemicFrame {...epistemicFrameContent} />
-				</div>
-			</section>
-
-			<div class="editorial-block">
-				<div class="editorial-container">
-					<InlineFigure {...inlineFigureContent} />
-				</div>
-			</div>
-
-			<section id="cases" class="editorial-section">
-				<div class="editorial-container">
-					<header class="editorial-section-heading">
-						<h2 class="editorial-section-heading__title">Case Sequence</h2>
-						<p class="editorial-section-heading__eyebrow">
-							A chronological analysis of actor-driven disruptions.
-						</p>
-					</header>
-
-					<div class="editorial-case-stack">
-						<CaseNode {...caseNodes[0]} />
-						<PullQuote {...pullQuoteContent} />
-						<CaseNode {...caseNodes[1]} />
-						<div class="evidence-grid">
-							{evidenceCards.map((card) => <EvidenceCard {...card} />)}
+		<main class="profile-main profile-shell">
+			<section class="profile-hero" id="profile">
+				<div class="profile-card">
+					<div class="profile-card__media">
+						<span class="profile-card__badge">Match queue: accepting ambitious weirdness</span>
+						<img
+							class="profile-card__cover"
+							src="/strategic-thicket.svg"
+							alt="Abstract topological lines used as a profile cover."
+						/>
+					</div>
+					<div class="profile-card__body">
+						<div class="profile-card__copy">
+							<p class="profile-kicker">Dating app energy, GitHub profile discipline</p>
+							<h1 class="profile-title">A landing page that flirts first and cites sources later.</h1>
+							<p class="profile-dek">
+								The current editorial experience still exists intact. This page just handles the vibe
+								check, the pinned threads, and the “should I click deeper?” decision.
+							</p>
 						</div>
-						<CaseNode {...caseNodes[2]} />
-						<AnalystCallout {...analystCalloutContent} />
-						<CaseNode {...caseNodes[3]} />
-					</div>
-				</div>
-			</section>
 
-			<div id="deep-archives" class="editorial-section-break-wrap">
-				<div class="editorial-container">
-					<SectionBreak {...sectionBreakContent} />
-				</div>
-			</div>
+						<ul class="profile-tag-list" aria-label="Profile traits">
+							{tags.map((tag) => <li>{tag}</li>)}
+						</ul>
 
-			<section class="editorial-section archive-section">
-				<div class="editorial-container archive-section__grid">
-					<div class="archive-section__intro">
-						<h2 class="archive-section__title">Historical Analogues</h2>
-						<p class="archive-section__eyebrow">Comparative Signal Analysis.</p>
-					</div>
-					<div class="archive-section__list">
-						{archiveEntries.map((entry) => <ArchiveEntry {...entry} />)}
-					</div>
-				</div>
-			</section>
+						<div class="profile-actions">
+							<a class="profile-actions__primary" href="/dossier">Read the full dossier</a>
+							<a class="profile-actions__secondary" href="/dossier#cases">Skip to case sequence</a>
+						</div>
 
-			<section id="synthesis" class="editorial-section">
-				<div class="editorial-container synthesis-section__grid">
-					<div class="synthesis-section__copy">
-						<h2 class="synthesis-section__title">{synthesisContent.title}</h2>
-						<div class="synthesis-copy">
-							<p>{synthesisContent.paragraphs[0]}</p>
-							<p class="is-muted">{synthesisContent.paragraphs[1]}</p>
+						<div class="profile-swipe-wrap">
+							<SwipeActions client:load />
 						</div>
 					</div>
-					<div class="synthesis-section__panel">
-						<WatchlistPanel {...watchlistContent} />
+				</div>
+
+				<div class="profile-hero__aside">
+					<div class="profile-terminal">
+						<div class="profile-terminal__header">
+							<span>README.md</span>
+							<span>first-impressions.log</span>
+						</div>
+						<TypewriterBio client:load />
 					</div>
+					<AnalystCallout {...profileNote} />
+				</div>
+			</section>
+
+			<section class="profile-metrics">
+				<div class="profile-metrics__grid">
+					{profileStats.map((card) => <EvidenceCard {...card} />)}
+				</div>
+				<div class="profile-heatmap-card">
+					<div class="profile-heatmap-card__header">
+						<span class="profile-heatmap-card__eyebrow">Contribution Mood Board</span>
+						<span class="profile-heatmap-card__meta">Last 4 weeks</span>
+					</div>
+					<div class="profile-heatmap" aria-label="Contribution style heatmap">
+						{
+							heatmapRows.map((row) => (
+								<div class="profile-heatmap__row">
+									{row.map((value) => <span class="profile-heatmap__cell" data-level={value}></span>)}
+								</div>
+							))
+						}
+					</div>
+					<p class="profile-heatmap-card__note">
+						Heavy green means making things. Coral means overthinking them just enough to stay interesting.
+					</p>
+				</div>
+			</section>
+
+			<section class="profile-divider">
+				<SectionBreak
+					title="Pinned Routes"
+					eyebrow="Best entry points"
+					meta="The dossier still lives on its own route"
+				/>
+			</section>
+
+			<section class="profile-pinned" id="pinned">
+				<div class="profile-pinned__quote">
+					<PullQuote
+						quote="Like a dating profile if the hobbies section linked to a classified archive."
+						attribution="First impression"
+					/>
+				</div>
+				<div class="profile-pinned__list">
+					{pinnedRoutes.map((entry) => <ArchiveEntry {...entry} />)}
+				</div>
+			</section>
+
+			<section class="profile-showcase">
+				<div class="profile-showcase__case">
+					<CaseNode {...featuredThread} />
+				</div>
+				<div class="profile-showcase__figure">
+					<InlineFigure {...landingFigure} />
+				</div>
+			</section>
+
+			<section class="profile-signals" id="signals">
+				<div class="profile-signals__copy">
+					<p class="profile-signals__eyebrow">Repository README</p>
+					<h2 class="profile-signals__title">The landing page is the profile card. The dossier is the commit history.</h2>
+					<p class="profile-signals__text">
+						If you want the quick scan, stay here. If you want the full argument, the archived cases,
+						and the more editorial version you already liked, the next click is the real handoff.
+					</p>
+					<div class="profile-signals__links">
+						<a href="/dossier">Open dossier</a>
+						<a href="/dossier#synthesis">Jump to watchlist</a>
+					</div>
+				</div>
+				<div class="profile-signals__panel">
+					<WatchlistPanel {...compatibilityPanel} />
 				</div>
 			</section>
 		</main>
-
-		<footer class="editorial-footer">
-			<div class="editorial-container editorial-footer__grid">
-				<div class="editorial-footer__copy">
-					<span class="editorial-footer__brand">jungle.roaring.wave</span>
-					<p class="editorial-footer__meta">© 2024 Archival Intelligence Unit.</p>
-					<p class="editorial-footer__legal">
-						All data points remain provisional and subject to classified revision without prior notice.
-					</p>
-				</div>
-
-				<div class="editorial-footer__links" id="classified-index">
-					{
-						footerLinks.map((link) => (
-							<a id={link.href.slice(1)} href={link.href}>
-								{link.label}
-							</a>
-						))
-					}
-				</div>
-			</div>
-		</footer>
 	</div>
 </BaseLayout>
