@@ -335,11 +335,13 @@ select {
 
 .epistemic-frame__rail,
 .epistemic-frame__body,
+.case-node,
 .inline-figure__media,
 .inline-figure__caption,
 .case-node__meta,
 .case-node__body,
 .case-node__counter,
+.evidence-grid,
 .pull-quote,
 .section-break,
 .watchlist-panel,
@@ -1177,6 +1179,14 @@ select {
 		padding-left: var(--sidebar-width);
 	}
 
+	.editorial-case-stack {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+	}
+
+	.case-node {
+		grid-column: 1 / -1;
+	}
+
 	.epistemic-frame__rail {
 		grid-column: span 5;
 		position: sticky;
@@ -1210,6 +1220,10 @@ select {
 	}
 
 	.pull-quote {
+		grid-column: 4 / -1;
+	}
+
+	.evidence-grid {
 		grid-column: 4 / -1;
 	}
 
