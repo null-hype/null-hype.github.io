@@ -119,6 +119,10 @@ select {
 	letter-spacing: -0.04em;
 }
 
+.editorial-topbar__brand {
+	text-decoration: none;
+}
+
 .editorial-nav {
 	gap: 1.25rem;
 }
@@ -284,6 +288,10 @@ select {
 	padding-block: clamp(2rem, 4vw, 4rem);
 }
 
+.editorial-block--tight {
+	padding-top: 0;
+}
+
 .editorial-section--bordered {
 	border-bottom: 1px solid var(--editorial-outline);
 }
@@ -327,6 +335,31 @@ select {
 	color: var(--editorial-secondary);
 }
 
+.editorial-prose,
+.archive-section__copy,
+.editorial-note__copy {
+	display: grid;
+	gap: 1.15rem;
+	max-width: 42rem;
+	font-size: var(--step-1);
+	line-height: 1.68;
+}
+
+.editorial-prose p,
+.archive-section__copy p,
+.editorial-note__copy p {
+	margin: 0;
+}
+
+.editorial-prose--lead {
+	font-size: var(--step-2);
+	line-height: 1.55;
+}
+
+.editorial-prose--case-intro {
+	margin-bottom: clamp(2.5rem, 4vw, 4rem);
+}
+
 .epistemic-frame {
 	display: grid;
 	grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -335,11 +368,13 @@ select {
 
 .epistemic-frame__rail,
 .epistemic-frame__body,
+.case-node,
 .inline-figure__media,
 .inline-figure__caption,
 .case-node__meta,
 .case-node__body,
 .case-node__counter,
+.evidence-grid,
 .pull-quote,
 .section-break,
 .watchlist-panel,
@@ -890,6 +925,10 @@ select {
 	color: var(--editorial-secondary);
 }
 
+.archive-section__copy {
+	color: rgba(var(--editorial-rgb), 0.76);
+}
+
 .synthesis-section__title {
 	margin: 0 0 1.5rem;
 	font-size: var(--step-4);
@@ -1048,6 +1087,7 @@ select {
 	border-color: var(--editorial-accent);
 	background: var(--editorial-accent);
 	color: #fff;
+	text-decoration: none;
 }
 
 .watchlist-panel__cta:hover,
@@ -1128,6 +1168,23 @@ select {
 	color: #fff;
 }
 
+.editorial-note-stack {
+	display: grid;
+	gap: 2rem;
+}
+
+.editorial-note {
+	border-left: 0.22rem solid var(--editorial-accent);
+	padding-left: 1.4rem;
+}
+
+.editorial-note__title {
+	margin: 0 0 0.9rem;
+	font-size: var(--step-1);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+}
+
 .story-frame {
 	padding: 2rem;
 	background: var(--editorial-bg);
@@ -1177,6 +1234,14 @@ select {
 		padding-left: var(--sidebar-width);
 	}
 
+	.editorial-case-stack {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+	}
+
+	.case-node {
+		grid-column: 1 / -1;
+	}
+
 	.epistemic-frame__rail {
 		grid-column: span 5;
 		position: sticky;
@@ -1210,6 +1275,10 @@ select {
 	}
 
 	.pull-quote {
+		grid-column: 4 / -1;
+	}
+
+	.evidence-grid {
 		grid-column: 4 / -1;
 	}
 

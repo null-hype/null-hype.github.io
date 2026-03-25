@@ -10,6 +10,7 @@ export interface WatchlistPanelProps {
 		readonly description: string;
 	}[];
 	readonly ctaLabel: string;
+	readonly ctaHref?: string;
 	readonly dossierId: string;
 }
 
@@ -19,6 +20,7 @@ export default function WatchlistPanel({
 	title,
 	indicators,
 	ctaLabel,
+	ctaHref,
 	dossierId,
 }: Readonly<WatchlistPanelProps>) {
 	return (
@@ -38,9 +40,15 @@ export default function WatchlistPanel({
 				))}
 			</ul>
 			<div className="watchlist-panel__footer">
-				<button className="watchlist-panel__cta" type="button">
-					{ctaLabel}
-				</button>
+				{ctaHref ? (
+					<a className="watchlist-panel__cta" href={ctaHref}>
+						{ctaLabel}
+					</a>
+				) : (
+					<button className="watchlist-panel__cta" type="button">
+						{ctaLabel}
+					</button>
+				)}
 				<p className="watchlist-panel__dossier">{dossierId}</p>
 			</div>
 		</aside>

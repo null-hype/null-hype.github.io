@@ -36,4 +36,4 @@ The site now follows a normal Astro layout:
 └── tsconfig.json
 ```
 
-`astro.config.mjs` keeps the `SITE` and `BASE_PATH` environment variables so the existing GitHub Pages workflow can build correctly for project or user pages.
+`astro.config.mjs` keeps the `SITE` and `BASE_PATH` environment variables for Astro project/user-path builds, while GitHub Actions now publishes Storybook to GitHub Pages.

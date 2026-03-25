@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TidelaneList from './TidelaneList';
+import '../styles/editorial.css';
+import '../styles/now-page.css';
+import { nowPageMeta, nowSections } from '../data/nowContent';
+---
+
+<BaseLayout
+	title="jungle.roaring.wave | Now"
+	description="What Robin Jordan is focused on now, drawn from the current Linear backlog."
+>
+	<div class="now-page">
+		<div class="now-page__grain" aria-hidden="true"></div>
+
+		<header class="now-header">
+			<div class="now-shell now-header__inner">
+				<a class="now-header__brand" href="/now">jungle.roaring.wave</a>
+				<nav class="now-header__nav" aria-label="Primary">
+					<a href="#now">Now</a>
+					<a href="#recently-done">Recently done</a>
+					<a href="/dossier">Dossier</a>
+				</nav>
+			</div>
+		</header>
+
+		<main class="now-main now-shell">
+			<p class="now-kicker">Now / {nowPageMeta.lastUpdated}</p>
+			<h1 class="now-title">{nowPageMeta.title}</h1>
+
+			<div class="now-intro">
+				{nowPageMeta.intro.map((paragraph) => <p>{paragraph}</p>)}
+			</div>
+
+			<TidelaneList sections={nowSections} />
+
+			<footer class="now-footer">
+				<p>{nowPageMeta.footer}</p>
+				<p>
+					The deeper version of the current obsession lives in the <a href="/dossier">dossier</a>.
+				</p>
+			</footer>
+		</main>
+	</div>
+</BaseLayout>
