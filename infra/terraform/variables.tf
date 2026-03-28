@@ -47,4 +47,5 @@ variable "domain" {
 variable "ssh_public_key" {
   description = "SSH public key to inject into the instance for post-provision access"
   type        = string
+  sensitive   = true
 }
