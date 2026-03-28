@@ -140,6 +140,7 @@ export class TidelaneInfra {
     gcpCredentials: Secret,
     cloudflareToken: Secret,
     gcpProject: string,
+    cloudflareZoneId: string,
     @argument({ defaultValue: false }) preserveOnFailure: boolean,
   ): Promise<string> {
     return dag.container()
@@ -148,8 +149,10 @@ export class TidelaneInfra {
       .withSecretVariable("GOOGLE_CREDENTIALS", gcpCredentials)
       .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
       .withEnvVariable("GCP_PROJECT", gcpProject)
+      .withEnvVariable("CLOUDFLARE_ZONE_ID", cloudflareZoneId)
       .withEnvVariable("PRESERVE_ON_FAILURE", preserveOnFailure ? "1" : "0")
       .withWorkdir("/workspace/test")
+      .withExec(["go", "mod", "tidy"])
       .withExec(["go", "test", "-v", "-timeout", "30m", "./..."])
       .stdout()
   }
