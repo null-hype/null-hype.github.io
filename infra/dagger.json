@@ -1,0 +1,7 @@
+{
+  "name": "tidelane-infra",
+  "engineVersion": "v0.13.0",
+  "sdk": {
+    "source": "typescript"
+  }
+}
