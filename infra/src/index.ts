@@ -1,7 +1,48 @@
 import { dag, Container, Directory, File, Secret, object, func, argument } from "@dagger.io/dagger"
 
+/**
+ * Command surface (PLAN-191):
+ *
+ *   bootstrap  Phase 0 — prerequisites only. Creates SA, GCS bucket, SSH keypair.
+ *              Never touches compute or DNS. Idempotent. Elevated authority required.
+ *   plan       Phase 1 — non-mutating. terraform plan, print diff, exit.
+ *   check      Phase 1 — ephemeral only. Terratest suite, isolated resources.
+ *   deploy     Phase 2 — production-mutating. terraform apply + SSH bootstrap.
+ *   verify     Phase 3 — non-mutating. External smoke checks.
+ *   destroy    Phase 2 — production-mutating. terraform destroy.
+ */
 @object()
 export class TidelaneInfra {
+  /**
+   * bootstrap — control-plane prerequisites only (Phase 0).
+   *
+   * Creates the prerequisites that plan/deploy require, without touching
+   * any Terraform-owned resources (compute, DNS, firewall).
+   *
+   * What it may create:
+   *   - GCP service account for deploy operations
+   *   - IAM bindings on that SA
+   *   - GCS bucket for Terraform state
+   *   - Service account JSON key
+   *   - SSH keypair for instance access
+   *
+   * All operations are idempotent. Failures include the exact remediation
+   * command needed to resolve the issue.
+   *
+   * Implemented in PLAN-193.
+   */
+  @func()
+  async bootstrap(
+    gcpProject: string,
+    cloudflareToken: Secret,
+    @argument({ defaultValue: "us-central1" }) gcpRegion: string,
+    @argument({ defaultValue: "tidelane-deploy" }) serviceAccountName: string,
+    @argument({ defaultValue: "" }) backendBucket: string,
+  ): Promise<string> {
+    // TODO(PLAN-193): implement via gcloud prerequisite creation
+    throw new Error("bootstrap not yet implemented — see PLAN-193")
+  }
+
   /**
    * plan — non-mutating.
    * Runs `terraform plan` and prints the diff. Never writes state.
