@@ -3,11 +3,13 @@ import { dag, Container, Directory, Secret, object, func, argument } from "@dagg
 /**
  * Operator contract (PLAN-180):
  *
- *   plan    — non-mutating: terraform plan, print diff, exit
- *   check   — ephemeral-only: Terratest suite, create/destroy test resources
- *   deploy  — production-mutating: terraform apply + smallweb SSH bootstrap
- *   verify  — non-mutating: external smoke checks against tidelands.dev
- *   destroy — production-mutating: terraform destroy
+ *   bootstrap  Phase 0 — prerequisites only. Creates SA, GCS bucket, SSH keypair.
+ *              Never touches compute or DNS. Idempotent. Elevated authority required.
+ *   plan       Phase 1 — non-mutating: terraform plan, print diff, exit
+ *   check      Phase 1 — ephemeral-only: Terratest suite, create/destroy test resources
+ *   deploy     Phase 2 — production-mutating: terraform apply + smallweb SSH bootstrap
+ *   verify     Phase 3 — non-mutating: external smoke checks against tidelands.dev
+ *   destroy    Phase 2 — production-mutating: terraform destroy
  *
  * Secrets contract (PLAN-181):
  *
@@ -21,6 +23,36 @@ import { dag, Container, Directory, Secret, object, func, argument } from "@dagg
  */
 @object()
 export class TidelaneInfra {
+  /**
+   * bootstrap — control-plane prerequisites only (Phase 0).
+   *
+   * Creates the prerequisites that plan/deploy require, without touching
+   * any Terraform-owned resources (compute, DNS, firewall).
+   *
+   * What it may create:
+   *   - GCP service account for deploy operations
+   *   - IAM bindings on that SA
+   *   - GCS bucket for Terraform state
+   *   - Service account JSON key
+   *   - SSH keypair for instance access
+   *
+   * All operations are idempotent. Failures include the exact remediation
+   * command needed to resolve the issue.
+   *
+   * Implemented in PLAN-193.
+   */
+  @func()
+  async bootstrap(
+    gcpProject: string,
+    cloudflareToken: Secret,
+    @argument({ defaultValue: "us-central1" }) gcpRegion: string,
+    @argument({ defaultValue: "tidelane-deploy" }) serviceAccountName: string,
+    @argument({ defaultValue: "" }) backendBucket: string,
+  ): Promise<string> {
+    // TODO(PLAN-193): implement via gcloud prerequisite creation
+    throw new Error("bootstrap not yet implemented — see PLAN-193")
+  }
+
   /**
    * plan — non-mutating.
    * Runs `terraform plan` and prints the diff. Never writes state.
