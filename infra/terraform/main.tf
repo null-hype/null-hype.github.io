@@ -12,7 +12,15 @@ terraform {
     }
   }
 
-  # backend "gcs" {}  # configured via -backend-config at init time
+  backend "gcs" {
+    # bucket and prefix are passed via -backend-config at init time.
+    # Example:
+    #   terraform init \
+    #     -backend-config="bucket=my-tf-state-bucket" \
+    #     -backend-config="prefix=tidelands-dev/terraform.tfstate"
+    #
+    # The bucket must exist before first init (not managed by Terraform).
+  }
 }
 
 provider "google" {
