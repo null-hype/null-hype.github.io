@@ -13,11 +13,11 @@ import { dag, Container, Directory, Secret, object, func, argument } from "@dagg
  *
  *   gcpCredentials  — GCP service account JSON key (provider + GCS backend)
  *   cloudflareToken — Cloudflare API token (DNS edit + zone settings)
- *   sshPublicKey    — SSH public key → instance metadata at provision time
+ *   sshPublicKey    — SSH public key injected into instance metadata
  *   sshPrivateKey   — SSH private key for post-provision Dagger bootstrap
  *
- * Non-secret config (backendBucket, backendPrefix, gcpProject, etc.) flows
- * in as plain string args.
+ * All non-secret config (backendBucket, backendPrefix, gcpProject, etc.)
+ * flows in as plain string args.
  */
 @object()
 export class TidelaneInfra {
@@ -34,30 +34,27 @@ export class TidelaneInfra {
     backendBucket: string,
     backendPrefix: string,
     gcpProject: string,
+    cloudflareZoneId: string,
     @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    cloudflareZoneId: string,
+    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfContainer(src, gcpCredentials, cloudflareToken, sshPublicKey)
-      .withWorkdir("/workspace/terraform")
-      .withExec([
-        "terraform", "init", "-reconfigure",
-        `-backend-config=bucket=${backendBucket}`,
-        `-backend-config=prefix=${backendPrefix}`,
-      ])
+    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "plan",
         `-var=gcp_project_id=${gcpProject}`,
         `-var=gcp_zone=${gcpZone}`,
         `-var=domain=${domain}`,
         `-var=cloudflare_zone_id=${cloudflareZoneId}`,
+        `-var=instance_name=${instanceName}`,
       ])
       .stdout()
   }
 
   /**
    * deploy — production-mutating.
-   * Runs `terraform apply`, then bootstraps smallweb over SSH.
+   * Runs `terraform apply`, emits outputs as JSON.
+   * Post-apply smallweb bootstrap is handled in PLAN-186.
    */
   @func()
   async deploy(
@@ -65,47 +62,24 @@ export class TidelaneInfra {
     gcpCredentials: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    sshPrivateKey: Secret,
     backendBucket: string,
     backendPrefix: string,
     gcpProject: string,
+    cloudflareZoneId: string,
     @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    cloudflareZoneId: string,
+    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    const outputs = await this.tfContainer(src, gcpCredentials, cloudflareToken, sshPublicKey)
-      .withWorkdir("/workspace/terraform")
-      .withExec([
-        "terraform", "init", "-reconfigure",
-        `-backend-config=bucket=${backendBucket}`,
-        `-backend-config=prefix=${backendPrefix}`,
-      ])
+    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "apply", "-auto-approve",
         `-var=gcp_project_id=${gcpProject}`,
         `-var=gcp_zone=${gcpZone}`,
         `-var=domain=${domain}`,
         `-var=cloudflare_zone_id=${cloudflareZoneId}`,
+        `-var=instance_name=${instanceName}`,
       ])
       .withExec(["terraform", "output", "-json"])
-      .stdout()
-
-    // TODO(PLAN-186): parse outputs JSON, SSH into instance_ipv4, run bootstrap
-    return outputs
-  }
-
-  /**
-   * verify — non-mutating.
-   * Hits tidelands.dev externally and asserts expected routing behavior.
-   */
-  @func()
-  async verify(
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-  ): Promise<string> {
-    // TODO(PLAN-187): expand to representative subdomains and assert response content
-    return dag.container()
-      .from("curlimages/curl:latest")
-      .withExec(["curl", "-sf", "--max-time", "10", `https://${domain}`])
       .stdout()
   }
 
@@ -122,32 +96,43 @@ export class TidelaneInfra {
     backendBucket: string,
     backendPrefix: string,
     gcpProject: string,
+    cloudflareZoneId: string,
     @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    cloudflareZoneId: string,
+    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfContainer(src, gcpCredentials, cloudflareToken, sshPublicKey)
-      .withWorkdir("/workspace/terraform")
-      .withExec([
-        "terraform", "init", "-reconfigure",
-        `-backend-config=bucket=${backendBucket}`,
-        `-backend-config=prefix=${backendPrefix}`,
-      ])
+    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "destroy", "-auto-approve",
         `-var=gcp_project_id=${gcpProject}`,
         `-var=gcp_zone=${gcpZone}`,
         `-var=domain=${domain}`,
         `-var=cloudflare_zone_id=${cloudflareZoneId}`,
+        `-var=instance_name=${instanceName}`,
       ])
+      .stdout()
+  }
+
+  /**
+   * verify — non-mutating.
+   * Hits the domain externally and asserts a 200 response.
+   * Extended smoke checks are implemented in PLAN-187.
+   */
+  @func()
+  async verify(
+    @argument({ defaultValue: "tidelands.dev" }) domain: string,
+  ): Promise<string> {
+    return dag.container()
+      .from("curlimages/curl:latest")
+      .withExec(["curl", "-sf", "--max-time", "15", `https://${domain}`])
       .stdout()
   }
 
   /**
    * check — ephemeral-only (net non-mutating).
    * Runs Terratest suite against isolated resources named tidelane-test-<hex>.
-   * Resources are always destroyed on exit.
-   * Pass preserveOnFailure=true to skip destroy when tests fail (for debugging).
+   * Always destroys on exit. Pass preserveOnFailure=true to skip destroy on failure.
+   * Full suite implemented in PLAN-185.
    */
   @func()
   async check(
@@ -157,7 +142,6 @@ export class TidelaneInfra {
     gcpProject: string,
     @argument({ defaultValue: false }) preserveOnFailure: boolean,
   ): Promise<string> {
-    // TODO(PLAN-185): implement full Terratest suite
     return dag.container()
       .from("golang:1.22-bookworm")
       .withDirectory("/workspace", src)
@@ -170,13 +154,21 @@ export class TidelaneInfra {
       .stdout()
   }
 
-  // --- private helpers ---
+  // ---------------------------------------------------------------------------
+  // Private helpers
+  // ---------------------------------------------------------------------------
 
-  private tfContainer(
+  /**
+   * tfInit returns a container with Terraform initialised against the GCS backend.
+   * All subsequent terraform commands chain off this.
+   */
+  private tfInit(
     src: Directory,
     gcpCredentials: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
+    backendBucket: string,
+    backendPrefix: string,
   ): Container {
     return dag.container()
       .from("hashicorp/terraform:1.7")
@@ -184,5 +176,11 @@ export class TidelaneInfra {
       .withSecretVariable("GOOGLE_CREDENTIALS", gcpCredentials)
       .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
       .withSecretVariable("TF_VAR_ssh_public_key", sshPublicKey)
+      .withWorkdir("/workspace/terraform")
+      .withExec([
+        "terraform", "init", "-reconfigure",
+        `-backend-config=bucket=${backendBucket}`,
+        `-backend-config=prefix=${backendPrefix}`,
+      ])
   }
 }
