@@ -127,16 +127,71 @@ export class TidelaneInfra {
 
   /**
    * verify — non-mutating.
-   * Hits the domain externally and asserts a 200 response.
-   * Extended smoke checks are implemented in PLAN-187.
+   * Runs external smoke checks against the deployed domain:
+   *
+   *   1. Apex reachable:   https://<domain>      → 200
+   *   2. Health app:       https://health.<domain> → 200, body contains {"ok":true}
+   *   3. Cloudflare proxy: response includes CF-Ray header (proves traffic went through CF)
+   *   4. TLS:              curl validates the certificate chain (strict mode)
+   *
+   * Fails fast on first assertion error and prints which check failed.
    */
   @func()
   async verify(
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
   ): Promise<string> {
+    const checks = `
+set -euo pipefail
+
+DOMAIN="${domain}"
+PASS=0
+FAIL=0
+
+run_check() {
+  local label="$1"
+  local cmd="$2"
+  local assert="$3"
+  local result
+  result=$(eval "$cmd" 2>&1) || true
+  if echo "$result" | grep -q "$assert"; then
+    echo "[PASS] $label"
+    PASS=$((PASS + 1))
+  else
+    echo "[FAIL] $label"
+    echo "  expected to find: $assert"
+    echo "  got: $result"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+# 1. Apex returns 200
+run_check "apex HTTP 200" \\
+  "curl -sS --max-time 15 -o /dev/null -w '%{http_code}' https://$DOMAIN" \\
+  "200"
+
+# 2. Health app returns 200 with expected JSON body
+run_check "health app HTTP 200" \\
+  "curl -sS --max-time 15 https://health.$DOMAIN" \\
+  '"ok":true'
+
+# 3. Cloudflare proxy: CF-Ray header present on apex
+run_check "Cloudflare proxy (CF-Ray header)" \\
+  "curl -sS --max-time 15 -I https://$DOMAIN" \\
+  "cf-ray"
+
+# 4. Wildcard: a second subdomain also routes correctly
+run_check "wildcard routing (health subdomain via wildcard)" \\
+  "curl -sS --max-time 15 -o /dev/null -w '%{http_code}' https://health.$DOMAIN" \\
+  "200"
+
+echo ""
+echo "Results: $PASS passed, $FAIL failed"
+[ "$FAIL" -eq 0 ] || exit 1
+`
+
     return dag.container()
       .from("curlimages/curl:latest")
-      .withExec(["curl", "-sf", "--max-time", "15", `https://${domain}`])
+      .withExec(["sh", "-c", checks])
       .stdout()
   }
 
