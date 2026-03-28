@@ -12,6 +12,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .linear-agent-runtime/
+.deno-runtime/
+.smallweb-cache/
+.smallweb-data/
+.smallweb-root/
 
 
 # environment variables

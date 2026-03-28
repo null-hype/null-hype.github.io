@@ -24,6 +24,7 @@ export interface TidelaneListSection {
 	readonly id?: string;
 	readonly title: string;
 	readonly summary?: string;
+	readonly emptyMessage?: string;
 	readonly items: readonly TidelaneListItem[];
 }
 
@@ -87,16 +88,22 @@ export default function TidelaneList({ sections }: Readonly<TidelaneListProps>) 
 							) : null}
 						</div>
 
-						<ul className="tidelane-list">
-							{section.items.map((item) => (
-								<li
-									key={`${id}-${item.lane.slug}-${item.lane.moon.cycle}`}
-									className="tidelane-list__item"
-								>
-									<TidelaneCard item={item} />
-								</li>
-							))}
-						</ul>
+						{section.items.length > 0 ? (
+							<ul className="tidelane-list">
+								{section.items.map((item) => (
+									<li
+										key={`${id}-${item.lane.slug}-${item.lane.moon.cycle}`}
+										className="tidelane-list__item"
+									>
+										<TidelaneCard item={item} />
+									</li>
+								))}
+							</ul>
+						) : (
+							<p className="tidelane-section__empty">
+								{section.emptyMessage ?? 'No items right now.'}
+							</p>
+						)}
 					</section>
 				);
 			})}

@@ -1,87 +1,73 @@
 import type { TidelaneListItem, TidelaneListSection } from '../components/TidelaneList';
+import type { NowPageData } from './linearNowPage';
+import { createUnavailableNowPageData } from './linearNowPage';
 import { generateTidelaneNodes, type TidelaneNode } from './tidelane';
 
-interface NowEntry {
+interface FixtureEntry {
 	readonly title: string;
 	readonly body: string;
 	readonly references: string;
 }
 
-export const nowPageMeta = {
-	lastUpdated: 'March 24, 2026',
-	title: 'What I am doing now',
-	intro: [
-		'This page is pulled from the shape of the work, not from an aspirational bio. Right now the center of gravity is turning the PLAN-26 essay successor into a real web artifact.',
-		'The useful constraint is that everything has to cash out in the same place: Storybook components, Astro composition, a deployable site, and a dossier that is disciplined enough to survive contact with its own critique.',
-	],
-	footer:
-		'If this page looks stale, it probably is. The backlog moves faster than the prose.',
-} as const;
+const NOW_PAGE_TIDELANE_SEED = 26;
+const tidelaneNodes = generateTidelaneNodes(NOW_PAGE_TIDELANE_SEED);
 
-const nowItemsBase: readonly NowEntry[] = [
+const nowItemsBase: readonly FixtureEntry[] = [
 	{
 		title: 'Turn the essay into the artifact',
 		body:
 			'I am composing the Storybook editorial components into the live Astro reading experience and replacing placeholder copy with the v3.5 dossier text from PLAN-26.',
-		references: 'Linear: PLAN-163, PLAN-26',
+		references: 'Linear: PLAN-163 / jungle.roaring.wave / In Progress',
 	},
 	{
 		title: 'Finish the reusable component layer',
 		body:
 			'I am keeping the component library coherent enough that this site is not a one-off build. The point is an editorial system that can carry later essays without starting over.',
-		references: 'Linear: PLAN-142',
+		references: 'Linear: PLAN-142 / jungle.roaring.wave / In Progress',
 	},
 	{
 		title: 'Make publication boring',
 		body:
 			'I am lining up the deployment path early so the site can move cleanly from local build to preview and then to the canonical URL without a last-minute packaging scramble.',
-		references: 'Linear: PLAN-167, PLAN-152',
+		references: 'Linear: PLAN-167 / jungle.roaring.wave / Backlog',
 	},
 	{
 		title: 'Protect the wider editorial platform',
 		body:
 			'I am keeping one eye on the Falada stress tests and production-pipeline notes, but only enough to preserve momentum. They are supporting work, not permission to drift away from shipping this essay.',
-		references: 'Linear: PLAN-18, PLAN-13, PLAN-14, PLAN-15, PLAN-19, PLAN-20, PLAN-21, PLAN-22',
+		references: 'Linear: PLAN-18 / Planning / Backlog',
 	},
 ] as const;
 
-const recentlyDoneItemsBase: readonly NowEntry[] = [
+const recentlyDoneItemsBase: readonly FixtureEntry[] = [
 	{
 		title: 'The first full editorial prototype exists',
 		body:
 			'The Stitch prototype is done. That means the open questions are no longer about vague layout direction. They are now about implementation fidelity, argument quality, and integration.',
-		references: 'Linear: PLAN-137',
+		references: 'Linear: PLAN-137 / jungle.roaring.wave / Done',
 	},
 ] as const;
 
-const notNowItemsBase: readonly NowEntry[] = [
+const notNowItemsBase: readonly FixtureEntry[] = [
 	{
 		title: 'Collecting more parallel projects for their own sake',
 		body:
 			'I am not trying to turn the site, the backlog, the component library, and the essay into four separate hobbies. The useful job is convergence.',
-		references: 'Linear: PLAN-142, PLAN-163, PLAN-167',
+		references: 'Linear: PLAN-21 / Planning / Backlog',
 	},
 	{
 		title: 'Pretending the argument is already proven',
 		body:
 			'I am not trying to publish a grand unified theory of hidden coordination. The current standard is smaller and harder: define what would make the pattern stronger, weaker, or obviously overfit.',
-		references: 'Linear: PLAN-26, PLAN-115, PLAN-116',
+		references: 'Linear: PLAN-20 / Planning / Backlog',
 	},
 ] as const;
 
-export const nowPageTidelaneSeed = 26;
-
-const tidelaneNodes = generateTidelaneNodes(nowPageTidelaneSeed);
-
 function projectItemsToPhase(
-	items: readonly NowEntry[],
+	items: readonly FixtureEntry[],
 	phaseName: TidelaneNode['phase']['name'],
 ): TidelaneListItem[] {
 	const phaseNodes = tidelaneNodes.filter((node) => node.phase.name === phaseName);
-
-	if (phaseNodes.length < items.length) {
-		throw new Error(`Not enough tidelane nodes for phase "${phaseName}"`);
-	}
 
 	return items.map((item, index) => {
 		const node = phaseNodes[index];
@@ -102,29 +88,39 @@ function projectItemsToPhase(
 	});
 }
 
-export const nowItems = projectItemsToPhase(nowItemsBase, 'full');
-
-export const recentlyDoneItems = projectItemsToPhase(recentlyDoneItemsBase, 'waning');
-
-export const notNowItems = projectItemsToPhase(notNowItemsBase, 'waxing');
-
-export const nowSections = [
-	{
-		id: 'now',
-		title: 'Now',
-		summary: 'Full lane / EMEA / live work that is currently consuming the week',
-		items: nowItems,
+export const mockNowPageData: NowPageData = {
+	meta: {
+		lastUpdated: 'March 24, 2026',
+		title: 'What Robin Jordan is doing now',
+		intro: [
+			"Robin Jordan's assigned work is being pulled directly from Linear. The story fixture keeps the composition stable while the live Astro page swaps in real issue data.",
+			'The useful constraint is that everything has to cash out in the same place: Storybook components, Astro composition, and a current snapshot of the assigned issue set.',
+		],
+		footer:
+			'This fixture is only for Storybook. The Astro page uses a Linear-backed data loader at render time.',
 	},
-	{
-		id: 'recently-done',
-		title: 'Recently done',
-		summary: 'Waning lane / Americas / loops that closed cleanly enough to free capacity',
-		items: recentlyDoneItems,
-	},
-	{
-		id: 'not-now',
-		title: 'Not now',
-		summary: 'Waxing lane / APAC / deliberately deferred so the center of gravity stays intact',
-		items: notNowItems,
-	},
-] satisfies readonly TidelaneListSection[];
+	sections: [
+		{
+			id: 'now',
+			title: 'Now',
+			summary: 'Started + unstarted assignments currently in flight. Showing 4 of 4 issues.',
+			items: projectItemsToPhase(nowItemsBase, 'full'),
+		},
+		{
+			id: 'recently-done',
+			title: 'Recently done',
+			summary: 'Most recent completed assignments. Showing 1 of 1 issue.',
+			items: projectItemsToPhase(recentlyDoneItemsBase, 'waning'),
+		},
+		{
+			id: 'not-now',
+			title: 'Not now',
+			summary: 'Backlog and triage work parked outside the active lane. Showing 2 of 2 issues.',
+			items: projectItemsToPhase(notNowItemsBase, 'waxing'),
+		},
+	] satisfies readonly TidelaneListSection[],
+};
+
+export const mockUnavailableNowPageData = createUnavailableNowPageData(
+	new Date('2026-03-25T00:00:00.000Z'),
+);

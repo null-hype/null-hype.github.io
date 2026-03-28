@@ -2,7 +2,7 @@ import React from 'react';
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 
 import TidelaneList from '../../components/TidelaneList';
-import { nowSections } from '../../data/nowContent';
+import { mockNowPageData } from '../../data/nowPageFixture';
 import '../../styles/now-page.css';
 
 const withNowFrame: Decorator = (Story) => (
@@ -27,18 +27,18 @@ type Story = StoryObj<typeof meta>;
 
 export const FullBoard: Story = {
 	args: {
-		sections: nowSections,
+		sections: mockNowPageData.sections,
 	},
 };
 
 export const CurrentLaneOnly: Story = {
 	args: {
-		sections: nowSections.slice(0, 1),
+		sections: mockNowPageData.sections.slice(0, 1),
 	},
 };
 
 export const DeferredWork: Story = {
 	args: {
-		sections: nowSections.slice(2),
+		sections: mockNowPageData.sections.slice(2),
 	},
 };
