@@ -8,6 +8,9 @@ resource "google_compute_instance" "smallweb" {
   machine_type = var.machine_type
   zone         = var.gcp_zone
 
+  # Required for machine type changes without recreating the instance.
+  allow_stopping_for_update = true
+
   boot_disk {
     initialize_params {
       image = data.google_compute_image.debian.self_link
@@ -19,26 +22,60 @@ resource "google_compute_instance" "smallweb" {
   network_interface {
     network = "default"
     access_config {
-      # Ephemeral public IP. Terraform outputs the assigned address.
+      # Ephemeral public IP. Assigned address is exposed via outputs.
+      # DNS records in dns.tf reference this directly, so re-apply after
+      # instance recreation updates DNS automatically.
     }
   }
 
   metadata = {
-    ssh-keys = "smallweb:${var.ssh_public_key}"
+    # Only the key provisioned here can SSH as the smallweb user.
+    ssh-keys               = "smallweb:${var.ssh_public_key}"
+    block-project-ssh-keys = "true"
+  }
+
+  # Minimal scope — this instance serves HTTP only, no GCP API calls needed.
+  service_account {
+    email  = "default"
+    scopes = ["https://www.googleapis.com/auth/logging.write"]
   }
 
   tags = ["smallweb-origin"]
+
+  labels = {
+    managed-by = "terraform"
+    env        = var.env
+  }
 }
 
-resource "google_compute_firewall" "smallweb_ingress" {
-  name    = "${var.instance_name}-ingress"
+# Web traffic: 80 and 443 open to all.
+# Cloudflare proxies inbound requests, so the origin sees Cloudflare IPs.
+# Full (Strict) TLS (dns.tf) ensures the Cloudflare→origin leg is authenticated.
+resource "google_compute_firewall" "smallweb_web" {
+  name    = "${var.instance_name}-web"
   network = "default"
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "80", "443"]
+    ports    = ["80", "443"]
   }
 
-  source_ranges = ["0.0.0.0/0", "::/0"]
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["smallweb-origin"]
+}
+
+# SSH: restricted to the caller-supplied source range.
+# Default is open (0.0.0.0/0) for initial bootstrap.
+# Tighten var.ssh_source_ranges to the Dagger runner's egress IP for production.
+resource "google_compute_firewall" "smallweb_ssh" {
+  name    = "${var.instance_name}-ssh"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = var.ssh_source_ranges
   target_tags   = ["smallweb-origin"]
 }
