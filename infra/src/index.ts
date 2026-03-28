@@ -1,4 +1,4 @@
-import { dag, Container, Directory, Secret, object, func, argument } from "@dagger.io/dagger"
+import { dag, Container, Directory, File, Secret, object, func, argument } from "@dagger.io/dagger"
 
 /**
  * Operator contract (PLAN-180):
@@ -53,8 +53,8 @@ export class TidelaneInfra {
 
   /**
    * deploy — production-mutating.
-   * Runs `terraform apply`, emits outputs as JSON.
-   * Post-apply smallweb bootstrap is handled in PLAN-186.
+   * Runs `terraform apply` then bootstraps smallweb on the instance over SSH.
+   * Returns the terraform outputs JSON on success.
    */
   @func()
   async deploy(
@@ -62,6 +62,7 @@ export class TidelaneInfra {
     gcpCredentials: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
+    sshPrivateKey: Secret,
     backendBucket: string,
     backendPrefix: string,
     gcpProject: string,
@@ -70,7 +71,7 @@ export class TidelaneInfra {
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    const outputsJson = await this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "apply", "-auto-approve",
         `-var=gcp_project_id=${gcpProject}`,
@@ -81,6 +82,17 @@ export class TidelaneInfra {
       ])
       .withExec(["terraform", "output", "-json"])
       .stdout()
+
+    // Parse instance IP from outputs and bootstrap smallweb.
+    // terraform output -json shape: { "instance_ipv4": { "value": "1.2.3.4", ... }, ... }
+    const outputs = JSON.parse(outputsJson) as Record<string, { value: string }>
+    const ipv4 = outputs["instance_ipv4"]?.value
+    if (!ipv4) {
+      throw new Error(`terraform outputs missing instance_ipv4: ${outputsJson}`)
+    }
+
+    await this.sshBootstrap(src.file("scripts/bootstrap.sh"), ipv4, domain, sshPrivateKey)
+    return outputsJson
   }
 
   /**
@@ -132,7 +144,6 @@ export class TidelaneInfra {
    * check — ephemeral-only (net non-mutating).
    * Runs Terratest suite against isolated resources named tidelane-test-<hex>.
    * Always destroys on exit. Pass preserveOnFailure=true to skip destroy on failure.
-   * Full suite implemented in PLAN-185.
    */
   @func()
   async check(
@@ -160,6 +171,50 @@ export class TidelaneInfra {
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
+
+  /**
+   * sshBootstrap connects to host as the smallweb user, waits for SSH to be
+   * ready, copies bootstrap.sh, and runs it with the target domain as argument.
+   *
+   * Retries SSH connection for up to 90 seconds to allow the instance time to
+   * initialise after first boot.
+   */
+  /**
+   * sshBootstrap connects to host as the smallweb user, waits for SSH to be
+   * ready, copies bootstrap.sh from src, and runs it with the target domain.
+   *
+   * Retries SSH connection for up to 90 seconds (18 attempts × 5s) to allow
+   * the instance time to initialise after first boot.
+   */
+  private async sshBootstrap(
+    bootstrapFile: File,
+    host: string,
+    domain: string,
+    sshPrivateKey: Secret,
+  ): Promise<string> {
+    const sshFlags = "-o StrictHostKeyChecking=no -o ConnectTimeout=5 -i /root/.ssh/id_ed25519"
+    const target = `smallweb@${host}`
+
+    return dag.container()
+      .from("alpine:3.19")
+      .withExec(["apk", "add", "--no-cache", "openssh-client"])
+      .withMountedSecret("/root/.ssh/id_ed25519", sshPrivateKey)
+      .withExec(["chmod", "600", "/root/.ssh/id_ed25519"])
+      .withMountedFile("/bootstrap.sh", bootstrapFile)
+      // Wait up to 90 seconds for SSH to become available.
+      .withExec([
+        "sh", "-c",
+        `for i in $(seq 1 18); do
+           ssh ${sshFlags} ${target} echo ready && break
+           echo "waiting for SSH ($i/18)..." && sleep 5
+           [ $i -eq 18 ] && echo "SSH timed out" && exit 1
+         done`,
+      ])
+      // Copy bootstrap script and execute it with the domain argument.
+      .withExec(["scp", ...sshFlags.split(" "), "/bootstrap.sh", `${target}:/tmp/bootstrap.sh`])
+      .withExec(["ssh", ...sshFlags.split(" "), target, `bash /tmp/bootstrap.sh ${domain}`])
+      .stdout()
+  }
 
   /**
    * tfInit returns a container with Terraform initialised against the GCS backend.
