@@ -12,6 +12,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .linear-agent-runtime/
+.deno-runtime/
+.smallweb-cache/
+.smallweb-data/
+.smallweb-root/
 
 
 # environment variables
@@ -30,3 +34,14 @@ storybook-static
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.backup
+infra/terraform/*.tfplan
+infra/terraform/backend.tfvars
+infra/terraform/prod.tfvars
+
+# Bootstrap-generated deploy key (written by `dagger call bootstrap`)
+infra/.deploy-key.json

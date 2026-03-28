@@ -101,7 +101,16 @@
 	line-height: 1.7;
 }
 
+.now-callout {
+	margin-top: 1.75rem;
+	padding: 1rem 1.1rem;
+	border: 1px solid rgba(var(--editorial-rgb), 0.12);
+	border-radius: 1rem;
+	background: rgba(255, 255, 255, 0.72);
+}
+
 .now-intro p,
+.now-callout p,
 .now-item__body,
 .now-footer p {
 	margin: 0;
@@ -167,6 +176,17 @@
 .tidelane-section__summary {
 	margin: 0;
 	color: var(--tidelane-tone);
+}
+
+.tidelane-section__empty {
+	margin: 0;
+	padding: 1rem 1.1rem;
+	border: 1px dashed rgba(var(--editorial-rgb), 0.16);
+	border-radius: 1rem;
+	background: rgba(255, 255, 255, 0.56);
+	font-family: var(--font-meta);
+	line-height: 1.7;
+	color: rgba(var(--editorial-rgb), 0.68);
 }
 
 .tidelane-list {
