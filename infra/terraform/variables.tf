@@ -49,3 +49,15 @@ variable "ssh_public_key" {
   type        = string
   sensitive   = true
 }
+
+variable "ssh_source_ranges" {
+  description = "CIDR ranges allowed to reach port 22. Default is open; tighten to your Dagger runner's egress IP."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "env" {
+  description = "Environment label applied to GCE resources (e.g. prod, test)"
+  type        = string
+  default     = "prod"
+}
