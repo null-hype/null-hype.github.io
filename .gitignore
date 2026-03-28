@@ -42,3 +42,6 @@ infra/terraform/*.tfstate.backup
 infra/terraform/*.tfplan
 infra/terraform/backend.tfvars
 infra/terraform/prod.tfvars
+
+# Bootstrap-generated deploy key (written by `dagger call bootstrap`)
+infra/.deploy-key.json
