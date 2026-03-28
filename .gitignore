@@ -42,3 +42,9 @@ infra/terraform/*.tfstate.backup
 infra/terraform/*.tfplan
 infra/terraform/backend.tfvars
 infra/terraform/prod.tfvars
+
+# Bootstrap-generated outputs (written by `dagger call bootstrap`)
+infra/.deploy-key.json
+infra/.tidelane
+infra/.tidelane.pub
+infra/.zone-id.txt
