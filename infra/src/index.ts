@@ -66,7 +66,6 @@ export class TidelaneInfra {
   @func()
   async plan(
     src: Directory,
-    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -76,6 +75,9 @@ export class TidelaneInfra {
     @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
+    @argument({ defaultValue: "blue" }) deploymentSlot: string,
+    @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
+    gcpCredentials?: Secret,
   ): Promise<string> {
     return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
@@ -85,6 +87,8 @@ export class TidelaneInfra {
         `-var=domain=${domain}`,
         `-var=cloudflare_zone_id=${cloudflareZoneId}`,
         `-var=instance_name=${instanceName}`,
+        `-var=deployment_slot=${deploymentSlot}`,
+        `-var=manage_direct_dns_records=${manageDirectDnsRecords}`,
       ])
       .stdout()
   }
@@ -97,7 +101,6 @@ export class TidelaneInfra {
   @func()
   async deploy(
     src: Directory,
-    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -107,6 +110,9 @@ export class TidelaneInfra {
     @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
+    @argument({ defaultValue: "blue" }) deploymentSlot: string,
+    @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
+    gcpCredentials?: Secret,
   ): Promise<string> {
     return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
@@ -116,6 +122,8 @@ export class TidelaneInfra {
         `-var=domain=${domain}`,
         `-var=cloudflare_zone_id=${cloudflareZoneId}`,
         `-var=instance_name=${instanceName}`,
+        `-var=deployment_slot=${deploymentSlot}`,
+        `-var=manage_direct_dns_records=${manageDirectDnsRecords}`,
       ])
       .withExec(["terraform", "output", "-json"])
       .stdout()
@@ -128,7 +136,6 @@ export class TidelaneInfra {
   @func()
   async destroy(
     src: Directory,
-    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -138,6 +145,9 @@ export class TidelaneInfra {
     @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
+    @argument({ defaultValue: "blue" }) deploymentSlot: string,
+    @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
+    gcpCredentials?: Secret,
   ): Promise<string> {
     return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
@@ -147,6 +157,8 @@ export class TidelaneInfra {
         `-var=domain=${domain}`,
         `-var=cloudflare_zone_id=${cloudflareZoneId}`,
         `-var=instance_name=${instanceName}`,
+        `-var=deployment_slot=${deploymentSlot}`,
+        `-var=manage_direct_dns_records=${manageDirectDnsRecords}`,
       ])
       .stdout()
   }
@@ -175,10 +187,10 @@ export class TidelaneInfra {
   @func()
   async check(
     src: Directory,
-    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     gcpProject: string,
     @argument({ defaultValue: false }) preserveOnFailure: boolean,
+    gcpCredentials?: Secret,
   ): Promise<string> {
     const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
     let ctr = dag.container()

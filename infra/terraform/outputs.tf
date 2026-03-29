@@ -1,5 +1,10 @@
+output "deployment_slot" {
+  description = "Stable blue/green deployment slot managed by this state"
+  value       = var.deployment_slot
+}
+
 output "instance_name" {
-  description = "Name of the provisioned GCE instance"
+  description = "Name of the provisioned GCE instance for the selected deployment slot"
   value       = google_compute_instance.smallweb.name
 }
 
@@ -26,4 +31,9 @@ output "ssh_user" {
 output "ssh_connection" {
   description = "Convenience string for Dagger bootstrap: user@host"
   value       = "smallweb@${google_compute_instance.smallweb.network_interface[0].access_config[0].nat_ip}"
+}
+
+output "manage_direct_dns_records" {
+  description = "Whether this state owns apex and wildcard A records directly"
+  value       = var.manage_direct_dns_records
 }

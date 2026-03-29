@@ -16,9 +16,20 @@ variable "gcp_zone" {
 }
 
 variable "instance_name" {
-  description = "Name of the compute instance. Override for test runs (e.g. tidelane-test-<hex>)."
+  description = "Base name of the compute instance. The deployment slot is appended for slot-aware deploys."
   type        = string
   default     = "tidelane-smallweb"
+}
+
+variable "deployment_slot" {
+  description = "Stable deployment slot name. Use distinct backend prefixes per slot so blue and green can coexist."
+  type        = string
+  default     = "blue"
+
+  validation {
+    condition     = contains(["blue", "green"], var.deployment_slot)
+    error_message = "deployment_slot must be either \"blue\" or \"green\"."
+  }
 }
 
 variable "machine_type" {
@@ -66,4 +77,10 @@ variable "manage_zone_settings" {
   description = "Whether Terraform should manage Cloudflare zone-wide TLS/HTTPS settings."
   type        = bool
   default     = false
+}
+
+variable "manage_direct_dns_records" {
+  description = "Whether this state should own the apex and wildcard A records directly. Disable when provisioning independent blue/green origins behind a load balancer."
+  type        = bool
+  default     = true
 }

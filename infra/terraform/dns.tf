@@ -4,7 +4,10 @@ locals {
 
 # Apex A record: tidelands.dev → instance IPv4
 # TTL is set to 1 (automatic) because proxied records require it.
+# Disable this in blue/green slot states so the load-balancer layer can own
+# live traffic while each slot still provisions its own origin.
 resource "cloudflare_record" "apex_a" {
+  count   = var.manage_direct_dns_records ? 1 : 0
   zone_id = var.cloudflare_zone_id
   name    = "@"
   type    = "A"
@@ -15,7 +18,9 @@ resource "cloudflare_record" "apex_a" {
 
 # Wildcard A record: *.tidelands.dev → instance IPv4
 # Covers all smallweb app subdomains without per-app DNS entries.
+# Disable this in blue/green slot states so direct records do not fight.
 resource "cloudflare_record" "wildcard_a" {
+  count   = var.manage_direct_dns_records ? 1 : 0
   zone_id = var.cloudflare_zone_id
   name    = "*"
   type    = "A"
