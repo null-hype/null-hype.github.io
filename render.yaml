@@ -9,6 +9,7 @@ services:
     buildCommand: |
       set -eu && \
       test -n "$SSH_PRIVATE_KEY" && \
+      test -n "$GCP_CREDENTIALS_JSON" && \
       test -n "$REMOTE_DOCKER_SSH_TARGET" && \
       mkdir -p ~/.ssh .render/bin && \
       printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519 && \
@@ -22,7 +23,7 @@ services:
       export DOCKER_HOST="ssh://$REMOTE_DOCKER_SSH_TARGET" && \
       docker info && \
       npm --prefix infra install && \
-      .render/bin/dagger call -m ./infra plan --src=infra --cloudflare-token=env:CLOUDFLARE_API_TOKEN --ssh-public-key=env:SSH_PUBLIC_KEY --backend-bucket="$BACKEND_BUCKET" --backend-prefix="$BACKEND_PREFIX" --gcp-project="$GCP_PROJECT" --cloudflare-zone-id="$CLOUDFLARE_ZONE_ID" --gcp-zone="${GCP_ZONE:-us-central1-a}" --domain="${DOMAIN:-tidelands.dev}" --instance-name="${INSTANCE_NAME:-tidelane-smallweb}"
+      .render/bin/dagger call -m ./infra plan --src=infra --gcp-credentials=env:GCP_CREDENTIALS_JSON --cloudflare-token=env:CLOUDFLARE_API_TOKEN --ssh-public-key=env:SSH_PUBLIC_KEY --backend-bucket="$BACKEND_BUCKET" --backend-prefix="$BACKEND_PREFIX" --gcp-project="$GCP_PROJECT" --cloudflare-zone-id="$CLOUDFLARE_ZONE_ID" --gcp-zone="${GCP_ZONE:-us-central1-a}" --domain="${DOMAIN:-tidelands.dev}" --instance-name="${INSTANCE_NAME:-tidelane-smallweb}"
     startCommand: node -e "require('node:http').createServer((_,res)=>res.end('ok')).listen(process.env.PORT||10000,'0.0.0.0')"
     healthCheckPath: ""
     autoDeploy: false
