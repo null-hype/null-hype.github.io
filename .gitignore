@@ -15,7 +15,7 @@ pnpm-debug.log*
 .deno-runtime/
 .smallweb-cache/
 .smallweb-data/
-.smallweb-root/
+.smallweb-root/.vscode/
 .render/
 .tmp-home/
 

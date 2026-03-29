@@ -1,0 +1,14 @@
+{
+  "domain": "tidelands.dev",
+  "oidc": {
+    "issuer": "https://lastlogin.net"
+  },
+  "apps": {
+    "admin": {
+      "admin": true,
+      "authorizedEmails": [
+        "replace-me@example.com"
+      ]
+    }
+  }
+}
