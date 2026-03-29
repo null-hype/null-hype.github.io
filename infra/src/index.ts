@@ -1,4 +1,4 @@
-import { dag, Container, Directory, Secret, object, func, argument } from "@dagger.io/dagger"
+import { dag, Container, Directory, Secret, object, func } from "@dagger.io/dagger"
 
 type DeploymentConfig = {
   backendBucket: string
@@ -63,9 +63,9 @@ export class TidelaneInfra {
   async bootstrap(
     gcpProject: string,
     cloudflareToken: Secret,
-    @argument({ defaultValue: "us-central1" }) gcpRegion: string,
-    @argument({ defaultValue: "tidelane-deploy" }) serviceAccountName: string,
-    @argument({ defaultValue: "" }) backendBucket: string,
+    gcpRegion = "us-central1",
+    serviceAccountName = "tidelane-deploy",
+    backendBucket = "",
   ): Promise<string> {
     // TODO(PLAN-193): implement via gcloud prerequisite creation
     throw new Error("bootstrap not yet implemented — see PLAN-193")
@@ -80,8 +80,8 @@ export class TidelaneInfra {
     src: Directory,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    @argument({ defaultValue: "blue" }) deploymentSlot: string,
-    @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
+    deploymentSlot = "blue",
+    manageDirectDnsRecords = true,
     gcpCredentials?: Secret,
   ): Promise<string> {
     const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
@@ -103,8 +103,8 @@ export class TidelaneInfra {
     src: Directory,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    @argument({ defaultValue: "blue" }) deploymentSlot: string,
-    @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
+    deploymentSlot = "blue",
+    manageDirectDnsRecords = true,
     gcpCredentials?: Secret,
   ): Promise<string> {
     const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
@@ -126,8 +126,8 @@ export class TidelaneInfra {
     src: Directory,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    @argument({ defaultValue: "blue" }) deploymentSlot: string,
-    @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
+    deploymentSlot = "blue",
+    manageDirectDnsRecords = true,
     gcpCredentials?: Secret,
   ): Promise<string> {
     const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
@@ -145,9 +145,7 @@ export class TidelaneInfra {
    * Extended smoke checks are implemented in PLAN-187.
    */
   @func()
-  async verify(
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-  ): Promise<string> {
+  async verify(domain = "tidelands.dev"): Promise<string> {
     return dag.container()
       .from("curlimages/curl:latest")
       .withExec(["curl", "-sf", "--max-time", "15", `https://${domain}`])
@@ -164,7 +162,7 @@ export class TidelaneInfra {
   async check(
     src: Directory,
     cloudflareToken: Secret,
-    @argument({ defaultValue: false }) preserveOnFailure: boolean,
+    preserveOnFailure = false,
     gcpCredentials?: Secret,
   ): Promise<string> {
     const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
