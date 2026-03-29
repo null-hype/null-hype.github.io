@@ -32,6 +32,7 @@ resource "cloudflare_record" "wildcard_a" {
 # Full (Strict): Cloudflare validates the origin certificate on every request.
 # Caddy (installed by the bootstrap step) handles origin TLS automatically.
 resource "cloudflare_zone_settings_override" "tls" {
+  count   = var.manage_zone_settings ? 1 : 0
   zone_id = var.cloudflare_zone_id
 
   settings {

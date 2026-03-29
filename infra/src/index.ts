@@ -66,7 +66,7 @@ export class TidelaneInfra {
   @func()
   async plan(
     src: Directory,
-    gcpCredentials: Secret | null,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -77,7 +77,7 @@ export class TidelaneInfra {
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "plan",
         `-var=gcp_project_id=${gcpProject}`,
@@ -97,7 +97,7 @@ export class TidelaneInfra {
   @func()
   async deploy(
     src: Directory,
-    gcpCredentials: Secret | null,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -108,7 +108,7 @@ export class TidelaneInfra {
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "apply", "-auto-approve",
         `-var=gcp_project_id=${gcpProject}`,
@@ -128,7 +128,7 @@ export class TidelaneInfra {
   @func()
   async destroy(
     src: Directory,
-    gcpCredentials: Secret | null,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -139,7 +139,7 @@ export class TidelaneInfra {
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "destroy", "-auto-approve",
         `-var=gcp_project_id=${gcpProject}`,
@@ -175,18 +175,19 @@ export class TidelaneInfra {
   @func()
   async check(
     src: Directory,
-    gcpCredentials: Secret | null,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     gcpProject: string,
     @argument({ defaultValue: false }) preserveOnFailure: boolean,
   ): Promise<string> {
+    const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
     let ctr = dag.container()
       .from("golang:1.22-bookworm")
       .withDirectory("/workspace", src)
       .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
 
-    if (gcpCredentials !== null) {
-      ctr = ctr.withSecretVariable("GOOGLE_CREDENTIALS", gcpCredentials)
+    if (resolvedGcpCredentials !== null) {
+      ctr = ctr.withSecretVariable("GOOGLE_CREDENTIALS", resolvedGcpCredentials)
     } else {
       ctr = ctr.withMountedDirectory(
         "/root/.config/gcloud",
@@ -224,6 +225,7 @@ export class TidelaneInfra {
       .from("hashicorp/terraform:1.7")
       .withDirectory("/workspace", src)
       .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
+      .withSecretVariable("TF_VAR_cloudflare_api_token", cloudflareToken)
       .withSecretVariable("TF_VAR_ssh_public_key", sshPublicKey)
 
     if (gcpCredentials !== null) {
@@ -245,5 +247,23 @@ export class TidelaneInfra {
         `-backend-config=bucket=${backendBucket}`,
         `-backend-config=prefix=${backendPrefix}`,
       ])
+  }
+
+  /**
+   * Prefer an explicitly-passed secret, then fall back to Render/CI env.
+   * This keeps the module callable both from local CLI and from a preview service
+   * whose build command does not pass a dedicated --gcp-credentials flag.
+   */
+  private resolveGcpCredentials(gcpCredentials?: Secret): Secret | null {
+    if (gcpCredentials) {
+      return gcpCredentials
+    }
+
+    const envCredentials = process.env.GCP_CREDENTIALS_JSON
+    if (envCredentials && envCredentials.trim() !== "") {
+      return dag.setSecret("gcp-credentials", envCredentials)
+    }
+
+    return null
   }
 }
