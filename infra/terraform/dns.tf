@@ -1,5 +1,6 @@
 locals {
-  ipv4 = google_compute_instance.smallweb.network_interface[0].access_config[0].nat_ip
+  ipv4                 = google_compute_instance.smallweb.network_interface[0].access_config[0].nat_ip
+  slot_origin_hostname = "${var.deployment_slot}-origin.${var.domain}"
 }
 
 # Apex A record: tidelands.dev → instance IPv4
@@ -27,6 +28,18 @@ resource "cloudflare_record" "wildcard_a" {
   content = local.ipv4
   proxied = true
   ttl     = 1
+}
+
+# Stable per-slot origin hostname for a future shared traffic layer.
+# Keep this DNS-only so a Cloudflare load balancer can target the origin
+# directly without creating a proxy loop.
+resource "cloudflare_record" "slot_origin_a" {
+  zone_id = var.cloudflare_zone_id
+  name    = "${var.deployment_slot}-origin"
+  type    = "A"
+  content = local.ipv4
+  proxied = false
+  ttl     = 60
 }
 
 # Note: AAAA records are omitted — GCE instances do not receive IPv6 addresses
