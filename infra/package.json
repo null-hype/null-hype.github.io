@@ -9,5 +9,8 @@
   "dependencies": {
     "@dagger.io/dagger": "^0.13.0",
     "typescript": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
   }
 }
