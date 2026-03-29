@@ -4,20 +4,22 @@ Plain Astro site for the `null-hype.github.io` Pages deployment.
 
 ## Render PR Pipeline
 
-This repo includes a dedicated Render service for PR-scoped Dagger plans.
+This repo includes a dedicated Render service for PR-scoped Dagger module checks.
 
 `render.yaml` defines the base Render service:
 
-- Service name: `null-hype-dagger-pr-plan`
+- Service name: `null-hype-dagger-pr-check`
 - Branch: `plan-188` for the current stacked-branch setup, then back to `master` after merge
 - Runtime: Node
 - Preview generation: manual
 - Preview trigger: add the GitHub label `render-preview` to a PR
 - Auto deploy on branch commits: off
 
-Required environment depends on the selected Dagger function:
+The preview service is intended to exercise the Dagger module itself, not to run
+Terraform against live infrastructure.
 
-- `plan`: `CLOUDFLARE_API_TOKEN`, `SSH_PUBLIC_KEY`, `BACKEND_BUCKET`, `BACKEND_PREFIX`, `GCP_PROJECT`, `CLOUDFLARE_ZONE_ID`
+Required environment for preview checks:
+
 - Remote Dagger engine: `SSH_PRIVATE_KEY`, `REMOTE_DOCKER_SSH_TARGET`
 
 Local bootstrap order for the current Render setup:
@@ -26,6 +28,7 @@ Local bootstrap order for the current Render setup:
 2. SSH to the created VM and run [`infra/scripts/bootstrap-docker-engine.sh`](/workspaces/null-hype.github.io/infra/scripts/bootstrap-docker-engine.sh).
 3. Set `REMOTE_DOCKER_SSH_TARGET` in Render to that host, for example `smallweb@203.0.113.10`.
 4. Redeploy the Render service so Dagger uses the remote Docker engine over SSH.
+5. Render previews run `dagger check --src=infra`, which installs module dependencies, builds the TypeScript module, and runs a tiny Node smoke test so the logs show an explicit passing test.
 
 ## Commands
 

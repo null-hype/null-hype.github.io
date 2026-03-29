@@ -1,4 +1,4 @@
-import { dag, Container, Directory, File, Secret, object, func, argument } from "@dagger.io/dagger"
+import { dag, Container, Directory, File, Secret, object, func } from "@dagger.io/dagger"
 
 /**
  * Operator contract (PLAN-180):
@@ -28,16 +28,16 @@ export class TidelaneInfra {
   @func()
   async plan(
     src: Directory,
-    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
     backendPrefix: string,
     gcpProject: string,
     cloudflareZoneId: string,
-    @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
+    gcpZone: string = "us-central1-a",
+    domain: string = "tidelands.dev",
+    instanceName: string = "tidelane-smallweb",
+    gcpCredentials?: Secret,
   ): Promise<string> {
     return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
@@ -59,7 +59,6 @@ export class TidelaneInfra {
   @func()
   async deploy(
     src: Directory,
-    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     sshPrivateKey: Secret,
@@ -67,9 +66,10 @@ export class TidelaneInfra {
     backendPrefix: string,
     gcpProject: string,
     cloudflareZoneId: string,
-    @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
+    gcpZone: string = "us-central1-a",
+    domain: string = "tidelands.dev",
+    instanceName: string = "tidelane-smallweb",
+    gcpCredentials?: Secret,
   ): Promise<string> {
     const outputsJson = await this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
@@ -102,16 +102,16 @@ export class TidelaneInfra {
   @func()
   async destroy(
     src: Directory,
-    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
     backendPrefix: string,
     gcpProject: string,
     cloudflareZoneId: string,
-    @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
+    gcpZone: string = "us-central1-a",
+    domain: string = "tidelands.dev",
+    instanceName: string = "tidelane-smallweb",
+    gcpCredentials?: Secret,
   ): Promise<string> {
     return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
@@ -138,7 +138,7 @@ export class TidelaneInfra {
    */
   @func()
   async verify(
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
+    domain: string = "tidelands.dev",
   ): Promise<string> {
     const checks = `
 set -euo pipefail
@@ -196,31 +196,22 @@ echo "Results: $PASS passed, $FAIL failed"
   }
 
   /**
-   * check — ephemeral-only (net non-mutating).
-   * Runs Terratest suite against isolated resources named tidelane-test-<hex>.
-   * Always destroys on exit. Pass preserveOnFailure=true to skip destroy on failure.
+   * check — Dagger module build/smoke test.
+   * This is the preview-safe gate for agents working on the module itself:
+   * install dependencies, compile the TypeScript module, and run a tiny Node
+   * smoke test against the built output.
    */
   @func()
   async check(
     src: Directory,
-    gcpCredentials?: Secret,
-    cloudflareToken: Secret,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    @argument({ defaultValue: false }) preserveOnFailure: boolean,
   ): Promise<string> {
-    const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
     return dag.container()
-      .from("golang:1.22-bookworm")
+      .from("node:22-bookworm")
       .withDirectory("/workspace", src)
-      .withSecretVariable("GOOGLE_CREDENTIALS", resolvedGcpCredentials)
-      .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
-      .withEnvVariable("GCP_PROJECT", gcpProject)
-      .withEnvVariable("CLOUDFLARE_ZONE_ID", cloudflareZoneId)
-      .withEnvVariable("PRESERVE_ON_FAILURE", preserveOnFailure ? "1" : "0")
-      .withWorkdir("/workspace/test")
-      .withExec(["go", "mod", "tidy"])
-      .withExec(["go", "test", "-v", "-timeout", "30m", "./..."])
+      .withWorkdir("/workspace")
+      .withExec(["npm", "install"])
+      .withExec(["npm", "run", "build"])
+      .withExec(["node", "--test", "module.smoke.test.mjs"])
       .stdout()
   }
 
