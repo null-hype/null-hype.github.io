@@ -1,5 +1,17 @@
 import { dag, Container, Directory, Secret, object, func, argument } from "@dagger.io/dagger"
 
+type DeploymentConfig = {
+  backendBucket: string
+  backendPrefix: string
+  gcpProject: string
+  cloudflareZoneId: string
+  gcpZone: string
+  domain: string
+  instanceName: string
+  deploymentSlot: string
+  manageDirectDnsRecords: boolean
+}
+
 /**
  * Operator contract (PLAN-180):
  *
@@ -24,8 +36,8 @@ import { dag, Container, Directory, Secret, object, func, argument } from "@dagg
  *                the deploy SA and returns a JSON key for subsequent commands.
  *   Fallback   — pass gcpCredentials explicitly (CI or pre-minted key path).
  *
- * All non-secret config (backendBucket, backendPrefix, gcpProject, etc.)
- * flows in as plain string args.
+ * Non-secret deployment config is loaded once from env and passed down as a
+ * typed object. Dagger owns the workflow surface; Terraform owns the raw vars.
  */
 @object()
 export class TidelaneInfra {
@@ -68,27 +80,15 @@ export class TidelaneInfra {
     src: Directory,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
     @argument({ defaultValue: "blue" }) deploymentSlot: string,
     @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
     gcpCredentials?: Secret,
   ): Promise<string> {
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
       .withExec([
         "terraform", "plan",
-        `-var=gcp_project_id=${gcpProject}`,
-        `-var=gcp_zone=${gcpZone}`,
-        `-var=domain=${domain}`,
-        `-var=cloudflare_zone_id=${cloudflareZoneId}`,
-        `-var=instance_name=${instanceName}`,
-        `-var=deployment_slot=${deploymentSlot}`,
-        `-var=manage_direct_dns_records=${manageDirectDnsRecords}`,
+        ...this.tfVars(config),
       ])
       .stdout()
   }
@@ -103,27 +103,15 @@ export class TidelaneInfra {
     src: Directory,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
     @argument({ defaultValue: "blue" }) deploymentSlot: string,
     @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
     gcpCredentials?: Secret,
   ): Promise<string> {
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
       .withExec([
         "terraform", "apply", "-auto-approve",
-        `-var=gcp_project_id=${gcpProject}`,
-        `-var=gcp_zone=${gcpZone}`,
-        `-var=domain=${domain}`,
-        `-var=cloudflare_zone_id=${cloudflareZoneId}`,
-        `-var=instance_name=${instanceName}`,
-        `-var=deployment_slot=${deploymentSlot}`,
-        `-var=manage_direct_dns_records=${manageDirectDnsRecords}`,
+        ...this.tfVars(config),
       ])
       .withExec(["terraform", "output", "-json"])
       .stdout()
@@ -138,27 +126,15 @@ export class TidelaneInfra {
     src: Directory,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    @argument({ defaultValue: "us-central1-a" }) gcpZone: string,
-    @argument({ defaultValue: "tidelands.dev" }) domain: string,
-    @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
     @argument({ defaultValue: "blue" }) deploymentSlot: string,
     @argument({ defaultValue: true }) manageDirectDnsRecords: boolean,
     gcpCredentials?: Secret,
   ): Promise<string> {
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
       .withExec([
         "terraform", "destroy", "-auto-approve",
-        `-var=gcp_project_id=${gcpProject}`,
-        `-var=gcp_zone=${gcpZone}`,
-        `-var=domain=${domain}`,
-        `-var=cloudflare_zone_id=${cloudflareZoneId}`,
-        `-var=instance_name=${instanceName}`,
-        `-var=deployment_slot=${deploymentSlot}`,
-        `-var=manage_direct_dns_records=${manageDirectDnsRecords}`,
+        ...this.tfVars(config),
       ])
       .stdout()
   }
@@ -188,11 +164,11 @@ export class TidelaneInfra {
   async check(
     src: Directory,
     cloudflareToken: Secret,
-    gcpProject: string,
     @argument({ defaultValue: false }) preserveOnFailure: boolean,
     gcpCredentials?: Secret,
   ): Promise<string> {
     const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
+    const gcpProject = this.requiredEnv("GCP_PROJECT")
     let ctr = dag.container()
       .from("golang:1.22-bookworm")
       .withDirectory("/workspace", src)
@@ -230,8 +206,7 @@ export class TidelaneInfra {
     gcpCredentials: Secret | null,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
+    config: DeploymentConfig,
   ): Container {
     let ctr = dag.container()
       .from("hashicorp/terraform:1.7")
@@ -256,9 +231,60 @@ export class TidelaneInfra {
       .withWorkdir("/workspace/terraform")
       .withExec([
         "terraform", "init", "-reconfigure",
-        `-backend-config=bucket=${backendBucket}`,
-        `-backend-config=prefix=${backendPrefix}`,
+        `-backend-config=bucket=${config.backendBucket}`,
+        `-backend-config=prefix=${config.backendPrefix}`,
       ])
+  }
+
+  private tfVars(config: DeploymentConfig): string[] {
+    return [
+      `-var=gcp_project_id=${config.gcpProject}`,
+      `-var=gcp_zone=${config.gcpZone}`,
+      `-var=domain=${config.domain}`,
+      `-var=cloudflare_zone_id=${config.cloudflareZoneId}`,
+      `-var=instance_name=${config.instanceName}`,
+      `-var=deployment_slot=${config.deploymentSlot}`,
+      `-var=manage_direct_dns_records=${config.manageDirectDnsRecords}`,
+    ]
+  }
+
+  private loadDeploymentConfig(overrides: Pick<DeploymentConfig, "deploymentSlot" | "manageDirectDnsRecords">): DeploymentConfig {
+    return {
+      backendBucket: this.requiredEnv("BACKEND_BUCKET"),
+      backendPrefix: this.resolveBackendPrefix(overrides.deploymentSlot),
+      gcpProject: this.requiredEnv("GCP_PROJECT"),
+      cloudflareZoneId: this.requiredEnv("CLOUDFLARE_ZONE_ID"),
+      gcpZone: process.env.GCP_ZONE ?? "us-central1-a",
+      domain: process.env.DOMAIN ?? "tidelands.dev",
+      instanceName: process.env.INSTANCE_NAME ?? "tidelane-smallweb",
+      deploymentSlot: overrides.deploymentSlot,
+      manageDirectDnsRecords: overrides.manageDirectDnsRecords,
+    }
+  }
+
+  private resolveBackendPrefix(deploymentSlot: string): string {
+    const explicit = process.env.BACKEND_PREFIX
+    if (explicit && explicit.trim() !== "") {
+      return explicit.replaceAll("{slot}", deploymentSlot)
+    }
+
+    const root = process.env.BACKEND_PREFIX_ROOT
+    if (root && root.trim() !== "") {
+      return `${root.replace(/\/+$/, "")}/${deploymentSlot}/terraform.tfstate`
+    }
+
+    throw new Error(
+      "missing required env BACKEND_PREFIX or BACKEND_PREFIX_ROOT for Terraform state prefix",
+    )
+  }
+
+  private requiredEnv(name: string): string {
+    const value = process.env[name]
+    if (!value || value.trim() === "") {
+      throw new Error(`missing required env ${name}`)
+    }
+
+    return value
   }
 
   /**

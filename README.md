@@ -9,7 +9,7 @@ This repo includes a dedicated Render service for PR-scoped Dagger plans.
 `render.yaml` defines the base Render service:
 
 - Service name: `null-hype-dagger-pr-plan`
-- Branch: `plan-188` for the current stacked-branch setup, then back to `master` after merge
+- Branch: `plan-197` for the current stacked-branch setup, then back to `master` after merge
 - Runtime: Node
 - Preview generation: manual
 - Preview trigger: add the GitHub label `render-preview` to a PR
@@ -17,7 +17,8 @@ This repo includes a dedicated Render service for PR-scoped Dagger plans.
 
 Required environment depends on the selected Dagger function:
 
-- `plan`: `CLOUDFLARE_API_TOKEN`, `SSH_PUBLIC_KEY`, `BACKEND_BUCKET`, `BACKEND_PREFIX`, `GCP_PROJECT`, `CLOUDFLARE_ZONE_ID`
+- `plan`: `CLOUDFLARE_API_TOKEN`, `SSH_PUBLIC_KEY`, `BACKEND_BUCKET`, `GCP_PROJECT`, `CLOUDFLARE_ZONE_ID`, and either `BACKEND_PREFIX` or `BACKEND_PREFIX_ROOT`
+- Optional deploy-shape env: `DEPLOYMENT_SLOT`, `MANAGE_DIRECT_DNS_RECORDS`, `GCP_ZONE`, `DOMAIN`, `INSTANCE_NAME`
 - Remote Dagger engine: `SSH_PRIVATE_KEY`, `REMOTE_DOCKER_SSH_TARGET`
 
 Local bootstrap order for the current Render setup:

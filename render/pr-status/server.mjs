@@ -13,53 +13,43 @@ const daggerPath = process.env.DAGGER_BIN ?? path.join(renderDir, 'bin', 'dagger
 const pipelineDefinitions = {
   plan: {
     description: 'Non-mutating Terraform plan for PR review.',
-    requiredEnv: [
+    missingEnv: () => missingDeploymentEnv([
       'CLOUDFLARE_API_TOKEN',
       'SSH_PUBLIC_KEY',
-      'BACKEND_BUCKET',
-      'BACKEND_PREFIX',
-      'GCP_PROJECT',
-      'CLOUDFLARE_ZONE_ID',
-    ],
+    ]),
     buildArgs: () => [
       'call',
       '-m',
       './infra',
       'plan',
-      '--src=.',
+      '--src=infra',
       ...secretArg('gcp-credentials', 'GCP_CREDENTIALS'),
       ...secretArg('cloudflare-token', 'CLOUDFLARE_API_TOKEN'),
       ...secretArg('ssh-public-key', 'SSH_PUBLIC_KEY'),
-      `--backend-bucket=${process.env.BACKEND_BUCKET}`,
-      `--backend-prefix=${process.env.BACKEND_PREFIX}`,
-      `--gcp-project=${process.env.GCP_PROJECT}`,
-      `--cloudflare-zone-id=${process.env.CLOUDFLARE_ZONE_ID}`,
-      `--gcp-zone=${process.env.GCP_ZONE ?? 'us-central1-a'}`,
-      `--domain=${process.env.DOMAIN ?? 'tidelands.dev'}`,
-      `--instance-name=${process.env.INSTANCE_NAME ?? 'tidelane-smallweb'}`,
+      ...optionalArg('deployment-slot', process.env.DEPLOYMENT_SLOT),
+      ...optionalArg('manage-direct-dns-records', process.env.MANAGE_DIRECT_DNS_RECORDS),
     ],
   },
   check: {
     description: 'Ephemeral Terratest-backed check run.',
-    requiredEnv: [
+    missingEnv: () => missingRequiredEnv([
       'CLOUDFLARE_API_TOKEN',
       'GCP_PROJECT',
-    ],
+    ]),
     buildArgs: () => [
       'call',
       '-m',
       './infra',
       'check',
-      '--src=.',
+      '--src=infra',
       ...secretArg('gcp-credentials', 'GCP_CREDENTIALS'),
       ...secretArg('cloudflare-token', 'CLOUDFLARE_API_TOKEN'),
-      `--gcp-project=${process.env.GCP_PROJECT}`,
-      `--preserve-on-failure=${process.env.PRESERVE_ON_FAILURE ?? 'false'}`,
+      ...optionalArg('preserve-on-failure', process.env.PRESERVE_ON_FAILURE),
     ],
   },
   verify: {
     description: 'External smoke verification against the configured domain.',
-    requiredEnv: [],
+    missingEnv: () => [],
     buildArgs: () => [
       'call',
       '-m',
@@ -134,7 +124,7 @@ async function initialize() {
     return;
   }
 
-  state.missingEnv = pipeline.requiredEnv.filter((name) => !process.env[name]);
+  state.missingEnv = pipeline.missingEnv();
   state.command = [daggerPath, ...pipeline.buildArgs()].join(' ');
 
   if (state.missingEnv.length > 0) {
@@ -352,6 +342,33 @@ function secretArg(flag, envName) {
   }
 
   return [`--${flag}=env:${envName}`];
+}
+
+function optionalArg(flag, value) {
+  if (!value) {
+    return [];
+  }
+
+  return [`--${flag}=${value}`];
+}
+
+function missingRequiredEnv(names) {
+  return names.filter((name) => !process.env[name]);
+}
+
+function missingDeploymentEnv(baseNames) {
+  const missing = missingRequiredEnv([
+    ...baseNames,
+    'BACKEND_BUCKET',
+    'GCP_PROJECT',
+    'CLOUDFLARE_ZONE_ID',
+  ]);
+
+  if (!process.env.BACKEND_PREFIX && !process.env.BACKEND_PREFIX_ROOT) {
+    missing.push('BACKEND_PREFIX|BACKEND_PREFIX_ROOT');
+  }
+
+  return missing;
 }
 
 function escapeHtml(value) {
