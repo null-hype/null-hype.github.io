@@ -28,7 +28,7 @@ variable "machine_type" {
 }
 
 variable "cloudflare_api_token" {
-  description = "Cloudflare API token with DNS and zone settings permissions"
+  description = "Cloudflare API token. DNS write is required; zone settings write is only needed when manage_zone_settings is enabled."
   type        = string
   sensitive   = true
 }
@@ -60,4 +60,10 @@ variable "env" {
   description = "Environment label applied to GCE resources (e.g. prod, test)"
   type        = string
   default     = "prod"
+}
+
+variable "manage_zone_settings" {
+  description = "Whether Terraform should manage Cloudflare zone-wide TLS/HTTPS settings."
+  type        = bool
+  default     = false
 }

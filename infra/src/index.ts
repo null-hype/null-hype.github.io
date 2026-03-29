@@ -288,6 +288,7 @@ echo "Results: $PASS passed, $FAIL failed"
       .withDirectory("/workspace", src)
       .withSecretVariable("GOOGLE_CREDENTIALS", gcpCredentials)
       .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
+      .withSecretVariable("TF_VAR_cloudflare_api_token", cloudflareToken)
       .withSecretVariable("TF_VAR_ssh_public_key", sshPublicKey)
       .withWorkdir("/workspace/terraform")
       .withExec([
