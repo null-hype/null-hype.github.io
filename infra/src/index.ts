@@ -28,7 +28,7 @@ export class TidelaneInfra {
   @func()
   async plan(
     src: Directory,
-    gcpCredentials: Secret,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -39,7 +39,7 @@ export class TidelaneInfra {
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "plan",
         `-var=gcp_project_id=${gcpProject}`,
@@ -59,7 +59,7 @@ export class TidelaneInfra {
   @func()
   async deploy(
     src: Directory,
-    gcpCredentials: Secret,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     sshPrivateKey: Secret,
@@ -71,7 +71,7 @@ export class TidelaneInfra {
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    const outputsJson = await this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    const outputsJson = await this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "apply", "-auto-approve",
         `-var=gcp_project_id=${gcpProject}`,
@@ -102,7 +102,7 @@ export class TidelaneInfra {
   @func()
   async destroy(
     src: Directory,
-    gcpCredentials: Secret,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
     backendBucket: string,
@@ -113,7 +113,7 @@ export class TidelaneInfra {
     @argument({ defaultValue: "tidelands.dev" }) domain: string,
     @argument({ defaultValue: "tidelane-smallweb" }) instanceName: string,
   ): Promise<string> {
-    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, backendBucket, backendPrefix)
       .withExec([
         "terraform", "destroy", "-auto-approve",
         `-var=gcp_project_id=${gcpProject}`,
@@ -203,16 +203,17 @@ echo "Results: $PASS passed, $FAIL failed"
   @func()
   async check(
     src: Directory,
-    gcpCredentials: Secret,
+    gcpCredentials?: Secret,
     cloudflareToken: Secret,
     gcpProject: string,
     cloudflareZoneId: string,
     @argument({ defaultValue: false }) preserveOnFailure: boolean,
   ): Promise<string> {
+    const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
     return dag.container()
       .from("golang:1.22-bookworm")
       .withDirectory("/workspace", src)
-      .withSecretVariable("GOOGLE_CREDENTIALS", gcpCredentials)
+      .withSecretVariable("GOOGLE_CREDENTIALS", resolvedGcpCredentials)
       .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
       .withEnvVariable("GCP_PROJECT", gcpProject)
       .withEnvVariable("CLOUDFLARE_ZONE_ID", cloudflareZoneId)
@@ -296,5 +297,23 @@ echo "Results: $PASS passed, $FAIL failed"
         `-backend-config=bucket=${backendBucket}`,
         `-backend-config=prefix=${backendPrefix}`,
       ])
+  }
+
+  /**
+   * Prefer an explicitly-passed secret, then fall back to Render/CI env.
+   * This lets the preview service use a normal build command without passing
+   * a dedicated --gcp-credentials flag on every invocation.
+   */
+  private resolveGcpCredentials(gcpCredentials?: Secret): Secret {
+    if (gcpCredentials) {
+      return gcpCredentials
+    }
+
+    const envCredentials = process.env.GCP_CREDENTIALS_JSON
+    if (envCredentials && envCredentials.trim() !== "") {
+      return dag.setSecret("gcp-credentials", envCredentials)
+    }
+
+    throw new Error("gcp credentials are required: pass gcpCredentials or set GCP_CREDENTIALS_JSON")
   }
 }
