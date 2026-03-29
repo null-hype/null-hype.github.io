@@ -78,15 +78,23 @@ cat <<EOF
 Service account key created:
   $KEY_PATH
 
+Set deployment env:
+  export BACKEND_BUCKET=$BUCKET
+  export GCP_PROJECT=$PROJECT_ID
+  export BACKEND_PREFIX='${BACKEND_PREFIX:-tidelands-dev/{slot}/terraform.tfstate}'
+  export CLOUDFLARE_ZONE_ID='${CLOUDFLARE_ZONE_ID:-<set-me>}'
+  export GCP_ZONE='${GCP_ZONE:-us-central1-a}'
+  export DOMAIN='${DOMAIN:-tidelands.dev}'
+  export INSTANCE_NAME='${INSTANCE_NAME:-tidelane-smallweb}'
+
 Next deploy command:
   dagger call -m ./infra deploy \\
     --src infra \\
     --gcp-credentials file:$KEY_PATH \\
     --cloudflare-token env:CLOUDFLARE_API_TOKEN \\
     --ssh-public-key file:${SSH_PUBLIC_KEY_FILE:-/tmp/null_hype_render_plan_key.pub} \\
-    --ssh-private-key file:${SSH_PRIVATE_KEY_FILE:-/tmp/null_hype_render_plan_key} \\
-    --backend-bucket $BUCKET \\
-    --backend-prefix ${BACKEND_PREFIX:-tidelands-dev/terraform.tfstate} \\
-    --gcp-project $PROJECT_ID \\
-    --cloudflare-zone-id ${CLOUDFLARE_ZONE_ID:-}
+    --deployment-slot ${DEPLOYMENT_SLOT:-blue}
+
+For a standby slot, add:
+    --manage-direct-dns-records=false
 EOF

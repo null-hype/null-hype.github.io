@@ -3,7 +3,7 @@ services:
     name: null-hype-dagger-pr-plan
     runtime: node
     repo: https://github.com/null-hype/null-hype.github.io
-    branch: plan-188
+    branch: plan-197
     plan: free
     region: oregon
     buildCommand: |
@@ -23,13 +23,19 @@ services:
       export DOCKER_HOST="ssh://$REMOTE_DOCKER_SSH_TARGET" && \
       docker info && \
       npm --prefix infra install && \
-      .render/bin/dagger call -m ./infra plan --src=infra --gcp-credentials=env:GCP_CREDENTIALS_JSON --cloudflare-token=env:CLOUDFLARE_API_TOKEN --ssh-public-key=env:SSH_PUBLIC_KEY --backend-bucket="$BACKEND_BUCKET" --backend-prefix="$BACKEND_PREFIX" --gcp-project="$GCP_PROJECT" --cloudflare-zone-id="$CLOUDFLARE_ZONE_ID" --gcp-zone="${GCP_ZONE:-us-central1-a}" --domain="${DOMAIN:-tidelands.dev}" --instance-name="${INSTANCE_NAME:-tidelane-smallweb}"
+      .render/bin/dagger call -m ./infra plan --src=infra --gcp-credentials=env:GCP_CREDENTIALS_JSON --cloudflare-token=env:CLOUDFLARE_API_TOKEN --ssh-public-key=env:SSH_PUBLIC_KEY --deployment-slot="${DEPLOYMENT_SLOT:-blue}" --manage-direct-dns-records="${MANAGE_DIRECT_DNS_RECORDS:-true}"
     startCommand: node -e "require('node:http').createServer((_,res)=>res.end('ok')).listen(process.env.PORT||10000,'0.0.0.0')"
     healthCheckPath: ""
     autoDeploy: false
     previews:
       generation: manual
     envVars:
+      - key: BACKEND_PREFIX_ROOT
+        value: tidelands-dev
+      - key: DEPLOYMENT_SLOT
+        value: blue
+      - key: MANAGE_DIRECT_DNS_RECORDS
+        value: "true"
       - key: GCP_ZONE
         value: us-central1-a
       - key: DOMAIN
