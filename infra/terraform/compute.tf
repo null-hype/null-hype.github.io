@@ -3,8 +3,13 @@ data "google_compute_image" "debian" {
   project = "debian-cloud"
 }
 
+locals {
+  slot_instance_name = "${var.instance_name}-${var.deployment_slot}"
+  slot_network_tag   = "smallweb-origin-${var.deployment_slot}"
+}
+
 resource "google_compute_instance" "smallweb" {
-  name         = var.instance_name
+  name         = local.slot_instance_name
   machine_type = var.machine_type
   zone         = var.gcp_zone
 
@@ -40,11 +45,12 @@ resource "google_compute_instance" "smallweb" {
     scopes = ["https://www.googleapis.com/auth/logging.write"]
   }
 
-  tags = ["smallweb-origin"]
+  tags = [local.slot_network_tag]
 
   labels = {
     managed-by = "terraform"
     env        = var.env
+    slot       = var.deployment_slot
   }
 }
 
@@ -52,7 +58,7 @@ resource "google_compute_instance" "smallweb" {
 # Cloudflare proxies inbound requests, so the origin sees Cloudflare IPs.
 # Full (Strict) TLS (dns.tf) ensures the Cloudflare→origin leg is authenticated.
 resource "google_compute_firewall" "smallweb_web" {
-  name    = "${var.instance_name}-web"
+  name    = "${local.slot_instance_name}-web"
   network = "default"
 
   allow {
@@ -61,14 +67,14 @@ resource "google_compute_firewall" "smallweb_web" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["smallweb-origin"]
+  target_tags   = [local.slot_network_tag]
 }
 
 # SSH: restricted to the caller-supplied source range.
 # Default is open (0.0.0.0/0) for initial bootstrap.
 # Tighten var.ssh_source_ranges to the Dagger runner's egress IP for production.
 resource "google_compute_firewall" "smallweb_ssh" {
-  name    = "${var.instance_name}-ssh"
+  name    = "${local.slot_instance_name}-ssh"
   network = "default"
 
   allow {
@@ -77,5 +83,5 @@ resource "google_compute_firewall" "smallweb_ssh" {
   }
 
   source_ranges = var.ssh_source_ranges
-  target_tags   = ["smallweb-origin"]
+  target_tags   = [local.slot_network_tag]
 }
