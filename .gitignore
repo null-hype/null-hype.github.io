@@ -16,6 +16,8 @@ pnpm-debug.log*
 .smallweb-cache/
 .smallweb-data/
 .smallweb-root/
+.render/
+.tmp-home/
 
 
 # environment variables
@@ -45,3 +47,4 @@ infra/terraform/prod.tfvars
 
 # Bootstrap-generated deploy key (written by `dagger call bootstrap`)
 infra/.deploy-key.json
+infra/tidelanes-deploy.json

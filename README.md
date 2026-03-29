@@ -2,6 +2,31 @@
 
 Plain Astro site for the `null-hype.github.io` Pages deployment.
 
+## Render PR Pipeline
+
+This repo includes a dedicated Render service for PR-scoped Dagger plans.
+
+`render.yaml` defines the base Render service:
+
+- Service name: `null-hype-dagger-pr-plan`
+- Branch: `plan-188` for the current stacked-branch setup, then back to `master` after merge
+- Runtime: Node
+- Preview generation: manual
+- Preview trigger: add the GitHub label `render-preview` to a PR
+- Auto deploy on branch commits: off
+
+Required environment depends on the selected Dagger function:
+
+- `plan`: `CLOUDFLARE_API_TOKEN`, `SSH_PUBLIC_KEY`, `BACKEND_BUCKET`, `BACKEND_PREFIX`, `GCP_PROJECT`, `CLOUDFLARE_ZONE_ID`
+- Remote Dagger engine: `SSH_PRIVATE_KEY`, `REMOTE_DOCKER_SSH_TARGET`
+
+Local bootstrap order for the current Render setup:
+
+1. Run the long-lived infra provisioner locally with `deploy`, not `check`.
+2. SSH to the created VM and run [`infra/scripts/bootstrap-docker-engine.sh`](/workspaces/null-hype.github.io/infra/scripts/bootstrap-docker-engine.sh).
+3. Set `REMOTE_DOCKER_SSH_TARGET` in Render to that host, for example `smallweb@203.0.113.10`.
+4. Redeploy the Render service so Dagger uses the remote Docker engine over SSH.
+
 ## Commands
 
 All commands are run from the project root:
