@@ -18,6 +18,7 @@ pnpm-debug.log*
 .smallweb-root/.vscode/
 .render/
 .tmp-home/
+.tmp-smallweb-mutagen/
 
 
 # environment variables
