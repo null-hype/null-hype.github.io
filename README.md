@@ -28,6 +28,21 @@ Local bootstrap order for the current Render setup:
 3. Set `REMOTE_DOCKER_SSH_TARGET` in Render to that host, for example `smallweb@203.0.113.10`.
 4. Redeploy the Render service so Dagger uses the remote Docker engine over SSH.
 
+## Quick Mutagen Deploy
+
+For a first quick-and-dirty Smallweb deploy, the Dagger module now exports a Mutagen-ready artifact set:
+
+1. Build the site and generate the sync bundle:
+   `ADMIN_AUTHORIZED_EMAILS='you@example.com' MUTAGEN_DESTINATION='smallweb@203.0.113.10:/opt/tidelands/smallweb' ./infra/scripts/start-smallweb-mutagen-sync.sh`
+2. Point the remote Smallweb process at `<remote root>/.smallweb-root`.
+
+The generated bundle contains only:
+
+- `.smallweb-root/`
+- `dist/`
+
+The accompanying Mutagen config uses one-way replica mode and ignores VCS metadata so the remote path behaves like a deployed mirror, not a collaborative working tree.
+
 ## Commands
 
 All commands are run from the project root:
