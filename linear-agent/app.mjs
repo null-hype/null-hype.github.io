@@ -14,12 +14,65 @@ const AGENT_ACTIVITY_CREATE_MUTATION = `
   }
 `;
 
+const ISSUE_PROJECT_QUERY = `
+  query IssueProject($id: String!) {
+    issue(id: $id) {
+      id
+      identifier
+      title
+      state {
+        name
+        type
+      }
+      project {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const PROJECT_UPDATE_CREATE_MUTATION = `
+  mutation ProjectUpdateCreate($input: ProjectUpdateCreateInput!) {
+    projectUpdateCreate(input: $input) {
+      success
+      projectUpdate {
+        id
+      }
+    }
+  }
+`;
+
+const PROJECT_UPDATE_HEALTH_VALUES = new Set(['onTrack', 'atRisk', 'offTrack']);
+
 function parseBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') {
     return fallback;
   }
 
   return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase());
+}
+
+function normalizeProjectUpdateHealth(value) {
+  if (typeof value !== 'string' || value.trim() === '') {
+    return 'onTrack';
+  }
+
+  const normalized = value.trim().toLowerCase();
+
+  if (normalized === 'ontrack' || normalized === 'on-track') {
+    return 'onTrack';
+  }
+
+  if (normalized === 'atrisk' || normalized === 'at-risk') {
+    return 'atRisk';
+  }
+
+  if (normalized === 'offtrack' || normalized === 'off-track') {
+    return 'offTrack';
+  }
+
+  return PROJECT_UPDATE_HEALTH_VALUES.has(value) ? value : 'onTrack';
 }
 
 export function loadConfig(env = process.env) {
@@ -30,6 +83,10 @@ export function loadConfig(env = process.env) {
     env.LINEAR_DRY_RUN,
     env.LINEAR_OAUTH_ACCESS_TOKEN ? false : true,
   );
+  const projectUpdateDryRun = parseBoolean(
+    env.LINEAR_PROJECT_UPDATE_DRY_RUN,
+    env.LINEAR_OAUTH_ACCESS_TOKEN ? false : dryRun,
+  );
 
   return {
     port: Number.isFinite(port) ? port : 3000,
@@ -39,6 +96,10 @@ export function loadConfig(env = process.env) {
     allowedClockSkewMs: Number.isFinite(allowedClockSkewMs) ? allowedClockSkewMs : 60000,
     runtimeDir,
     dryRun,
+    projectUpdatesEnabled: parseBoolean(env.LINEAR_PROJECT_UPDATES_ENABLED, true),
+    projectUpdateDryRun,
+    projectUpdateHealth: normalizeProjectUpdateHealth(env.LINEAR_PROJECT_UPDATE_HEALTH),
+    projectUpdateHideDiff: parseBoolean(env.LINEAR_PROJECT_UPDATE_HIDE_DIFF, true),
     agentName: env.LINEAR_AGENT_NAME ?? 'Local Spike Harness',
   };
 }
@@ -76,6 +137,7 @@ function createPaths(config) {
     deliveries: path.join(config.runtimeDir, 'deliveries.jsonl'),
     notifications: path.join(config.runtimeDir, 'notifications.jsonl'),
     activities: path.join(config.runtimeDir, 'activities.jsonl'),
+    projectUpdates: path.join(config.runtimeDir, 'project-updates.jsonl'),
     errors: path.join(config.runtimeDir, 'errors.jsonl'),
   };
 }
@@ -199,12 +261,20 @@ function summarizeNotification(payload) {
   };
 }
 
-async function postGraphql(config, body, fetchImpl = fetch) {
+function resolveAgentActivityAuthorization(config) {
+  return config.oauthAccessToken ? `Bearer ${config.oauthAccessToken}` : '';
+}
+
+function resolveProjectUpdateAuthorization(config) {
+  return resolveAgentActivityAuthorization(config);
+}
+
+async function postGraphql(config, body, authorization, fetchImpl = fetch) {
   const response = await fetchImpl(config.graphqlEndpoint, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      authorization: `Bearer ${config.oauthAccessToken}`,
+      ...(authorization ? { authorization } : {}),
     },
     body: JSON.stringify(body),
   });
@@ -243,12 +313,133 @@ async function emitActivity(config, paths, sessionId, content, services) {
         },
       },
     },
+    resolveAgentActivityAuthorization(config),
     services.fetchImpl ?? fetch,
   );
 
   await appendJsonl(paths.activities, {
     ...record,
     agentActivityId: data.agentActivityCreate?.agentActivity?.id ?? null,
+  });
+
+  return data;
+}
+
+function formatIssueSummary(issue) {
+  const parts = [issue?.identifier, issue?.title].filter(Boolean);
+  return parts.join(' ').trim();
+}
+
+function buildProjectUpdateBody(payload, config, issue, content) {
+  const issueSummary = formatIssueSummary(issue);
+  const projectName = issue?.project?.name;
+  const issueStatus = issue?.state?.name;
+  const sessionId = payload.agentSession?.id;
+  const leadLine = issueSummary
+    ? `${config.agentName} finished work for **${issueSummary}**.`
+    : `${config.agentName} finished work for the delegated issue.`;
+
+  const details = [];
+
+  if (projectName) {
+    details.push(`- Project: **${projectName}**`);
+  }
+
+  if (issueStatus) {
+    details.push(`- Issue status: **${issueStatus}**`);
+  }
+
+  if (sessionId) {
+    details.push(`- Agent session: \`${sessionId}\``);
+  }
+
+  return [leadLine, ...details, '', content.body.trim()].join('\n').trim();
+}
+
+async function resolveIssueForProjectUpdate(payload, config, services) {
+  const issue = payload.agentSession?.issue ?? null;
+
+  if (!issue) {
+    return null;
+  }
+
+  if (issue.project?.id) {
+    return issue;
+  }
+
+  if (!issue.id) {
+    return issue;
+  }
+
+  const authorization = resolveProjectUpdateAuthorization(config);
+
+  if (!authorization) {
+    return issue;
+  }
+
+  const data = await postGraphql(
+    config,
+    {
+      query: ISSUE_PROJECT_QUERY,
+      variables: {
+        id: issue.id,
+      },
+    },
+    authorization,
+    services.fetchImpl ?? fetch,
+  );
+
+  return data.issue ?? issue;
+}
+
+async function emitProjectUpdate(config, paths, payload, issue, content, services) {
+  const project = issue?.project ?? null;
+
+  if (!project?.id || !config.projectUpdatesEnabled) {
+    return { skipped: true };
+  }
+
+  const body = buildProjectUpdateBody(payload, config, issue, content);
+  const record = {
+    mode: config.projectUpdateDryRun ? 'dry-run' : 'live',
+    recordedAt: new Date().toISOString(),
+    agentSessionId: payload.agentSession?.id ?? null,
+    issueId: issue?.id ?? null,
+    issueIdentifier: issue?.identifier ?? null,
+    issueTitle: issue?.title ?? null,
+    projectId: project.id,
+    projectName: project.name ?? null,
+    health: config.projectUpdateHealth,
+    body,
+  };
+
+  const authorization = resolveProjectUpdateAuthorization(config);
+
+  if (config.projectUpdateDryRun || !authorization) {
+    await appendJsonl(paths.projectUpdates, record);
+    return { dryRun: true };
+  }
+
+  const data = await postGraphql(
+    config,
+    {
+      query: PROJECT_UPDATE_CREATE_MUTATION,
+      variables: {
+        input: {
+          projectId: project.id,
+          body,
+          health: config.projectUpdateHealth,
+          isDiffHidden: config.projectUpdateHideDiff,
+        },
+      },
+    },
+    authorization,
+    services.fetchImpl ?? fetch,
+  );
+
+  await appendJsonl(paths.projectUpdates, {
+    ...record,
+    projectUpdateId: data.projectUpdateCreate?.projectUpdate?.id ?? null,
   });
 
   return data;
@@ -261,8 +452,14 @@ async function handleAgentSessionEvent(payload, config, paths, services) {
     throw new Error('AgentSessionEvent payload is missing agentSession.id');
   }
 
+  const issue = await resolveIssueForProjectUpdate(payload, config, services);
+
   for (const content of buildAgentActivities(payload, config)) {
     await emitActivity(config, paths, sessionId, content, services);
+
+    if (content.type === 'response' && payload.agentActivity?.signal !== 'stop') {
+      await emitProjectUpdate(config, paths, payload, issue, content, services);
+    }
   }
 }
 
@@ -337,8 +534,12 @@ export function createRequestProcessor(config = loadConfig(), services = {}) {
             ok: true,
             port: config.port,
             dryRun: config.dryRun,
+            projectUpdateDryRun: config.projectUpdateDryRun,
             webhookSecretConfigured: Boolean(config.webhookSecret),
             oauthAccessTokenConfigured: Boolean(config.oauthAccessToken),
+            projectUpdatesEnabled: config.projectUpdatesEnabled,
+            projectUpdateAuthConfigured: Boolean(resolveProjectUpdateAuthorization(config)),
+            projectUpdateHealth: config.projectUpdateHealth,
             runtimeDir: config.runtimeDir,
           },
         };
