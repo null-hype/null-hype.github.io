@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STEGANOGRAPHY CONTENT ENGINE | ARCHIVAL CODEX</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed": "#e4e2e1",
+                        "on-tertiary-fixed": "#50493d",
+                        "on-secondary-container": "#53524e",
+                        "outline-variant": "#bbbaac",
+                        "on-error-container": "#752121",
+                        "surface-variant": "#eae9d9",
+                        "secondary-fixed": "#e5e2dd",
+                        "on-secondary-fixed": "#403f3c",
+                        "error": "#a64542",
+                        "on-secondary-fixed-variant": "#5c5b57",
+                        "surface-container-highest": "#eae9d9",
+                        "outline": "#818174",
+                        "tertiary": "#6b6356",
+                        "surface-container-low": "#fcf9f0",
+                        "on-primary-fixed": "#3f3f3f",
+                        "surface-container-high": "#f0eee1",
+                        "on-surface": "#38392e",
+                        "primary-container": "#e4e2e1",
+                        "on-primary-container": "#525151",
+                        "secondary-dim": "#595854",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#e5e2dd",
+                        "on-background": "#38392e",
+                        "inverse-surface": "#0e0e0b",
+                        "surface": "#fdffda",
+                        "primary-dim": "#535252",
+                        "on-tertiary-fixed-variant": "#6d6558",
+                        "surface-tint": "#5f5e5e",
+                        "secondary-fixed-dim": "#d7d4cf",
+                        "primary-fixed-dim": "#d6d4d3",
+                        "on-surface-variant": "#656559",
+                        "tertiary-container": "#fef2e1",
+                        "on-error": "#ffffff",
+                        "background": "#fdffda",
+                        "tertiary-fixed": "#fef2e1",
+                        "primary": "#5f5e5e",
+                        "on-primary-fixed-variant": "#5c5b5b",
+                        "secondary": "#656460",
+                        "tertiary-dim": "#5f574b",
+                        "error-container": "#fe8983",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#ffffff",
+                        "surface-dim": "#e4e3d2",
+                        "inverse-on-surface": "#9f9d97",
+                        "on-primary": "#faf7f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#625b4e",
+                        "surface-bright": "#fdffda",
+                        "error-dim": "#4e0309",
+                        "tertiary-fixed-dim": "#efe4d3",
+                        "surface-container": "#f6f4e8"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Newsreader", "serif"],
+                        "label": ["Space Grotesk", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #f6f4e8; }
+        ::-webkit-scrollbar-thumb { background: #bbbaac; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Intelligence Header (System Bar) -->
+<div class="w-full bg-surface-container-highest border-b border-outline-variant/40 px-8 py-1.5 flex justify-between items-center z-50 fixed top-0">
+<div class="font-label text-[10px] uppercase tracking-[0.2em] flex items-center space-x-4">
+<span class="text-on-surface/60">NODE: ARCHIVE-PRIME</span>
+<span class="text-outline-variant">|</span>
+<span class="text-on-surface/60">STATUS: ENCRYPTED_STREAM</span>
+<span class="text-outline-variant">|</span>
+<span class="text-on-surface/60">LATENCY: 14MS</span>
+</div>
+<div class="font-label text-[10px] uppercase tracking-[0.2em]">
+            SESSION_TOKEN: 0x8F22A...
+        </div>
+</div>
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-72 bg-[#f0eee1] border-r border-[#bbbaac]/40 py-20 flex flex-col z-40 hidden md:flex">
+<div class="px-8 mb-12">
+<h2 class="text-lg font-headline italic text-[#38392e] leading-tight">ARCHIVAL INDEX</h2>
+<p class="font-label text-[10px] uppercase tracking-widest text-[#5f5e5e] mt-1">V.0824-2023</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center space-x-3 text-[#38392e] font-bold border-l-4 border-[#5f5e5e] pl-4 py-3 group transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span class="font-label text-xs uppercase tracking-widest">Chronology</span>
+</a>
+<a class="flex items-center space-x-3 text-[#5f5e5e] pl-5 py-3 group hover:bg-[#bbbaac]/20 transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="public">public</span>
+<span class="font-label text-xs uppercase tracking-widest">Geolocation</span>
+</a>
+<a class="flex items-center space-x-3 text-[#5f5e5e] pl-5 py-3 group hover:bg-[#bbbaac]/20 transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="fingerprint">fingerprint</span>
+<span class="font-label text-xs uppercase tracking-widest">Metadata</span>
+</a>
+<a class="flex items-center space-x-3 text-[#5f5e5e] pl-5 py-3 group hover:bg-[#bbbaac]/20 transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="category">category</span>
+<span class="font-label text-xs uppercase tracking-widest">Taxonomy</span>
+</a>
+<a class="flex items-center space-x-3 text-[#5f5e5e] pl-5 py-3 group hover:bg-[#bbbaac]/20 transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="menu_book">menu_book</span>
+<span class="font-label text-xs uppercase tracking-widest">Citations</span>
+</a>
+<a class="flex items-center space-x-3 text-[#5f5e5e] pl-5 py-3 group hover:bg-[#bbbaac]/20 transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="format_list_numbered">format_list_numbered</span>
+<span class="font-label text-xs uppercase tracking-widest">Index</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full bg-primary text-on-primary font-label text-[10px] py-4 tracking-widest uppercase hover:bg-primary-dim transition-colors">
+                RE-INDEX DATABASE
+            </button>
+<div class="mt-8 space-y-4">
+<div class="flex items-center space-x-3 text-[#5f5e5e] font-label text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="analytics">analytics</span>
+<span>System Status</span>
+</div>
+<div class="flex items-center space-x-3 text-[#5f5e5e] font-label text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="help_outline">help_outline</span>
+<span>Help</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-72 min-h-screen pt-12">
+<!-- Top Navigation -->
+<header class="bg-[#fdffda] border-b border-[#bbbaac]/40 z-30">
+<div class="flex justify-between items-center w-full px-12 py-10 max-w-[1600px] mx-auto">
+<div class="flex flex-col">
+<h1 class="text-5xl font-bold tracking-tighter font-headline text-[#38392e] uppercase leading-none">
+                        STEGANOGRAPHY CONTENT ENGINE
+                    </h1>
+<p class="font-label text-xs text-[#5f5e5e] mt-4 tracking-[0.3em]">BUREAU OF DIGITAL EXHUMATION // FILE_REF_441</p>
+</div>
+<div class="hidden lg:flex items-center space-x-12">
+<nav class="flex space-x-8">
+<a class="text-[#38392e] border-b-2 border-[#5f5e5e] pb-1 font-label text-xs uppercase tracking-widest" href="#">Archive</a>
+<a class="text-[#5f5e5e]/70 font-label text-xs uppercase tracking-widest hover:text-[#38392e] transition-colors" href="#">Coordinates</a>
+<a class="text-[#5f5e5e]/70 font-label text-xs uppercase tracking-widest hover:text-[#38392e] transition-colors" href="#">Metadata</a>
+</nav>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-on-surface" data-icon="settings">settings</span>
+<span class="material-symbols-outlined text-on-surface" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Archive Content -->
+<div class="px-12 py-16 max-w-[1600px] mx-auto">
+<!-- Editorial Note Section -->
+<section class="mb-24 grid grid-cols-12 gap-8 items-start">
+<div class="col-span-12 lg:col-span-5 border border-outline-variant/40 p-12 bg-surface-container-low relative">
+<div class="absolute -top-3 -left-3 bg-primary text-on-primary px-3 py-1 font-label text-[10px] tracking-widest uppercase">
+                        Editorial No. 01
+                    </div>
+<h3 class="font-headline text-3xl font-bold text-on-surface mb-6 leading-tight italic">
+                        Hidden Intent and Planted Signals
+                    </h3>
+<div class="space-y-4 font-body text-lg text-on-surface/80 leading-relaxed">
+<p>
+                            In the digital landscape, visibility is often a byproduct of failure. True operational efficiency within the steganographic realm relies on the "unseen middle"—the vast, grey space between encrypted blocks and apparent white noise.
+                        </p>
+<p>
+                            This engine serves not as a mere storage facility, but as a living exhumation site where obfuscated intent is slowly brought to the surface through systematic metadata analysis and chronological re-alignment.
+                        </p>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/20 flex justify-between items-center">
+<span class="font-label text-[10px] uppercase tracking-widest text-outline">AUTHOR: NULL_PTR</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-outline">STAMP: 2024.Q1</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-7 h-full flex flex-col justify-center">
+<div class="aspect-[16/7] w-full bg-surface-container-highest overflow-hidden relative">
+<img alt="Digital data fragments" class="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" data-alt="abstract close-up of microchip circuitry with green glowing data streams and deep shadows in a high-tech laboratory setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeiCSKGEiDrGEgA233gHJhsivkkg_MDAxZ2eZblOeJBS7a1by4qRA0eNCGY41Cwx6xe7fias83ek-h7c96vaTspj5Nl43ZzVvyGkG8Q33Rypq1hWePUq8dYziPYwhWs21TMIcUhWTlCRIYyns2nQhcTh0DI0tiSPbfqmJckUo77EeHgyIYS2lPUjk_ZTyR2ABMFi-sDyklcgDrLgCRe3i-cQP3e0fx41l2LYGksBBLDsUKCBs8j08ATHAMFIOpnBaMHypmXFyivL4J"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent"></div>
+<div class="absolute bottom-6 left-6 font-label text-[10px] uppercase text-on-surface bg-surface/80 px-4 py-2">
+                            SIGNAL_MAP_REFERENCE: 42.112 - 70.441
+                        </div>
+</div>
+</div>
+</section>
+<!-- Archival Grid Header -->
+<div class="flex items-baseline justify-between mb-12 border-b border-on-surface/10 pb-4">
+<h2 class="font-headline text-4xl font-bold tracking-tighter uppercase">ARCHIVE ENTRIES</h2>
+<span class="font-label text-xs uppercase tracking-widest text-primary">Displaying 001—007 of 944</span>
+</div>
+<!-- Bento Archive Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-outline-variant/40">
+<!-- Entry 1: I Hid $1 -->
+<article class="p-8 border-r border-b border-outline-variant/40 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-12">
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Entry_01</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="visibility_off">visibility_off</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-2 group-hover:italic transition-all">I Hid $1</h3>
+<div class="font-label text-[10px] text-primary uppercase tracking-widest mb-6">Intent: Obfuscation</div>
+<p class="font-body text-sm text-on-surface/70 mb-8 leading-relaxed">
+                        A methodology for the systematic concealment of low-value assets. Prioritizing volume over complexity to overwhelm forensic scanners.
+                    </p>
+<div class="pt-6 border-t border-outline-variant/20">
+<span class="font-label text-[10px] text-outline uppercase tracking-[0.2em] block mb-2">LATEST_TRANSCRIPT</span>
+<a class="font-body italic text-on-surface hover:text-primary transition-colors block" href="#">"The Psychology of the Minimalist Ransom"</a>
+</div>
+</article>
+<!-- Entry 2: Finder's Log -->
+<article class="p-8 border-r border-b border-outline-variant/40 hover:bg-surface-container transition-colors group lg:row-span-2 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-12">
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Entry_02</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="search">search</span>
+</div>
+<h3 class="font-headline text-3xl font-bold mb-2 group-hover:italic">Finder's Log</h3>
+<div class="font-label text-[10px] text-primary uppercase tracking-widest mb-8">Intent: Reconnaissance</div>
+<p class="font-body text-base text-on-surface/70 mb-12 leading-relaxed">
+                            Chronological documentation of recovered data fragments. Includes packet-loss analysis and timestamped node attribution from forgotten servers.
+                        </p>
+<img alt="Server room fragments" class="w-full aspect-square object-cover grayscale mb-8" data-alt="a dark room filled with old computer servers with small flickering lights and dangling cables in a dusty environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0oBfc8J8xa0ScQURgK0BSDa7K1mogCxcnoBwrD5dopimSy4CHGFtkHxrbvhK_tWSxxSwB9OD5knsqaImkn-v08m89QWu5cdLrAPA6FIzLuHuEenpW8YUTz8Dw0yfCYjJ8aTaqoiKmMNApOem4AmA8DJZfuKahEwgJjVQqc1h_nqmAnbWh1erFMdBi4e5jHcYn4J2-RAZwGBlmqVHugRONwWgRjaUBl__7Jg9MkwjUjv8BDcOWGnOdF9vZK5YZ_Yy4wkUWANNROgRL"/>
+</div>
+<div class="pt-6 border-t border-outline-variant/20">
+<span class="font-label text-[10px] text-outline uppercase tracking-[0.2em] block mb-2">LATEST_TRANSCRIPT</span>
+<a class="font-body italic text-on-surface hover:text-primary transition-colors block" href="#">"Bit-Rot in the Mojave Data Center"</a>
+</div>
+</article>
+<!-- Entry 3: Dead Drop -->
+<article class="p-8 border-r border-b border-outline-variant/40 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-12">
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Entry_03</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="sensors_off">sensors_off</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-2 group-hover:italic">Dead Drop</h3>
+<div class="font-label text-[10px] text-primary uppercase tracking-widest mb-6">Intent: Exfiltration</div>
+<p class="font-body text-sm text-on-surface/70 mb-8 leading-relaxed">
+                        Asynchronous communication protocols for high-stakes metadata. Utilizing high-latency paths to bypass real-time monitoring.
+                    </p>
+<div class="pt-6 border-t border-outline-variant/20">
+<span class="font-label text-[10px] text-outline uppercase tracking-[0.2em] block mb-2">LATEST_TRANSCRIPT</span>
+<a class="font-body italic text-on-surface hover:text-primary transition-colors block" href="#">"Latency as a Security Feature"</a>
+</div>
+</article>
+<!-- Entry 4: Decoy Pattern -->
+<article class="p-8 border-r border-b border-outline-variant/40 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-12">
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Entry_04</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="waves">waves</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-2 group-hover:italic">Decoy Pattern</h3>
+<div class="font-label text-[10px] text-primary uppercase tracking-widest mb-6">Intent: Misdirection</div>
+<p class="font-body text-sm text-on-surface/70 mb-8 leading-relaxed">
+                        The art of creating plausible deniability through fake traffic. Generates high volumes of benign packets to mask critical movements.
+                    </p>
+<div class="pt-6 border-t border-outline-variant/20">
+<span class="font-label text-[10px] text-outline uppercase tracking-[0.2em] block mb-2">LATEST_TRANSCRIPT</span>
+<a class="font-body italic text-on-surface hover:text-primary transition-colors block" href="#">"The Aesthetic of Ordinary White Noise"</a>
+</div>
+</article>
+<!-- Entry 5: Trace Route -->
+<article class="p-8 border-r border-b border-outline-variant/40 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-12">
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Entry_05</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="route">route</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-2 group-hover:italic">Trace Route</h3>
+<div class="font-label text-[10px] text-primary uppercase tracking-widest mb-6">Intent: Attribution</div>
+<p class="font-body text-sm text-on-surface/70 mb-8 leading-relaxed">
+                        Forensic mapping of data packets across non-standard nodes. Visualizing the invisible hops between global intelligence exchanges.
+                    </p>
+<div class="pt-6 border-t border-outline-variant/20">
+<span class="font-label text-[10px] text-outline uppercase tracking-[0.2em] block mb-2">LATEST_TRANSCRIPT</span>
+<a class="font-body italic text-on-surface hover:text-primary transition-colors block" href="#">"Invisible Hops: Navigating the Deep Mesh"</a>
+</div>
+</article>
+<!-- Entry 6: Recovery Window -->
+<article class="p-8 border-r border-b border-outline-variant/40 hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-12">
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Entry_06</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="history">history</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-2 group-hover:italic">Recovery Window</h3>
+<div class="font-label text-[10px] text-primary uppercase tracking-widest mb-6">Intent: Restoration</div>
+<p class="font-body text-sm text-on-surface/70 mb-8 leading-relaxed">
+                        Temporal analysis of data persistence in volatile memory. Exploiting the brief intervals before electron leakage occurs.
+                    </p>
+<div class="pt-6 border-t border-outline-variant/20">
+<span class="font-label text-[10px] text-outline uppercase tracking-[0.2em] block mb-2">LATEST_TRANSCRIPT</span>
+<a class="font-body italic text-on-surface hover:text-primary transition-colors block" href="#">"Cold Boot Echoes and Phantom Bits"</a>
+</div>
+</article>
+<!-- Entry 7: Reveal Surface -->
+<article class="p-8 border-r border-b border-outline-variant/40 hover:bg-surface-container transition-colors group lg:col-span-2">
+<div class="flex flex-col md:flex-row gap-12">
+<div class="flex-1">
+<div class="flex justify-between items-start mb-12">
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Entry_07</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary" data-icon="lock_open">lock_open</span>
+</div>
+<h3 class="font-headline text-4xl font-bold mb-2 group-hover:italic">Reveal Surface</h3>
+<div class="font-label text-[10px] text-primary uppercase tracking-widest mb-8">Intent: Decryption</div>
+<p class="font-body text-lg text-on-surface/70 mb-8 leading-relaxed">
+                                Final stage protocols for stripping encryption layers. The transition point where noise ceases and structure becomes readable.
+                            </p>
+<div class="pt-6 border-t border-outline-variant/20">
+<span class="font-label text-[10px] text-outline uppercase tracking-[0.2em] block mb-2">LATEST_TRANSCRIPT</span>
+<a class="font-body italic text-on-surface hover:text-primary transition-colors block text-xl" href="#">"The Singular Moment of Clear-Text Manifestation"</a>
+</div>
+</div>
+<div class="w-full md:w-1/3 bg-on-surface p-8 flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-surface text-6xl mb-4" data-icon="key">key</span>
+<span class="font-label text-[10px] text-surface/50 uppercase tracking-[0.3em]">Access Required</span>
+<button class="mt-8 px-6 py-3 border border-surface text-surface font-label text-[10px] tracking-widest uppercase hover:bg-surface hover:text-on-surface transition-all">
+                                Request Clearance
+                            </button>
+</div>
+</div>
+</article>
+</div>
+</div>
+<!-- Archival Footer -->
+<footer class="w-full py-24 px-12 mt-20 border-t border-[#bbbaac]/40 bg-[#f6f4e8] flex flex-col items-center">
+<div class="max-w-[1600px] w-full grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-2">
+<h4 class="text-sm font-headline text-[#38392e] uppercase font-bold tracking-widest mb-6">STEGANOGRAPHY CONTENT ENGINE</h4>
+<p class="font-body text-xs text-[#5f5e5e] max-w-sm leading-relaxed">
+                        A project dedicated to the systematic uncovering of intent within the digital noise. All data fragments are handled with forensic integrity.
+                    </p>
+</div>
+<div class="space-y-4">
+<h5 class="font-label text-[10px] uppercase tracking-widest text-on-surface">Protocols</h5>
+<ul class="space-y-2 font-mono text-[10px] uppercase tracking-widest text-[#5f5e5e]">
+<li><a class="hover:text-[#38392e] transition-colors" href="#">Privacy Protocol</a></li>
+<li><a class="hover:text-[#38392e] transition-colors" href="#">Terms of Access</a></li>
+<li><a class="hover:text-[#38392e] transition-colors" href="#">Manifesto</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="font-label text-[10px] uppercase tracking-widest text-on-surface">Stats</h5>
+<ul class="space-y-2 font-mono text-[10px] uppercase tracking-widest text-[#5f5e5e]">
+<li>Files Exhumed: 1.4M</li>
+<li>Active Nodes: 842</li>
+<li>Latest Update: 2s ago</li>
+</ul>
+</div>
+</div>
+<div class="mt-20 pt-8 border-t border-[#bbbaac]/40 w-full flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+<span class="font-label text-[10px] uppercase tracking-[0.2em] text-[#5f5e5e]">
+                    © 2024 STEGANOGRAPHY CONTENT ENGINE | DIGITAL PRINT IMPRINT NO. 441
+                </span>
+<div class="flex space-x-8 font-label text-[10px] uppercase tracking-[0.2em] text-[#5f5e5e]">
+<a class="hover:underline text-[#38392e]" href="#">Archive Stats</a>
+<a class="hover:underline text-[#38392e]" href="#">System Logs</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Mobile Navigation (Suppressed on Web/Desktop) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant/40 flex justify-around py-4 z-50">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+<span class="material-symbols-outlined text-outline" data-icon="public">public</span>
+<span class="material-symbols-outlined text-outline" data-icon="fingerprint">fingerprint</span>
+<span class="material-symbols-outlined text-outline" data-icon="category">category</span>
+</nav>
+</body></html>
