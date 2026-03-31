@@ -8,8 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "agent:start": "node --env-file=.env linear-agent/server.mjs",
-    "agent:test": "node --env-file=.env --test linear-agent/server.test.mjs",
+    "agent:start": "node --env-file-if-exists=.env linear-agent/server.mjs",
+    "agent:test": "node --env-file-if-exists=.env --test linear-agent/server.test.mjs",
     "linear:rename-current-cycle": "node linear-agent/rename-current-cycle.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

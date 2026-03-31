@@ -6,6 +6,7 @@ This folder turns the current repo into a minimal local Linear agent harness for
 
 - A local Node webhook endpoint can receive signed Linear webhooks on `POST /webhooks/linear`.
 - `AgentSessionEvent` deliveries produce `thought` and `response` agent activities.
+- Final `response` activities can post a project update back to the Linear project attached to the delegated issue.
 - `AppUserNotification` deliveries are recorded and summarized so the project-member notification matrix can be filled in.
 - The setup works behind a tunnel as soon as something is listening on local port `3000`.
 
@@ -13,6 +14,7 @@ This folder turns the current repo into a minimal local Linear agent harness for
 
 - Live Linear delivery from your workspace.
 - Live `agentActivityCreate` mutations back into Linear unless `LINEAR_OAUTH_ACCESS_TOKEN` is configured.
+- Live `projectUpdateCreate` mutations unless `LINEAR_OAUTH_ACCESS_TOKEN` is configured.
 - Whether project membership alone is enough to trigger `issueStatusChanged` and `issueNewComment`; that still requires real workspace traffic.
 
 ## Environment
@@ -34,9 +36,16 @@ Optional:
 ```bash
 export PORT=3000
 export LINEAR_DRY_RUN=1
+export LINEAR_PROJECT_UPDATE_DRY_RUN=1
+export LINEAR_PROJECT_UPDATE_HEALTH=onTrack
+export LINEAR_PROJECT_UPDATES_ENABLED=1
 ```
 
-`LINEAR_DRY_RUN=1` logs would-be activities to `.linear-agent-runtime/activities.jsonl` instead of calling the Linear GraphQL API.
+`LINEAR_DRY_RUN=1` logs would-be agent activities to `.linear-agent-runtime/activities.jsonl` instead of calling `agentActivityCreate`.
+
+`LINEAR_PROJECT_UPDATE_DRY_RUN=1` logs would-be project updates to `.linear-agent-runtime/project-updates.jsonl` instead of calling `projectUpdateCreate`.
+
+Project updates are emitted when the harness sends a final `response` activity for an `AgentSessionEvent`. The target project is derived from the assigned issue. If the webhook payload already includes `agentSession.issue.project`, the harness uses that directly. Otherwise it looks up the issue by id via GraphQL using the app OAuth token before creating the project update.
 
 ## Commands
 
@@ -77,3 +86,5 @@ node linear-agent/mock-webhook.mjs notification issueNewComment
 5. Check `.linear-agent-runtime/activities.jsonl` and `GET /matrix`.
 
 If `LINEAR_OAUTH_ACCESS_TOKEN` is present, live activity mutations will be sent back to Linear. If not, the server stays in dry-run mode and only logs what it would have sent.
+
+If `LINEAR_OAUTH_ACCESS_TOKEN` is present and `LINEAR_PROJECT_UPDATE_DRY_RUN` is not set, project updates are sent live even if agent activities are still running in dry-run mode.
