@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>THE ARCHIVAL MONOGRAPH | I Hid $1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-bright": "#fdffda",
+                        "surface-container-low": "#fcf9f0",
+                        "on-secondary-container": "#53524e",
+                        "on-primary": "#faf7f6",
+                        "inverse-on-surface": "#9f9d97",
+                        "inverse-surface": "#0e0e0b",
+                        "primary": "#5f5e5e",
+                        "error-container": "#fe8983",
+                        "on-tertiary-fixed-variant": "#6d6558",
+                        "surface-container-high": "#f0eee1",
+                        "surface-dim": "#e4e3d2",
+                        "secondary": "#656460",
+                        "on-secondary-fixed": "#403f3c",
+                        "tertiary-container": "#fef2e1",
+                        "tertiary": "#6b6356",
+                        "primary-fixed-dim": "#d6d4d3",
+                        "surface-tint": "#5f5e5e",
+                        "secondary-container": "#e5e2dd",
+                        "on-tertiary-container": "#625b4e",
+                        "secondary-dim": "#595854",
+                        "primary-dim": "#535252",
+                        "on-error-container": "#752121",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#efe4d3",
+                        "on-background": "#38392e",
+                        "error-dim": "#4e0309",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#eae9d9",
+                        "on-surface-variant": "#656559",
+                        "on-secondary-fixed-variant": "#5c5b57",
+                        "on-tertiary-fixed": "#50493d",
+                        "error": "#a64542",
+                        "on-primary-fixed": "#3f3f3f",
+                        "tertiary-dim": "#5f574b",
+                        "surface": "#fdffda",
+                        "on-surface": "#38392e",
+                        "secondary-fixed-dim": "#d7d4cf",
+                        "surface-container-highest": "#eae9d9",
+                        "on-primary-container": "#525151",
+                        "outline-variant": "#bbbaac",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#e5e2dd",
+                        "on-primary-fixed-variant": "#5c5b5b",
+                        "tertiary-fixed": "#fef2e1",
+                        "background": "#fdffda",
+                        "inverse-primary": "#ffffff",
+                        "primary-fixed": "#e4e2e1",
+                        "surface-container": "#f6f4e8",
+                        "primary-container": "#e4e2e1",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#818174"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Newsreader", "serif"],
+                        "label": ["Space Grotesk", "monospace"]
+                    },
+                    borderRadius: { "DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            font-size: 1.25rem;
+        }
+        body {
+            background-color: #f6f4e8; /* Explicit background from prompt */
+        }
+    </style>
+</head>
+<body class="bg-surface-container text-on-surface antialiased">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#f6f4e8] border-b border-[#bbbaac]/40">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-[1920px] mx-auto">
+<div class="text-2xl font-black tracking-tighter uppercase text-[#38392e] font-headline">THE ARCHIVAL MONOGRAPH</div>
+<nav class="hidden md:flex gap-8 items-center font-headline text-[1.1rem] tracking-tight">
+<a class="text-[#38392e] border-b border-[#38392e] pb-1" href="#">ARCHIVE</a>
+<a class="text-[#5f5e5e] hover:text-[#38392e] transition-colors duration-300" href="#">INTELLIGENCE</a>
+<a class="text-[#5f5e5e] hover:text-[#38392e] transition-colors duration-300" href="#">CURATION</a>
+<a class="text-[#5f5e5e] hover:text-[#38392e] transition-colors duration-300" href="#">DISPATCH</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5f5e5e]" data-icon="account_circle">account_circle</span>
+<span class="material-symbols-outlined text-[#5f5e5e]" data-icon="settings">settings</span>
+</div>
+</div>
+</header>
+<!-- Side Taxonomy Rail -->
+<aside class="fixed left-0 top-16 bottom-0 w-64 flex flex-col py-8 z-40 bg-[#f0eee1] border-r border-[#bbbaac]/40 hidden lg:flex">
+<div class="px-8 mb-10">
+<h2 class="font-label text-[10px] uppercase tracking-[0.2em] text-[#818174]">TAXONOMY</h2>
+<p class="font-label text-[10px] text-[#818174] mt-1">V.08.24</p>
+</div>
+<nav class="flex flex-col flex-1">
+<a class="group flex items-center px-8 py-3 font-label text-[10px] uppercase tracking-widest text-[#38392e] font-bold bg-[#fdffda]/50 translate-x-1 transition-all" href="#">
+<span class="material-symbols-outlined mr-3 text-base" data-icon="schedule">schedule</span>
+                CHRONOLOGY
+            </a>
+<a class="group flex items-center px-8 py-3 font-label text-[10px] uppercase tracking-widest text-[#818174] hover:bg-[#fdffda] hover:text-[#38392e] transition-all" href="#">
+<span class="material-symbols-outlined mr-3 text-base" data-icon="distance">distance</span>
+                GEOLOCATION
+            </a>
+<a class="group flex items-center px-8 py-3 font-label text-[10px] uppercase tracking-widest text-[#818174] hover:bg-[#fdffda] hover:text-[#38392e] transition-all" href="#">
+<span class="material-symbols-outlined mr-3 text-base" data-icon="fingerprint">fingerprint</span>
+                METADATA
+            </a>
+<a class="group flex items-center px-8 py-3 font-label text-[10px] uppercase tracking-widest text-[#818174] hover:bg-[#fdffda] hover:text-[#38392e] transition-all" href="#">
+<span class="material-symbols-outlined mr-3 text-base" data-icon="format_quote">format_quote</span>
+                CITATIONS
+            </a>
+<a class="group flex items-center px-8 py-3 font-label text-[10px] uppercase tracking-widest text-[#818174] hover:bg-[#fdffda] hover:text-[#38392e] transition-all" href="#">
+<span class="material-symbols-outlined mr-3 text-base" data-icon="auto_stories">auto_stories</span>
+                RELATED
+            </a>
+</nav>
+</aside>
+<!-- Intelligence Header (Breadcrumbs/Status) -->
+<div class="fixed top-16 left-0 lg:left-64 right-0 h-10 bg-surface-container-highest border-b border-outline-variant/20 z-30 flex items-center px-8">
+<div class="font-label text-[9px] uppercase tracking-widest text-on-surface-variant flex gap-4 items-center">
+<span>REPOSITORY // INTEL-992</span>
+<span class="text-outline-variant">|</span>
+<span>STATUS: VERIFIED</span>
+<span class="text-outline-variant">|</span>
+<span>ENCODING: UTF-8</span>
+<span class="text-outline-variant">|</span>
+<span>LOC: UNDISCLOSED</span>
+</div>
+</div>
+<!-- Main Content Canvas -->
+<main class="pt-32 pb-20 px-8 lg:pl-80 lg:pr-12 max-w-[1400px]">
+<!-- Taxonomy Metadata Top -->
+<div class="mb-12 border-l-2 border-on-surface pl-6 py-2">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div>
+<span class="block font-label text-[10px] uppercase tracking-tighter text-outline mb-1">Series</span>
+<span class="block font-headline text-lg italic text-on-surface">I Hid $1</span>
+</div>
+<div>
+<span class="block font-label text-[10px] uppercase tracking-tighter text-outline mb-1">Intent</span>
+<span class="block font-headline text-lg italic text-on-surface">Obfuscation</span>
+</div>
+<div>
+<span class="block font-label text-[10px] uppercase tracking-tighter text-outline mb-1">Entry</span>
+<span class="block font-headline text-lg italic text-on-surface">001</span>
+</div>
+<div>
+<span class="block font-label text-[10px] uppercase tracking-tighter text-outline mb-1">Evidence Grade</span>
+<span class="block font-headline text-lg italic text-on-surface">Alpha</span>
+</div>
+</div>
+</div>
+<!-- Headline & Deck -->
+<div class="mb-16">
+<h1 class="font-headline text-5xl md:text-7xl font-black leading-none tracking-tight text-on-surface mb-6">
+                The Silence of One Dollar:<br/>A Study in Trivial Concealment
+            </h1>
+<p class="font-headline text-2xl text-on-surface-variant leading-relaxed max-w-2xl italic">
+                An exploration of intent, attention, and the psychology of the missed object.
+            </p>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-16">
+<!-- Article Body -->
+<article class="space-y-12">
+<section>
+<h2 class="font-headline text-3xl font-bold text-on-surface mb-6 border-b border-outline-variant/40 pb-2">The Geometry of the Hide</h2>
+<p class="font-body text-xl leading-relaxed text-on-surface mb-6">
+                        Concealment is rarely about depth; it is about the friction of the gaze. When we hide a single dollar bill, we are not contending with the physics of space, but the architecture of expectation. A dollar bill is thin enough to exist in the liminal spaces—under the felt of a coaster, behind the backing of a cheap frame, or pressed between the pages of a forgotten telephone directory.
+                    </p>
+<p class="font-body text-xl leading-relaxed text-on-surface">
+                        The "Geometry" refers to the specific angles at which an object becomes invisible to the casual occupant of a room. It is the art of finding the dead spots in human peripheral vision.
+                    </p>
+</section>
+<!-- Pull Quote -->
+<blockquote class="py-12 border-y-2 border-on-surface">
+<p class="font-headline text-4xl italic text-on-surface text-center leading-tight">
+                        "In a world of high-stakes encryption, the most effective cipher is often the one that costs nothing."
+                    </p>
+</blockquote>
+<section>
+<h2 class="font-headline text-3xl font-bold text-on-surface mb-6 border-b border-outline-variant/40 pb-2">The Observer Effect</h2>
+<p class="font-body text-xl leading-relaxed text-on-surface mb-8">
+                        The observer does not look for what they do not expect to find. This psychological blind spot is the foundation of trivial obfuscation. In our fieldwork, we identified the "Cone of Invisibility"—a perceptual phenomenon where objects in plain sight are discarded by the brain's processing unit because they lack "threat value" or "utility relevance."
+                    </p>
+<!-- Inline Figure: Diagram Placeholder -->
+<div class="bg-surface-container-high p-8 border border-outline-variant/40">
+<div class="aspect-video w-full bg-surface-container flex flex-col items-center justify-center border border-dashed border-outline-variant relative overflow-hidden">
+<!-- Geometric Abstract Overlay -->
+<div class="absolute inset-0 opacity-10">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] border-[1px] border-on-surface rotate-45"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] border-[1px] border-on-surface -rotate-12"></div>
+</div>
+<span class="material-symbols-outlined text-4xl mb-2 text-outline" data-icon="visibility_off">visibility_off</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-outline">Fig. 1.2: Cone of Invisibility Mapping</span>
+</div>
+<p class="font-label text-[11px] mt-4 text-on-surface-variant leading-relaxed">
+                            Diagram mapping the decay of visual attention across common household environments. Shaded areas represent high-probability "blind zones" where objects under 1mm thickness remain undetected for &gt;365 days.
+                        </p>
+</div>
+</section>
+</article>
+<!-- Sidebar Margin Notes -->
+<aside class="space-y-8">
+<div class="bg-surface-container-lowest p-6 border-l-4 border-primary shadow-sm">
+<h3 class="font-label text-[10px] font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="edit_note">edit_note</span>
+                        Ambient Observations
+                    </h3>
+<p class="font-body text-base leading-relaxed text-on-secondary-container">
+                        Dust accumulation on the object serves as a secondary layer of natural camouflage. If the object is not moved, it literally becomes part of the room's geological record.
+                    </p>
+<div class="mt-4 pt-4 border-t border-outline-variant/20 font-label text-[9px] text-outline">
+                        REF: NOTE_77A // 09:12 PST
+                    </div>
+</div>
+<div class="bg-surface-container-lowest p-6 border-l-4 border-primary shadow-sm">
+<h3 class="font-label text-[10px] font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+                        Historical Context
+                    </h3>
+<p class="font-body text-base leading-relaxed text-on-secondary-container">
+                        Similar techniques were recorded in late 19th-century parlor games, where small tokens were placed atop door frames to test the "alertness" of the gentry.
+                    </p>
+<div class="mt-4 pt-4 border-t border-outline-variant/20 font-label text-[9px] text-outline">
+                        ARCHIVE_SRC: VOL. IV
+                    </div>
+</div>
+<!-- Decorative Asset -->
+<div class="pt-8">
+<img alt="Close-up of an old wooden desk with textured grain and deep shadows" class="w-full grayscale border border-outline-variant/20 opacity-80" data-alt="A macro photography shot of aged wood grain on a vintage writing desk, with harsh shadows and dramatic side lighting, moody archival aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWuwCHbjJ4QS_NI295Leby_-JYoeUWwlLZ02iFCaF1scU0ETGrvc8mxdO47zVXNiHUHQZErSICX8qzkqj7kcAUv6B9I4hc9YP0xJrT63aDnmWk5gP3mvCNm7rHzf1T1fiXaNxcuR5aIEsqCJVh9SmuLyhZRqDSylATYI8S4n2xtZ-FYQK_ACirS1cCi3TTznAwixVzJv3QH3bqBA5BA1MFCCG1Jn1qgIYtp6AGsa9sg7rVAch4BsR5IGXLCDfTGojduszrrOdo49Zn"/>
+</div>
+</aside>
+</div>
+<!-- Section Navigation -->
+<nav class="mt-24 pt-12 border-t-2 border-on-surface flex flex-col md:flex-row justify-between gap-8">
+<a class="group flex flex-col max-w-xs" href="#">
+<span class="font-label text-[10px] uppercase tracking-widest text-outline mb-2">Previous Entry</span>
+<span class="font-headline text-2xl group-hover:underline text-on-surface">Steganography 101</span>
+<span class="font-body text-sm text-on-surface-variant mt-2 italic opacity-60">The digital layer of hidden signals.</span>
+</a>
+<a class="group flex flex-col max-w-xs md:text-right md:items-end" href="#">
+<span class="font-label text-[10px] uppercase tracking-widest text-outline mb-2">Next Entry</span>
+<span class="font-headline text-2xl group-hover:underline text-on-surface">The Art of the Decoy</span>
+<span class="font-body text-sm text-on-surface-variant mt-2 italic opacity-60">Constructing diversions to protect the core.</span>
+</a>
+</nav>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-8 flex flex-col items-center gap-6 max-w-[1920px] mx-auto border-t-2 border-[#38392e] bg-[#f6f4e8]">
+<div class="font-headline italic text-lg text-[#38392e]">The Archival Monograph</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-label text-[11px] text-[#818174] hover:text-[#38392e] transition-colors" href="#">PRIVACY PROTOCOL</a>
+<a class="font-label text-[11px] text-[#818174] hover:text-[#38392e] transition-colors" href="#">TERMS OF ACCESS</a>
+<a class="font-label text-[11px] text-[#818174] hover:text-[#38392e] transition-colors" href="#">SITEMAP</a>
+<a class="font-label text-[11px] text-[#818174] hover:text-[#38392e] transition-colors" href="#">API DOCUMENTATION</a>
+</div>
+<div class="font-label text-[11px] text-[#5f5e5e] text-center tracking-widest mt-4">
+            © 2024 THE ARCHIVAL MONOGRAPH. ALL RIGHTS RESERVED. PRINTED DIGITALLY.
+        </div>
+</footer>
+</body></html>
