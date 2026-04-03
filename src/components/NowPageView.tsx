@@ -13,6 +13,7 @@ export interface NowPageViewProps {
 	readonly meta: NowPageMeta;
 	readonly sections: readonly TidelaneListSection[];
 	readonly warning?: string;
+	readonly isFavorited?: boolean;
 }
 
 /**
@@ -46,9 +47,10 @@ export default function NowPageView({
 	meta,
 	sections,
 	warning,
+	isFavorited = true,
 }: Readonly<NowPageViewProps>) {
 	return (
-		<div className="now-page">
+		<div className="now-page" data-favorited={isFavorited}>
 			<div className="now-page__grain" aria-hidden="true"></div>
 
 			<header className="now-header">
@@ -65,25 +67,37 @@ export default function NowPageView({
 			</header>
 
 			<main className="now-main now-shell">
-				<p className="now-kicker">CLASSIFIED // {meta.lastUpdated}</p>
-				<h1 className="now-title">
-					<JitterTitle text={meta.title} />
-				</h1>
+				{isFavorited ? (
+					<>
+						<p className="now-kicker">CLASSIFIED // {meta.lastUpdated}</p>
+						<h1 className="now-title">
+							<JitterTitle text={meta.title} />
+						</h1>
 
-				<div className="now-intro">
-					{meta.intro.map((paragraph) => (
-						<p key={paragraph}>{paragraph}</p>
-					))}
-				</div>
+						<div className="now-intro">
+							{meta.intro.map((paragraph) => (
+								<p key={paragraph}>{paragraph}</p>
+							))}
+						</div>
 
-				{warning ? (
-					<div className="now-callout" role="status">
-						<span className="font-label text-[10px] font-bold uppercase block mb-2">Warning: Structural Noise</span>
-						<p>{warning}</p>
+						{warning ? (
+							<div className="now-callout" role="status">
+								<span className="font-label text-[10px] font-bold uppercase block mb-2">Warning: Structural Noise</span>
+								<p>{warning}</p>
+							</div>
+						) : null}
+
+						<TidelaneList sections={sections} />
+					</>
+				) : (
+					<div className="now-coming-soon">
+						<p className="now-kicker">STAGING // RESTRICTED ACCESS</p>
+						<h1 className="now-title">Coming Soon!</h1>
+						<div className="now-intro">
+							<p>This view is currently private or under development. Check back soon for the full dossier.</p>
+						</div>
 					</div>
-				) : null}
-
-				<TidelaneList sections={sections} />
+				)}
 
 				<footer className="now-footer">
 					<p>{meta.footer}</p>

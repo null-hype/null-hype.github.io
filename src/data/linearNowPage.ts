@@ -13,6 +13,15 @@ const EMPTY_BACKLOG_MESSAGE = 'No backlog or triage issues are currently assigne
 
 const LINEAR_NOW_QUERY = `
 	query TidelandsTranspositionQuery {
+		favorites {
+			nodes {
+				id
+				customView {
+					id
+					name
+				}
+			}
+		}
 		customView(id: "aa434af6-7a8d-4078-891d-3d3ab9ff6895") {
 			id
 			name
@@ -99,7 +108,18 @@ interface LinearCustomView {
 	readonly filterData: any;
 }
 
+interface LinearFavorite {
+	readonly id: string;
+	readonly customView?: {
+		readonly id: string;
+		readonly name: string;
+	};
+}
+
 interface LinearNowQueryData {
+	readonly favorites: {
+		readonly nodes: readonly LinearFavorite[];
+	};
 	readonly customView: LinearCustomView | null;
 	readonly team: {
 		readonly name: string;
@@ -127,6 +147,7 @@ export interface NowPageData {
 	readonly filterData?: any;
 	readonly rawIssues?: readonly LinearIssue[];
 	readonly allProjects?: readonly { id: string; name: string }[];
+	readonly isFavorited: boolean;
 }
 
 const tidelaneNodes = generateTidelaneNodes(NOW_PAGE_TIDELANE_SEED);
@@ -441,8 +462,13 @@ async function loadLinearNowPageData(env: ImportMetaEnv): Promise<NowPageData> {
 	
 	const data = await postGraphql<LinearNowQueryData>(apiKey ?? '', LINEAR_NOW_QUERY, endpoint);
 	
+	// Detect if the "www.tidelands.dev" view is favorited
+	const isFavorited = data.favorites.nodes.some(
+		f => f.customView?.id === 'aa434af6-7a8d-4078-891d-3d3ab9ff6895' || f.customView?.name === 'www.tidelands.dev'
+	);
+
 	// Default behavior: filter by the view's project filter if present
-	const projectFilterId = data.customView?.filterData?.and?.[0]?.project?.id?.in?.[0];
+	const projectFilterId = data.customView?.filterData?.and?.find((f: any) => f.project?.id?.in)?.project?.id?.in?.[0];
 	
 	const sourceIssues = data.team.issues.nodes;
 	const filteredIssues = projectFilterId 
@@ -457,6 +483,7 @@ async function loadLinearNowPageData(env: ImportMetaEnv): Promise<NowPageData> {
 		filterData: data.customView?.filterData,
 		rawIssues: data.team.issues.nodes,
 		allProjects: data.projects.nodes,
+		isFavorited,
 	};
 }
 
@@ -484,5 +511,6 @@ export function createUnavailableNowPageData(now = new Date()): NowPageData {
 				'Restore LINEAR_API_KEY and outbound access to api.linear.app, then refresh or rebuild the Astro page to repopulate it.',
 		},
 		sections: buildSections([], [], []),
+		isFavorited: false,
 	};
 }
