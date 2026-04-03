@@ -6,7 +6,13 @@ import { broadsheetDispatchViewContent } from '../../data/broadsheetContent';
 const meta = {
 	title: 'Editorial/BroadsheetDispatchView',
 	component: BroadsheetDispatchView,
-	parameters: { layout: 'fullscreen' },
+	parameters: { 
+		layout: 'fullscreen',
+		design: {
+			type: 'iframe',
+			url: '/broadsheet-dispatch.html',
+		},
+	},
 	tags: ['autodocs'],
 } satisfies Meta<typeof BroadsheetDispatchView>;
 

@@ -12,10 +12,15 @@ const EMPTY_DONE_MESSAGE = 'No completed assigned issues were found in the recen
 const EMPTY_BACKLOG_MESSAGE = 'No backlog or triage issues are currently assigned.';
 
 const LINEAR_NOW_QUERY = `
-	query AssignedIssuesForNowPage {
-		viewer {
+	query TidelandsTranspositionQuery {
+		customView(id: "aa434af6-7a8d-4078-891d-3d3ab9ff6895") {
+			id
 			name
-			assignedIssues(first: 50, orderBy: updatedAt) {
+			filterData
+		}
+		team(id: "3b90c938-ee3f-4205-9520-be7a07725ded") {
+			name
+			issues(first: 100, orderBy: updatedAt) {
 				nodes {
 					identifier
 					title
@@ -29,6 +34,7 @@ const LINEAR_NOW_QUERY = `
 						type
 					}
 					project {
+						id
 						name
 					}
 					team {
@@ -40,6 +46,12 @@ const LINEAR_NOW_QUERY = `
 						}
 					}
 				}
+			}
+		}
+		projects(first: 50) {
+			nodes {
+				id
+				name
 			}
 		}
 	}
@@ -70,6 +82,7 @@ interface LinearIssue {
 		readonly type: LinearIssueStateType;
 	};
 	readonly project: {
+		readonly id: string;
 		readonly name: string;
 	} | null;
 	readonly team: {
@@ -80,12 +93,22 @@ interface LinearIssue {
 	};
 }
 
+interface LinearCustomView {
+	readonly id: string;
+	readonly name: string;
+	readonly filterData: any;
+}
+
 interface LinearNowQueryData {
-	readonly viewer: {
+	readonly customView: LinearCustomView | null;
+	readonly team: {
 		readonly name: string;
-		readonly assignedIssues: {
+		readonly issues: {
 			readonly nodes: readonly LinearIssue[];
 		};
+	};
+	readonly projects: {
+		readonly nodes: readonly { id: string; name: string }[];
 	};
 }
 
@@ -101,6 +124,9 @@ interface GraphqlResponse<TData> {
 export interface NowPageData {
 	readonly meta: NowPageMeta;
 	readonly sections: readonly TidelaneListSection[];
+	readonly filterData?: any;
+	readonly rawIssues?: readonly LinearIssue[];
+	readonly allProjects?: readonly { id: string; name: string }[];
 }
 
 const tidelaneNodes = generateTidelaneNodes(NOW_PAGE_TIDELANE_SEED);
@@ -297,7 +323,7 @@ function sectionSummary(kind: 'active' | 'completed' | 'backlog', total: number,
 	return `Backlog and triage work parked outside the active lane. Showing ${shown} of ${total} ${pluralize(total, 'issue')}.`;
 }
 
-function buildSections(
+export function buildSections(
 	activeIssues: readonly LinearIssue[],
 	completedIssues: readonly LinearIssue[],
 	backlogIssues: readonly LinearIssue[],
@@ -331,7 +357,7 @@ function buildSections(
 	] satisfies readonly TidelaneListSection[];
 }
 
-function buildMeta(
+export function buildMeta(
 	viewerName: string,
 	issues: readonly LinearIssue[],
 	activeIssues: readonly LinearIssue[],
@@ -361,12 +387,17 @@ async function postGraphql<TData>(
 	query: string,
 	endpoint: string,
 ): Promise<TData> {
+	const headers: Record<string, string> = {
+		'content-type': 'application/json',
+	};
+
+	if (apiKey) {
+		headers.authorization = apiKey;
+	}
+
 	const response = await fetch(endpoint, {
 		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-			authorization: apiKey,
-		},
+		headers,
 		body: JSON.stringify({ query }),
 	});
 	const json = (await response.json()) as GraphqlResponse<TData>;
@@ -379,31 +410,53 @@ async function postGraphql<TData>(
 	return json.data;
 }
 
-async function loadLinearNowPageData(env: ImportMetaEnv): Promise<NowPageData> {
-	const apiKey = env.LINEAR_API_KEY;
-
-	if (!apiKey) {
-		throw new Error('LINEAR_API_KEY is required to build the now page from Linear.');
-	}
-
-	const endpoint = env.LINEAR_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
-	const data = await postGraphql<LinearNowQueryData>(apiKey, LINEAR_NOW_QUERY, endpoint);
-	const issues = [...data.viewer.assignedIssues.nodes].sort(
+export function sortAndFilterIssues(issues: readonly LinearIssue[]) {
+	const sorted = [...issues].sort(
 		(left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt),
 	);
-	const activeIssues = issues
+	
+	const activeIssues = sorted
 		.filter((issue) => issue.state.type === 'started' || issue.state.type === 'unstarted')
 		.sort(compareByPriorityThenUpdated);
-	const completedIssues = issues
+	const completedIssues = sorted
 		.filter((issue) => issue.state.type === 'completed')
 		.sort(compareByCompletedThenUpdated);
-	const backlogIssues = issues
+	const backlogIssues = sorted
 		.filter((issue) => issue.state.type === 'backlog' || issue.state.type === 'triage')
 		.sort(compareByPriorityThenUpdated);
 
+	return { activeIssues, completedIssues, backlogIssues, all: sorted };
+}
+
+async function loadLinearNowPageData(env: ImportMetaEnv): Promise<NowPageData> {
+	const isBrowser = !import.meta.env.SSR;
+	const apiKey = env.LINEAR_API_KEY;
+
+	if (!apiKey && !isBrowser) {
+		throw new Error('LINEAR_API_KEY is required to build the now page from Linear.');
+	}
+
+	const endpoint = isBrowser ? '/api/linear-proxy' : (env.LINEAR_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT);
+	console.log(`[loadLinearNowPageData] Fetching from endpoint: ${endpoint} (isBrowser: ${isBrowser})`);
+	
+	const data = await postGraphql<LinearNowQueryData>(apiKey ?? '', LINEAR_NOW_QUERY, endpoint);
+	
+	// Default behavior: filter by the view's project filter if present
+	const projectFilterId = data.customView?.filterData?.and?.[0]?.project?.id?.in?.[0];
+	
+	const sourceIssues = data.team.issues.nodes;
+	const filteredIssues = projectFilterId 
+		? sourceIssues.filter(issue => issue.project?.id === projectFilterId)
+		: sourceIssues;
+
+	const { activeIssues, completedIssues, backlogIssues, all } = sortAndFilterIssues(filteredIssues);
+
 	return {
-		meta: buildMeta(data.viewer.name, issues, activeIssues, completedIssues, backlogIssues),
+		meta: buildMeta(data.customView?.name ?? data.team.name, all, activeIssues, completedIssues, backlogIssues),
 		sections: buildSections(activeIssues, completedIssues, backlogIssues),
+		filterData: data.customView?.filterData,
+		rawIssues: data.team.issues.nodes,
+		allProjects: data.projects.nodes,
 	};
 }
 

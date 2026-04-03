@@ -12,10 +12,27 @@ const preview: Preview = {
     },
 
     a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
       test: 'todo'
+    },
+
+    design: {
+      type: 'config',
+      theme: {
+        name: 'Ransom Note (Investigative Dossier)',
+        colors: {
+          primary: "#1c1b1b", // Charcoal Ink
+          background: "#fcf9f8", // Warm Aged Paper
+          accent: "#0047ab", // Cobalt Blue
+          error: "#db3230", // Safety Red
+          success: "#145654", // Deep Green
+          surface: "#f0eded", // Surface Container
+        },
+        typography: {
+          headline: "Epilogue, sans-serif",
+          body: "Noto Serif, serif",
+          label: "Space Grotesk, monospace",
+        }
+      }
     }
   },
 };

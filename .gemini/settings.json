@@ -17,6 +17,9 @@
       },
       "timeout": 60000,
       "trust": true
+    },
+    "storybook": {
+      "httpUrl": "http://localhost:6006/mcp"
     }
   }
 }
