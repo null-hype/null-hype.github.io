@@ -1,149 +1,131 @@
 import { Meta } from "@storybook/addon-docs/blocks";
+import React from 'react';
 
-import TidelaneList from "../components/TidelaneList";
-import { generateTidelaneNodes } from "../data/tidelane";
+import NowPageView from "../components/NowPageView";
+import { getLinearNowPageData } from "../data/linearNowPage";
 import "../styles/now-page.css";
-
-export const stagingLanes = generateTidelaneNodes(110);
-
-export const stagingLane = stagingLanes.find((node) => node.phase.name === "full") ?? stagingLanes[0];
-
-export const stagingMeta = {
-  lastUpdated: "March 24, 2026",
-  title: "What I am doing now",
-  intro: [
-    "This staging page is constrained to one Linear initiative: Career Archive Era Test. The point is to preview the Astro release against the real initiative shape instead of the broader handcrafted now-page copy.",
-    "Right now that initiative contains one project, Career Archive (Spike), so the page collapses to a single active item rather than pretending there is a wider spread of current work.",
-  ],
-  footer:
-    "If the initiative gains more projects later, this staging page should expand from the same Linear hierarchy rather than drifting back to generic placeholder sections.",
-};
-
-export const stagingSections = [
-  {
-    id: "now",
-    title: "Now",
-    summary: "Initiative: Career Archive Era Test / 1 project / Linear-backed staging view",
-    items: [
-      {
-        title: "Career Archive (Spike)",
-        body:
-          "PLAN-110 spike project testing whether Linear can represent pre-workspace career history through initiative -> project -> issue structure. The current date range, January 1, 2019 to December 31, 2021, is explicitly synthetic and exists only for historical modeling during the spike.",
-        references: "Linear: Career Archive Era Test / Career Archive (Spike) / Status: Planned / Issues: PLAN-153, PLAN-154",
-        lane: {
-          slug: stagingLane.slug,
-          w3w: stagingLane.w3w,
-          moon: stagingLane.moon,
-          phase: stagingLane.phase,
-        },
-      },
-    ],
-  },
-];
 
 <Meta title="Astro Release Staging" />
 
-<div className="now-staging-shell">
-  <div className="now-staging-intro">
-    <p className="now-staging-kicker">Astro Release Staging</p>
-    <h1 className="now-staging-title">Now page release candidate</h1>
-    <p className="now-staging-copy">
-      This Storybook docs page stages the integrated <code>/now</code> experience before an Astro release.
-      It uses the same content fixtures, list component, and page styling as the live route so the review target
-      is the page itself rather than a stripped-down component demo.
-    </p>
-  </div>
+export const Loader = () => {
+  const [data, setData] = React.useState(null);
+  const [error, setError] = React.useState(null);
 
-  <div className="now-page now-staging-preview">
-    <div className="now-page__grain" aria-hidden="true"></div>
+  React.useEffect(() => {
+    getLinearNowPageData()
+      .then(setData)
+      .catch(err => setError(err.message));
+  }, []);
 
-    <header className="now-header">
-      <div className="now-shell now-header__inner">
-        <a className="now-header__brand" href="#now">jungle.roaring.wave</a>
-        <nav className="now-header__nav" aria-label="Release staging navigation">
-          <a href="#now">Now</a>
-          <a href="#recently-done">Recently done</a>
-          <a href="#staging-notes">Release notes</a>
-        </nav>
+  if (error) {
+    return (
+      <div className="now-staging-error">
+        <strong>Error loading live Linear data:</strong> {error}
       </div>
-    </header>
+    );
+  }
 
-    <main className="now-main now-shell">
-      <p className="now-kicker">Astro release staging / {stagingMeta.lastUpdated}</p>
-      <h1 className="now-title">{stagingMeta.title}</h1>
+  if (!data) {
+    return <div className="now-staging-loading">Analyzing Linear artifacts...</div>;
+  }
 
-      <div className="now-intro">
-        {stagingMeta.intro.map((paragraph) => (
-          <p>{paragraph}</p>
-        ))}
-      </div>
-
-      <TidelaneList sections={stagingSections} />
-
-      <footer className="now-footer" id="staging-notes">
-        <p>{stagingMeta.footer}</p>
-        <p>
-          Review this page in Storybook as the release candidate for <code>/now</code>, then ship the Astro build
-          once the single-project initiative view looks stable enough to widen into a fuller archive page.
+  return (
+    <div className="now-staging-shell">
+      <div className="now-staging-intro">
+        <p className="now-staging-kicker">Astro Release Staging // Release Candidate</p>
+        <h1 className="now-staging-title">Dossier: /now</h1>
+        <p className="now-staging-copy">
+          This staging ground transposes the live <strong>www.tidelands.dev</strong> custom view from Linear 
+          into a publishable forensic artifact. It uses the <strong>Ransom Note</strong> design system 
+          to render systemic infiltration reports as editorial dossiers.
         </p>
-      </footer>
-    </main>
-  </div>
-</div>
+      </div>
+
+      <div className="now-staging-preview">
+        <NowPageView meta={data.meta} sections={data.sections} />
+      </div>
+      
+      <div className="now-staging-metadata">
+        <div className="now-staging-metadata__inner">
+          <span className="font-label text-[10px] font-bold uppercase tracking-widest text-secondary block mb-4">Linear Contract State</span>
+          <pre className="text-[10px] bg-black/5 p-4 overflow-auto">
+            {JSON.stringify(data.filterData, null, 2)}
+          </pre>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+<Loader />
 
 <style>
   {`
     .now-staging-shell {
       margin: -1rem;
-      background: #f6f3ee;
+      background: var(--editorial-bg);
+      min-height: 100vh;
     }
 
     .now-staging-intro {
-      padding: 2rem 2rem 1rem;
-      border-bottom: 1px solid rgba(26, 26, 27, 0.1);
-      background: #fcf9f4;
+      padding: 4rem 4rem 2rem;
+      border-bottom: 2px solid var(--editorial-outline);
+      background: var(--editorial-surface-low);
     }
 
     .now-staging-kicker {
-      margin: 0 0 0.75rem;
+      margin: 0 0 1rem;
       font-family: var(--font-label);
       font-size: 0.72rem;
       font-weight: 800;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--editorial-accent);
+      color: var(--editorial-secondary);
     }
 
     .now-staging-title {
       margin: 0;
       font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 800;
-      letter-spacing: -0.05em;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.06em;
       line-height: 0.95;
       color: var(--editorial-ink);
+      text-transform: uppercase;
     }
 
     .now-staging-copy {
-      max-width: 46rem;
-      margin: 1rem 0 0;
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      line-height: 1.6;
-      color: rgba(26, 26, 27, 0.78);
-    }
-
-    .now-staging-preview {
-      position: relative;
-    }
-
-    .now-staging-preview .now-page__grain {
-      position: absolute;
-    }
-
-    .now-staging-preview code {
+      max-width: 48rem;
+      margin: 2rem 0 0;
       font-family: var(--font-meta);
-      font-size: 0.92em;
+      font-size: 1.25rem;
+      font-style: italic;
+      line-height: 1.6;
+      color: rgba(28, 27, 27, 0.8);
+    }
+
+    .now-staging-loading,
+    .now-staging-error {
+      padding: 4rem;
+      font-family: var(--font-label);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .now-staging-error {
+      color: var(--editorial-secondary);
+      background: #fff0f0;
+    }
+
+    .now-staging-metadata {
+      padding: 4rem;
+      background: var(--editorial-surface-high);
+      border-top: 4px solid var(--editorial-ink);
+    }
+
+    .now-staging-metadata__inner {
+      max-width: 64rem;
+      margin: 0 auto;
     }
   `}
 </style>

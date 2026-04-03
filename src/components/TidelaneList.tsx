@@ -45,21 +45,23 @@ function TidelaneCard({ item }: Readonly<{ item: TidelaneListItem }>) {
 				<p className="tidelane-card__phase">
 					{lane.phase.name} lane / {lane.phase.timezone}
 				</p>
-				<p className="tidelane-card__slug">{lane.slug}</p>
+				<p className="tidelane-card__slug">ENTRY::{lane.slug}</p>
 				<p className="tidelane-card__window">{lane.phase.utcBand}</p>
 			</div>
 
 			<div className="tidelane-card__content">
 				<h3 className="tidelane-card__title">{item.title}</h3>
-				<p className="tidelane-card__body">{item.body}</p>
+				<div className="tidelane-card__body-wrap">
+					<p className="tidelane-card__body">{item.body}</p>
+				</div>
 			</div>
 
 			<div className="tidelane-card__meta">
-				<p className="tidelane-card__track">{lane.w3w}</p>
+				<p className="tidelane-card__track">[{lane.w3w}]</p>
 				<p className="tidelane-card__moon">
-					Cycle {lane.moon.cycle} / {lane.moon.verb} / {lane.moon.domain}
+					Cycle {lane.moon.cycle} // {lane.moon.verb} // {lane.moon.domain}
 				</p>
-				<p className="tidelane-card__refs">{item.references}</p>
+				<p className="tidelane-card__refs">REF: {item.references}</p>
 			</div>
 		</article>
 	);
@@ -84,7 +86,7 @@ export default function TidelaneList({ sections }: Readonly<TidelaneListProps>) 
 						<div className="tidelane-section__header">
 							<h2 id={headingId}>{section.title}</h2>
 							{section.summary ? (
-								<p className="tidelane-section__summary">{section.summary}</p>
+								<p className="tidelane-section__summary">SIGNAL: {section.summary}</p>
 							) : null}
 						</div>
 
@@ -101,7 +103,7 @@ export default function TidelaneList({ sections }: Readonly<TidelaneListProps>) 
 							</ul>
 						) : (
 							<p className="tidelane-section__empty">
-								{section.emptyMessage ?? 'No items right now.'}
+								ENTRY_SET_EMPTY // {section.emptyMessage ?? 'No items right now.'}
 							</p>
 						)}
 					</section>

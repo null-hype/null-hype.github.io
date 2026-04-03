@@ -15,6 +15,33 @@ export interface NowPageViewProps {
 	readonly warning?: string;
 }
 
+/**
+ * Applies random baseline shifts to a string to mimic manual typesetting errors.
+ */
+function JitterTitle({ text }: { text: string }) {
+	return (
+		<>
+			{text.split(' ').map((word, wordIndex) => (
+				<span key={wordIndex} className="now-title__word">
+					{word.split('').map((char, charIndex) => {
+						const jitter = (wordIndex + charIndex) % 7 === 0;
+						const dir = (wordIndex + charIndex) % 2 === 0 ? 'up' : 'down';
+						return (
+							<span 
+								key={charIndex} 
+								className={jitter ? `baseline-shift-${dir}` : undefined}
+							>
+								{char}
+							</span>
+						);
+					})}
+					{' '}
+				</span>
+			))}
+		</>
+	);
+}
+
 export default function NowPageView({
 	meta,
 	sections,
@@ -38,8 +65,10 @@ export default function NowPageView({
 			</header>
 
 			<main className="now-main now-shell">
-				<p className="now-kicker">Now / {meta.lastUpdated}</p>
-				<h1 className="now-title">{meta.title}</h1>
+				<p className="now-kicker">CLASSIFIED // {meta.lastUpdated}</p>
+				<h1 className="now-title">
+					<JitterTitle text={meta.title} />
+				</h1>
 
 				<div className="now-intro">
 					{meta.intro.map((paragraph) => (
@@ -49,6 +78,7 @@ export default function NowPageView({
 
 				{warning ? (
 					<div className="now-callout" role="status">
+						<span className="font-label text-[10px] font-bold uppercase block mb-2">Warning: Structural Noise</span>
 						<p>{warning}</p>
 					</div>
 				) : null}

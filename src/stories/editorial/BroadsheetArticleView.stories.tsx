@@ -6,7 +6,13 @@ import { broadsheetArticleViewContent } from '../../data/broadsheetContent';
 const meta = {
 	title: 'Editorial/BroadsheetArticleView',
 	component: BroadsheetArticleView,
-	parameters: { layout: 'fullscreen' },
+	parameters: { 
+		layout: 'fullscreen',
+		design: {
+			type: 'iframe',
+			url: '/broadsheet-flagship.html',
+		},
+	},
 	tags: ['autodocs'],
 } satisfies Meta<typeof BroadsheetArticleView>;
 
