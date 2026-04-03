@@ -7,7 +7,6 @@ import { getLinearNowPageData, sortAndFilterIssues, buildMeta, buildSections } f
 import '../../styles/now-page.css';
 
 // Using any for Meta/StoryObj to allow Storybook-only control props (projectId, stateType)
-// which are not part of the underlying component props.
 const meta = {
 	title: 'Editorial/NowPageView',
 	component: NowPageView,
@@ -29,24 +28,43 @@ export const LinearSnapshot: Story = {
 	args: {
 		meta: mockNowPageData.meta,
 		sections: mockNowPageData.sections,
+		isFavorited: true,
 	},
+};
+
+export const ComingSoon: Story = {
+	args: {
+		meta: mockNowPageData.meta,
+		sections: mockNowPageData.sections,
+		isFavorited: false,
+	},
+	play: async ({ canvasElement }) => {
+		const title = canvasElement.querySelector('h1');
+		if (!title || !title.textContent?.includes('Coming Soon!')) {
+			throw new Error(`Expected "Coming Soon!" title, but found "${title?.textContent}"`);
+		}
+		
+		const kicker = canvasElement.querySelector('.now-kicker');
+		if (!kicker || !kicker.textContent?.includes('RESTRICTED ACCESS')) {
+			throw new Error(`Expected "RESTRICTED ACCESS" kicker, but found "${kicker?.textContent}"`);
+		}
+	}
 };
 
 export const LinearUnavailable: Story = {
 	args: {
 		meta: mockUnavailableNowPageData.meta,
 		sections: mockUnavailableNowPageData.sections,
+		isFavorited: true,
 		warning:
 			'Linear data is unavailable for this build. Confirm LINEAR_API_KEY and outbound access to api.linear.app.',
 	},
 };
 
-// TDD: Use mock data that matches our Linear expectations for automated verification
-// but allow the loader to override it with live data in the browser.
 export const LiveFromLinear: Story = {
 	args: {
-		projectId: 'd24fc8b9-f580-47db-ba6a-32497ead221b', // Default to Broadsheet project ID
-		stateType: 'completed', // Default to Completed
+		projectId: 'd24fc8b9-f580-47db-ba6a-32497ead221b', 
+		stateType: 'completed',
 		meta: {
 			...mockNowPageData.meta,
 			title: 'What Broadsheet is doing now',
@@ -97,10 +115,10 @@ export const LiveFromLinear: Story = {
 			allProjects: [], 
 			filterData: {}, 
 			meta: args.meta, 
-			sections: args.sections 
+			sections: args.sections,
+			isFavorited: args.isFavorited
 		};
 
-		// If we have live data, apply the interactive filters
 		if (linearData?.rawIssues) {
 			const activeProjectId = args.projectId;
 			const activeStateType = args.stateType;
@@ -119,6 +137,7 @@ export const LiveFromLinear: Story = {
 
 			data.meta = buildMeta(projectName, all, activeIssues, completedIssues, backlogIssues);
 			data.sections = buildSections(activeIssues, completedIssues, backlogIssues);
+			data.isFavorited = linearData.isFavorited;
 		}
 
 		return (
@@ -127,9 +146,10 @@ export const LiveFromLinear: Story = {
 					<div style={{ padding: '1rem', background: '#f0f0f0', borderBottom: '1px solid #ccc', fontSize: '0.8rem', fontFamily: 'monospace' }}>
 						<div style={{ marginBottom: '0.5rem' }}><strong>Linear Source View:</strong> {linearData.meta.title.replace('What ', '').replace(' is doing now', '')}</div>
 						<div><strong>Active filterData (JSON):</strong> {JSON.stringify(linearData.filterData, null, 2)}</div>
+						<div><strong>Favorited Status (Feature Flag):</strong> {data.isFavorited ? 'ACTIVE' : 'INACTIVE'}</div>
 					</div>
 				)}
-				<NowPageView meta={data.meta} sections={data.sections} warning={args.warning} />
+				<NowPageView meta={data.meta} sections={data.sections} warning={args.warning} isFavorited={data.isFavorited} />
 			</div>
 		);
 	},
@@ -156,7 +176,6 @@ export const LiveFromLinear: Story = {
 				context.argTypes.projectId.options = options;
 				context.argTypes.projectId.mapping = labels;
 				
-				// Automatically apply Linear View's saved filters to the Storybook Controls
 				const linearFilter = context.loaded.linearData.filterData;
 				if (linearFilter?.and) {
 					const projectFilter = linearFilter.and.find((f: any) => f.project?.id?.in);
@@ -179,17 +198,14 @@ export const LiveFromLinear: Story = {
 		const title = canvasElement.querySelector('h1');
 		if (!title) throw new Error('Could not find NowPageView title');
 		
-		if (!title.textContent?.includes('Broadsheet')) {
-			throw new Error(`Expected title to include "Broadsheet", but found "${title.textContent}"`);
-		}
-
-		const issues = Array.from(canvasElement.querySelectorAll('.tidelane-card__title'));
-		const targetTitle = 'Reference: Tidelands Stitch design system and mockups';
-		const found = issues.find(el => el.textContent === targetTitle);
-
-		if (!found) {
-			const foundTitles = issues.map(el => el.textContent).join(', ');
-			throw new Error(`Target issue "${targetTitle}" not found in component. Found: [${foundTitles}]`);
+		// If favorited, check for broadsheet
+		if (title.textContent?.includes('Broadsheet')) {
+			const issues = Array.from(canvasElement.querySelectorAll('.tidelane-card__title'));
+			const targetTitle = 'Reference: Tidelands Stitch design system and mockups';
+			const found = issues.find(el => el.textContent === targetTitle);
+			if (!found) throw new Error(`Target issue not found. Found: [${issues.map(el => el.textContent).join(', ')}]`);
+		} else if (!title.textContent?.includes('Coming Soon!')) {
+			throw new Error(`Unexpected title state: ${title.textContent}`);
 		}
 	}
 };
