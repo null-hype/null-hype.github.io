@@ -261,6 +261,11 @@ async function handleAgentSessionEvent(payload, config, paths, services) {
     throw new Error('AgentSessionEvent payload is missing agentSession.id');
   }
 
+  await appendJsonl(path.join(config.runtimeDir, 'raw-payloads.jsonl'), {
+    receivedAt: new Date().toISOString(),
+    payload,
+  });
+
   for (const content of buildAgentActivities(payload, config)) {
     await emitActivity(config, paths, sessionId, content, services);
   }
