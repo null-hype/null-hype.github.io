@@ -93,6 +93,7 @@ Next deploy command:
     --gcp-credentials file:$KEY_PATH \\
     --cloudflare-token env:CLOUDFLARE_API_TOKEN \\
     --ssh-public-key file:${SSH_PUBLIC_KEY_FILE:-/tmp/null_hype_render_plan_key.pub} \\
+    --ssh-private-key file:${SSH_PRIVATE_KEY_FILE:-/tmp/null_hype_render_plan_key} \\
     --deployment-slot ${DEPLOYMENT_SLOT:-blue}
 
 For a standby slot, add:
