@@ -40,6 +40,8 @@ export function loadConfig(env = process.env) {
     runtimeDir,
     dryRun,
     agentName: env.LINEAR_AGENT_NAME ?? 'Local Spike Harness',
+    julesProxyUrl: env.JULES_PROXY_URL ?? '',
+    julesProxyToken: env.JULES_PROXY_TOKEN ?? '',
   };
 }
 
@@ -254,6 +256,68 @@ async function emitActivity(config, paths, sessionId, content, services) {
   return data;
 }
 
+async function readResponseBody(response) {
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (contentType.includes('application/json')) {
+    return await response.json();
+  }
+
+  const text = await response.text();
+
+  if (!text) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { body: text };
+  }
+}
+
+async function dispatchToJules(config, payload, services) {
+  if (!config.julesProxyUrl) {
+    return null;
+  }
+
+  const issue = payload.agentSession?.issue;
+  const promptContext = payload.promptContext ?? issue?.description ?? '';
+
+  if (!issue?.id || !issue?.identifier || !promptContext) {
+    throw new Error('AgentSessionEvent payload is missing Jules dispatch context');
+  }
+
+  const headers = {
+    'content-type': 'application/json',
+  };
+
+  if (config.julesProxyToken) {
+    headers.authorization = `Bearer ${config.julesProxyToken}`;
+  }
+
+  const response = await (services.fetchImpl ?? fetch)(
+    `${config.julesProxyUrl.replace(/\/$/, '')}/api/dispatch`,
+    {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        promptContext,
+        issueId: issue.id,
+        issueIdentifier: issue.identifier,
+      }),
+    },
+  );
+
+  const body = await readResponseBody(response);
+
+  if (!response.ok) {
+    throw new Error(`Jules dispatch failed: ${response.status} ${JSON.stringify(body)}`);
+  }
+
+  return body;
+}
+
 async function handleAgentSessionEvent(payload, config, paths, services) {
   const sessionId = payload.agentSession?.id;
 
@@ -263,6 +327,10 @@ async function handleAgentSessionEvent(payload, config, paths, services) {
 
   for (const content of buildAgentActivities(payload, config)) {
     await emitActivity(config, paths, sessionId, content, services);
+  }
+
+  if (payload.action === 'created') {
+    await dispatchToJules(config, payload, services);
   }
 }
 

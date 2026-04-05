@@ -1,0 +1,30 @@
+{
+  "id": "operator-tools",
+  "version": "0.1.0",
+  "name": "Operator Tools",
+  "description": "Installs the repo operator toolchain: Terraform, Dagger, Mutagen, gcloud, jq, and SSH client utilities.",
+  "documentationURL": "https://github.com/null-hype/null-hype.github.io/tree/master/.devcontainer/features/src/operator-tools",
+  "licenseURL": "https://opensource.org/licenses/MIT",
+  "options": {
+    "terraformVersion": {
+      "type": "string",
+      "default": "1.7.5",
+      "description": "Terraform CLI version to install from releases.hashicorp.com."
+    },
+    "daggerVersion": {
+      "type": "string",
+      "default": "0.13.7",
+      "description": "Dagger CLI version to install with the official installer."
+    },
+    "mutagenVersion": {
+      "type": "string",
+      "default": "0.18.1",
+      "description": "Mutagen CLI version to install from GitHub releases."
+    },
+    "installGcloud": {
+      "type": "boolean",
+      "default": true,
+      "description": "Install the Google Cloud CLI from the official apt repository."
+    }
+  }
+}

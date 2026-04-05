@@ -34,6 +34,8 @@ Optional:
 ```bash
 export PORT=3000
 export LINEAR_DRY_RUN=1
+export JULES_PROXY_URL=https://jules.tidelands.dev
+export JULES_PROXY_TOKEN=replace-with-shared-proxy-token
 ```
 
 `LINEAR_DRY_RUN=1` logs would-be activities to `.linear-agent-runtime/activities.jsonl` instead of calling the Linear GraphQL API.
@@ -77,3 +79,5 @@ node linear-agent/mock-webhook.mjs notification issueNewComment
 5. Check `.linear-agent-runtime/activities.jsonl` and `GET /matrix`.
 
 If `LINEAR_OAUTH_ACCESS_TOKEN` is present, live activity mutations will be sent back to Linear. If not, the server stays in dry-run mode and only logs what it would have sent.
+
+If `JULES_PROXY_URL` is present, `AgentSessionEvent` deliveries with `action="created"` are also forwarded to the Jules Smallweb proxy. If `JULES_PROXY_TOKEN` is set, it is sent as a bearer token so the proxy can accept server-to-server dispatches without relying on a browser-authenticated `Remote-Email` header.
