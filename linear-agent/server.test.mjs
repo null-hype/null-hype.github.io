@@ -11,7 +11,7 @@ import {
   verifySignature,
 } from './app.mjs';
 
-async function createTestProcessor() {
+async function createTestProcessor({ config: configOverrides = {}, services: serviceOverrides = {} } = {}) {
   const runtimeDir = await mkdtemp(path.join(os.tmpdir(), 'linear-agent-test-'));
   const webhookSecret = 'test-secret';
   const config = {
@@ -23,11 +23,16 @@ async function createTestProcessor() {
     runtimeDir,
     dryRun: true,
     agentName: 'Test Harness',
+    julesProxyUrl: '',
+    julesProxyHost: '',
+    julesProxyToken: '',
+    ...configOverrides,
   };
   const processor = createRequestProcessor(config, {
     logger: {
       error() {},
     },
+    ...serviceOverrides,
   });
 
   return {
@@ -91,6 +96,85 @@ test('AgentSessionEvent created is accepted and writes dry-run activities', asyn
 
   assert.equal(response.statusCode, 200);
   await response.backgroundPromise;
+
+  const activityLog = await readFile(path.join(runtimeDir, 'activities.jsonl'), 'utf8');
+  assert.match(activityLog, /"type":"thought"/);
+  assert.match(activityLog, /"type":"response"/);
+});
+
+test('AgentSessionEvent created dispatches to Jules when configured', async () => {
+  const fetchCalls = [];
+  const { runtimeDir, webhookSecret, processor } = await createTestProcessor({
+    config: {
+      julesProxyUrl: 'https://jules.tidelands.dev',
+      julesProxyHost: 'jules.tidelands.dev',
+      julesProxyToken: 'proxy-token',
+    },
+    services: {
+      fetchImpl: async (url, init) => {
+        fetchCalls.push({ url, init });
+        return new Response(
+          JSON.stringify({
+            name: 'sessions/session-live',
+          }),
+          {
+            status: 200,
+            headers: {
+              'content-type': 'application/json',
+            },
+          },
+        );
+      },
+    },
+  });
+  const now = Date.now();
+  const payload = {
+    type: 'AgentSessionEvent',
+    action: 'created',
+    createdAt: new Date(now).toISOString(),
+    organizationId: 'org_test',
+    oauthClientId: 'oauth_test',
+    appUserId: 'app_user_test',
+    webhookTimestamp: now,
+    webhookId: 'wh_test_dispatch',
+    promptContext: '<issue identifier="PLAN-234"><title>Wire Jules</title></issue>',
+    agentSession: {
+      id: 'session_created',
+      issue: {
+        id: 'issue_created',
+        identifier: 'PLAN-234',
+        title: 'Wire Jules dispatch',
+        description: 'Issue body markdown',
+      },
+    },
+  };
+  const rawBody = JSON.stringify(payload);
+
+  const response = await processor.processRequest({
+    method: 'POST',
+    url: '/webhooks/linear',
+    headers: {
+      'content-type': 'application/json',
+      'linear-event': payload.type,
+      'linear-delivery': payload.webhookId,
+      'linear-signature': createSignature(webhookSecret, rawBody),
+    },
+    rawBody: Buffer.from(rawBody),
+  });
+
+  assert.equal(response.statusCode, 200);
+  await response.backgroundPromise;
+
+  assert.equal(fetchCalls.length, 1);
+  assert.equal(fetchCalls[0].url, 'https://jules.tidelands.dev/api/dispatch');
+  assert.equal(fetchCalls[0].init.method, 'POST');
+  assert.equal(fetchCalls[0].init.headers.host, 'jules.tidelands.dev');
+  assert.equal(fetchCalls[0].init.headers.authorization, 'Bearer proxy-token');
+  assert.deepEqual(JSON.parse(fetchCalls[0].init.body), {
+    promptContext: '<issue identifier="PLAN-234"><title>Wire Jules</title></issue>',
+    issueId: 'issue_created',
+    issueIdentifier: 'PLAN-234',
+  });
 
   const activityLog = await readFile(path.join(runtimeDir, 'activities.jsonl'), 'utf8');
   assert.match(activityLog, /"type":"thought"/);
@@ -196,4 +280,147 @@ test('AgentSessionEvent stop signal records only a terminal response', async () 
   assert.equal(entries.length, 1);
   assert.equal(entries[0].content.type, 'response');
   assert.match(entries[0].content.body, /stop signal/i);
+});
+
+test('Jules dispatch failures are logged without failing the webhook response', async () => {
+  const { runtimeDir, webhookSecret, processor } = await createTestProcessor({
+    config: {
+      julesProxyUrl: 'https://jules.tidelands.dev',
+    },
+    services: {
+      fetchImpl: async () =>
+        new Response(JSON.stringify({ ok: false, error: 'upstream failure' }), {
+          status: 502,
+          headers: {
+            'content-type': 'application/json',
+          },
+        }),
+    },
+  });
+  const now = Date.now();
+  const payload = {
+    type: 'AgentSessionEvent',
+    action: 'created',
+    createdAt: new Date(now).toISOString(),
+    organizationId: 'org_test',
+    oauthClientId: 'oauth_test',
+    appUserId: 'app_user_test',
+    webhookTimestamp: now,
+    webhookId: 'wh_test_dispatch_failure',
+    promptContext: '<issue identifier="PLAN-235"><title>Dispatch failure</title></issue>',
+    agentSession: {
+      id: 'session_created',
+      issue: {
+        id: 'issue_created',
+        identifier: 'PLAN-235',
+        title: 'Wire Jules dispatch',
+      },
+    },
+  };
+  const rawBody = JSON.stringify(payload);
+
+  const response = await processor.processRequest({
+    method: 'POST',
+    url: '/webhooks/linear',
+    headers: {
+      'content-type': 'application/json',
+      'linear-event': payload.type,
+      'linear-delivery': payload.webhookId,
+      'linear-signature': createSignature(webhookSecret, rawBody),
+    },
+    rawBody: Buffer.from(rawBody),
+  });
+
+  assert.equal(response.statusCode, 200);
+  await response.backgroundPromise;
+
+  const activityLog = await readFile(path.join(runtimeDir, 'activities.jsonl'), 'utf8');
+  assert.match(activityLog, /"type":"thought"/);
+  assert.match(activityLog, /"type":"response"/);
+
+  const errorLog = await readFile(path.join(runtimeDir, 'errors.jsonl'), 'utf8');
+  assert.match(errorLog, /Jules dispatch failed: 502/);
+  assert.match(errorLog, /AgentSessionEvent/);
+});
+
+test('Linear activity failures are logged and do not block Jules dispatch', async () => {
+  const fetchCalls = [];
+  const { runtimeDir, webhookSecret, processor } = await createTestProcessor({
+    config: {
+      dryRun: false,
+      oauthAccessToken: 'linear-token',
+      julesProxyUrl: 'https://jules.tidelands.dev',
+    },
+    services: {
+      fetchImpl: async (url) => {
+        fetchCalls.push(url);
+
+        if (url === 'https://api.linear.app/graphql') {
+          return new Response(JSON.stringify({
+            errors: [{ message: 'activity rejected' }],
+          }), {
+            status: 200,
+            headers: {
+              'content-type': 'application/json',
+            },
+          });
+        }
+
+        return new Response(JSON.stringify({
+          name: 'sessions/session-live',
+        }), {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        });
+      },
+    },
+  });
+  const now = Date.now();
+  const payload = {
+    type: 'AgentSessionEvent',
+    action: 'created',
+    createdAt: new Date(now).toISOString(),
+    organizationId: 'org_test',
+    oauthClientId: 'oauth_test',
+    appUserId: 'app_user_test',
+    webhookTimestamp: now,
+    webhookId: 'wh_test_activity_failure',
+    promptContext: '<issue identifier="PLAN-234"><title>Activity failure</title></issue>',
+    agentSession: {
+      id: 'session_created',
+      issue: {
+        id: 'issue_created',
+        identifier: 'PLAN-234',
+        title: 'Wire Jules dispatch',
+      },
+    },
+  };
+  const rawBody = JSON.stringify(payload);
+
+  const response = await processor.processRequest({
+    method: 'POST',
+    url: '/webhooks/linear',
+    headers: {
+      'content-type': 'application/json',
+      'linear-event': payload.type,
+      'linear-delivery': payload.webhookId,
+      'linear-signature': createSignature(webhookSecret, rawBody),
+    },
+    rawBody: Buffer.from(rawBody),
+  });
+
+  assert.equal(response.statusCode, 200);
+  await response.backgroundPromise;
+
+  assert.deepEqual(fetchCalls, [
+    'https://api.linear.app/graphql',
+    'https://api.linear.app/graphql',
+    'https://jules.tidelands.dev/api/dispatch',
+  ]);
+
+  const errorLog = await readFile(path.join(runtimeDir, 'errors.jsonl'), 'utf8');
+  assert.match(errorLog, /Linear GraphQL request failed/);
+  assert.match(errorLog, /emitActivity/);
 });

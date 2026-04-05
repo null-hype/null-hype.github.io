@@ -1,5 +1,7 @@
 # Linear Agent Spike
 
+This Node service is now a secondary harness. The production Linear webhook ingress lives in the Smallweb app at `.smallweb-root/linear-agent/`.
+
 This folder turns the current repo into a minimal local Linear agent harness for `PLAN-101`.
 
 ## What it verifies
@@ -34,6 +36,9 @@ Optional:
 ```bash
 export PORT=3000
 export LINEAR_DRY_RUN=1
+export JULES_PROXY_URL=https://jules.tidelands.dev
+export JULES_PROXY_HOST=jules.tidelands.dev
+export JULES_PROXY_TOKEN=replace-with-shared-proxy-token
 ```
 
 `LINEAR_DRY_RUN=1` logs would-be activities to `.linear-agent-runtime/activities.jsonl` instead of calling the Linear GraphQL API.
@@ -46,6 +51,12 @@ Start the local webhook server:
 npm run agent:start
 ```
 
+Start the Smallweb stack in a second terminal:
+
+```bash
+npm run smallweb:start
+```
+
 Run the local verification tests:
 
 ```bash
@@ -55,7 +66,7 @@ npm run agent:test
 Send a signed mock session webhook into the running server:
 
 ```bash
-node linear-agent/mock-webhook.mjs created
+npm run agent:mock-created
 node linear-agent/mock-webhook.mjs prompted
 node linear-agent/mock-webhook.mjs stop
 node linear-agent/mock-webhook.mjs notification issueStatusChanged
@@ -71,9 +82,12 @@ node linear-agent/mock-webhook.mjs notification issueNewComment
 ## Live hookup
 
 1. Keep your existing `localtunnel` session running against port `3000`.
-2. Start the webhook server with `npm run agent:start`.
-3. Point the Linear app webhook URL at `<your-localtunnel-url>/webhooks/linear`.
-4. Delegate a test issue to the app user.
-5. Check `.linear-agent-runtime/activities.jsonl` and `GET /matrix`.
+2. Start the Smallweb stack with `npm run smallweb:start`.
+3. Start the Node webhook server with `npm run agent:start`.
+4. Point the Linear app webhook URL at `<your-localtunnel-url>/webhooks/linear`.
+5. Delegate a test issue to the app user.
+6. Check `.linear-agent-runtime/activities.jsonl`, `.linear-agent-runtime/errors.jsonl`, and `.smallweb-root/jules/data/sessions.jsonl`.
 
 If `LINEAR_OAUTH_ACCESS_TOKEN` is present, live activity mutations will be sent back to Linear. If not, the server stays in dry-run mode and only logs what it would have sent.
+
+If `JULES_PROXY_URL` is present, `AgentSessionEvent` deliveries with `action="created"` are also forwarded to the Jules Smallweb proxy. `JULES_PROXY_HOST` is optional and useful for local Smallweb routing where the proxy is reached at `127.0.0.1` but needs a host header such as `jules.tidelands.dev`. If `JULES_PROXY_TOKEN` is set, it is sent as a bearer token so the proxy can accept server-to-server dispatches without relying on a browser-authenticated `Remote-Email` header.
