@@ -42,6 +42,15 @@ resource "cloudflare_record" "slot_origin_a" {
   ttl     = 60
 }
 
+resource "cloudflare_record" "slot_origin_wildcard_a" {
+  zone_id = var.cloudflare_zone_id
+  name    = "*.${var.deployment_slot}-origin"
+  type    = "A"
+  content = local.ipv4
+  proxied = false
+  ttl     = 60
+}
+
 # Note: AAAA records are omitted — GCE instances do not receive IPv6 addresses
 # by default. Enable dual-stack on the VPC subnet and add an output for the
 # IPv6 address if AAAA records are required later.

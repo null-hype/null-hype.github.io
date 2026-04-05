@@ -3,6 +3,10 @@ data "google_compute_image" "debian" {
   project = "debian-cloud"
 }
 
+data "google_compute_default_service_account" "default" {
+  project = var.gcp_project_id
+}
+
 locals {
   slot_instance_name = "${var.instance_name}-${var.deployment_slot}"
   slot_network_tag   = "smallweb-origin-${var.deployment_slot}"
@@ -41,7 +45,7 @@ resource "google_compute_instance" "smallweb" {
 
   # Minimal scope — this instance serves HTTP only, no GCP API calls needed.
   service_account {
-    email  = "default"
+    email  = data.google_compute_default_service_account.default.email
     scopes = ["https://www.googleapis.com/auth/logging.write"]
   }
 

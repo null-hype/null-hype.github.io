@@ -43,6 +43,8 @@ The generated bundle contains only:
 
 The accompanying Mutagen config uses one-way replica mode and ignores VCS metadata so the remote path behaves like a deployed mirror, not a collaborative working tree.
 
+Run this from inside the devcontainer after `npm run devcontainer:doctor`. If you need a local override env file, export `NULL_HYPE_ENV_FILES=path/to/local.env`.
+
 ## Commands
 
 All commands are run from the project root:
@@ -61,6 +63,23 @@ This repo now includes the devcontainer and MCP setup from `null-hype/null-hype`
 Set `ANTHROPIC_API_KEY`, `LINEAR_API_KEY`, and `GITHUB_PERSONAL_ACCESS_TOKEN` in your local environment or Codespaces secrets before creating or rebuilding the devcontainer.
 
 Because `.devcontainer/devcontainer.json` maps those values from `${localEnv:...}` into `containerEnv`, changing them usually requires a rebuild or restart of the devcontainer/Codespace to take effect.
+
+The repo-specific operator toolchain now lives in a local feature at [`.devcontainer/features/src/operator-tools`](/workspaces/null-hype.github.io/.devcontainer/features/src/operator-tools/devcontainer-feature.json). It installs Terraform, Dagger, Mutagen, gcloud, jq, and SSH client tools, while persistent state now lives in named devcontainer volumes for:
+
+- `~/.config/gcloud`
+- `~/.mutagen`
+- `~/.terraform.d`
+- `~/.ssh`
+
+Useful commands:
+
+| Command | Action |
+| :--- | :--- |
+| `npm run devcontainer:doctor` | Verify the operator toolchain and state directories inside the devcontainer |
+| `npm run devcontainer:test-features` | Run the built-in `@devcontainers/cli` tests for the local `operator-tools` feature |
+| `npm run worktree:audit` | Inventory registered worktrees, show clean/dirty state, and highlight in-repo worktrees |
+
+Additional details live in [`.devcontainer/README.md`](/workspaces/null-hype.github.io/.devcontainer/README.md).
 
 ## Structure
 
