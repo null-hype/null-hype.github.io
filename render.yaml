@@ -1,15 +1,14 @@
 services:
   - type: web
-    name: null-hype-dagger-pr-plan
+    name: null-hype-dagger-pr-check
     runtime: node
     repo: https://github.com/null-hype/null-hype.github.io
-    branch: plan-197
+    branch: master
     plan: free
     region: oregon
     buildCommand: |
       set -eu && \
       test -n "$SSH_PRIVATE_KEY" && \
-      test -n "$GCP_CREDENTIALS_JSON" && \
       test -n "$REMOTE_DOCKER_SSH_TARGET" && \
       mkdir -p ~/.ssh .render/bin && \
       printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519 && \
@@ -22,23 +21,10 @@ services:
       export PATH="$PWD/.render/bin:$PATH" && \
       export DOCKER_HOST="ssh://$REMOTE_DOCKER_SSH_TARGET" && \
       docker info && \
-      npm --prefix infra install && \
-      .render/bin/dagger call -m ./infra plan --src=infra --gcp-credentials=env:GCP_CREDENTIALS_JSON --cloudflare-token=env:CLOUDFLARE_API_TOKEN --ssh-public-key=env:SSH_PUBLIC_KEY --deployment-slot="${DEPLOYMENT_SLOT:-blue}" --manage-direct-dns-records="${MANAGE_DIRECT_DNS_RECORDS:-true}"
+      npm --prefix infra ci && \
+      .render/bin/dagger call -m ./infra module-check --src=infra
     startCommand: node -e "require('node:http').createServer((_,res)=>res.end('ok')).listen(process.env.PORT||10000,'0.0.0.0')"
     healthCheckPath: ""
     autoDeploy: false
     previews:
       generation: manual
-    envVars:
-      - key: BACKEND_PREFIX_ROOT
-        value: tidelands-dev
-      - key: DEPLOYMENT_SLOT
-        value: blue
-      - key: MANAGE_DIRECT_DNS_RECORDS
-        value: "true"
-      - key: GCP_ZONE
-        value: us-central1-a
-      - key: DOMAIN
-        value: tidelands.dev
-      - key: INSTANCE_NAME
-        value: tidelane-smallweb

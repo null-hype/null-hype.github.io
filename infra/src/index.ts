@@ -27,6 +27,7 @@ type SmallwebRootConfig = {
  *              Never touches compute or DNS. Idempotent. Elevated authority required.
  *   plan       Phase 1 — non-mutating: terraform plan, print diff, exit
  *   check      Phase 1 — ephemeral-only: Terratest suite, create/destroy test resources
+ *   moduleCheck Phase 1 — preview-safe module build/smoke test
  *   deploy     Phase 2 — production-mutating: terraform apply + smallweb SSH bootstrap
  *   verify     Phase 3 — non-mutating: external smoke checks against tidelands.dev
  *   destroy    Phase 2 — production-mutating: terraform destroy
@@ -122,26 +123,42 @@ export class TidelaneInfra {
 
   /**
    * deploy — production-mutating.
-   * Runs `terraform apply`, emits outputs as JSON.
-   * Post-apply smallweb bootstrap is handled in PLAN-186.
+   * Runs `terraform apply` then bootstraps smallweb on the instance over SSH.
+   * Returns the terraform outputs JSON on success.
    */
   @func()
   async deploy(
     src: Directory,
     cloudflareToken: Secret,
     sshPublicKey: Secret,
+    sshPrivateKey: Secret,
     deploymentSlot = "blue",
     manageDirectDnsRecords = true,
     gcpCredentials?: Secret,
   ): Promise<string> {
     const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
+    const outputsJson = await this.tfInit(
+      src,
+      this.resolveGcpCredentials(gcpCredentials),
+      cloudflareToken,
+      sshPublicKey,
+      config,
+    )
       .withExec([
         "terraform", "apply", "-auto-approve",
         ...this.tfVars(config),
       ])
       .withExec(["terraform", "output", "-json"])
       .stdout()
+
+    const outputs = JSON.parse(outputsJson) as Record<string, { value: string }>
+    const ipv4 = outputs["instance_ipv4"]?.value
+    if (!ipv4) {
+      throw new Error(`terraform outputs missing instance_ipv4: ${outputsJson}`)
+    }
+
+    await this.sshBootstrap(src.file("scripts/bootstrap.sh"), ipv4, config.domain, sshPrivateKey)
+    return outputsJson
   }
 
   /**
@@ -168,14 +185,58 @@ export class TidelaneInfra {
 
   /**
    * verify — non-mutating.
-   * Hits the domain externally and asserts a 200 response.
-   * Extended smoke checks are implemented in PLAN-187.
+   * Runs external smoke checks against the deployed domain.
    */
   @func()
   async verify(domain = "tidelands.dev"): Promise<string> {
+    const checks = `
+set -euo pipefail
+
+DOMAIN="${domain}"
+PASS=0
+FAIL=0
+
+run_check() {
+  local label="$1"
+  local cmd="$2"
+  local assert="$3"
+  local result
+  result=$(eval "$cmd" 2>&1) || true
+  if echo "$result" | grep -q "$assert"; then
+    echo "[PASS] $label"
+    PASS=$((PASS + 1))
+  else
+    echo "[FAIL] $label"
+    echo "  expected to find: $assert"
+    echo "  got: $result"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+run_check "apex HTTP 200" \\
+  "curl -sS --max-time 15 -o /dev/null -w '%{http_code}' https://$DOMAIN" \\
+  "200"
+
+run_check "health app HTTP 200" \\
+  "curl -sS --max-time 15 https://health.$DOMAIN" \\
+  '"ok":true'
+
+run_check "Cloudflare proxy (CF-Ray header)" \\
+  "curl -sS --max-time 15 -I https://$DOMAIN" \\
+  "cf-ray"
+
+run_check "wildcard routing (health subdomain via wildcard)" \\
+  "curl -sS --max-time 15 -o /dev/null -w '%{http_code}' https://health.$DOMAIN" \\
+  "200"
+
+echo ""
+echo "Results: $PASS passed, $FAIL failed"
+[ "$FAIL" -eq 0 ] || exit 1
+`
+
     return dag.container()
       .from("curlimages/curl:latest")
-      .withExec(["curl", "-sf", "--max-time", "15", `https://${domain}`])
+      .withExec(["sh", "-c", checks])
       .stdout()
   }
 
@@ -213,6 +274,21 @@ export class TidelaneInfra {
       .withEnvVariable("PRESERVE_ON_FAILURE", preserveOnFailure ? "1" : "0")
       .withWorkdir("/workspace/test")
       .withExec(["go", "test", "-v", "-timeout", "30m", "./..."])
+      .stdout()
+  }
+
+  /**
+   * moduleCheck — preview-safe Dagger module build and smoke test.
+   */
+  @func()
+  async moduleCheck(src: Directory): Promise<string> {
+    return dag.container()
+      .from("node:22-bookworm")
+      .withDirectory("/workspace", src)
+      .withWorkdir("/workspace")
+      .withExec(["npm", "ci"])
+      .withExec(["npm", "run", "build"])
+      .withExec(["node", "--test", "module.smoke.test.mjs"])
       .stdout()
   }
 
@@ -275,6 +351,38 @@ export class TidelaneInfra {
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
+
+  /**
+   * sshBootstrap connects to host as the smallweb user, waits for SSH to be
+   * ready, copies bootstrap.sh from src, and runs it with the target domain.
+   */
+  private async sshBootstrap(
+    bootstrapFile: File,
+    host: string,
+    domain: string,
+    sshPrivateKey: Secret,
+  ): Promise<string> {
+    const sshFlags = "-o StrictHostKeyChecking=no -o ConnectTimeout=5 -i /root/.ssh/id_ed25519"
+    const target = `smallweb@${host}`
+
+    return dag.container()
+      .from("alpine:3.19")
+      .withExec(["apk", "add", "--no-cache", "openssh-client"])
+      .withMountedSecret("/root/.ssh/id_ed25519", sshPrivateKey)
+      .withExec(["chmod", "600", "/root/.ssh/id_ed25519"])
+      .withMountedFile("/bootstrap.sh", bootstrapFile)
+      .withExec([
+        "sh", "-c",
+        `for i in $(seq 1 18); do
+           ssh ${sshFlags} ${target} echo ready && break
+           echo "waiting for SSH ($i/18)..." && sleep 5
+           [ $i -eq 18 ] && echo "SSH timed out" && exit 1
+         done`,
+      ])
+      .withExec(["scp", ...sshFlags.split(" "), "/bootstrap.sh", `${target}:/tmp/bootstrap.sh`])
+      .withExec(["ssh", ...sshFlags.split(" "), target, `bash /tmp/bootstrap.sh ${domain}`])
+      .stdout()
+  }
 
   /**
    * tfInit returns a container with Terraform initialised against the GCS backend.
