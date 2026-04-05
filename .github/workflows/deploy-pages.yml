@@ -1,10 +1,9 @@
-name: Deploy Astro site to GitHub Pages
+name: Deploy Storybook to GitHub Pages
 
 on:
   push:
     branches:
       - main
-      - master
   workflow_dispatch:
 
 permissions:
@@ -13,11 +12,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-storybook:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,26 +28,19 @@ jobs:
         with:
           node-version: 22
 
-      - name: Configure GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
       - name: Install dependencies
         run: npm install
 
-      - name: Build Astro site
-        run: npm run build
-        env:
-          SITE: ${{ steps.pages.outputs.origin }}
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+      - name: Build Storybook
+        run: npm run build-storybook
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./storybook-static
 
-  deploy:
-    needs: build
+  deploy-pages:
+    needs: build-storybook
     runs-on: ubuntu-latest
 
     environment:
@@ -56,6 +48,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

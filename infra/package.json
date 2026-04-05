@@ -1,0 +1,16 @@
+{
+  "name": "tidelane-infra",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@dagger.io/dagger": "^0.13.0",
+    "typescript": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
+  }
+}
