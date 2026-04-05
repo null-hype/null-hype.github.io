@@ -10,8 +10,24 @@ const config: StorybookConfig = {
     "@storybook/addon-vitest",
     "@storybook/addon-a11y",
     "@storybook/addon-docs",
-    "@storybook/addon-mcp"
+    "@storybook/addon-mcp",
+    "@storybook/addon-designs"
   ],
-  "framework": "@storybook/react-vite"
+  "staticDirs": ["../.stitch/designs"],
+  "framework": "@storybook/react-vite",
+  async viteFinal(config) {
+    return {
+      ...config,
+      server: {
+        ...config.server,
+        proxy: {
+          '/api': {
+            target: 'http://localhost:4321',
+            changeOrigin: true,
+          },
+        },
+      },
+    };
+  },
 };
 export default config;

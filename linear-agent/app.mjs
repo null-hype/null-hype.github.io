@@ -1,5 +1,6 @@
 import http from 'node:http';
 import crypto from 'node:crypto';
+import https from 'node:https';
 import { appendFile, mkdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -40,6 +41,9 @@ export function loadConfig(env = process.env) {
     runtimeDir,
     dryRun,
     agentName: env.LINEAR_AGENT_NAME ?? 'Local Spike Harness',
+    julesProxyUrl: env.JULES_PROXY_URL ?? '',
+    julesProxyHost: env.JULES_PROXY_HOST ?? '',
+    julesProxyToken: env.JULES_PROXY_TOKEN ?? '',
   };
 }
 
@@ -254,6 +258,140 @@ async function emitActivity(config, paths, sessionId, content, services) {
   return data;
 }
 
+async function readResponseBody(response) {
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (contentType.includes('application/json')) {
+    return await response.json();
+  }
+
+  const text = await response.text();
+
+  if (!text) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { body: text };
+  }
+}
+
+async function requestProxy(config, init, services) {
+  if (services.fetchImpl) {
+    return await services.fetchImpl(config.julesProxyUrl, init);
+  }
+
+  if (!config.julesProxyHost) {
+    return await fetch(config.julesProxyUrl, init);
+  }
+
+  const targetUrl = new URL(config.julesProxyUrl);
+  const transport = targetUrl.protocol === 'https:' ? https : http;
+
+  return await new Promise((resolve, reject) => {
+    const request = transport.request(
+      {
+        protocol: targetUrl.protocol,
+        hostname: targetUrl.hostname,
+        port: targetUrl.port,
+        method: init.method,
+        path: `${targetUrl.pathname}${targetUrl.search}`,
+        headers: init.headers,
+      },
+      (response) => {
+        const chunks = [];
+
+        response.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+
+        response.on('end', () => {
+          resolve(
+            new Response(Buffer.concat(chunks), {
+              status: response.statusCode ?? 500,
+              headers: response.headers,
+            }),
+          );
+        });
+
+        response.on('error', reject);
+      },
+    );
+
+    request.on('error', reject);
+
+    if (init.body) {
+      request.write(init.body);
+    }
+
+    request.end();
+  });
+}
+
+async function dispatchToJules(config, payload, services) {
+  if (!config.julesProxyUrl) {
+    return null;
+  }
+
+  const issue = payload.agentSession?.issue;
+  const promptContext = payload.promptContext ?? issue?.description ?? '';
+
+  if (!issue?.id || !issue?.identifier || !promptContext) {
+    throw new Error('AgentSessionEvent payload is missing Jules dispatch context');
+  }
+
+  const headers = {
+    'content-type': 'application/json',
+  };
+
+  if (config.julesProxyHost) {
+    headers.host = config.julesProxyHost;
+  }
+
+  if (config.julesProxyToken) {
+    headers.authorization = `Bearer ${config.julesProxyToken}`;
+  }
+
+  const response = await requestProxy(
+    {
+      ...config,
+      julesProxyUrl: `${config.julesProxyUrl.replace(/\/$/, '')}/api/dispatch`,
+    },
+    {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        promptContext,
+        issueId: issue.id,
+        issueIdentifier: issue.identifier,
+      }),
+    },
+    services,
+  );
+
+  const body = await readResponseBody(response);
+
+  if (!response.ok) {
+    throw new Error(`Jules dispatch failed: ${response.status} ${JSON.stringify(body)}`);
+  }
+
+  return body;
+}
+
+async function logProcessingError(paths, payload, error, logger, stage) {
+  await appendJsonl(paths.errors, {
+    recordedAt: new Date().toISOString(),
+    error: error instanceof Error ? error.message : String(error),
+    payloadType: payload.type ?? null,
+    stage,
+    webhookId: payload.webhookId ?? null,
+  });
+
+  logger.error(error);
+}
+
 async function handleAgentSessionEvent(payload, config, paths, services) {
   const sessionId = payload.agentSession?.id;
 
@@ -261,8 +399,27 @@ async function handleAgentSessionEvent(payload, config, paths, services) {
     throw new Error('AgentSessionEvent payload is missing agentSession.id');
   }
 
+  await appendJsonl(path.join(config.runtimeDir, 'raw-payloads.jsonl'), {
+    receivedAt: new Date().toISOString(),
+    payload,
+  });
+
+  const logger = services.logger ?? console;
+
   for (const content of buildAgentActivities(payload, config)) {
-    await emitActivity(config, paths, sessionId, content, services);
+    try {
+      await emitActivity(config, paths, sessionId, content, services);
+    } catch (error) {
+      await logProcessingError(paths, payload, error, logger, 'emitActivity');
+    }
+  }
+
+  if (payload.action === 'created') {
+    try {
+      await dispatchToJules(config, payload, services);
+    } catch (error) {
+      await logProcessingError(paths, payload, error, logger, 'dispatchToJules');
+    }
   }
 }
 
@@ -417,16 +574,9 @@ export function createRequestProcessor(config = loadConfig(), services = {}) {
           action: payload.action ?? null,
           dryRun: config.dryRun,
         },
-        backgroundPromise: dispatchWebhook(payload, config, paths, services).catch(async (error) => {
-          await appendJsonl(paths.errors, {
-            recordedAt: new Date().toISOString(),
-            error: error instanceof Error ? error.message : String(error),
-            payloadType: payload.type ?? null,
-            webhookId: payload.webhookId ?? null,
-          });
-
-          logger.error(error);
-        }),
+        backgroundPromise: dispatchWebhook(payload, config, paths, services).catch((error) =>
+          logProcessingError(paths, payload, error, logger, 'dispatchWebhook')
+        ),
       };
     },
   };

@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: null-hype-dagger-pr-plan
+    runtime: node
+    repo: https://github.com/null-hype/null-hype.github.io
+    branch: plan-197
+    plan: free
+    region: oregon
+    buildCommand: |
+      set -eu && \
+      test -n "$SSH_PRIVATE_KEY" && \
+      test -n "$GCP_CREDENTIALS_JSON" && \
+      test -n "$REMOTE_DOCKER_SSH_TARGET" && \
+      mkdir -p ~/.ssh .render/bin && \
+      printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519 && \
+      chmod 600 ~/.ssh/id_ed25519 && \
+      printf 'Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null\n' > ~/.ssh/config && \
+      curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-24.0.7.tgz -o /tmp/docker.tgz && \
+      tar -xzf /tmp/docker.tgz -C .render/bin --strip-components=1 docker/docker && \
+      curl -fsSL https://dl.dagger.io/dagger/install.sh -o /tmp/dagger-install.sh && \
+      BIN_DIR=.render/bin sh /tmp/dagger-install.sh && \
+      export PATH="$PWD/.render/bin:$PATH" && \
+      export DOCKER_HOST="ssh://$REMOTE_DOCKER_SSH_TARGET" && \
+      docker info && \
+      npm --prefix infra install && \
+      .render/bin/dagger call -m ./infra plan --src=infra --gcp-credentials=env:GCP_CREDENTIALS_JSON --cloudflare-token=env:CLOUDFLARE_API_TOKEN --ssh-public-key=env:SSH_PUBLIC_KEY --deployment-slot="${DEPLOYMENT_SLOT:-blue}" --manage-direct-dns-records="${MANAGE_DIRECT_DNS_RECORDS:-true}"
+    startCommand: node -e "require('node:http').createServer((_,res)=>res.end('ok')).listen(process.env.PORT||10000,'0.0.0.0')"
+    healthCheckPath: ""
+    autoDeploy: false
+    previews:
+      generation: manual
+    envVars:
+      - key: BACKEND_PREFIX_ROOT
+        value: tidelands-dev
+      - key: DEPLOYMENT_SLOT
+        value: blue
+      - key: MANAGE_DIRECT_DNS_RECORDS
+        value: "true"
+      - key: GCP_ZONE
+        value: us-central1-a
+      - key: DOMAIN
+        value: tidelands.dev
+      - key: INSTANCE_NAME
+        value: tidelane-smallweb

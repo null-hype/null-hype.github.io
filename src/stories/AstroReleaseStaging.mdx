@@ -1,0 +1,205 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import React from 'react';
+
+import NowPageView from "../components/NowPageView";
+import { getLinearNowPageData } from "../data/linearNowPage";
+import "../styles/now-page.css";
+
+<Meta title="Astro Release Staging" />
+
+export const Loader = () => {
+  const [data, setData] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    getLinearNowPageData()
+      .then(setData)
+      .catch(err => setError(err.message));
+  }, []);
+
+  if (error) {
+    return (
+      <div className="now-staging-error">
+        <strong>Error loading live Linear data:</strong> {error}
+      </div>
+    );
+  }
+
+  if (!data) {
+    return <div className="now-staging-loading">Analyzing Linear artifacts...</div>;
+  }
+
+  return (
+    <div className="now-staging-shell">
+      <div className="now-staging-intro">
+        <div className="now-staging-status-row">
+          <p className="now-staging-kicker">Astro Release Staging // Release Candidate</p>
+          <div className={`now-staging-flag ${data.isFavorited ? 'is-public' : 'is-internal'}`}>
+            {data.isFavorited ? 'PUBLIC EXPOSURE ACTIVE' : 'INTERNAL STAGING ONLY'}
+          </div>
+        </div>
+        <h1 className="now-staging-title">Dossier: /now</h1>
+        <p className="now-staging-copy">
+          This staging ground transposes the live <strong>www.tidelands.dev</strong> custom view from Linear 
+          into a publishable forensic artifact. It uses the <strong>Ransom Note</strong> design system 
+          to render systemic infiltration reports as editorial dossiers.
+        </p>
+      </div>
+
+      <div className="now-staging-preview">
+        <NowPageView meta={data.meta} sections={data.sections} />
+      </div>
+      
+      <div className="now-staging-metadata">
+        <div className="now-staging-metadata__inner">
+          <div className="now-staging-metadata__grid">
+            <div>
+              <span className="font-label text-[10px] font-bold uppercase tracking-widest text-secondary block mb-4">Linear Contract State</span>
+              <pre className="text-[10px] bg-black/5 p-4 overflow-auto">
+                {JSON.stringify(data.filterData, null, 2)}
+              </pre>
+            </div>
+            <div>
+              <span className="font-label text-[10px] font-bold uppercase tracking-widest text-secondary block mb-4">Feature Flag: Favorited View</span>
+              <div className="now-staging-feature-card">
+                <p className="text-sm font-meta italic mb-4">
+                  Favoriting the <strong>www.tidelands.dev</strong> view in Linear acts as the master 
+                  switch for public availability.
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className={`status-dot ${data.isFavorited ? 'is-active' : ''}`}></div>
+                  <span className="font-label text-[11px] font-bold tracking-widest">
+                    {data.isFavorited ? 'FAVORITED (READY TO SHIP)' : 'NOT FAVORITED (PREVENT SHIP)'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+<Loader />
+
+<style>
+  {`
+    .now-staging-shell {
+      margin: -1rem;
+      background: var(--editorial-bg);
+      min-height: 100vh;
+    }
+
+    .now-staging-intro {
+      padding: 4rem 4rem 2rem;
+      border-bottom: 2px solid var(--editorial-outline);
+      background: var(--editorial-surface-low);
+    }
+
+    .now-staging-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .now-staging-kicker {
+      margin: 0;
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--editorial-secondary);
+    }
+
+    .now-staging-flag {
+      padding: 0.4rem 0.8rem;
+      font-family: var(--font-label);
+      font-size: 0.6rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .now-staging-flag.is-internal {
+      background: var(--editorial-surface-high);
+      color: rgba(28, 27, 27, 0.4);
+    }
+
+    .now-staging-flag.is-public {
+      background: var(--editorial-success);
+      color: #fff;
+    }
+
+    .now-staging-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      line-height: 0.95;
+      color: var(--editorial-ink);
+      text-transform: uppercase;
+    }
+
+    .now-staging-copy {
+      max-width: 48rem;
+      margin: 2rem 0 0;
+      font-family: var(--font-meta);
+      font-size: 1.25rem;
+      font-style: italic;
+      line-height: 1.6;
+      color: rgba(28, 27, 27, 0.8);
+    }
+
+    .now-staging-loading,
+    .now-staging-error {
+      padding: 4rem;
+      font-family: var(--font-label);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .now-staging-error {
+      color: var(--editorial-secondary);
+      background: #fff0f0;
+    }
+
+    .now-staging-metadata {
+      padding: 4rem;
+      background: var(--editorial-surface-high);
+      border-top: 4px solid var(--editorial-ink);
+    }
+
+    .now-staging-metadata__inner {
+      max-width: 64rem;
+      margin: 0 auto;
+    }
+
+    .now-staging-metadata__grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 4rem;
+    }
+
+    .now-staging-feature-card {
+      padding: 2rem;
+      background: var(--editorial-bg);
+      border: 1px solid var(--editorial-outline);
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(28, 27, 27, 0.1);
+    }
+
+    .status-dot.is-active {
+      background: var(--editorial-success);
+      box-shadow: 0 0 12px var(--editorial-success);
+    }
+  `}
+</style>
