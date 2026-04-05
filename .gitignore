@@ -21,6 +21,7 @@ pnpm-debug.log*
 .smallweb-root/jules/.env
 .smallweb-root/jules/data/
 .render/
+.tools/
 .tmp-home/
 .tmp-smallweb-mutagen/
 
