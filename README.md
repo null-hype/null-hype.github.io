@@ -36,12 +36,30 @@ For a first quick-and-dirty Smallweb deploy, the Dagger module now exports a Mut
    `ADMIN_AUTHORIZED_EMAILS='you@example.com' MUTAGEN_DESTINATION='smallweb@203.0.113.10:/opt/tidelands/smallweb' ./infra/scripts/start-smallweb-mutagen-sync.sh`
 2. Point the remote Smallweb process at `<remote root>/.smallweb-root`.
 
+If `MUTAGEN_DESTINATION` is unset, the helper now tries to derive it from Terraform state via the `ssh_connection` output and defaults the remote root to `/opt/tidelands/smallweb`. That path can be overridden with `MUTAGEN_REMOTE_ROOT`.
+
+The helper also:
+
+- sources `.env` from the repo root by default
+- accepts `CLOUDFLARE_API_KEY` as a fallback for `CLOUDFLARE_API_TOKEN`
+- defaults `BACKEND_PREFIX_ROOT` to `tidelands-dev`
+- generates `~/.ssh/null_hype_render_plan_key(.pub)` automatically when no SSH public key is configured
+- prefers repo-local CLI installs in `.tools/bin/`
+
 The generated bundle contains only:
 
 - `.smallweb-root/`
 - `dist/`
 
 The accompanying Mutagen config uses one-way replica mode and ignores VCS metadata so the remote path behaves like a deployed mirror, not a collaborative working tree.
+
+For an existing production Smallweb instance, the generated Mutagen config preserves the remote-managed files:
+
+- `.smallweb-root/.smallweb/config.json`
+- `.smallweb-root/jules/.env`
+- `.smallweb-root/jules/data/`
+- `.smallweb-root/linear-agent/.env`
+- `.smallweb-root/linear-agent/data/`
 
 ## Commands
 
@@ -53,6 +71,32 @@ All commands are run from the project root:
 | `npm run dev` | Start the local Astro dev server |
 | `npm run build` | Build the production site into `dist/` |
 | `npm run preview` | Preview the production build locally |
+| `npm run smallweb:start` | Start the Smallweb stack locally, including `linear-agent` and `jules` |
+| `npm run jules:start` | Alias for `npm run smallweb:start` |
+| `npm run agent:start` | Start the legacy standalone Node webhook receiver locally |
+| `npm run agent:test` | Run the webhook unit tests |
+| `npm run agent:mock-created` | Send a signed local `AgentSessionEvent created` to the webhook server |
+
+## Linear To Jules
+
+The production ingress now lives inside Smallweb:
+
+1. `npm run smallweb:start`
+2. Point Linear's webhook URL at `https://linear-agent.tidelands.dev/webhooks/linear`
+
+Required `.env` entries:
+
+- `LINEAR_WEBHOOK_SECRET`
+- `LINEAR_OAUTH_ACCESS_TOKEN`
+- `JULES_API_KEY`
+- `JULES_SOURCE_ID=github/null-hype/null-hype.github.io`
+- `JULES_PROXY_URL=http://127.0.0.1:7777`
+- `JULES_PROXY_HOST=jules.tidelands.dev`
+- `JULES_PROXY_TOKEN=<shared-secret>`
+
+The Mutagen Smallweb bundle already includes both `.smallweb-root/linear-agent/` and `.smallweb-root/jules/`, so the production deploy surface is now the Smallweb root rather than the standalone Node harness.
+
+With the stack running, signed webhook deliveries to `linear-agent.tidelands.dev/webhooks/linear` exercise the same delegation path used by real Linear issue assignment. Successful Jules dispatches are recorded in `.smallweb-root/jules/data/sessions.jsonl`.
 
 ## Devcontainer Setup
 

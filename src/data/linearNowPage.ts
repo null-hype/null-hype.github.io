@@ -450,17 +450,16 @@ export function sortAndFilterIssues(issues: readonly LinearIssue[]) {
 }
 
 async function loadLinearNowPageData(env: ImportMetaEnv): Promise<NowPageData> {
-	const isBrowser = !import.meta.env.SSR;
 	const apiKey = env.LINEAR_API_KEY;
 
-	if (!apiKey && !isBrowser) {
+	if (!apiKey) {
 		throw new Error('LINEAR_API_KEY is required to build the now page from Linear.');
 	}
 
-	const endpoint = isBrowser ? '/api/linear-proxy' : (env.LINEAR_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT);
-	console.log(`[loadLinearNowPageData] Fetching from endpoint: ${endpoint} (isBrowser: ${isBrowser})`);
+	const endpoint = env.LINEAR_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
+	console.log(`[loadLinearNowPageData] Fetching from endpoint: ${endpoint}`);
 	
-	const data = await postGraphql<LinearNowQueryData>(apiKey ?? '', LINEAR_NOW_QUERY, endpoint);
+	const data = await postGraphql<LinearNowQueryData>(apiKey, LINEAR_NOW_QUERY, endpoint);
 	
 	// Detect if the "www.tidelands.dev" view is favorited
 	const isFavorited = data.favorites.nodes.some(

@@ -102,6 +102,25 @@ export class TidelaneInfra {
   }
 
   /**
+   * outputs — non-mutating.
+   * Reads Terraform outputs from the configured remote state as JSON.
+   */
+  @func()
+  async outputs(
+    src: Directory,
+    cloudflareToken: Secret,
+    sshPublicKey: Secret,
+    deploymentSlot = "blue",
+    manageDirectDnsRecords = true,
+    gcpCredentials?: Secret,
+  ): Promise<string> {
+    const config = this.loadDeploymentConfig({ deploymentSlot, manageDirectDnsRecords })
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
+      .withExec(["terraform", "output", "-json"])
+      .stdout()
+  }
+
+  /**
    * deploy — production-mutating.
    * Runs `terraform apply`, emits outputs as JSON.
    * Post-apply smallweb bootstrap is handled in PLAN-186.
@@ -399,6 +418,12 @@ export class TidelaneInfra {
       "    mode: \"one-way-replica\"",
       "    ignore:",
       "      vcs: true",
+      "      paths:",
+      "        - \".smallweb-root/.smallweb/config.json\"",
+      "        - \".smallweb-root/jules/.env\"",
+      "        - \".smallweb-root/jules/data\"",
+      "        - \".smallweb-root/linear-agent/.env\"",
+      "        - \".smallweb-root/linear-agent/data\"",
       "",
     ].join("\n")
   }

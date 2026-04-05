@@ -16,6 +16,10 @@ pnpm-debug.log*
 .smallweb-cache/
 .smallweb-data/
 .smallweb-root/.vscode/
+.smallweb-root/linear-agent/.env
+.smallweb-root/linear-agent/data/
+.smallweb-root/jules/.env
+.smallweb-root/jules/data/
 .render/
 .tmp-home/
 .tmp-smallweb-mutagen/
