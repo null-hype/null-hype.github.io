@@ -12,6 +12,18 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .linear-agent-runtime/
+.deno-runtime/
+.smallweb-cache/
+.smallweb-data/
+.smallweb-root/.vscode/
+.smallweb-root/linear-agent/.env
+.smallweb-root/linear-agent/data/
+.smallweb-root/jules/.env
+.smallweb-root/jules/data/
+.render/
+.tools/
+.tmp-home/
+.tmp-smallweb-mutagen/
 
 
 # environment variables
@@ -23,3 +35,22 @@ pnpm-debug.log*
 
 *storybook.log
 storybook-static
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.backup
+infra/terraform/*.tfplan
+infra/terraform/backend.tfvars
+infra/terraform/prod.tfvars
+
+# Bootstrap-generated deploy key (written by `dagger call bootstrap`)
+infra/.deploy-key.json
+infra/tidelanes-deploy.json

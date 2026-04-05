@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NowPageView from './NowPageView';
+import '../styles/editorial.css';
+import '../styles/now-page.css';
+import { createUnavailableNowPageData, getLinearNowPageData } from '../data/linearNowPage';
+
+let pageData = createUnavailableNowPageData();
+let warning: string | undefined;
+
+try {
+	pageData = await getLinearNowPageData();
+} catch (error) {
+	warning =
+		'Linear data is unavailable for this build. Confirm LINEAR_API_KEY and outbound access to api.linear.app.';
+
+	if (import.meta.env.DEV) {
+		console.error('Failed to load Linear now page data.', error);
+	}
+}
+---
+
+<BaseLayout
+	title="jungle.roaring.wave | Now"
+	description="What Robin Jordan is focused on now, pulled from current assigned Linear issues."
+>
+	<NowPageView meta={pageData.meta} sections={pageData.sections} warning={warning} />
+</BaseLayout>

@@ -1,0 +1,45 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@std/encoding@1.0.8": "1.0.8",
+    "jsr:@std/html@1.0.3": "1.0.3",
+    "jsr:@std/http@1.0.12": "1.0.12"
+  },
+  "jsr": {
+    "@std/encoding@1.0.8": {
+      "integrity": "a6c8f3f933ab1bed66244f435d1dc0fd23a888e07195532122ddc3d5f8f0e6b4"
+    },
+    "@std/html@1.0.3": {
+      "integrity": "7a0ac35e050431fb49d44e61c8b8aac1ebd55937e0dc9ec6409aa4bab39a7988"
+    },
+    "@std/http@1.0.12": {
+      "integrity": "85246d8bfe9c8e2538518725b158bdc31f616e0869255f4a8d9e3de919cab2aa"
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@astrojs/react@^5.0.1",
+        "npm:@chromatic-com/storybook@^5.0.2",
+        "npm:@playwright/test@^1.58.2",
+        "npm:@storybook/addon-a11y@^10.3.3",
+        "npm:@storybook/addon-docs@^10.3.3",
+        "npm:@storybook/addon-mcp@~0.4.2",
+        "npm:@storybook/addon-vitest@^10.3.3",
+        "npm:@storybook/react-vite@^10.3.3",
+        "npm:@types/node@^25.5.0",
+        "npm:@types/react-dom@^19.2.3",
+        "npm:@types/react@^19.2.14",
+        "npm:@vitest/browser-playwright@^4.1.1",
+        "npm:@vitest/coverage-v8@^4.1.1",
+        "npm:astro@^6.0.1",
+        "npm:playwright@^1.58.2",
+        "npm:react-dom@^19.2.4",
+        "npm:react@^19.2.4",
+        "npm:sharp@~0.34.2",
+        "npm:storybook@^10.3.3",
+        "npm:vitest@^4.1.1"
+      ]
+    }
+  }
+}

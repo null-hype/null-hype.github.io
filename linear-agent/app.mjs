@@ -1,5 +1,6 @@
 import http from 'node:http';
 import crypto from 'node:crypto';
+import https from 'node:https';
 import { appendFile, mkdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -14,12 +15,65 @@ const AGENT_ACTIVITY_CREATE_MUTATION = `
   }
 `;
 
+const ISSUE_PROJECT_QUERY = `
+  query IssueProject($id: String!) {
+    issue(id: $id) {
+      id
+      identifier
+      title
+      state {
+        name
+        type
+      }
+      project {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const PROJECT_UPDATE_CREATE_MUTATION = `
+  mutation ProjectUpdateCreate($input: ProjectUpdateCreateInput!) {
+    projectUpdateCreate(input: $input) {
+      success
+      projectUpdate {
+        id
+      }
+    }
+  }
+`;
+
+const PROJECT_UPDATE_HEALTH_VALUES = new Set(['onTrack', 'atRisk', 'offTrack']);
+
 function parseBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') {
     return fallback;
   }
 
   return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase());
+}
+
+function normalizeProjectUpdateHealth(value) {
+  if (typeof value !== 'string' || value.trim() === '') {
+    return 'onTrack';
+  }
+
+  const normalized = value.trim().toLowerCase();
+
+  if (normalized === 'ontrack' || normalized === 'on-track') {
+    return 'onTrack';
+  }
+
+  if (normalized === 'atrisk' || normalized === 'at-risk') {
+    return 'atRisk';
+  }
+
+  if (normalized === 'offtrack' || normalized === 'off-track') {
+    return 'offTrack';
+  }
+
+  return PROJECT_UPDATE_HEALTH_VALUES.has(value) ? value : 'onTrack';
 }
 
 export function loadConfig(env = process.env) {
@@ -30,6 +84,10 @@ export function loadConfig(env = process.env) {
     env.LINEAR_DRY_RUN,
     env.LINEAR_OAUTH_ACCESS_TOKEN ? false : true,
   );
+  const projectUpdateDryRun = parseBoolean(
+    env.LINEAR_PROJECT_UPDATE_DRY_RUN,
+    env.LINEAR_OAUTH_ACCESS_TOKEN ? false : dryRun,
+  );
 
   return {
     port: Number.isFinite(port) ? port : 3000,
@@ -39,7 +97,14 @@ export function loadConfig(env = process.env) {
     allowedClockSkewMs: Number.isFinite(allowedClockSkewMs) ? allowedClockSkewMs : 60000,
     runtimeDir,
     dryRun,
+    projectUpdatesEnabled: parseBoolean(env.LINEAR_PROJECT_UPDATES_ENABLED, true),
+    projectUpdateDryRun,
+    projectUpdateHealth: normalizeProjectUpdateHealth(env.LINEAR_PROJECT_UPDATE_HEALTH),
+    projectUpdateHideDiff: parseBoolean(env.LINEAR_PROJECT_UPDATE_HIDE_DIFF, true),
     agentName: env.LINEAR_AGENT_NAME ?? 'Local Spike Harness',
+    julesProxyUrl: env.JULES_PROXY_URL ?? '',
+    julesProxyHost: env.JULES_PROXY_HOST ?? '',
+    julesProxyToken: env.JULES_PROXY_TOKEN ?? '',
   };
 }
 
@@ -76,6 +141,7 @@ function createPaths(config) {
     deliveries: path.join(config.runtimeDir, 'deliveries.jsonl'),
     notifications: path.join(config.runtimeDir, 'notifications.jsonl'),
     activities: path.join(config.runtimeDir, 'activities.jsonl'),
+    projectUpdates: path.join(config.runtimeDir, 'project-updates.jsonl'),
     errors: path.join(config.runtimeDir, 'errors.jsonl'),
   };
 }
@@ -199,12 +265,20 @@ function summarizeNotification(payload) {
   };
 }
 
-async function postGraphql(config, body, fetchImpl = fetch) {
+function resolveAgentActivityAuthorization(config) {
+  return config.oauthAccessToken ? `Bearer ${config.oauthAccessToken}` : '';
+}
+
+function resolveProjectUpdateAuthorization(config) {
+  return resolveAgentActivityAuthorization(config);
+}
+
+async function postGraphql(config, body, authorization, fetchImpl = fetch) {
   const response = await fetchImpl(config.graphqlEndpoint, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      authorization: `Bearer ${config.oauthAccessToken}`,
+      ...(authorization ? { authorization } : {}),
     },
     body: JSON.stringify(body),
   });
@@ -243,12 +317,267 @@ async function emitActivity(config, paths, sessionId, content, services) {
         },
       },
     },
+    resolveAgentActivityAuthorization(config),
     services.fetchImpl ?? fetch,
   );
 
   await appendJsonl(paths.activities, {
     ...record,
     agentActivityId: data.agentActivityCreate?.agentActivity?.id ?? null,
+  });
+
+  return data;
+}
+
+async function readResponseBody(response) {
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (contentType.includes('application/json')) {
+    return await response.json();
+  }
+
+  const text = await response.text();
+
+  if (!text) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { body: text };
+  }
+}
+
+async function requestProxy(config, init, services) {
+  if (services.fetchImpl) {
+    return await services.fetchImpl(config.julesProxyUrl, init);
+  }
+
+  if (!config.julesProxyHost) {
+    return await fetch(config.julesProxyUrl, init);
+  }
+
+  const targetUrl = new URL(config.julesProxyUrl);
+  const transport = targetUrl.protocol === 'https:' ? https : http;
+
+  return await new Promise((resolve, reject) => {
+    const request = transport.request(
+      {
+        protocol: targetUrl.protocol,
+        hostname: targetUrl.hostname,
+        port: targetUrl.port,
+        method: init.method,
+        path: `${targetUrl.pathname}${targetUrl.search}`,
+        headers: init.headers,
+      },
+      (response) => {
+        const chunks = [];
+
+        response.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+
+        response.on('end', () => {
+          resolve(
+            new Response(Buffer.concat(chunks), {
+              status: response.statusCode ?? 500,
+              headers: response.headers,
+            }),
+          );
+        });
+
+        response.on('error', reject);
+      },
+    );
+
+    request.on('error', reject);
+
+    if (init.body) {
+      request.write(init.body);
+    }
+
+    request.end();
+  });
+}
+
+async function dispatchToJules(config, payload, services) {
+  if (!config.julesProxyUrl) {
+    return null;
+  }
+
+  const issue = payload.agentSession?.issue;
+  const promptContext = payload.promptContext ?? issue?.description ?? '';
+
+  if (!issue?.id || !issue?.identifier || !promptContext) {
+    throw new Error('AgentSessionEvent payload is missing Jules dispatch context');
+  }
+
+  const headers = {
+    'content-type': 'application/json',
+  };
+
+  if (config.julesProxyHost) {
+    headers.host = config.julesProxyHost;
+  }
+
+  if (config.julesProxyToken) {
+    headers.authorization = `Bearer ${config.julesProxyToken}`;
+  }
+
+  const response = await requestProxy(
+    {
+      ...config,
+      julesProxyUrl: `${config.julesProxyUrl.replace(/\/$/, '')}/api/dispatch`,
+    },
+    {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        promptContext,
+        issueId: issue.id,
+        issueIdentifier: issue.identifier,
+      }),
+    },
+    services,
+  );
+
+  const body = await readResponseBody(response);
+
+  if (!response.ok) {
+    throw new Error(`Jules dispatch failed: ${response.status} ${JSON.stringify(body)}`);
+  }
+
+  return body;
+}
+
+async function logProcessingError(paths, payload, error, logger, stage) {
+  await appendJsonl(paths.errors, {
+    recordedAt: new Date().toISOString(),
+    error: error instanceof Error ? error.message : String(error),
+    payloadType: payload.type ?? null,
+    stage,
+    webhookId: payload.webhookId ?? null,
+  });
+
+  logger.error(error);
+}
+
+function formatIssueSummary(issue) {
+  const parts = [issue?.identifier, issue?.title].filter(Boolean);
+  return parts.join(' ').trim();
+}
+
+function buildProjectUpdateBody(payload, config, issue, content) {
+  const issueSummary = formatIssueSummary(issue);
+  const projectName = issue?.project?.name;
+  const issueStatus = issue?.state?.name;
+  const sessionId = payload.agentSession?.id;
+  const leadLine = issueSummary
+    ? `${config.agentName} finished work for **${issueSummary}**.`
+    : `${config.agentName} finished work for the delegated issue.`;
+
+  const details = [];
+
+  if (projectName) {
+    details.push(`- Project: **${projectName}**`);
+  }
+
+  if (issueStatus) {
+    details.push(`- Issue status: **${issueStatus}**`);
+  }
+
+  if (sessionId) {
+    details.push(`- Agent session: \`${sessionId}\``);
+  }
+
+  return [leadLine, ...details, '', content.body.trim()].join('\n').trim();
+}
+
+async function resolveIssueForProjectUpdate(payload, config, services) {
+  const issue = payload.agentSession?.issue ?? null;
+
+  if (!issue) {
+    return null;
+  }
+
+  if (issue.project?.id) {
+    return issue;
+  }
+
+  if (!issue.id) {
+    return issue;
+  }
+
+  const authorization = resolveProjectUpdateAuthorization(config);
+
+  if (!authorization) {
+    return issue;
+  }
+
+  const data = await postGraphql(
+    config,
+    {
+      query: ISSUE_PROJECT_QUERY,
+      variables: {
+        id: issue.id,
+      },
+    },
+    authorization,
+    services.fetchImpl ?? fetch,
+  );
+
+  return data.issue ?? issue;
+}
+
+async function emitProjectUpdate(config, paths, payload, issue, content, services) {
+  const project = issue?.project ?? null;
+
+  if (!project?.id || !config.projectUpdatesEnabled) {
+    return { skipped: true };
+  }
+
+  const body = buildProjectUpdateBody(payload, config, issue, content);
+  const record = {
+    mode: config.projectUpdateDryRun ? 'dry-run' : 'live',
+    recordedAt: new Date().toISOString(),
+    agentSessionId: payload.agentSession?.id ?? null,
+    issueId: issue?.id ?? null,
+    issueIdentifier: issue?.identifier ?? null,
+    issueTitle: issue?.title ?? null,
+    projectId: project.id,
+    projectName: project.name ?? null,
+    health: config.projectUpdateHealth,
+    body,
+  };
+
+  const authorization = resolveProjectUpdateAuthorization(config);
+
+  if (config.projectUpdateDryRun || !authorization) {
+    await appendJsonl(paths.projectUpdates, record);
+    return { dryRun: true };
+  }
+
+  const data = await postGraphql(
+    config,
+    {
+      query: PROJECT_UPDATE_CREATE_MUTATION,
+      variables: {
+        input: {
+          projectId: project.id,
+          body,
+          health: config.projectUpdateHealth,
+          isDiffHidden: config.projectUpdateHideDiff,
+        },
+      },
+    },
+    authorization,
+    services.fetchImpl ?? fetch,
+  );
+
+  await appendJsonl(paths.projectUpdates, {
+    ...record,
+    projectUpdateId: data.projectUpdateCreate?.projectUpdate?.id ?? null,
   });
 
   return data;
@@ -261,8 +590,41 @@ async function handleAgentSessionEvent(payload, config, paths, services) {
     throw new Error('AgentSessionEvent payload is missing agentSession.id');
   }
 
+  await appendJsonl(path.join(config.runtimeDir, 'raw-payloads.jsonl'), {
+    receivedAt: new Date().toISOString(),
+    payload,
+  });
+
+  const logger = services.logger ?? console;
+
   for (const content of buildAgentActivities(payload, config)) {
-    await emitActivity(config, paths, sessionId, content, services);
+    try {
+      await emitActivity(config, paths, sessionId, content, services);
+    } catch (error) {
+      await logProcessingError(paths, payload, error, logger, 'emitActivity');
+      continue;
+    }
+
+    if (
+      payload.action === 'prompted' &&
+      content.type === 'response' &&
+      payload.agentActivity?.signal !== 'stop'
+    ) {
+      try {
+        const issue = await resolveIssueForProjectUpdate(payload, config, services);
+        await emitProjectUpdate(config, paths, payload, issue, content, services);
+      } catch (error) {
+        await logProcessingError(paths, payload, error, logger, 'emitProjectUpdate');
+      }
+    }
+  }
+
+  if (payload.action === 'created') {
+    try {
+      await dispatchToJules(config, payload, services);
+    } catch (error) {
+      await logProcessingError(paths, payload, error, logger, 'dispatchToJules');
+    }
   }
 }
 
@@ -337,8 +699,12 @@ export function createRequestProcessor(config = loadConfig(), services = {}) {
             ok: true,
             port: config.port,
             dryRun: config.dryRun,
+            projectUpdateDryRun: config.projectUpdateDryRun,
             webhookSecretConfigured: Boolean(config.webhookSecret),
             oauthAccessTokenConfigured: Boolean(config.oauthAccessToken),
+            projectUpdatesEnabled: config.projectUpdatesEnabled,
+            projectUpdateAuthConfigured: Boolean(resolveProjectUpdateAuthorization(config)),
+            projectUpdateHealth: config.projectUpdateHealth,
             runtimeDir: config.runtimeDir,
           },
         };
@@ -417,16 +783,9 @@ export function createRequestProcessor(config = loadConfig(), services = {}) {
           action: payload.action ?? null,
           dryRun: config.dryRun,
         },
-        backgroundPromise: dispatchWebhook(payload, config, paths, services).catch(async (error) => {
-          await appendJsonl(paths.errors, {
-            recordedAt: new Date().toISOString(),
-            error: error instanceof Error ? error.message : String(error),
-            payloadType: payload.type ?? null,
-            webhookId: payload.webhookId ?? null,
-          });
-
-          logger.error(error);
-        }),
+        backgroundPromise: dispatchWebhook(payload, config, paths, services).catch((error) =>
+          logProcessingError(paths, payload, error, logger, 'dispatchWebhook')
+        ),
       };
     },
   };

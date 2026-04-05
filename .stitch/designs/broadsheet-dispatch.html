@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#fcf9f0",
+              "tertiary-fixed": "#fef2e1",
+              "surface-container": "#f6f4e8",
+              "on-primary": "#faf7f6",
+              "on-background": "#38392e",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#525151",
+              "primary-container": "#e4e2e1",
+              "surface-container-high": "#f0eee1",
+              "on-secondary-fixed-variant": "#5c5b57",
+              "on-primary-fixed": "#3f3f3f",
+              "tertiary-fixed-dim": "#efe4d3",
+              "surface-bright": "#fdffda",
+              "surface-dim": "#e4e3d2",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "outline": "#818174",
+              "surface-variant": "#eae9d9",
+              "secondary-dim": "#595854",
+              "tertiary-dim": "#5f574b",
+              "on-primary-fixed-variant": "#5c5b5b",
+              "surface": "#fdffda",
+              "on-error-container": "#752121",
+              "surface-container-highest": "#eae9d9",
+              "inverse-surface": "#0e0e0b",
+              "secondary-fixed-dim": "#d7d4cf",
+              "on-secondary-fixed": "#403f3c",
+              "surface-tint": "#5f5e5e",
+              "secondary-container": "#e5e2dd",
+              "on-error": "#ffffff",
+              "on-secondary-container": "#53524e",
+              "inverse-primary": "#ffffff",
+              "on-tertiary-fixed": "#50493d",
+              "primary-fixed": "#e4e2e1",
+              "background": "#fdffda",
+              "error-container": "#fe8983",
+              "outline-variant": "#bbbaac",
+              "tertiary-container": "#fef2e1",
+              "primary-fixed-dim": "#d6d4d3",
+              "on-tertiary-fixed-variant": "#6d6558",
+              "secondary": "#656460",
+              "tertiary": "#6b6356",
+              "on-surface-variant": "#656559",
+              "inverse-on-surface": "#9f9d97",
+              "primary": "#5f5e5e",
+              "on-surface": "#38392e",
+              "secondary-fixed": "#e5e2dd",
+              "primary-dim": "#535252",
+              "error": "#a64542",
+              "on-tertiary-container": "#625b4e",
+              "error-dim": "#4e0309"
+            },
+            fontFamily: {
+              "headline": ["Newsreader"],
+              "body": ["Newsreader"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+body {
+    background-color: #fdffda;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDUvyaA-11-TOQwnDbPu97q7HBO5YFN32lAYfxTWNGQKk5pkkGQQ9ogYBwu_PgPKo0TXMlrb0GrbLeupt0heGWp95r3HkbVxGnjW6-3m3q2PNWnn0h8H5Hex8ov4eqXkzUEcsgaU2EsmX1NGuyEb74jnyLlFBOMDqbQSJoSlQCgraiUtNxxKQSIP41AgZhMwqBiHMUy8lry1mRgyY3X1HReFqwszxjlaz_PIqVvg3I8ISlTQA1p05Mjnz3VJ3QX3H68jXxvbDzmU8Kx)
+    }
+.no-scrollbar::-webkit-scrollbar {
+    display: none
+    }
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-on-surface selection:bg-primary-container">
+<!-- TopAppBar Navigation -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#fdffda] dark:bg-[#1a1a15] border-b-[1px] border-[#bbbaac]/40">
+<button class="hover:bg-[#f6f4e8] dark:hover:bg-[#2c2c24] transition-colors duration-300 p-2">
+<span class="material-symbols-outlined text-[#38392e] dark:text-[#f6f4e8]">menu</span>
+</button>
+<h1 class="font-serif italic tracking-tighter Newsreader text-2xl text-[#38392e] dark:text-[#f6f4e8]">ARCHIVAL DISPATCH</h1>
+<button class="hover:bg-[#f6f4e8] dark:hover:bg-[#2c2c24] transition-colors duration-300 p-2">
+<span class="material-symbols-outlined text-[#38392e] dark:text-[#f6f4e8]">search</span>
+</button>
+</header>
+<!-- Intelligence Header (Status Bar) -->
+<div class="mt-16 bg-surface-container-highest px-6 py-1.5 flex justify-between items-center border-b border-outline-variant/40">
+<div class="font-label text-[10px] tracking-widest text-on-surface-variant flex gap-4 uppercase">
+<span>[INTENT: RECONNAISSANCE]</span>
+<span class="border-l border-outline-variant/40 pl-4">ID: FL-0422</span>
+</div>
+<div class="font-label text-[10px] tracking-widest text-on-surface-variant uppercase">
+            [STATUS: VERIFIED]
+        </div>
+</div>
+<main class="px-6 py-10 max-w-2xl mx-auto mb-24">
+<!-- Masthead -->
+<div class="mb-12">
+<p class="font-label text-xs uppercase tracking-[0.2em] mb-4 text-primary">FINDER'S LOG // DISPATCH 08</p>
+<h2 class="text-5xl font-headline font-bold leading-[1.1] tracking-tighter text-on-background mb-6">
+                The Expected Discovery
+            </h2>
+<div class="flex items-center gap-4 border-t border-outline-variant/40 pt-4">
+<div class="w-10 h-10 bg-surface-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">fingerprint</span>
+</div>
+<div>
+<p class="font-label text-[10px] uppercase tracking-wider text-outline">Author</p>
+<p class="font-headline italic text-sm">The Anonymous Curator</p>
+</div>
+<div class="ml-auto text-right">
+<p class="font-label text-[10px] uppercase tracking-wider text-outline">Timestamp</p>
+<p class="font-label text-xs">2024.08.14.04:12</p>
+</div>
+</div>
+</div>
+<!-- Featured Image with Editorial Caption -->
+<figure class="mb-12">
+<div class="aspect-[4/5] bg-surface-container overflow-hidden border border-outline-variant/20">
+<img alt="Archival view" class="w-full h-full object-cover mix-blend-multiply grayscale contrast-125 opacity-90" data-alt="Monochromatic high-contrast photograph of an ancient leather-bound book lying open on a weathered wooden table with dramatic raking sunlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFegfOI3BUtYLphzhlYZ3DmOB_7FriqzQqnyPYF4WvhwKJTAItToaKnodM5UaX2WAwr52WztAd5Wrta1Mr1evYNyDaihryZr4O76Yo_Y7k_aAWt9cx2OjE_8g5679Hg6CyJmenEGGIAybSU1C8E6nLGiflRMZ4ILy4SerDgF7rfA4wvnDAlnDzP7rH6-vfiCI6lqho0__RBarOLRLoET0gD9i2KOF1BkHqvl42XW-X-au4LEtfXnPbqvrBIx9e45H87KzfhWR-TGBK"/>
+</div>
+<figcaption class="mt-3 font-label text-[10px] uppercase text-outline flex justify-between">
+<span>Fig 1.1: The Archetypal Found Object</span>
+<span>Ref: 098-X</span>
+</figcaption>
+</figure>
+<!-- Thesis Section -->
+<section class="mb-12">
+<p class="text-2xl font-headline leading-snug text-on-background mb-8 italic">
+                When expectation meets reality, the narrative of discovery shifts. People who find what they were looking for narrate the moment as a 'logical conclusion,' while those who find it by accident describe it as 'divine intervention' or 'glitch in the simulation.'
+            </p>
+<div class="w-12 h-px bg-primary mb-8"></div>
+</section>
+<!-- Observations (Asymmetric List) -->
+<section class="space-y-10 mb-16">
+<div class="flex gap-6 group">
+<span class="font-label text-sm text-outline group-hover:text-primary transition-colors">01.</span>
+<div>
+<h3 class="font-headline text-xl font-bold mb-2">The 'Pre-Destined' Narrative</h3>
+<p class="text-on-surface-variant leading-relaxed">Found objects are integrated into existing mental frameworks. The finder feels a sense of completion rather than surprise, as if the object was already a ghost in their pockets before it manifested in the physical world.</p>
+</div>
+</div>
+<div class="flex gap-6 group pl-8">
+<span class="font-label text-sm text-outline group-hover:text-primary transition-colors">02.</span>
+<div>
+<h3 class="font-headline text-xl font-bold mb-2">The 'Anomaly' Narrative</h3>
+<p class="text-on-surface-variant leading-relaxed">Unexpected finds are treated as disruptions to the timeline. These objects carry a weight of 'wrongness'—they exist in places where probability suggests they shouldn't, acting as jagged edges in the user's reality.</p>
+</div>
+</div>
+<div class="flex gap-6 group">
+<span class="font-label text-sm text-outline group-hover:text-primary transition-colors">03.</span>
+<div>
+<h3 class="font-headline text-xl font-bold mb-2">The 'Vanishing Point' Narrative</h3>
+<p class="text-on-surface-variant leading-relaxed">Finding something that was never lost creates a unique psychological feedback loop. This is the discovery of the redundant, the encounter with an object that serves no purpose other than to confirm it exists.</p>
+</div>
+</div>
+</section>
+<!-- Quote Block -->
+<blockquote class="my-16 px-10 py-12 bg-surface-container-high border-l-4 border-primary relative">
+<span class="material-symbols-outlined absolute top-4 left-4 text-outline/20 text-4xl">format_quote</span>
+<p class="text-2xl font-headline italic leading-tight text-on-background mb-6">
+                'In the archive, you find what you are looking for. In the field, you find what is looking for you.'
+            </p>
+<cite class="font-label text-xs uppercase tracking-widest text-outline block">— Anonymous Curator</cite>
+</blockquote>
+<!-- Intelligence Links -->
+<nav class="border-t border-outline-variant/40 pt-10 space-y-4">
+<a class="flex justify-between items-center group py-2 border-b border-outline-variant/10 hover:border-primary transition-all" href="#">
+<span class="font-label text-xs uppercase tracking-wider">Read Full Archive Entry</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="flex justify-between items-center group py-2 border-b border-outline-variant/10 hover:border-primary transition-all" href="#">
+<span class="font-label text-xs uppercase tracking-wider text-outline">Previous Dispatch: I Hid $1</span>
+<span class="material-symbols-outlined text-sm text-outline">west</span>
+</a>
+<a class="flex justify-between items-center group py-2 border-b border-outline-variant/10 hover:border-primary transition-all" href="#">
+<span class="font-label text-xs uppercase tracking-wider text-outline">Next Dispatch: Dead Drop</span>
+<span class="material-symbols-outlined text-sm text-outline">east</span>
+</a>
+</nav>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#fdffda]/90 backdrop-blur-md border-t-[1px] border-[#bbbaac]/40">
+<a class="flex flex-col items-center justify-center text-[#818174] dark:text-[#6b6b5b] opacity-60 pt-1 hover:text-[#38392e] dark:hover:text-[#f6f4e8] transition-all duration-150" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-mono uppercase text-[9px] tracking-tighter mt-1">ARCHIVE</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#818174] dark:text-[#6b6b5b] opacity-60 pt-1 hover:text-[#38392e] dark:hover:text-[#f6f4e8] transition-all duration-150" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="font-mono uppercase text-[9px] tracking-tighter mt-1">INDEX</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#38392e] dark:text-[#f6f4e8] border-t-2 border-[#5f5e5e] pt-1 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">article</span>
+<span class="font-mono uppercase text-[9px] tracking-tighter mt-1">DISPATCH</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#818174] dark:text-[#6b6b5b] opacity-60 pt-1 hover:text-[#38392e] dark:hover:text-[#f6f4e8] transition-all duration-150" href="#">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-mono uppercase text-[9px] tracking-tighter mt-1">INTEL</span>
+</a>
+</nav>
+</body></html>
