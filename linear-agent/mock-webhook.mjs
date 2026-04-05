@@ -43,6 +43,10 @@ function createPayload(kind) {
             id: 'issue_test_created',
             identifier: 'PLAN-101',
             title: 'Spike: Deploy minimal Linear agent, validate project-member notification stream',
+            project: {
+              id: 'project_test_harness',
+              name: 'Agent Test Harness',
+            },
           },
         },
         url: 'https://linear.app/tidelands2/issue/PLAN-101/spike',
@@ -56,6 +60,10 @@ function createPayload(kind) {
             id: 'issue_test_prompted',
             identifier: 'PLAN-101',
             title: 'Spike: Deploy minimal Linear agent, validate project-member notification stream',
+            project: {
+              id: 'project_test_harness',
+              name: 'Agent Test Harness',
+            },
           },
         },
         agentActivity: {

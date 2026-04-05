@@ -10,9 +10,9 @@
     "astro": "astro",
     "smallweb:start": "bash ./scripts/start-jules-proxy.sh",
     "jules:start": "npm run smallweb:start",
-    "agent:start": "node --env-file=.env linear-agent/server.mjs",
-    "agent:test": "node --env-file=.env --test linear-agent/server.test.mjs",
-    "agent:mock-created": "node --env-file=.env linear-agent/mock-webhook.mjs created",
+    "agent:start": "node --env-file-if-exists=.env linear-agent/server.mjs",
+    "agent:test": "node --env-file-if-exists=.env --test linear-agent/server.test.mjs",
+    "agent:mock-created": "node --env-file-if-exists=.env linear-agent/mock-webhook.mjs created",
     "linear:rename-current-cycle": "node linear-agent/rename-current-cycle.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
