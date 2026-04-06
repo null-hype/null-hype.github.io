@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import '../../styles/editorial.css';
+
+export async function getStaticPaths() {
+  const issues = await getCollection('issues');
+  return issues.map(issue => ({
+    params: { id: issue.id },
+    props: { issue },
+  }));
+}
+
+const { issue } = Astro.props;
+---
+
+<BaseLayout
+  title={`Issue ${issue.data.ID} | ${issue.data.Title}`}
+  description={issue.data.Description || issue.data.Title}
+>
+  <main class="editorial-main now-shell" style="padding-top: 4rem;">
+    <article class="editorial-container">
+      <header style="margin-bottom: 2rem;">
+        <p class="now-kicker">ISSUE // {issue.data.Status} // {issue.data.Project || 'Unassigned'}</p>
+        <h1 class="now-title" style="margin-bottom: 1rem;">{issue.data.Title}</h1>
+        <div style="display: flex; gap: 1rem; opacity: 0.8; font-size: 0.875rem;">
+          <span><strong>ID:</strong> {issue.data.ID}</span>
+          {issue.data.Priority && <span><strong>Priority:</strong> {issue.data.Priority}</span>}
+          {issue.data.Assignee && <span><strong>Assignee:</strong> {issue.data.Assignee}</span>}
+          {issue.data.Updated && <span><strong>Updated:</strong> {new Date(issue.data.Updated).toLocaleDateString()}</span>}
+        </div>
+      </header>
+
+      <div class="editorial-prose" style="white-space: pre-wrap;">
+        {issue.data.Description ? (
+          <p>{issue.data.Description}</p>
+        ) : (
+          <p><em>No description provided.</em></p>
+        )}
+      </div>
+    </article>
+  </main>
+</BaseLayout>

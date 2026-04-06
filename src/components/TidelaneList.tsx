@@ -50,7 +50,13 @@ function TidelaneCard({ item }: Readonly<{ item: TidelaneListItem }>) {
 			</div>
 
 			<div className="tidelane-card__content">
-				<h3 className="tidelane-card__title">{item.title}</h3>
+				{item.href ? (
+					<a href={item.href} className="tidelane-card__title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+						<h3 className="tidelane-card__title" style={{ textDecoration: 'underline' }}>{item.title}</h3>
+					</a>
+				) : (
+					<h3 className="tidelane-card__title">{item.title}</h3>
+				)}
 				<div className="tidelane-card__body-wrap">
 					<p className="tidelane-card__body">{item.body}</p>
 				</div>
