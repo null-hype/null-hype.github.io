@@ -6,11 +6,14 @@ test('home page shows projects collection', async ({ page }) => {
   // Wait for the page to load
   await page.waitForSelector('.now-page');
 
-  // Check if "Projects" section heading is visible
-  const projectsHeading = page.getByRole('heading', { name: 'Projects' });
-  await expect(projectsHeading).toBeVisible();
+  // Check if Initiative section headings are visible instead of "Projects"
+  const initiativeHeading = page.getByRole('heading', { name: 'The Cyber Farm Dispatches' });
+  await expect(initiativeHeading).toBeVisible();
 
-  // Check that other sections are NOT visible
+  const grammarHeading = page.getByRole('heading', { name: 'Grammar as Protocol' });
+  await expect(grammarHeading).toBeVisible();
+
+  // Check that other Linear sections are NOT visible
   await expect(page.getByRole('heading', { name: 'Now' })).not.toBeVisible();
   await expect(page.getByRole('heading', { name: 'Recently done' })).not.toBeVisible();
   await expect(page.getByRole('heading', { name: 'Not now' })).not.toBeVisible();
