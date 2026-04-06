@@ -91,9 +91,9 @@ function projectItemsToPhase(
 export const mockNowPageData: NowPageData = {
 	meta: {
 		lastUpdated: 'March 24, 2026',
-		title: 'What Robin Jordan is doing now',
+		title: 'What Richard Anthony is doing now',
 		intro: [
-			"Robin Jordan's assigned work is being pulled directly from Linear. The story fixture keeps the composition stable while the live Astro page swaps in real issue data.",
+			"Richard Anthony's assigned work is being pulled directly from Linear. The story fixture keeps the composition stable while the live Astro page swaps in real issue data.",
 			'The useful constraint is that everything has to cash out in the same place: Storybook components, Astro composition, and a current snapshot of the assigned issue set.',
 		],
 		footer:
