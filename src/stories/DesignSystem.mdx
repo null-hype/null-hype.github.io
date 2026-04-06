@@ -1,13 +1,12 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { DossierHeader, ColorSwatch, TypographySpec, RuleBlock, RedactionBlock } from '../components/DesignSystemComponents';
 
 <Meta title="Design System/Investigative Dossier" />
 
-# Design System Strategy: The Investigative Dossier
-
-## 1. Overview & Creative North Star
-**The Creative North Star: "The Curated Forensic"**
-
-This design system rejects the "hacker" clichés of terminal green and digital rain. Instead, it adopts the persona of a high-end, investigative editorial—think *Ray Gun* magazine meets a classified intelligence briefing. It is raw, sophisticated, and intentionally human.
+<DossierHeader 
+  title="The Curated Forensic" 
+  subtitle="This design system rejects the 'hacker' clichés of terminal green and digital rain. Instead, it adopts the persona of a high-end, investigative editorial—think Ray Gun magazine meets a classified intelligence briefing. It is raw, sophisticated, and intentionally human."
+/>
 
 We achieve a "signature" look by leveraging a **Deconstructed Grid**. While the underlying structure is rigid, we break it through intentional "errors": baseline shifts in headers, overlapping containers, and asymmetrical color accents. The goal is to make the digital screen feel like a physical desk covered in rare, high-quality paper and ink-heavy documents. We are moving away from "UI components" and toward "information artifacts."
 
@@ -17,13 +16,17 @@ We achieve a "signature" look by leveraging a **Deconstructed Grid**. While the 
 
 The palette is rooted in the tactile world. The background is not white; it is a warm, aged paper. The primary "ink" is a deep charcoal.
 
-### Palette Highlights
-- **Surface (#fcf9f8):** The base paper. All layouts start here.
-- **On-Surface (#1c1b1b):** The ink. Used for all primary reading.
-- **Accents:** Cobalt Blue (`primary_container`), Safety Red (`secondary_container`), and Deep Green (`tertiary_container`) are used as "highlighter" or "stamped" accents.
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
+  <ColorSwatch name="Surface" hex="#fcf9f8" variable="--editorial-bg" desc="The base paper. All layouts start here." />
+  <ColorSwatch name="On-Surface (Ink)" hex="#1c1b1b" variable="--editorial-ink" desc="Used for all primary reading." />
+  <ColorSwatch name="Accent: Cobalt Blue" hex="#00327d" variable="--editorial-accent" desc="Primary highlighter or stamped accent." />
+  <ColorSwatch name="Accent: Safety Red" hex="#ff3b30" variable="--editorial-secondary" desc="Secondary highlighter or stamped accent." />
+  <ColorSwatch name="Accent: Deep Green" hex="#008751" variable="--editorial-success" desc="Tertiary highlighter or stamped accent." />
+</div>
 
-### The "No-Line" Rule
-**Prohibit 1px solid borders for sectioning.** To define a new content area, use a tonal shift. Use `surface_container_low` for a subtle recessed feel or `surface_container_highest` to suggest a thicker sheet of paper stacked on top. Boundaries are felt through value changes, not drawn with lines.
+<RuleBlock title="The 'No-Line' Rule" type="rule">
+  **Prohibit 1px solid borders for sectioning.** To define a new content area, use a tonal shift. Use <code>surface_container_low</code> for a subtle recessed feel or <code>surface_container_highest</code> to suggest a thicker sheet of paper stacked on top. Boundaries are felt through value changes, not drawn with lines.
+</RuleBlock>
 
 ### Glass & Texture
 For floating elements or "top-secret" overlays, use **Glassmorphism**. Apply `surface_container_lowest` at 70% opacity with a `24px` backdrop-blur. This simulates a semi-translucent vellum paper, allowing the underlying "dossier" content to bleed through.
@@ -34,9 +37,26 @@ For floating elements or "top-secret" overlays, use **Glassmorphism**. Apply `su
 
 The tension between the utilitarian **Noto Serif** and the expressive **Epilogue** creates the "Editorial" feel.
 
-- **Display & Headlines (Epilogue):** These are your "rule-breakers." Headlines should utilize selective color shifts (e.g., the first word in `on_surface`, the second in `primary`). Encourage **Baseline Shifts**: move specific characters up or down by `2px` to mimic manual typesetting errors.
-- **Body Text (Noto Serif):** The "Voice of Reason." Use `body-lg` (1rem) for all long-form copy. The serif provides the "dossier" authority and ensures high readability against the warm paper background.
-- **Labels (Space Grotesk):** Used for technical metadata, timestamps, and classification markers. These should be treated as "stamps"—often set in `secondary` (Safety Red) or `tertiary` (Deep Green) to denote status.
+<TypographySpec 
+  name="Display & Headlines" 
+  font="var(--font-display)" 
+  usage="These are your 'rule-breakers.' Headlines should utilize selective color shifts. Encourage Baseline Shifts to mimic manual typesetting errors." 
+  preview="THE CURATED FORENSIC" 
+/>
+
+<TypographySpec 
+  name="Body Text" 
+  font="var(--font-meta)" 
+  usage="The 'Voice of Reason.' Use body-lg (1rem) for all long-form copy. The serif provides the 'dossier' authority and ensures high readability against the warm paper background." 
+  preview="The palette is rooted in the tactile world. The background is not white; it is a warm, aged paper." 
+/>
+
+<TypographySpec 
+  name="Labels" 
+  font="var(--font-label)" 
+  usage="Used for technical metadata, timestamps, and classification markers. These should be treated as 'stamps'—often set in secondary (Safety Red) or tertiary (Deep Green) to denote status." 
+  preview="ENTRY::OBSIDIAN-APAC | UTC+8..+12" 
+/>
 
 ---
 
@@ -44,41 +64,55 @@ The tension between the utilitarian **Noto Serif** and the expressive **Epilogue
 
 We do not use Material-style drop shadows. Depth is an environmental effect, not a light-source effect.
 
-- **The Layering Principle:** Stack `surface-container` tiers. A "Project Card" should be `surface_container_highest` sitting on a `surface` background. The contrast in warmth/value creates the lift.
-- **Ambient Shadows:** If an element must "float" (like a modal), use a shadow with a `48px` blur, `0%` spread, and `6%` opacity using the `on_surface` color. It should feel like a soft glow of ink rather than a harsh shadow.
-- **The "Ghost Border" Fallback:** If a boundary is visually required for accessibility, use the `outline_variant` token at **15% opacity**. It should be barely perceptible—a "hint" of an edge.
+<RuleBlock title="The Layering Principle" type="rule">
+  Stack <code>surface-container</code> tiers. A "Project Card" should be <code>surface_container_highest</code> sitting on a <code>surface</code> background. The contrast in warmth/value creates the lift.
+</RuleBlock>
+
+<RuleBlock title="Ambient Shadows" type="rule">
+  If an element must "float" (like a modal), use a shadow with a <code>48px</code> blur, <code>0%</code> spread, and <code>6%</code> opacity using the <code>on_surface</code> color. It should feel like a soft glow of ink rather than a harsh shadow.
+</RuleBlock>
+
+<RuleBlock title="The 'Ghost Border' Fallback" type="rule">
+  If a boundary is visually required for accessibility, use the <code>outline_variant</code> token at <strong>15% opacity</strong>. It should be barely perceptible—a "hint" of an edge.
+</RuleBlock>
 
 ---
 
 ## 5. Components & Artifacts
 
-### Buttons (The "Markings")
-- **Primary:** Rectangular, sharp `0px` corners. Background: `primary` (#00327d), Text: `on_primary`. No gradients.
-- **Secondary:** `outline` token at 20% opacity. Text in `on_surface`.
-- **States:** On hover, shift the background to `primary_container` and apply a slight "jitter" (a 1px offset) to mimic a physical stamp hit.
-
-### Input Fields (The "Forms")
-- **Style:** No boxes. Use a single bottom-heavy underline (2px) using `outline`.
-- **Labels:** Always `label-sm` in `on_surface_variant`, placed inside the "line" area to look like a printed form.
-
-### Cards & Lists (The "Entries")
-- **Constraint:** **Zero Dividers.** Separate list items using the Spacing Scale (e.g., `8` or `3rem` gaps).
-- **Asymmetry:** For card layouts, vary the padding on the left and right (e.g., `pl-8`, `pr-4`) to break the "perfect" digital grid.
-
 ### Specialty Component: The "Redaction"
 For sensitive portfolio data (offensive security context), use a block of `on_surface` (charcoal) over text that reveals the content on hover. This reinforces the "dossier" narrative.
+
+Hover over this text to reveal the secret: <RedactionBlock text="Project Tidelands was an inside job." />
 
 ---
 
 ## 6. Do’s and Don’ts
 
-### Do:
-- **Use "Ink Bleed" Accents:** Use the cobalt or red accents as small, asymmetrical blocks of color that "bleed" off the edge of the screen.
-- **Embrace White Space:** Use the `20` (7rem) and `24` (8.5rem) spacing tokens generously. Sophistication comes from the "void."
-- **Mix Case:** Use `label-md` in all-caps for technical data, but keep `title-lg` in sentence case for a high-end editorial feel.
+<RuleBlock title="Do: Use 'Ink Bleed' Accents" type="do">
+  Use the cobalt or red accents as small, asymmetrical blocks of color that "bleed" off the edge of the screen.
+</RuleBlock>
 
-### Don’t:
-- **No Rounded Corners:** `0px` is the absolute rule. Any radius breaks the "raw" aesthetic.
-- **No Standard Grids:** Avoid centering everything. Align text to the left but place secondary imagery or metadata on the far right of the grid to create tension.
-- **No Cliches:** Absolutely no green "code" fonts or terminal windows. The sophistication is in the *result* of the work, not the *tools* of the work.
-- **No Purple:** Adhere strictly to the Cobalt/Red/Yellow/Green accent palette.
+<RuleBlock title="Do: Embrace White Space" type="do">
+  Use the <code>20</code> (7rem) and <code>24</code> (8.5rem) spacing tokens generously. Sophistication comes from the "void."
+</RuleBlock>
+
+<RuleBlock title="Do: Mix Case" type="do">
+  Use <code>label-md</code> in all-caps for technical data, but keep <code>title-lg</code> in sentence case for a high-end editorial feel.
+</RuleBlock>
+
+<RuleBlock title="Don't: No Rounded Corners" type="dont">
+  <code>0px</code> is the absolute rule. Any radius breaks the "raw" aesthetic.
+</RuleBlock>
+
+<RuleBlock title="Don't: No Standard Grids" type="dont">
+  Avoid centering everything. Align text to the left but place secondary imagery or metadata on the far right of the grid to create tension.
+</RuleBlock>
+
+<RuleBlock title="Don't: No Cliches" type="dont">
+  Absolutely no green "code" fonts or terminal windows. The sophistication is in the result of the work, not the tools of the work.
+</RuleBlock>
+
+<RuleBlock title="Don't: No Purple" type="dont">
+  Adhere strictly to the Cobalt/Red/Yellow/Green accent palette.
+</RuleBlock>
