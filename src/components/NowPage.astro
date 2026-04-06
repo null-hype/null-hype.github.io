@@ -34,15 +34,15 @@ if (activeProjects.length > 0) {
         id: 'projects',
         title: 'Projects',
         summary: `Tracking ${activeProjects.length} active initiatives from local content collections.`,
-        items: activeProjects.slice(0, 3).map((project, index) => ({
+        items: activeProjects.map((project, index) => ({
             title: project.data.Name,
             body: project.data.Summary || project.data.Description || '',
             references: `Project: ${project.data.ID} / ${project.data.Status}`,
             lane: {
-                slug: projectNodes[index].slug,
-                w3w: projectNodes[index].w3w,
-                moon: projectNodes[index].moon,
-                phase: projectNodes[index].phase,
+                slug: projectNodes[index % projectNodes.length].slug,
+                w3w: projectNodes[index % projectNodes.length].w3w,
+                moon: projectNodes[index % projectNodes.length].moon,
+                phase: projectNodes[index % projectNodes.length].phase,
             }
         }))
     };

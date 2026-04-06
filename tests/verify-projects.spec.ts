@@ -19,6 +19,10 @@ test('home page shows projects collection', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'jungle.roaring.wave' })).not.toBeVisible();
   await expect(page.getByRole('link', { name: 'Dossier' })).not.toBeVisible();
 
+  // Check that all 4 "In Progress" projects from the CSV are visible
+  const projectItems = page.locator('.tidelane-list__item');
+  await expect(projectItems).toHaveCount(4);
+
   // Check if "Australian MCP Field Notes" project is visible
   const projectTitle = page.getByText('Australian MCP Field Notes');
   await expect(projectTitle).toBeVisible();
