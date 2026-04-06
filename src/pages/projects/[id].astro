@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import '../../styles/editorial.css';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(project => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+
+const allIssues = await getCollection('issues');
+let projectIssues = allIssues.filter(issue => 
+  issue.data.Project === project.data.Name || 
+  issue.data["Project ID"] === project.data.ID
+);
+
+// Sorting logic: priority first, then blocking relations
+const priorityRank: Record<string, number> = {
+  'Urgent': 1,
+  'High': 2,
+  'Medium': 3,
+  'Low': 4,
+  'No priority': 5,
+};
+
+projectIssues.sort((a, b) => {
+  const rankA = priorityRank[a.data.Priority as string] ?? 5;
+  const rankB = priorityRank[b.data.Priority as string] ?? 5;
+
+  if (rankA !== rankB) {
+    return rankA - rankB;
+  }
+
+  // Same priority: evaluate blocking relations
+  const aBlockedBy = a.data['Blocked by'] || '';
+  const bBlockedBy = b.data['Blocked by'] || '';
+
+  // If A is blocked by B, B should come first
+  if (aBlockedBy.includes(b.data.ID)) return 1;
+  // If B is blocked by A, A should come first
+  if (bBlockedBy.includes(a.data.ID)) return -1;
+
+  // If A is blocked by something else but B is not, B should come first
+  if (aBlockedBy && !bBlockedBy) return 1;
+  // If B is blocked by something else but A is not, A should come first
+  if (!aBlockedBy && bBlockedBy) return -1;
+
+  return 0;
+});
+---
+
+<BaseLayout
+  title={`Project: ${project.data.Name}`}
+  description={project.data.Summary || project.data.Description || project.data.Name}
+>
+  <main class="editorial-main now-shell" style="padding-top: 4rem;">
+    <article class="editorial-container">
+      <header style="margin-bottom: 2rem;">
+        <p class="now-kicker">PROJECT // {project.data.Status}</p>
+        <h1 class="now-title" style="margin-bottom: 1rem;">{project.data.Name}</h1>
+        <div style="display: flex; gap: 1rem; opacity: 0.8; font-size: 0.875rem;">
+          <span><strong>ID:</strong> {project.data.ID}</span>
+          {project.data.Priority && <span><strong>Priority:</strong> {project.data.Priority}</span>}
+          {project.data["Updated At"] && <span><strong>Updated:</strong> {new Date(project.data["Updated At"]).toLocaleDateString()}</span>}
+        </div>
+      </header>
+
+      <div class="editorial-prose" style="white-space: pre-wrap; margin-bottom: 3rem;">
+        {project.data.Description || project.data.Summary ? (
+          <p>{project.data.Description || project.data.Summary}</p>
+        ) : (
+          <p><em>No project description provided.</em></p>
+        )}
+      </div>
+
+      {projectIssues.length > 0 && (
+        <section>
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--now-surface-stroke); padding-bottom: 0.5rem;">
+            Issues ({projectIssues.length})
+          </h2>
+          <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.5rem;">
+            {projectIssues.map(issue => (
+              <li style="border: 1px solid var(--now-surface-stroke); padding: 1rem; border-radius: 4px; background: var(--now-surface-raised);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                  <h3 style="font-size: 1.125rem; font-weight: bold; margin: 0;">{issue.data.Title}</h3>
+                  <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--now-ink); color: var(--now-surface); padding: 0.25rem 0.5rem; border-radius: 2px;">
+                    {issue.data.Status}
+                  </span>
+                </div>
+                <div style="font-size: 0.875rem; opacity: 0.8; margin-bottom: 1rem; display: flex; gap: 1rem;">
+                  <span><strong>ID:</strong> {issue.data.ID}</span>
+                  {issue.data.Priority && <span><strong>Priority:</strong> {issue.data.Priority}</span>}
+                  {issue.data['Blocked by'] && <span><strong>Blocked by:</strong> {issue.data['Blocked by']}</span>}
+                </div>
+                {issue.data.Description && (
+                  <p style="font-size: 0.875rem; white-space: pre-wrap; margin: 0; line-height: 1.5;">{issue.data.Description}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </article>
+  </main>
+</BaseLayout>

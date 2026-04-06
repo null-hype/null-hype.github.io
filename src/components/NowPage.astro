@@ -43,9 +43,7 @@ if (activeProjects.length > 0) {
                 issue.data["Project ID"] === project.data.ID
             );
             
-            // Link to the first issue if available
-            const firstIssue = projectIssues.length > 0 ? projectIssues[0] : null;
-            const href = firstIssue ? `/issues/${firstIssue.id}` : undefined;
+            const href = `/projects/${project.id}`;
 
             return {
                 title: project.data.Name,
