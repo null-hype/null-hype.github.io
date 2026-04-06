@@ -53,34 +53,9 @@ export default function NowPageView({
 		<div className="now-page" data-favorited={isFavorited}>
 			<div className="now-page__grain" aria-hidden="true"></div>
 
-			<header className="now-header">
-				<div className="now-shell now-header__inner">
-					<a className="now-header__brand" href="/now">
-						jungle.roaring.wave
-					</a>
-					<nav class="now-header__nav" aria-label="Primary">
-						<a href="#now">Now</a>
-						<a href="#recently-done">Recently done</a>
-						<a href="/dossier">Dossier</a>
-						<a href="/identity">Identity</a>
-					</nav>
-				</div>
-			</header>
-
 			<main className="now-main now-shell">
 				{isFavorited ? (
 					<>
-						<p className="now-kicker">CLASSIFIED // {meta.lastUpdated}</p>
-						<h1 className="now-title">
-							<JitterTitle text={meta.title} />
-						</h1>
-
-						<div className="now-intro">
-							{meta.intro.map((paragraph) => (
-								<p key={paragraph}>{paragraph}</p>
-							))}
-						</div>
-
 						{warning ? (
 							<div className="now-callout" role="status">
 								<span className="font-label text-[10px] font-bold uppercase block mb-2">Warning: Structural Noise</span>
@@ -99,14 +74,6 @@ export default function NowPageView({
 						</div>
 					</div>
 				)}
-
-				<footer className="now-footer">
-					<p>{meta.footer}</p>
-					<p>
-						The deeper version of the current obsession lives in the{' '}
-						<a href="/dossier">dossier</a>.
-					</p>
-				</footer>
 			</main>
 		</div>
 	);
