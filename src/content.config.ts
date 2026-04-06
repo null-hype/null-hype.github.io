@@ -74,6 +74,8 @@ const projects = defineCollection({
     Status: z.string(),
     Priority: z.string().optional().nullable(),
     "Updated At": z.string().optional(),
+    "Latest Update": z.string().optional(),
+    "Latest Update Date": z.string().optional(),
   }),
 });
 
