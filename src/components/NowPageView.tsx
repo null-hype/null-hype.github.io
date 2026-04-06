@@ -58,10 +58,11 @@ export default function NowPageView({
 					<a className="now-header__brand" href="/now">
 						jungle.roaring.wave
 					</a>
-					<nav className="now-header__nav" aria-label="Primary">
+					<nav class="now-header__nav" aria-label="Primary">
 						<a href="#now">Now</a>
 						<a href="#recently-done">Recently done</a>
 						<a href="/dossier">Dossier</a>
+						<a href="/identity">Identity</a>
 					</nav>
 				</div>
 			</header>

@@ -4,6 +4,12 @@ import NowPageView from './NowPageView';
 import '../styles/editorial.css';
 import '../styles/now-page.css';
 import { createUnavailableNowPageData, getLinearNowPageData } from '../data/linearNowPage';
+import { getCollection } from 'astro:content';
+import { generateTidelaneNodes } from '../data/tidelane';
+
+const NOW_PAGE_TIDELANE_SEED = 26;
+const tidelaneNodes = generateTidelaneNodes(NOW_PAGE_TIDELANE_SEED);
+const projectNodes = tidelaneNodes.filter(node => node.phase.name === 'full');
 
 let pageData = createUnavailableNowPageData();
 let warning: string | undefined;
@@ -18,11 +24,38 @@ try {
 		console.error('Failed to load Linear now page data.', error);
 	}
 }
+
+const projectEntries = await getCollection('projects');
+const activeProjects = projectEntries.filter(p => p.data?.Status === 'In Progress');
+
+// Map projects to TidelaneListSection
+if (activeProjects.length > 0) {
+    const projectSection = {
+        id: 'projects',
+        title: 'Projects',
+        summary: `Tracking ${activeProjects.length} active initiatives from local content collections.`,
+        items: activeProjects.slice(0, 3).map((project, index) => ({
+            title: project.data.Name,
+            body: project.data.Summary || project.data.Description || '',
+            references: `Project: ${project.data.ID} / ${project.data.Status}`,
+            lane: {
+                slug: projectNodes[index].slug,
+                w3w: projectNodes[index].w3w,
+                moon: projectNodes[index].moon,
+                phase: projectNodes[index].phase,
+            }
+        }))
+    };
+    pageData = {
+        ...pageData,
+        sections: [projectSection, ...pageData.sections]
+    };
+}
 ---
 
 <BaseLayout
 	title="jungle.roaring.wave | Now"
-	description="What Robin Jordan is focused on now, pulled from current assigned Linear issues."
+	description="What Richard Anthony is focused on now, pulled from current assigned Linear issues."
 >
 	<NowPageView meta={pageData.meta} sections={pageData.sections} warning={warning} />
 </BaseLayout>

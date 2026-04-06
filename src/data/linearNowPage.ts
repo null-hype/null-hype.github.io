@@ -26,9 +26,6 @@ const LINEAR_NOW_QUERY = `
 			id
 			name
 			filterData
-		}
-		team(id: "3b90c938-ee3f-4205-9520-be7a07725ded") {
-			name
 			issues(first: 100, orderBy: updatedAt) {
 				nodes {
 					identifier
@@ -120,13 +117,11 @@ interface LinearNowQueryData {
 	readonly favorites: {
 		readonly nodes: readonly LinearFavorite[];
 	};
-	readonly customView: LinearCustomView | null;
-	readonly team: {
-		readonly name: string;
+	readonly customView: (LinearCustomView & {
 		readonly issues: {
 			readonly nodes: readonly LinearIssue[];
 		};
-	};
+	}) | null;
 	readonly projects: {
 		readonly nodes: readonly { id: string; name: string }[];
 	};
@@ -466,25 +461,21 @@ async function loadLinearNowPageData(env: ImportMetaEnv): Promise<NowPageData> {
 		f => f.customView?.id === 'aa434af6-7a8d-4078-891d-3d3ab9ff6895' || f.customView?.name === 'www.tidelands.dev'
 	);
 
-	// Default behavior: filter by the view's project filter if present
-	const projectFilterId = data.customView?.filterData?.and?.find((f: any) => f.project?.id?.in)?.project?.id?.in?.[0];
-	
-	const sourceIssues = data.team.issues.nodes;
-	const filteredIssues = projectFilterId 
-		? sourceIssues.filter(issue => issue.project?.id === projectFilterId)
-		: sourceIssues;
+	// Option 1: Use the issues directly from the customView
+	const filteredIssues = data.customView?.issues.nodes ?? [];
 
 	const { activeIssues, completedIssues, backlogIssues, all } = sortAndFilterIssues(filteredIssues);
 
 	return {
-		meta: buildMeta(data.customView?.name ?? data.team.name, all, activeIssues, completedIssues, backlogIssues),
+		meta: buildMeta(data.customView?.name ?? 'Richard Anthony', all, activeIssues, completedIssues, backlogIssues),
 		sections: buildSections(activeIssues, completedIssues, backlogIssues),
 		filterData: data.customView?.filterData,
-		rawIssues: data.team.issues.nodes,
+		rawIssues: filteredIssues,
 		allProjects: data.projects.nodes,
 		isFavorited,
 	};
 }
+
 
 export function getLinearNowPageData(env: ImportMetaEnv = import.meta.env) {
 	if (!linearNowPageDataPromise) {
