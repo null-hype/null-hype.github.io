@@ -92,6 +92,7 @@ const issues = defineCollection({
     Project: z.string().optional(),
     Assignee: z.string().optional(),
     Updated: z.string().optional(),
+    "Blocked by": z.string().optional(),
   }),
 });
 
