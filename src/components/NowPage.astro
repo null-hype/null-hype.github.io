@@ -26,6 +26,7 @@ try {
 }
 
 const projectEntries = await getCollection('projects');
+const issueEntries = await getCollection('issues');
 const activeProjects = projectEntries.filter(p => p.data?.Status === 'In Progress');
 
 // Map projects to TidelaneListSection
@@ -34,17 +35,31 @@ if (activeProjects.length > 0) {
         id: 'projects',
         title: 'Projects',
         summary: `Tracking ${activeProjects.length} active initiatives from local content collections.`,
-        items: activeProjects.map((project, index) => ({
-            title: project.data.Name,
-            body: project.data.Summary || project.data.Description || '',
-            references: `Project: ${project.data.ID} / ${project.data.Status}`,
-            lane: {
-                slug: projectNodes[index % projectNodes.length].slug,
-                w3w: projectNodes[index % projectNodes.length].w3w,
-                moon: projectNodes[index % projectNodes.length].moon,
-                phase: projectNodes[index % projectNodes.length].phase,
-            }
-        }))
+        items: activeProjects.map((project, index) => {
+            // Find the first issue that belongs to this project
+            // Projects and Issues might share Project ID or just Project Name
+            const projectIssues = issueEntries.filter(issue => 
+                issue.data.Project === project.data.Name || 
+                issue.data["Project ID"] === project.data.ID
+            );
+            
+            // Link to the first issue if available
+            const firstIssue = projectIssues.length > 0 ? projectIssues[0] : null;
+            const href = firstIssue ? `/issues/${firstIssue.id}` : undefined;
+
+            return {
+                title: project.data.Name,
+                body: project.data.Summary || project.data.Description || '',
+                references: `Project: ${project.data.ID} / ${project.data.Status}${projectIssues.length > 0 ? ` / ${projectIssues.length} issues` : ''}`,
+                href,
+                lane: {
+                    slug: projectNodes[index % projectNodes.length].slug,
+                    w3w: projectNodes[index % projectNodes.length].w3w,
+                    moon: projectNodes[index % projectNodes.length].moon,
+                    phase: projectNodes[index % projectNodes.length].phase,
+                }
+            };
+        })
     };
     pageData = {
         ...pageData,
