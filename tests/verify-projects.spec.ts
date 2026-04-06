@@ -27,11 +27,11 @@ test('home page shows projects collection', async ({ page }) => {
   const projectTitle = page.getByText('Australian MCP Field Notes');
   await expect(projectTitle).toBeVisible();
 
-  // Verify that it is a link and goes to an issue
+  // Verify that it is a link and goes to a project page
   const projectLink = page.getByRole('link', { name: 'Australian MCP Field Notes' });
   await expect(projectLink).toBeVisible();
   const href = await projectLink.getAttribute('href');
-  expect(href).toMatch(/\/issues\/.+/);
+  expect(href).toMatch(/\/projects\/.+/);
 
   // Check if it has the correct reference format
   const projectRef = page.getByText(/Project: 2861f9cc-ab68-4f82-9645-860a135e73f6/);
