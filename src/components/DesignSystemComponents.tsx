@@ -14,7 +14,7 @@ export const ColorSwatch = ({ name, hex, variable, desc }: { name: string, hex: 
     <div style={{ width: '4rem', height: '4rem', backgroundColor: hex, border: '1px solid rgba(28,27,27,0.1)' }} />
     <div>
       <h3 style={{ margin: 0, fontFamily: 'var(--font-label)', fontSize: '0.85rem', textTransform: 'uppercase' }}>{name} ({hex})</h3>
-      <code style={{ fontSize: '0.75rem', color: 'var(--editorial-secondary)' }}>{variable}</code>
+      <code style={{ fontSize: '0.75rem', color: 'var(--editorial-ink)' }}>{variable}</code>
       <p style={{ margin: '0.5rem 0 0 0', fontFamily: 'var(--font-meta)', fontSize: '0.9rem' }}>{desc}</p>
     </div>
   </div>
