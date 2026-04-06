@@ -24,7 +24,7 @@
 	z-index: 10;
 	background: rgba(252, 249, 248, 0.95);
 	backdrop-filter: blur(12px);
-	border-bottom: 2px solid var(--editorial-outline);
+	border: 1px solid rgba(28, 27, 27, 0.15);
 }
 
 .now-header__inner,
@@ -116,7 +116,7 @@
 	font-style: italic;
 	line-height: 1.6;
 	color: rgba(28, 27, 27, 0.8);
-	border-bottom: 2px solid var(--editorial-outline);
+	border: 1px solid rgba(28, 27, 27, 0.15);
 	padding-bottom: 4rem;
 }
 
