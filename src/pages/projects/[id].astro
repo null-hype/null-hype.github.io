@@ -78,6 +78,22 @@ projectIssues.sort((a, b) => {
         )}
       </div>
 
+      {project.data["Latest Update"] && (
+        <section style="margin-bottom: 3rem; padding: 1.5rem; background: var(--now-surface-raised); border-radius: 4px; border: 1px solid var(--now-surface-stroke);">
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--now-surface-stroke); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline;">
+            <span>Latest Update</span>
+            {project.data["Latest Update Date"] && (
+              <span style="font-size: 0.875rem; font-weight: normal; opacity: 0.8;">
+                {new Date(project.data["Latest Update Date"]).toLocaleDateString()}
+              </span>
+            )}
+          </h2>
+          <div style="font-size: 0.9375rem; white-space: pre-wrap; line-height: 1.6;">
+            {project.data["Latest Update"]}
+          </div>
+        </section>
+      )}
+
       {projectIssues.length > 0 && (
         <section>
           <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--now-surface-stroke); padding-bottom: 0.5rem;">

@@ -36,4 +36,12 @@ test('home page shows projects collection', async ({ page }) => {
   // Check if it has the correct reference format
   const projectRef = page.getByText(/Project: 2861f9cc-ab68-4f82-9645-860a135e73f6/);
   await expect(projectRef).toBeVisible();
+
+  // Navigate to the project page
+  await projectLink.click();
+  await page.waitForURL(/\/projects\/.+/);
+
+  // Check if Latest Update is rendered on the project page
+  const latestUpdateHeading = page.getByRole('heading', { name: /Latest Update/i });
+  await expect(latestUpdateHeading).toBeVisible();
 });
