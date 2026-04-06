@@ -1,0 +1,18 @@
+
+> null-hype.github.io@0.0.1 dev
+> astro dev
+
+[vite] connected.
+15:55:48 [types] Generated 0ms
+15:55:48 [WARN] [content] Content config not loaded
+15:55:48 [WARN] [vite] [plugin:astro:scripts] context method emitFile() is not supported in serve mode. This plugin is likely not vite-compatible.
+15:55:48 [vite] Re-optimizing dependencies because vite config has changed
+ astro  v6.0.8 ready in 518 ms
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+15:55:48 watching for file changes...
+Proxying request to Linear API...
+Using API Key starting with: lin_api_ZV...
+Linear API responded with status: 200
+Custom View: www.tidelands.dev, Issues: 0
+15:56:23 [200] POST /api/linear-proxy 1195ms

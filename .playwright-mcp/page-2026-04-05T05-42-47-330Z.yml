@@ -1,0 +1,275 @@
+- generic [ref=e2]:
+  - heading "0 notifications" [level=2] [ref=e3]
+  - generic [ref=e4]:
+    - generic:
+      - button [ref=e5] [cursor=pointer]:
+        - generic [ref=e7]: Skip to main content
+      - button [ref=e8] [cursor=pointer]
+    - generic [ref=e11]:
+      - banner [ref=e13]:
+        - generic [ref=e16]:
+          - button [ref=e17] [cursor=pointer]
+          - generic [ref=e20]:
+            - navigation [ref=e23]:
+              - list [ref=e24]:
+                - listitem [ref=e25]:
+                  - button "Home, 1 new notification" [ref=e26] [cursor=pointer]:
+                    - generic [ref=e30]: Home
+                - listitem [ref=e31]:
+                  - link "My Network, 0 new notifications" [ref=e32] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork
+                    - generic [ref=e36]: My Network
+                - listitem [ref=e37]:
+                  - button "Jobs, 0 new notifications" [ref=e38] [cursor=pointer]:
+                    - generic [ref=e42]: Jobs
+                - listitem [ref=e43]:
+                  - link "Messaging, 0 new notifications" [ref=e44] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/
+                    - generic [ref=e48]: Messaging
+                - listitem [ref=e49]:
+                  - link "Notifications, 25 new notifications" [ref=e50] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/
+                    - generic [ref=e54]: Notifications
+                - listitem [ref=e55]:
+                  - button "Me" [ref=e56] [cursor=pointer]:
+                    - figure [ref=e58]
+                    - generic [ref=e60]: Me
+            - navigation [ref=e64]:
+              - list [ref=e65]:
+                - listitem [ref=e66]:
+                  - button "For Business" [ref=e67] [cursor=pointer]:
+                    - generic [ref=e71]: For Business
+                - listitem [ref=e73]:
+                  - link "0 new notifications" [ref=e74] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts/
+                    - generic [ref=e78]: Advertise
+      - main [ref=e79]:
+        - generic [ref=e80]:
+          - toolbar [ref=e81]:
+            - generic [ref=e85]:
+              - link "Richard Anthony" [ref=e86] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/public-rant/
+                - generic "Richard Anthony" [ref=e87]:
+                  - figure [ref=e88]
+                  - generic [ref=e89]:
+                    - paragraph [ref=e90]: Richard Anthony
+                    - paragraph [ref=e92]: Security Researcher & Platform Engineer | Agentic Vulnerability Automation | Terraform · ArgoCD · GitOps | Bug Bounty | 🇦🇺 Sydney · 🇩🇪 DACH (C1 German)
+              - generic [ref=e93]:
+                - button "Resources" [ref=e95] [cursor=pointer]:
+                  - generic [ref=e97]: Resources
+                - link "Visit my website" [ref=e99] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Fonlyplan%2Enet&urlhash=zNW2&isSdui=true
+                  - generic [ref=e101]: Visit my website
+                - link "Add section" [ref=e102] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/
+                  - generic [ref=e104]: Add section
+                - button "Open to" [ref=e106] [cursor=pointer]:
+                  - generic [ref=e108]: Open to
+          - main [ref=e109]:
+            - generic [ref=e111]:
+              - generic [ref=e119]:
+                - generic [ref=e120]:
+                  - generic [ref=e121]:
+                    - link [ref=e123] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/public-rant/overlay/background-photo/
+                      - figure [ref=e124]
+                    - button "Edit background image" [ref=e128] [cursor=pointer]
+                  - link "Profile photo" [ref=e131] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/
+                    - generic "Profile photo" [ref=e132]:
+                      - figure [ref=e133]
+                  - generic [ref=e134]:
+                    - link [ref=e136] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/
+                    - link "Edit profile" [ref=e138] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/public-rant/edit/intro/
+                - generic [ref=e141]:
+                  - generic [ref=e142]:
+                    - generic [ref=e144]:
+                      - link "Richard Anthony" [ref=e147] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/
+                        - heading "Richard Anthony" [level=2] [ref=e149]
+                      - paragraph [ref=e150]: Security Researcher & Platform Engineer | Agentic Vulnerability Automation | Terraform · ArgoCD · GitOps | Bug Bounty | 🇦🇺 Sydney · 🇩🇪 DACH (C1 German)
+                      - generic [ref=e151]:
+                        - paragraph [ref=e152]: Woolloomooloo, New South Wales, Australia
+                        - paragraph [ref=e153]: ·
+                        - paragraph [ref=e154]:
+                          - link "Contact info" [ref=e155] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/public-rant/overlay/contact-info/
+                    - generic [ref=e157]:
+                      - button "Self-employed" [ref=e158] [cursor=pointer]:
+                        - generic [ref=e159]:
+                          - figure [ref=e160]
+                          - paragraph [ref=e164]: Self-employed
+                      - button "University of Sydney" [ref=e165] [cursor=pointer]:
+                        - generic [ref=e166]:
+                          - figure [ref=e167]
+                          - paragraph [ref=e171]: University of Sydney
+                  - generic [ref=e172]:
+                    - link "131 followers" [ref=e173] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/feed/followers/
+                      - paragraph [ref=e174]: 131 followers
+                    - paragraph [ref=e175]: ·
+                    - link "122 connections" [ref=e176] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/mynetwork/invite-connect/connections/
+                      - paragraph [ref=e177]: 122 connections
+                  - generic [ref=e180]:
+                    - button "Open to" [ref=e182] [cursor=pointer]:
+                      - generic [ref=e184]: Open to
+                    - link "Add section" [ref=e185] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/
+                      - generic [ref=e187]: Add section
+                    - link "Visit my website" [ref=e189] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Fonlyplan%2Enet&urlhash=zNW2&isSdui=true
+                      - generic [ref=e191]: Visit my website
+                    - button "Resources" [ref=e193] [cursor=pointer]:
+                      - generic [ref=e195]: Resources
+                - generic [ref=e198]:
+                  - list [ref=e200]:
+                    - listitem [ref=e201]:
+                      - generic [ref=e202]:
+                        - link "Open to work Woolloomooloo, NSW | On-site · Hybrid Show details" [ref=e203] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/
+                          - generic [ref=e204]:
+                            - paragraph [ref=e206]:
+                              - strong [ref=e207]: Open to work
+                            - paragraph [ref=e209]: Woolloomooloo, NSW | On-site · Hybrid
+                            - paragraph [ref=e211]: Show details
+                        - link "Edit" [ref=e212] [cursor=pointer]:
+                          - /url: /in/public-rant/opportunities/job-opportunities/edit/?origin=PROFILE_TOP_CARD
+                    - listitem [ref=e215]:
+                      - generic [ref=e216]:
+                        - link "Share that you’re hiring and attract qualified candidates. Get started" [ref=e217] [cursor=pointer]:
+                          - /url: /in/public-rant/opportunities/hiring-opportunities/onboarding/
+                          - generic [ref=e218]:
+                            - paragraph [ref=e219]:
+                              - strong [ref=e220]: Share that you’re hiring
+                              - text: and attract qualified candidates.
+                            - paragraph [ref=e222]: Get started
+                        - button "Close" [ref=e223] [cursor=pointer]
+                    - listitem [ref=e226]:
+                      - generic [ref=e228]:
+                        - link "Tell non-profits you are interested in getting involved with your time and skills Get started" [ref=e229] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/public-rant/opportunities/volunteering/education/
+                          - generic [ref=e230]:
+                            - paragraph [ref=e231]:
+                              - strong [ref=e232]: Tell non-profits
+                              - text: you are interested in getting involved with your time and skills
+                            - paragraph [ref=e234]: Get started
+                        - button "Close" [ref=e235] [cursor=pointer]
+                  - button "Next" [ref=e238] [cursor=pointer]
+              - generic [ref=e294]:
+                - generic [ref=e298]:
+                  - generic [ref=e299]:
+                    - heading "Profile language" [level=2] [ref=e300]
+                    - link "Edit profile language" [ref=e302] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/public-rant/edit/secondary-language/
+                  - paragraph [ref=e306]: English
+                  - generic [ref=e307]:
+                    - heading "Public profile & URL" [level=2] [ref=e308]
+                    - link "Edit Public profile & URL" [ref=e310] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/public-profile/settings/?trk=d_flagship3_profile_self_view_public_profile
+                  - paragraph [ref=e314]: www.linkedin.com/in/public-rant
+                - iframe [ref=e317]:
+                  
+              - generic [ref=e321]:
+                - generic [ref=e322]:
+                  - navigation [ref=e323]:
+                    - link "About" [ref=e324] [cursor=pointer]:
+                      - /url: https://about.linkedin.com/
+                      - paragraph [ref=e325]: About
+                    - link "Accessibility" [ref=e326] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/accessibility/
+                      - paragraph [ref=e327]: Accessibility
+                    - link "Talent Solutions" [ref=e328] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/talent-solutions?trk=flagship_nav&veh=li-footer-lts-control&src=li-footer
+                      - paragraph [ref=e329]: Talent Solutions
+                    - link "Community Guidelines" [ref=e330] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/legal/professional-community-policies/
+                      - paragraph [ref=e331]: Community Guidelines
+                    - link "Careers" [ref=e332] [cursor=pointer]:
+                      - /url: https://careers.linkedin.com/
+                      - paragraph [ref=e333]: Careers
+                    - link "Marketing Solutions" [ref=e334] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/advertise?trk=n_nav_lms_f&src=li-footer
+                      - paragraph [ref=e335]: Marketing Solutions
+                    - button "Privacy & Terms" [ref=e336] [cursor=pointer]:
+                      - paragraph [ref=e338]: Privacy & Terms
+                    - link "Ad Choices" [ref=e340] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/answer/62931/
+                      - paragraph [ref=e341]: Ad Choices
+                    - link "Advertising" [ref=e342] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/ad/start/?trk=n_nav_ads_rr
+                      - paragraph [ref=e343]: Advertising
+                    - link "Sales Solutions" [ref=e344] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/sales-solutions?trk=flagship_nav&veh=li-footer-lss-control&src=li-footer
+                      - paragraph [ref=e345]: Sales Solutions
+                    - link "Mobile" [ref=e346] [cursor=pointer]:
+                      - /url: https://mobile.linkedin.com/
+                      - paragraph [ref=e347]: Mobile
+                    - link "Small Business" [ref=e348] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/grow?src=li-footer
+                      - paragraph [ref=e349]: Small Business
+                    - link "Safety Center" [ref=e350] [cursor=pointer]:
+                      - /url: https://safety.linkedin.com/
+                      - paragraph [ref=e351]: Safety Center
+                  - paragraph [ref=e353]: LinkedIn Corporation © 2026
+                - generic [ref=e354]:
+                  - list [ref=e355]:
+                    - listitem [ref=e356]:
+                      - generic [ref=e359]:
+                        - link "Questions?" [ref=e360] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/help/linkedin/
+                          - paragraph [ref=e361]: Questions?
+                        - paragraph [ref=e362]: Visit our Help Center.
+                    - listitem [ref=e363]:
+                      - generic [ref=e366]:
+                        - link "Manage your account and privacy" [ref=e367] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/mypreferences/d/
+                          - paragraph [ref=e368]: Manage your account and privacy
+                        - paragraph [ref=e369]: Go to your Settings.
+                    - listitem [ref=e370]:
+                      - generic [ref=e373]:
+                        - link "Recommendation transparency" [ref=e374] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/help/linkedin/answer/a1339724/
+                          - paragraph [ref=e375]: Recommendation transparency
+                        - paragraph [ref=e376]: Learn more about Recommended Content.
+                  - generic [ref=e378]:
+                    - paragraph [ref=e380]: Select language
+                    - combobox "Select language" [ref=e382] [cursor=pointer]:
+                      - option "العربية (Arabic)"
+                      - option "বাংলা (Bangla)"
+                      - option "Čeština (Czech)"
+                      - option "Dansk (Danish)"
+                      - option "Deutsch (German)"
+                      - option "Ελληνικά (Greek)"
+                      - option "English (English)" [selected]
+                      - option "Español (Spanish)"
+                      - option "فارسی (Persian)"
+                      - option "Suomi (Finnish)"
+                      - option "Français (French)"
+                      - option "हिंदी (Hindi)"
+                      - option "Magyar (Hungarian)"
+                      - option "Bahasa Indonesia (Indonesian)"
+                      - option "Italiano (Italian)"
+                      - option "עברית (Hebrew)"
+                      - option "日本語 (Japanese)"
+                      - option "한국어 (Korean)"
+                      - option "मराठी (Marathi)"
+                      - option "Bahasa Malaysia (Malay)"
+                      - option "Nederlands (Dutch)"
+                      - option "Norsk (Norwegian)"
+                      - option "ਪੰਜਾਬੀ (Punjabi)"
+                      - option "Polski (Polish)"
+                      - option "Português (Portuguese)"
+                      - option "Română (Romanian)"
+                      - option "Русский (Russian)"
+                      - option "Svenska (Swedish)"
+                      - option "తెలుగు (Telugu)"
+                      - option "ภาษาไทย (Thai)"
+                      - option "Tagalog (Tagalog)"
+                      - option "Türkçe (Turkish)"
+                      - option "Українська (Ukrainian)"
+                      - option "Tiếng Việt (Vietnamese)"
+                      - option "简体中文 (Chinese (Simplified))"
+                      - option "正體中文 (Chinese (Traditional))"

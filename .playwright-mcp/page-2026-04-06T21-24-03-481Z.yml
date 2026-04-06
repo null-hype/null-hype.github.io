@@ -1,0 +1,162 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "jungle.roaring.wave" [ref=e5] [cursor=pointer]:
+          - /url: /now
+        - navigation "Primary" [ref=e6]:
+          - link "Now" [ref=e7] [cursor=pointer]:
+            - /url: "#now"
+          - link "Recently done" [ref=e8] [cursor=pointer]:
+            - /url: "#recently-done"
+          - link "Dossier" [ref=e9] [cursor=pointer]:
+            - /url: /dossier
+          - link "Identity" [ref=e10] [cursor=pointer]:
+            - /url: /identity
+    - main [ref=e11]:
+      - paragraph [ref=e12]: CLASSIFIED // April 6, 2026
+      - heading "W hat www.ti d elands . dev is doin g now" [level=1] [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]: W
+          - text: hat
+        - generic [ref=e16]:
+          - text: www.ti
+          - generic [ref=e17]: d
+          - text: elands
+          - generic [ref=e18]: .
+          - text: dev
+        - generic [ref=e19]: is
+        - generic [ref=e20]:
+          - text: doin
+          - generic [ref=e21]: g
+        - generic [ref=e22]: now
+      - generic [ref=e23]:
+        - paragraph [ref=e24]: www.tidelands.dev's assigned work is being pulled directly from Linear. 0 active issues, 6 recently completed, and 25 waiting in backlog or triage.
+        - paragraph [ref=e25]: This page updates from assigned issue metadata when the set changes and the site is rendered again.
+      - generic [ref=e26]:
+        - region "Now" [ref=e27]:
+          - generic [ref=e28]:
+            - heading "Now" [level=2] [ref=e29]
+            - paragraph [ref=e30]: "SIGNAL: Started + unstarted assignments currently in flight. Showing 0 of 0 issues."
+          - paragraph [ref=e31]: ENTRY_SET_EMPTY // No started or unstarted issues are currently assigned.
+        - region "Recently done" [ref=e32]:
+          - generic [ref=e33]:
+            - heading "Recently done" [level=2] [ref=e34]
+            - paragraph [ref=e35]: "SIGNAL: Most recent completed assignments. Showing 3 of 6 issues."
+          - list [ref=e36]:
+            - listitem [ref=e37]:
+              - article [ref=e38]:
+                - generic [ref=e39]:
+                  - paragraph [ref=e40]: waning lane / Americas
+                  - paragraph [ref=e41]: ENTRY::castle-amer
+                  - paragraph [ref=e42]: UTC-5..-8
+                - generic [ref=e43]:
+                  - heading "[Identity] Update Skills Section (Add Security/DevOps)" [level=3] [ref=e44]
+                  - paragraph [ref=e46]: "Goal: Ensure skills are searchable by target recruiters.\\\\n\\\\n\\ Remove: AngularJS, Capistrano, RSpec, Ruby on Rails, UAT, UX.\\\\n\\ Add: Terraform, ArgoCD, Dagger, GitOps, Kubernetes, Docker, Penetration Testing,..."
+                - generic [ref=e47]:
+                  - paragraph [ref=e48]: "[castle.mulberry.meadow]"
+                  - paragraph [ref=e49]: Cycle 1 // coordinate // orchestration
+                  - paragraph [ref=e50]: "REF: Linear: PLAN-265 / LinkedIn Rebranding & Outreach / Done"
+            - listitem [ref=e51]:
+              - article [ref=e52]:
+                - generic [ref=e53]:
+                  - paragraph [ref=e54]: waning lane / Americas
+                  - paragraph [ref=e55]: ENTRY::carousel-amer
+                  - paragraph [ref=e56]: UTC-5..-8
+                - generic [ref=e57]:
+                  - heading "[Identity] Overhaul \"About\" Section" [level=3] [ref=e58]
+                  - paragraph [ref=e60]: "Goal: Lead with your current identity, not your longest prior employer.\\\\n\\\\n### Suggested Rewrite (Narrative / Story-led):\\\\n\\\\n> I build things that break things — systematically and at scale.\\\\n>\\\\n> Over the past..."
+                - generic [ref=e61]:
+                  - paragraph [ref=e62]: "[carousel.granite.mulberry]"
+                  - paragraph [ref=e63]: Cycle 2 // excavate // reconnaissance
+                  - paragraph [ref=e64]: "REF: Linear: PLAN-262 / LinkedIn Rebranding & Outreach / Done"
+            - listitem [ref=e65]:
+              - article [ref=e66]:
+                - generic [ref=e67]:
+                  - paragraph [ref=e68]: waning lane / Americas
+                  - paragraph [ref=e69]: ENTRY::obsidian-amer
+                  - paragraph [ref=e70]: UTC-5..-8
+                - generic [ref=e71]:
+                  - heading "[Identity] Add Languages & Featured Content" [level=3] [ref=e72]
+                  - paragraph [ref=e74]: "Goal: Prime for DACH market roles.\\\\n\\\\n\\ Add German (C1) to Languages.\\\\n\\ Populate Featured section with GitHub/Portfolio/CVE write-ups."
+                - generic [ref=e75]:
+                  - paragraph [ref=e76]: "[obsidian.orbital.huggable]"
+                  - paragraph [ref=e77]: Cycle 3 // triangulate // constraint-design
+                  - paragraph [ref=e78]: "REF: Linear: PLAN-266 / LinkedIn Rebranding & Outreach / Done"
+        - region "Not now" [ref=e79]:
+          - generic [ref=e80]:
+            - heading "Not now" [level=2] [ref=e81]
+            - paragraph [ref=e82]: "SIGNAL: Backlog and triage work parked outside the active lane. Showing 4 of 25 issues."
+          - list [ref=e83]:
+            - listitem [ref=e84]:
+              - article [ref=e85]:
+                - generic [ref=e86]:
+                  - paragraph [ref=e87]: waxing lane / APAC
+                  - paragraph [ref=e88]: ENTRY::castle-apac
+                  - paragraph [ref=e89]: UTC+8..+12
+                - generic [ref=e90]:
+                  - 'heading "LinkedIn Profile Audit — Richard Anthony (`/in/public-rant`)" [level=3] [ref=e91]'
+                  - paragraph [ref=e93]: Here's a comprehensive section-by-section audit based on your goal of attracting recruiters in security research, bug bounty hunting, and high-level infrastructure automation (AU + DACH markets).
+                - generic [ref=e94]:
+                  - paragraph [ref=e95]: "[castle.mulberry.meadow]"
+                  - paragraph [ref=e96]: Cycle 1 // coordinate // orchestration
+                  - paragraph [ref=e97]: "REF: Linear: PLAN-237 / LinkedIn Rebranding & Outreach / Backlog"
+            - listitem [ref=e98]:
+              - article [ref=e99]:
+                - generic [ref=e100]:
+                  - paragraph [ref=e101]: waxing lane / APAC
+                  - paragraph [ref=e102]: ENTRY::carousel-apac
+                  - paragraph [ref=e103]: UTC+8..+12
+                - generic [ref=e104]:
+                  - 'heading "[Jobs] Outreach: CloudBees (Senior Agentic Engineer)" [level=3] [ref=e105]'
+                  - paragraph [ref=e107]: "Company: CloudBees\\\\nLocation: Sydney (Remote)\\\\nType: Full-time (potential for consulting/contract)\\\\nFit: 5/5\\\\n\\\\nAction: Apply externally. Mentions Goose + MCP + agent safety explicitly. Reach out about..."
+                - generic [ref=e108]:
+                  - paragraph [ref=e109]: "[carousel.granite.mulberry]"
+                  - paragraph [ref=e110]: Cycle 2 // excavate // reconnaissance
+                  - paragraph [ref=e111]: "REF: Linear: PLAN-290 / LinkedIn Rebranding & Outreach / Backlog"
+            - listitem [ref=e112]:
+              - article [ref=e113]:
+                - generic [ref=e114]:
+                  - paragraph [ref=e115]: waxing lane / APAC
+                  - paragraph [ref=e116]: ENTRY::obsidian-apac
+                  - paragraph [ref=e117]: UTC+8..+12
+                - generic [ref=e118]:
+                  - 'heading "[Jobs] Apply: Agentic AI Engineer (Accuris)" [level=3] [ref=e119]'
+                  - paragraph [ref=e121]: "Company: Accuris\\\\nLocation: US (Remote)\\\\nType: Contract — 6mo\\\\nFit: 4/5\\\\n\\\\nAction: InMail Nate Airulla directly. Remote contract, agentic AI."
+                - generic [ref=e122]:
+                  - paragraph [ref=e123]: "[obsidian.orbital.huggable]"
+                  - paragraph [ref=e124]: Cycle 3 // triangulate // constraint-design
+                  - paragraph [ref=e125]: "REF: Linear: PLAN-289 / LinkedIn Rebranding & Outreach / Backlog"
+            - listitem [ref=e126]:
+              - article [ref=e127]:
+                - generic [ref=e128]:
+                  - paragraph [ref=e129]: waxing lane / APAC
+                  - paragraph [ref=e130]: ENTRY::obsidian-apac
+                  - paragraph [ref=e131]: UTC+8..+12
+                - generic [ref=e132]:
+                  - 'heading "[Jobs] Apply: DevSecOps Engineer (Skillfield)" [level=3] [ref=e133]'
+                  - paragraph [ref=e135]: "Company: Skillfield\\\\nLocation: Melbourne (Hybrid)\\\\nType: Contract — 6mo + extension\\\\nFit: 4/5\\\\n\\\\nAction: Apply externally. Telco client, CI/CD + security."
+                - generic [ref=e136]:
+                  - paragraph [ref=e137]: "[obsidian.nimbus.pavilion]"
+                  - paragraph [ref=e138]: Cycle 4 // synthesize // signal-analysis
+                  - paragraph [ref=e139]: "REF: Linear: PLAN-288 / LinkedIn Rebranding & Outreach / Backlog"
+      - generic [ref=e140]:
+        - paragraph [ref=e141]: This page is a build-time snapshot of assigned Linear issues. If it looks stale, the site likely has not been rebuilt since April 6, 2026.
+        - paragraph [ref=e142]:
+          - text: The deeper version of the current obsession lives in the
+          - link "dossier" [ref=e143] [cursor=pointer]:
+            - /url: /dossier
+          - text: .
+  - generic [ref=e146]:
+    - button "Menu" [ref=e147]:
+      - img [ref=e149]
+      - generic: Menu
+    - button "Inspect" [ref=e153]:
+      - img [ref=e155]
+      - generic: Inspect
+    - button "Audit" [ref=e157]:
+      - img [ref=e159]
+      - generic: Audit
+    - button "Settings" [ref=e162]:
+      - img [ref=e164]
+      - generic: Settings
