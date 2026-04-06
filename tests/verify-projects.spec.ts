@@ -10,6 +10,15 @@ test('home page shows projects collection', async ({ page }) => {
   const projectsHeading = page.getByRole('heading', { name: 'Projects' });
   await expect(projectsHeading).toBeVisible();
 
+  // Check that other sections are NOT visible
+  await expect(page.getByRole('heading', { name: 'Now' })).not.toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Recently done' })).not.toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Not now' })).not.toBeVisible();
+
+  // Check that header elements are NOT visible
+  await expect(page.getByRole('link', { name: 'jungle.roaring.wave' })).not.toBeVisible();
+  await expect(page.getByRole('link', { name: 'Dossier' })).not.toBeVisible();
+
   // Check if "Australian MCP Field Notes" project is visible
   const projectTitle = page.getByText('Australian MCP Field Notes');
   await expect(projectTitle).toBeVisible();

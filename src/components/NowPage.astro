@@ -48,7 +48,11 @@ if (activeProjects.length > 0) {
     };
     pageData = {
         ...pageData,
-        sections: [projectSection, ...pageData.sections]
+        meta: {
+            ...pageData.meta,
+            intro: [],
+        },
+        sections: [projectSection]
     };
 }
 ---
