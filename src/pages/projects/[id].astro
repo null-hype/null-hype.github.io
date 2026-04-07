@@ -14,115 +14,533 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 
 const allIssues = await getCollection('issues');
-let projectIssues = allIssues.filter(issue => 
-  issue.data.Project === project.data.Name || 
+let projectIssues = allIssues.filter(issue =>
+  issue.data.Project === project.data.Name ||
   issue.data["Project ID"] === project.data.ID
 );
 
-// Sorting logic: priority first, then blocking relations
 const priorityRank: Record<string, number> = {
-  'Urgent': 1,
-  'High': 2,
-  'Medium': 3,
-  'Low': 4,
-  'No priority': 5,
+  'Urgent': 1, 'High': 2, 'Medium': 3, 'Low': 4, 'No priority': 5,
 };
 
 projectIssues.sort((a, b) => {
   const rankA = priorityRank[a.data.Priority as string] ?? 5;
   const rankB = priorityRank[b.data.Priority as string] ?? 5;
-
-  if (rankA !== rankB) {
-    return rankA - rankB;
-  }
-
-  // Same priority: evaluate blocking relations
+  if (rankA !== rankB) return rankA - rankB;
   const aBlockedBy = a.data['Blocked by'] || '';
   const bBlockedBy = b.data['Blocked by'] || '';
-
-  // If A is blocked by B, B should come first
   if (aBlockedBy.includes(b.data.ID)) return 1;
-  // If B is blocked by A, A should come first
   if (bBlockedBy.includes(a.data.ID)) return -1;
-
-  // If A is blocked by something else but B is not, B should come first
   if (aBlockedBy && !bBlockedBy) return 1;
-  // If B is blocked by something else but A is not, A should come first
   if (!aBlockedBy && bBlockedBy) return -1;
-
   return 0;
 });
+
+const statusLabel =
+  project.data.Status === 'In Progress' ? 'Active' :
+  project.data.Status === 'Completed' ? 'Filed' :
+  project.data.Status === 'Cancelled' ? 'Closed' :
+  project.data.Status || 'Active';
+
+function issueStatusLabel(status: string | undefined): string {
+  if (!status) return 'Active';
+  if (status === 'In Progress') return 'Active';
+  if (status === 'Done') return 'Filed';
+  if (status === 'In Review') return 'In Review';
+  if (status === 'Cancelled') return 'Closed';
+  if (status === 'Backlog') return 'Queued';
+  return status;
+}
+
+function cleanUpdateText(text: string): string {
+  // Strip "🟢 On track | Name posted an update on Date\n\n" prefix
+  return text.replace(/^[^\n]*\|\s*[^\n]*\n\n/, '').trim();
+}
+
+const shortRef = (project.data.ID?.slice(0, 8) ?? '--------').toUpperCase();
+const entryCount = projectIssues.length;
+const entryLabel = entryCount === 1 ? 'Entry' : 'Entries';
+const latestUpdate = project.data["Latest Update"] ? cleanUpdateText(project.data["Latest Update"]) : null;
+const filedDate = project.data["Updated At"]
+  ? new Date(project.data["Updated At"]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  : null;
+const updateDate = project.data["Latest Update Date"]
+  ? new Date(project.data["Latest Update Date"]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  : null;
+const descParagraphs = project.data.Description
+  ? project.data.Description.split('\n\n').map((p: string) => p.trim()).filter(Boolean)
+  : [];
 ---
 
 <BaseLayout
-  title={`Project: ${project.data.Name}`}
+  title={project.data.Name}
   description={project.data.Summary || project.data.Description || project.data.Name}
 >
-  <main class="editorial-main now-shell" style="padding-top: 4rem;">
-    <article class="editorial-container">
-      <header style="margin-bottom: 2rem;">
-        <p class="now-kicker">PROJECT // {project.data.Status}</p>
-        <h1 class="now-title" style="margin-bottom: 1rem;">{project.data.Name}</h1>
-        <div style="display: flex; gap: 1rem; opacity: 0.8; font-size: 0.875rem;">
-          <span><strong>ID:</strong> {project.data.ID}</span>
-          {project.data.Priority && <span><strong>Priority:</strong> {project.data.Priority}</span>}
-          {project.data["Updated At"] && <span><strong>Updated:</strong> {new Date(project.data["Updated At"]).toLocaleDateString()}</span>}
+  <div class="dossier-article">
+
+    <!-- HERO -->
+    <header class="dossier-article__hero now-shell">
+      <p class="now-kicker">DOSSIER {shortRef} // {statusLabel.toUpperCase()}</p>
+      <h1 class="now-title">{project.data.Name}</h1>
+      {(project.data.Summary) && (
+        <p class="dossier-article__abstract">{project.data.Summary}</p>
+      )}
+    </header>
+
+    <!-- METADATA BAR -->
+    <div class="dossier-article__meta-bar now-shell">
+      {project.data.Initiatives && (
+        <div class="dossier-article__meta-cell">
+          <span class="dossier-article__meta-label">Series</span>
+          <span class="dossier-article__meta-value">{project.data.Initiatives}</span>
         </div>
-      </header>
-
-      <div class="editorial-prose" style="white-space: pre-wrap; margin-bottom: 3rem;">
-        {project.data.Description || project.data.Summary ? (
-          <p>{project.data.Description || project.data.Summary}</p>
-        ) : (
-          <p><em>No project description provided.</em></p>
-        )}
+      )}
+      <div class="dossier-article__meta-cell">
+        <span class="dossier-article__meta-label">Status</span>
+        <span class="dossier-article__meta-value" data-status={project.data.Status}>{statusLabel}</span>
       </div>
-
-      {project.data["Latest Update"] && (
-        <section style="margin-bottom: 3rem; padding: 1.5rem; background: var(--editorial-surface-low); border-radius: 0px; border: 1px solid var(--editorial-outline);">
-          <h2 style="font-size: 1.25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--editorial-outline); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline;">
-            <span>Latest Update</span>
-            {project.data["Latest Update Date"] && (
-              <span style="font-size: 0.875rem; font-weight: normal; opacity: 0.8;">
-                {new Date(project.data["Latest Update Date"]).toLocaleDateString()}
-              </span>
-            )}
-          </h2>
-          <div style="font-size: 0.9375rem; white-space: pre-wrap; line-height: 1.6;">
-            {project.data["Latest Update"]}
-          </div>
-        </section>
+      {project.data.Priority && project.data.Priority !== 'No priority' && (
+        <div class="dossier-article__meta-cell">
+          <span class="dossier-article__meta-label">Signal</span>
+          <span class="dossier-article__meta-value" data-priority={project.data.Priority}>{project.data.Priority}</span>
+        </div>
       )}
+      {filedDate && (
+        <div class="dossier-article__meta-cell">
+          <span class="dossier-article__meta-label">Filed</span>
+          <span class="dossier-article__meta-value">{filedDate}</span>
+        </div>
+      )}
+      <div class="dossier-article__meta-cell">
+        <span class="dossier-article__meta-label">{entryLabel}</span>
+        <span class="dossier-article__meta-value">{entryCount}</span>
+      </div>
+    </div>
 
-      {projectIssues.length > 0 && (
-        <section>
-          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--editorial-outline); padding-bottom: 0.5rem;">
-            Issues ({projectIssues.length})
-          </h2>
-          <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.5rem;">
-            {projectIssues.map(issue => (
-              <li style="padding: 1.5rem; border-radius: 0px; background: var(--editorial-surface-low);">
-                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
-                  <h3 style="font-size: 1.125rem; font-weight: bold; margin: 0;">{issue.data.Title}</h3>
-                  <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--editorial-ink); color: var(--editorial-surface); padding: 0.25rem 0.5rem; border-radius: 0px;">
-                    {issue.data.Status}
-                  </span>
-                </div>
-                <div style="font-size: 0.875rem; opacity: 0.8; margin-bottom: 1rem; display: flex; gap: 1rem;">
-                  <span><strong>ID:</strong> {issue.data.ID}</span>
-                  {issue.data.Priority && <span><strong>Priority:</strong> {issue.data.Priority}</span>}
-                  {issue.data['Blocked by'] && <span><strong>Blocked by:</strong> {issue.data['Blocked by']}</span>}
-                </div>
-                {issue.data.Description && (
-                  <p style="font-size: 0.875rem; white-space: pre-wrap; margin: 0; line-height: 1.5;">{issue.data.Description}</p>
-                )}
+    <!-- BODY -->
+    <div class="dossier-article__body now-shell">
+
+      <!-- SIDE RAIL -->
+      <aside class="dossier-article__rail">
+        <div class="dossier-article__rail-section">
+          <h3 class="dossier-article__rail-heading">Signal File</h3>
+          <ul class="dossier-article__rail-list">
+            <li>
+              <span class="dossier-article__meta-label">Ref</span>
+              <span class="dossier-article__meta-value">{shortRef}</span>
+            </li>
+            {project.data.Initiatives && (
+              <li>
+                <span class="dossier-article__meta-label">Series</span>
+                <span class="dossier-article__meta-value">{project.data.Initiatives}</span>
               </li>
-            ))}
+            )}
+            <li>
+              <span class="dossier-article__meta-label">Status</span>
+              <span class="dossier-article__meta-value" data-status={project.data.Status}>{statusLabel}</span>
+            </li>
+            <li>
+              <span class="dossier-article__meta-label">{entryLabel}</span>
+              <span class="dossier-article__meta-value">{entryCount}</span>
+            </li>
           </ul>
-        </section>
-      )}
-    </article>
-  </main>
+        </div>
+
+      </aside>
+
+      <!-- CONTENT CANVAS -->
+      <div class="dossier-article__canvas">
+
+        {descParagraphs.length > 0 && (
+          <div class="dossier-article__prose">
+            {descParagraphs.map((para: string) => (
+              <p>{para}</p>
+            ))}
+          </div>
+        )}
+
+        {latestUpdate && (
+          <div class="dossier-article__dispatch">
+            <span class="dossier-article__dispatch-label">Latest Dispatch</span>
+            <p class="dossier-article__dispatch-body">{latestUpdate}</p>
+            {updateDate && (
+              <span class="dossier-article__dispatch-date">{updateDate}</span>
+            )}
+          </div>
+        )}
+
+        {projectIssues.length > 0 && (
+          <section class="dossier-article__entries">
+            <h2 class="dossier-article__entries-heading">
+              <span class="dossier-article__entries-count">{entryCount}</span>
+              {entryLabel}
+            </h2>
+            <ol class="dossier-article__entries-list">
+              {projectIssues.map((issue, index) => {
+                const sl = issueStatusLabel(issue.data.Status as string | undefined);
+                const paras = issue.data.Description
+                  ? issue.data.Description.split('\n\n').map((p: string) => p.trim()).filter(Boolean)
+                  : [];
+                return (
+                  <li class="dossier-article__entry">
+                    <div class="dossier-article__entry-index" aria-hidden="true">
+                      {String(index + 1).padStart(2, '0')}.
+                    </div>
+                    <article class="dossier-article__entry-body">
+                      <h3 class="dossier-article__entry-title">{issue.data.Title}</h3>
+                      {paras.map((para: string) => (
+                        <p class="dossier-article__entry-prose">{para}</p>
+                      ))}
+                      <div class="dossier-article__entry-foot">
+                        <span class={`dossier-article__entry-status dossier-article__entry-status--${sl.toLowerCase().replace(/\s+/g, '-')}`}>
+                          {sl}
+                        </span>
+                        {issue.data['Blocked by'] && (
+                          <span class="dossier-article__entry-seq">
+                            ↳ follows {issue.data['Blocked by']}
+                          </span>
+                        )}
+                      </div>
+                    </article>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        )}
+
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="dossier-article__footer now-shell">
+      <span class="dossier-article__meta-label">
+        {project.data.Initiatives || 'Tidelands'} // Dossier {shortRef} // {statusLabel}
+      </span>
+      <a href="/" class="dossier-article__back">← Dispatch</a>
+    </footer>
+
+  </div>
 </BaseLayout>
-seLayout>
-yout>
+
+<style>
+  .dossier-article {
+    min-height: 100vh;
+    background: var(--editorial-bg);
+    color: var(--editorial-ink);
+  }
+
+  /* HERO */
+  .dossier-article__hero {
+    padding-top: clamp(4rem, 10vw, 7rem);
+    padding-bottom: 3rem;
+  }
+
+  .dossier-article__abstract {
+    max-width: 44rem;
+    font-family: var(--font-meta);
+    font-size: clamp(1.1rem, 2.5vw, 1.375rem);
+    font-style: italic;
+    line-height: 1.65;
+    color: rgba(28, 27, 27, 0.75);
+    margin: 2rem 0 0;
+  }
+
+  /* METADATA BAR */
+  .dossier-article__meta-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    border-top: 1px solid rgba(28, 27, 27, 0.1);
+    border-bottom: 1px solid rgba(28, 27, 27, 0.1);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+  }
+
+  .dossier-article__meta-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .dossier-article__meta-label {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(28, 27, 27, 0.4);
+  }
+
+  .dossier-article__meta-value {
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .dossier-article__meta-value[data-status="In Progress"] { color: var(--editorial-success); }
+  .dossier-article__meta-value[data-priority="Urgent"] { color: var(--editorial-secondary); }
+
+  /* BODY LAYOUT */
+  .dossier-article__body {
+    display: flex;
+    gap: clamp(3rem, 6vw, 5rem);
+    padding-top: 4rem;
+    padding-bottom: 6rem;
+    align-items: flex-start;
+  }
+
+  /* SIDE RAIL */
+  .dossier-article__rail {
+    width: 15rem;
+    flex-shrink: 0;
+    position: sticky;
+    top: 3rem;
+  }
+
+  .dossier-article__rail-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .dossier-article__rail-heading {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(28, 27, 27, 0.4);
+    border-bottom: 1px solid rgba(28, 27, 27, 0.1);
+    padding-bottom: 0.6rem;
+    margin: 0 0 1.25rem;
+  }
+
+  .dossier-article__rail-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dossier-article__rail-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  /* DISPATCH BLOCK — canvas-width pull section */
+  .dossier-article__dispatch {
+    background: var(--editorial-accent);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  .dossier-article__dispatch-label {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .dossier-article__dispatch-body {
+    font-family: var(--font-meta);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0;
+    font-style: italic;
+  }
+
+  .dossier-article__dispatch-date {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* CONTENT CANVAS */
+  .dossier-article__canvas {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dossier-article__prose {
+    margin-bottom: 4rem;
+  }
+
+  .dossier-article__prose p {
+    font-family: var(--font-meta);
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: rgba(28, 27, 27, 0.85);
+    margin: 0 0 1.5rem;
+  }
+
+  /* ENTRIES */
+  .dossier-article__entries-heading {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(28, 27, 27, 0.4);
+    border-top: 4px solid var(--editorial-ink);
+    padding-top: 1rem;
+    margin: 0 0 3rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .dossier-article__entries-count {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--editorial-ink);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .dossier-article__entries-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dossier-article__entry {
+    display: flex;
+    gap: 2rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid rgba(28, 27, 27, 0.08);
+  }
+
+  .dossier-article__entry-index {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgba(28, 27, 27, 0.2);
+    padding-top: 0.4rem;
+    width: 2rem;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .dossier-article__entry-body {
+    flex: 1;
+  }
+
+  .dossier-article__entry-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin: 0 0 0.75rem;
+  }
+
+  .dossier-article__entry-prose {
+    font-family: var(--font-meta);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(28, 27, 27, 0.72);
+    margin: 0 0 1rem;
+  }
+
+  .dossier-article__entry-foot {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .dossier-article__entry-status {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    background: var(--editorial-ink);
+    color: var(--editorial-bg);
+  }
+
+  .dossier-article__entry-status--filed,
+  .dossier-article__entry-status--done {
+    background: var(--editorial-success);
+  }
+
+  .dossier-article__entry-status--in-review {
+    background: var(--editorial-accent);
+  }
+
+  .dossier-article__entry-status--active {
+    background: var(--editorial-secondary);
+  }
+
+  .dossier-article__entry-seq {
+    font-family: var(--font-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: rgba(28, 27, 27, 0.35);
+  }
+
+  /* FOOTER */
+  .dossier-article__footer {
+    padding-top: 2.5rem;
+    padding-bottom: 5rem;
+    border-top: 8px solid var(--editorial-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .dossier-article__back {
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--editorial-secondary);
+    text-decoration: none;
+  }
+
+  .dossier-article__back:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 63.99rem) {
+    .dossier-article__body {
+      flex-direction: column;
+    }
+
+    .dossier-article__rail {
+      width: 100%;
+      position: static;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+  }
+
+  @media (max-width: 39.99rem) {
+    .dossier-article__rail {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { RedactionBlock } from './DesignSystemComponents';
 
 export interface TidelaneListItem {
 	readonly title: string;
@@ -44,16 +45,16 @@ function TidelaneCard({ item }: Readonly<{ item: TidelaneListItem }>) {
 		<article className="tidelane-card" data-phase={lane.phase.name}>
 			<div className="tidelane-card__rail">
 				<p className="tidelane-card__phase">
-					{lane.phase.name} lane / {lane.phase.timezone}
+					{lane.phase.name} / {lane.phase.timezone}
 				</p>
-				<p className="tidelane-card__slug">ENTRY::{lane.slug}</p>
+				<p className="tidelane-card__slug">{lane.slug.replace(/-/g, '.')}</p>
 				<p className="tidelane-card__window">{lane.phase.utcBand}</p>
 			</div>
 
 			<div className="tidelane-card__content">
 				{item.href ? (
-					<a href={item.href} className="tidelane-card__title-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-						<h3 className="tidelane-card__title" style={{ textDecoration: 'underline' }}>{item.title}</h3>
+					<a href={item.href} className="tidelane-card__title-link">
+						<h3 className="tidelane-card__title">{item.title}</h3>
 					</a>
 				) : (
 					<h3 className="tidelane-card__title">{item.title}</h3>
@@ -64,7 +65,7 @@ function TidelaneCard({ item }: Readonly<{ item: TidelaneListItem }>) {
 			</div>
 
 			<div className="tidelane-card__meta">
-				<p className="tidelane-card__track">[{lane.w3w}]</p>
+				<p className="tidelane-card__track"><RedactionBlock text={`[${lane.w3w}]`} /></p>
 				<p className="tidelane-card__moon">
 					Cycle {lane.moon.cycle} // {lane.moon.verb} // {lane.moon.domain}
 				</p>
@@ -93,7 +94,7 @@ export default function TidelaneList({ sections }: Readonly<TidelaneListProps>) 
 						<div className="tidelane-section__header">
 							<h2 id={headingId}>{section.title}</h2>
 							{section.summary ? (
-								<p className="tidelane-section__summary">SIGNAL: {section.summary}</p>
+								<p className="tidelane-section__summary">{section.summary}</p>
 							) : null}
 						</div>
 
@@ -110,7 +111,7 @@ export default function TidelaneList({ sections }: Readonly<TidelaneListProps>) 
 							</ul>
 						) : (
 							<p className="tidelane-section__empty">
-								ENTRY_SET_EMPTY // {section.emptyMessage ?? 'No items right now.'}
+								{section.emptyMessage ?? 'No items right now.'}
 							</p>
 						)}
 					</section>
