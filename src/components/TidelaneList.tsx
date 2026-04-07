@@ -4,6 +4,7 @@ export interface TidelaneListItem {
 	readonly title: string;
 	readonly body: string;
 	readonly references: string;
+	readonly href?: string;
 	readonly lane: {
 		readonly slug: string;
 		readonly w3w: string;
