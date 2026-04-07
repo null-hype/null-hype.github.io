@@ -1,6 +1,6 @@
 import type { TidelaneListItem, TidelaneListSection } from '../components/TidelaneList';
-import type { NowPageData } from './linearNowPage';
-import { createUnavailableNowPageData } from './linearNowPage';
+import type { NowPageData } from './nowPageData';
+import { createUnavailableNowPageData } from './nowPageData';
 import { generateTidelaneNodes, type TidelaneNode } from './tidelane';
 
 interface FixtureEntry {
@@ -91,13 +91,12 @@ function projectItemsToPhase(
 export const mockNowPageData: NowPageData = {
 	meta: {
 		lastUpdated: 'March 24, 2026',
-		title: 'What Richard Anthony is doing now',
+		title: 'tidelands.dev | Projects',
 		intro: [
-			"Richard Anthony's assigned work is being pulled directly from Linear. The story fixture keeps the composition stable while the live Astro page swaps in real issue data.",
-			'The useful constraint is that everything has to cash out in the same place: Storybook components, Astro composition, and a current snapshot of the assigned issue set.',
+			'This Storybook fixture mirrors the checked-in project and issue CSV snapshots used by the Astro build.',
+			'The useful constraint is that Storybook, Astro, and production all render the same collection-backed shape.',
 		],
-		footer:
-			'This fixture is only for Storybook. The Astro page uses a Linear-backed data loader at render time.',
+		footer: 'Published project index built from checked-in Astro content collections.',
 	},
 	sections: [
 		{
