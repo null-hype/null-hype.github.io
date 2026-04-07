@@ -79,8 +79,8 @@ projectIssues.sort((a, b) => {
       </div>
 
       {project.data["Latest Update"] && (
-        <section style="margin-bottom: 3rem; padding: 1.5rem; background: var(--now-surface-raised); border-radius: 4px; border: 1px solid var(--now-surface-stroke);">
-          <h2 style="font-size: 1.25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--now-surface-stroke); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline;">
+        <section style="margin-bottom: 3rem; padding: 1.5rem; background: var(--editorial-surface-low); border-radius: 0px; border: 1px solid var(--editorial-outline);">
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--editorial-outline); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: baseline;">
             <span>Latest Update</span>
             {project.data["Latest Update Date"] && (
               <span style="font-size: 0.875rem; font-weight: normal; opacity: 0.8;">
@@ -96,15 +96,15 @@ projectIssues.sort((a, b) => {
 
       {projectIssues.length > 0 && (
         <section>
-          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--now-surface-stroke); padding-bottom: 0.5rem;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--editorial-outline); padding-bottom: 0.5rem;">
             Issues ({projectIssues.length})
           </h2>
           <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.5rem;">
             {projectIssues.map(issue => (
-              <li style="border: 1px solid var(--now-surface-stroke); padding: 1rem; border-radius: 4px; background: var(--now-surface-raised);">
+              <li style="padding: 1.5rem; border-radius: 0px; background: var(--editorial-surface-low);">
                 <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
                   <h3 style="font-size: 1.125rem; font-weight: bold; margin: 0;">{issue.data.Title}</h3>
-                  <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--now-ink); color: var(--now-surface); padding: 0.25rem 0.5rem; border-radius: 2px;">
+                  <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--editorial-ink); color: var(--editorial-surface); padding: 0.25rem 0.5rem; border-radius: 0px;">
                     {issue.data.Status}
                   </span>
                 </div>
@@ -124,3 +124,5 @@ projectIssues.sort((a, b) => {
     </article>
   </main>
 </BaseLayout>
+seLayout>
+yout>
