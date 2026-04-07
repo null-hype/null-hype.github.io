@@ -1,27 +1,11 @@
 "ID","Name","URL","Summary","Description","Status","Priority","Milestones","Creator","Lead","Members","Start Date (Start)","Start Date (End)","Target Date (Start)","Target Date (End)","Created At","Started At","Updated At","Completed At","Canceled At","Archived At","Teams","Initiatives","Health","Latest Update","Latest Update Date","Customer Count","Customer Revenue","Blocking","Blocked by","Labels","Initiative IDs"
-"2861f9cc-ab68-4f82-9645-860a135e73f6","Australian MCP Field Notes","https://linear.app/tidelands-dev/project/australian-mcp-field-notes-1af0109e32d0","Public field notes and dispatches on the emerging Australian MCP and agentic infrastructure scene, derived from LinkedIn reconnaissance and production work.","## Purpose
+"2861f9cc-ab68-4f82-9645-860a135e73f6","Australian MCP Field Notes","https://linear.app/tidelands-dev/project/australian-mcp-field-notes-1af0109e32d0","Public field notes and dispatches on the emerging Australian MCP and agentic infrastructure scene, derived from LinkedIn reconnaissance and production work.","This page publishes public-facing field notes drawn from LinkedIn reconnaissance and real production work at The Cyber Farm. The internal source material lives in Planning as recon reports, working notes, and operator fragments. This project is the cleaned public mirror.
 
-This page publishes public-facing field notes drawn from LinkedIn reconnaissance and real production work at The Cyber Farm.
+The focus is the emerging Australian MCP and agentic infrastructure scene — the gap between what companies are doing and what job titles say, constraint layers and approval systems for agents, and the overlap between security research and agent infrastructure.
 
-The internal source material lives in Planning as recon reports, working notes, and operator fragments. This project is the cleaned public mirror.
+The project body is the page shell. Issue bodies are atomic publishable nodes. Blocking relations define reading order. Pulse updates are LinkedIn-ready dispatches.
 
-## Focus
-
-* the emerging Australian MCP and agentic infrastructure scene
-* the gap between what companies are doing and what job titles say
-* constraint layers, approval systems, and safety architecture for agents
-* the overlap between security research and agent infrastructure
-
-## Format
-
-* the project body is the page shell
-* issue bodies are atomic publishable nodes
-* blocking relations define reading order
-* Pulse updates are LinkedIn-ready dispatches
-
-## Source note
-
-This page is derived primarily from LinkedIn recon work performed inside Planning and then rewritten for a public audience.","In Progress","High","","Robin Jordan","","","2026-04-01T13:00:00.000Z",,,,"2026-04-02T04:42:04.821Z","2026-04-02T04:42:04.831Z","2026-04-02T04:42:04.821Z",,,,"Opensource","The Cyber Farm Dispatches","On track","🟢 On track | Robin Jordan posted an update on Apr 3
+Source material is derived primarily from LinkedIn recon work performed inside Planning and then rewritten for a public audience.","In Progress","High","","Robin Jordan","","","2026-04-01T13:00:00.000Z",,,,"2026-04-02T04:42:04.821Z","2026-04-02T04:42:04.831Z","2026-04-02T04:42:04.821Z",,,,"Opensource","The Cyber Farm Dispatches","On track","🟢 On track | Robin Jordan posted an update on Apr 3
 
 I spent two weeks mapping the Australian MCP and agentic AI scene — who is building, who is hiring, and where the gaps are between what companies need and what job titles say.
 
@@ -34,13 +18,7 @@ Grammars are compiled expertise. An expensive model writes the rules once. A che
 
 Two articles lay out the Grammar as Protocol thesis and then prove it across six domains — from SAT math to German grammar to security scanning to argumentation — using the same four-layer architecture in each. The claim is structural, not metaphorical. The same Pkl module, Tree-sitter parser, and XState machine pattern applies everywhere.
 
-Read the series →
-
-**Status**: In Progress
-**Priority**: High
-**Start date**: Not set → Mar 7th
-
-*Progress since Apr 3*: 0% → 25%","2026-04-03T04:19:32.770Z",,,"","","","6d66d799-219a-4d87-ba8f-35df0640dc90"
+Read the series →","2026-04-03T04:19:32.770Z",,,"","","","6d66d799-219a-4d87-ba8f-35df0640dc90"
 "78ea8afa-9300-4d63-90b0-3b384fa43c18","Confirmed Findings","https://linear.app/tidelands-dev/project/confirmed-findings-5986a4ba83e2","Vulnerability disclosures from production security research — confirmed, responsibly disclosed, and written up for a technical audience.",,"In Progress","High","","Robin Jordan","","","2026-03-06T13:00:00.000Z",,,,"2026-04-03T04:19:48.809Z","2026-04-03T04:19:48.822Z","2026-04-03T04:19:48.809Z",,,,"Planning","Security Research","On track","🟢 On track | Robin Jordan posted an update on Apr 3
 
 Two confirmed vulnerability disclosures, both acknowledged by the vendor, both resulting in hall-of-fame listings.
@@ -49,13 +27,7 @@ The first is a namespace confusion issue in CodeSandbox — what happens when mu
 
 Both findings are written up with the general pattern, not just the specific instance. The namespace reuse problem and the account-state-at-every-entry-point problem appear in systems well beyond these two vendors.
 
-Read the findings →
-
-**Status**: In Progress
-**Priority**: High
-**Start date**: Not set → Mar 7th
-
-*Progress since Apr 3*: 0% → 25%","2026-04-03T04:22:39.745Z",,,"","","","8110f60d-89ab-4887-9dd0-e901fdd7ed2b"
+Read the findings →","2026-04-03T04:22:39.745Z",,,"","","","8110f60d-89ab-4887-9dd0-e901fdd7ed2b"
 "c24e45b0-8b20-4b6b-9618-d2b86e6bfde6","Building tidelands.dev","https://linear.app/tidelands-dev/project/building-tidelandsdev-b3a650d3aee6","How tidelands.dev went from an empty domain to a deployed smallweb origin with Terraform, Dagger, and Cloudflare — and why the decision log matters more than the code.",,"In Progress","High","","Robin Jordan","","","2026-03-27T13:00:00.000Z",,,,"2026-04-03T04:16:44.414Z","2026-04-03T04:16:44.498Z","2026-04-03T04:16:44.414Z",,,,"Planning","Infrastructure","On track","🟢 On track | Robin Jordan posted an update on Apr 3
 
 tidelands.dev started as an empty domain and a constraint: no manual SSH, no console clicks, one command to deploy everything.
@@ -64,10 +36,4 @@ Three articles trace that path — the operator contract that shaped every decis
 
 This is a build log, not a tutorial. The decisions mattered more than the code.
 
-Read the series →
-
-**Status**: In Progress
-**Priority**: High
-**Start date**: Not set → Mar 28th
-
-*Progress since Apr 3*: 0% → 25%","2026-04-03T04:18:08.896Z",,,"","","","c49e0023-7b06-47f5-8e0f-20b1bace9790"
+Read the series →","2026-04-03T04:18:08.896Z",,,"","","","c49e0023-7b06-47f5-8e0f-20b1bace9790"

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import TidelaneList, { type TidelaneListSection } from './TidelaneList';
+import { RedactionBlock } from './DesignSystemComponents';
 
 export interface NowPageMeta {
 	readonly lastUpdated: string;
@@ -28,8 +29,8 @@ function JitterTitle({ text }: { text: string }) {
 						const jitter = (wordIndex + charIndex) % 7 === 0;
 						const dir = (wordIndex + charIndex) % 2 === 0 ? 'up' : 'down';
 						return (
-							<span 
-								key={charIndex} 
+							<span
+								key={charIndex}
 								className={jitter ? `baseline-shift-${dir}` : undefined}
 							>
 								{char}
@@ -56,6 +57,16 @@ export default function NowPageView({
 			<main className="now-main now-shell">
 				{isFavorited ? (
 					<>
+						<header className="now-page__header">
+							<p className="now-kicker">ACTIVE DISPATCH // <RedactionBlock text={meta.lastUpdated} /></p>
+							<h1 className="now-title"><JitterTitle text="Current Operations" /></h1>
+							{meta.intro.length > 0 && (
+								<div className="now-intro">
+									{meta.intro.map((line, i) => <p key={i}>{line}</p>)}
+								</div>
+							)}
+						</header>
+
 						{warning ? (
 							<div className="now-callout" role="status">
 								<span className="font-label text-[10px] font-bold uppercase block mb-2">Warning: Structural Noise</span>
