@@ -254,6 +254,18 @@
 	font-weight: 900;
 }
 
+.tidelane-card__title-link {
+	text-decoration: none;
+	color: inherit;
+}
+
+.tidelane-card__title-link:hover .tidelane-card__title {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 0.4rem;
+	text-decoration-color: var(--tidelane-accent);
+}
+
 .tidelane-card__title {
 	margin: 0;
 	font-family: var(--font-display);

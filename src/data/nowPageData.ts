@@ -113,7 +113,7 @@ function buildSections(
 			return {
 				title: project.data.Name,
 				body: project.data.Summary || project.data.Description || '',
-				references: `Project: ${project.data.ID} / ${project.data.Status}${projectIssueCount > 0 ? ` / ${projectIssueCount} issues` : ''}`,
+				references: `${(project.data.ID ?? '').slice(0, 8).toUpperCase()} // ${project.data.Status === 'In Progress' ? 'Active' : project.data.Status ?? 'Active'}${projectIssueCount > 0 ? ` // ${projectIssueCount} ${projectIssueCount === 1 ? 'entry' : 'entries'}` : ''}`,
 				href: `/projects/${project.id}`,
 				lane: {
 					slug: node.slug,
