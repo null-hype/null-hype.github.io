@@ -62,6 +62,18 @@ For an existing production Smallweb instance, the generated Mutagen config prese
 - `.smallweb-root/linear-agent/.env`
 - `.smallweb-root/linear-agent/data/`
 
+## GitHub Actions Prod Deploy
+
+`.github/workflows/deploy-smallweb-prod.yml` provides a manual `workflow_dispatch` deploy for the production Smallweb host.
+
+Configure the GitHub `production` environment with:
+
+- `SMALLWEB_PROD_DESTINATION`
+- `SMALLWEB_SSH_PRIVATE_KEY`
+- `ADMIN_AUTHORIZED_EMAILS`
+
+The workflow uses the existing Mutagen bundle path in [`infra/scripts/start-smallweb-mutagen-sync.sh`](/workspaces/null-hype.github.io/infra/scripts/start-smallweb-mutagen-sync.sh) and does not require `LINEAR_API_KEY`. The site build is expected to run entirely from checked-in Astro content collections.
+
 ## Commands
 
 All commands are run from the project root:

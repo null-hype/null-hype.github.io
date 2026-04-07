@@ -1,0 +1,86 @@
+name: Deploy Smallweb Prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy
+        required: true
+        default: master
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smallweb-prod
+  cancel-in-progress: false
+
+env:
+  DAGGER_VERSION: "0.13.7"
+  MUTAGEN_VERSION: "0.18.1"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      url: https://www.tidelands.dev
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install deploy tools
+        run: |
+          mkdir -p .tools/bin
+          curl -fsSL https://dl.dagger.io/dagger/install.sh | BIN_DIR="$PWD/.tools/bin" DAGGER_VERSION="$DAGGER_VERSION" sh
+          curl -fsSL "https://github.com/mutagen-io/mutagen/releases/download/v${MUTAGEN_VERSION}/mutagen_linux_amd64_v${MUTAGEN_VERSION}.tar.gz" -o /tmp/mutagen.tar.gz
+          tar -xzf /tmp/mutagen.tar.gz -C /tmp
+          install "/tmp/mutagen_linux_amd64_v${MUTAGEN_VERSION}/mutagen" .tools/bin/mutagen
+          echo "$PWD/.tools/bin" >> "$GITHUB_PATH"
+
+      - name: Configure SSH
+        env:
+          SMALLWEB_PROD_DESTINATION: ${{ secrets.SMALLWEB_PROD_DESTINATION }}
+          SMALLWEB_SSH_PRIVATE_KEY: ${{ secrets.SMALLWEB_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          printf '%s\n' "$SMALLWEB_SSH_PRIVATE_KEY" > "$HOME/.ssh/null_hype_render_plan_key"
+          chmod 600 "$HOME/.ssh/null_hype_render_plan_key"
+          ssh-keygen -y -f "$HOME/.ssh/null_hype_render_plan_key" > "$HOME/.ssh/null_hype_render_plan_key.pub"
+          chmod 644 "$HOME/.ssh/null_hype_render_plan_key.pub"
+          host="$(printf '%s' "$SMALLWEB_PROD_DESTINATION" | sed -E 's#^[^@]+@([^:]+):.*#\1#')"
+          ssh-keyscan -H "$host" >> "$HOME/.ssh/known_hosts"
+          chmod 644 "$HOME/.ssh/known_hosts"
+
+      - name: Deploy app bundle to Smallweb
+        env:
+          ADMIN_AUTHORIZED_EMAILS: ${{ secrets.ADMIN_AUTHORIZED_EMAILS }}
+          MUTAGEN_DESTINATION: ${{ secrets.SMALLWEB_PROD_DESTINATION }}
+          MUTAGEN_RESET: "1"
+          MUTAGEN_SESSION_NAME: smallweb-prod-${{ github.run_id }}
+        run: ./infra/scripts/start-smallweb-mutagen-sync.sh
+
+      - name: Verify www
+        run: |
+          curl -fsS https://www.tidelands.dev/ | grep -q 'tidelands.dev | Projects'
+          curl -fsS https://www.tidelands.dev/ | grep -q 'The Cyber Farm Dispatches'
+
+      - name: Verify null-hype
+        run: |
+          curl -fsS https://null-hype.tidelands.dev/ | grep -q 'tidelands.dev | Projects'
+          curl -fsS https://null-hype.tidelands.dev/ | grep -q 'The Cyber Farm Dispatches'

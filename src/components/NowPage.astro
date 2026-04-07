@@ -3,90 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import NowPageView from './NowPageView';
 import '../styles/editorial.css';
 import '../styles/now-page.css';
-import { createUnavailableNowPageData, getLinearNowPageData } from '../data/linearNowPage';
-import { getCollection } from 'astro:content';
-import { generateTidelaneNodes } from '../data/tidelane';
+import { getNowPageDataFromCollections } from '../data/nowPageData';
 
-const NOW_PAGE_TIDELANE_SEED = 26;
-const tidelaneNodes = generateTidelaneNodes(NOW_PAGE_TIDELANE_SEED);
-const projectNodes = tidelaneNodes.filter(node => node.phase.name === 'full');
-
-let pageData = createUnavailableNowPageData();
-let warning: string | undefined;
-
-try {
-	pageData = await getLinearNowPageData();
-} catch (error) {
-	warning =
-		'Linear data is unavailable for this build. Confirm LINEAR_API_KEY and outbound access to api.linear.app.';
-
-	if (import.meta.env.DEV) {
-		console.error('Failed to load Linear now page data.', error);
-	}
-}
-
-const projectEntries = await getCollection('projects');
-const issueEntries = await getCollection('issues');
-const activeProjects = projectEntries.filter(p => p.data?.Status === 'In Progress');
-
-// Group projects by Initiative
-if (activeProjects.length > 0) {
-    const groupedByInitiative = new Map<string, typeof activeProjects>();
-    for (const project of activeProjects) {
-        const initiative = project.data.Initiatives || 'Other';
-        if (!groupedByInitiative.has(initiative)) {
-            groupedByInitiative.set(initiative, []);
-        }
-        groupedByInitiative.get(initiative)!.push(project);
-    }
-
-    const newSections = Array.from(groupedByInitiative.entries()).map(([initiative, projects], groupIndex) => {
-        return {
-            id: `initiative-${groupIndex}`,
-            title: initiative,
-            summary: `Tracking ${projects.length} project${projects.length === 1 ? '' : 's'} in this initiative.`,
-            items: projects.map((project, itemIndex) => {
-                const projectIssues = issueEntries.filter(issue => 
-                    issue.data.Project === project.data.Name || 
-                    issue.data["Project ID"] === project.data.ID
-                );
-                
-                const href = `/projects/${project.id}`;
-
-                // Calculate a flat index for moon/phase consistency across all projects if desired, 
-                // or just use itemIndex + groupIndex to add variety
-                const nodeIndex = (groupIndex * 3 + itemIndex) % projectNodes.length;
-
-                return {
-                    title: project.data.Name,
-                    body: project.data.Summary || project.data.Description || '',
-                    references: `Project: ${project.data.ID} / ${project.data.Status}${projectIssues.length > 0 ? ` / ${projectIssues.length} issues` : ''}`,
-                    href,
-                    lane: {
-                        slug: projectNodes[nodeIndex].slug,
-                        w3w: projectNodes[nodeIndex].w3w,
-                        moon: projectNodes[nodeIndex].moon,
-                        phase: projectNodes[nodeIndex].phase,
-                    }
-                };
-            })
-        };
-    });
-
-    pageData = {
-        ...pageData,
-        meta: {
-            ...pageData.meta,
-            intro: [],
-        },
-        sections: newSections
-    };
-}
+const pageData = await getNowPageDataFromCollections();
 ---
 
 <BaseLayout
-	title="jungle.roaring.wave | Now"
-	description="What Richard Anthony is focused on now, pulled from current assigned Linear issues."
+	title={pageData.meta.title}
+	description={pageData.meta.footer}
 >
-	<NowPageView meta={pageData.meta} sections={pageData.sections} warning={warning} />
+	<NowPageView meta={pageData.meta} sections={pageData.sections} isFavorited={pageData.isFavorited} />
 </BaseLayout>
