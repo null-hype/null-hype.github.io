@@ -55,12 +55,9 @@
 
 .now-header__nav a,
 .now-kicker,
-.tidelane-card__phase,
-.tidelane-card__slug,
-.tidelane-card__window,
-.tidelane-card__track,
-.tidelane-card__moon,
-.tidelane-card__refs {
+.tidelane-card__status,
+.tidelane-card__updated,
+.tidelane-card__meta-item {
 	font-family: var(--font-label);
 	font-size: 0.62rem;
 	font-weight: 700;
@@ -99,6 +96,16 @@
 	line-height: 0.85;
 	letter-spacing: -0.06em;
 	text-wrap: balance;
+}
+
+.now-board-wrap {
+	display: grid;
+	gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+.now-archive-list {
+	display: grid;
+	gap: 1rem;
 }
 
 .now-intro,
@@ -158,18 +165,6 @@
 .tidelane-card {
 	--tidelane-accent: var(--editorial-accent);
 	--tidelane-surface: var(--editorial-surface);
-}
-
-.tidelane-section[data-phase='waxing'],
-.tidelane-card[data-phase='waxing'] {
-	--tidelane-accent: var(--editorial-success);
-	--tidelane-surface: #f0f4f3;
-}
-
-.tidelane-section[data-phase='waning'],
-.tidelane-card[data-phase='waning'] {
-	--tidelane-accent: var(--editorial-secondary);
-	--tidelane-surface: #f4f0f0;
 }
 
 .tidelane-section__header {
@@ -239,24 +234,56 @@
 	gap: 0.75rem;
 }
 
-.tidelane-card__phase,
-.tidelane-card__window {
+.tidelane-card__status,
+.tidelane-card__updated {
 	margin: 0;
 	color: rgba(28, 27, 27, 0.4);
 }
 
-.tidelane-card__slug {
-	display: inline-flex;
+.tidelane-card__header {
+	display: flex;
 	align-items: center;
-	width: fit-content;
-	margin: 0;
-	color: var(--tidelane-accent);
-	font-weight: 900;
+	justify-content: space-between;
+	gap: 1rem;
+	flex-wrap: wrap;
 }
 
 .tidelane-card__title-link {
 	text-decoration: none;
 	color: inherit;
+}
+
+.tidelane-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.tidelane-card__meta-item {
+	margin: 0;
+	color: var(--tidelane-accent);
+	font-weight: 900;
+}
+
+.tidelane-card__update {
+	margin: 0;
+	padding-left: 1rem;
+	border-left: 2px solid rgba(28, 27, 27, 0.16);
+	font-family: var(--font-meta);
+	font-size: 0.95rem;
+	font-style: italic;
+	line-height: 1.6;
+	color: rgba(28, 27, 27, 0.68);
+}
+
+.now-empty-state {
+	padding-bottom: var(--section-space);
+}
+
+@media (min-width: 64rem) {
+	.now-archive-list {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 .tidelane-card__title-link:hover .tidelane-card__title {

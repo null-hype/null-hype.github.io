@@ -1,25 +1,16 @@
 import React from 'react';
-import { RedactionBlock } from './DesignSystemComponents';
 
 export interface TidelaneListItem {
 	readonly title: string;
 	readonly body: string;
-	readonly references: string;
 	readonly href?: string;
-	readonly lane: {
-		readonly slug: string;
-		readonly w3w: string;
-		readonly moon: {
-			readonly cycle: number;
-			readonly verb: string;
-			readonly domain: string;
-		};
-		readonly phase: {
-			readonly name: 'waxing' | 'full' | 'waning';
-			readonly timezone: 'APAC' | 'EMEA' | 'Americas';
-			readonly utcBand: string;
-		};
-	};
+	readonly projectId: string;
+	readonly status: string;
+	readonly issueCount: number;
+	readonly priority?: string;
+	readonly updatedAt?: string;
+	readonly updatedAtIso?: string;
+	readonly latestUpdate?: string;
 }
 
 export interface TidelaneListSection {
@@ -39,16 +30,13 @@ function toIdFragment(value: string) {
 }
 
 function TidelaneCard({ item }: Readonly<{ item: TidelaneListItem }>) {
-	const { lane } = item;
+	const entryLabel = item.issueCount === 1 ? 'entry' : 'entries';
 
 	return (
-		<article className="tidelane-card" data-phase={lane.phase.name}>
-			<div className="tidelane-card__rail">
-				<p className="tidelane-card__phase">
-					{lane.phase.name} / {lane.phase.timezone}
-				</p>
-				<p className="tidelane-card__slug">{lane.slug.replace(/-/g, '.')}</p>
-				<p className="tidelane-card__window">{lane.phase.utcBand}</p>
+		<article className="tidelane-card">
+			<div className="tidelane-card__header">
+				<p className="tidelane-card__status">{item.status}</p>
+				{item.updatedAt ? <p className="tidelane-card__updated">{item.updatedAt}</p> : null}
 			</div>
 
 			<div className="tidelane-card__content">
@@ -59,17 +47,26 @@ function TidelaneCard({ item }: Readonly<{ item: TidelaneListItem }>) {
 				) : (
 					<h3 className="tidelane-card__title">{item.title}</h3>
 				)}
-				<div className="tidelane-card__body-wrap">
-					<p className="tidelane-card__body">{item.body}</p>
-				</div>
+
+				{item.body ? (
+					<div className="tidelane-card__body-wrap">
+						<p className="tidelane-card__body">{item.body}</p>
+					</div>
+				) : null}
+
+				{item.latestUpdate ? (
+					<p className="tidelane-card__update">{item.latestUpdate}</p>
+				) : null}
 			</div>
 
 			<div className="tidelane-card__meta">
-				<p className="tidelane-card__track"><RedactionBlock text={`[${lane.w3w}]`} /></p>
-				<p className="tidelane-card__moon">
-					Cycle {lane.moon.cycle} // {lane.moon.verb} // {lane.moon.domain}
+				<p className="tidelane-card__meta-item">{item.projectId}</p>
+				<p className="tidelane-card__meta-item">
+					{item.issueCount} {entryLabel}
 				</p>
-				<p className="tidelane-card__refs">REF: {item.references}</p>
+				{item.priority ? (
+					<p className="tidelane-card__meta-item">{item.priority}</p>
+				) : null}
 			</div>
 		</article>
 	);
@@ -81,16 +78,9 @@ export default function TidelaneList({ sections }: Readonly<TidelaneListProps>) 
 			{sections.map((section) => {
 				const id = section.id ?? toIdFragment(section.title);
 				const headingId = `${id}-heading`;
-				const phase = section.items[0]?.lane.phase.name ?? 'full';
 
 				return (
-					<section
-						key={id}
-						className="now-section tidelane-section"
-						id={id}
-						aria-labelledby={headingId}
-						data-phase={phase}
-					>
+					<section key={id} className="now-section tidelane-section" id={id} aria-labelledby={headingId}>
 						<div className="tidelane-section__header">
 							<h2 id={headingId}>{section.title}</h2>
 							{section.summary ? (
@@ -101,19 +91,14 @@ export default function TidelaneList({ sections }: Readonly<TidelaneListProps>) 
 						{section.items.length > 0 ? (
 							<ul className="tidelane-list">
 								{section.items.map((item) => (
-									<li
-										key={`${id}-${item.lane.slug}-${item.lane.moon.cycle}`}
-										className="tidelane-list__item"
-									>
+									<li key={`${id}-${item.projectId}`} className="tidelane-list__item">
 										<TidelaneCard item={item} />
 									</li>
 								))}
 							</ul>
-						) : (
-							<p className="tidelane-section__empty">
-								{section.emptyMessage ?? 'No items right now.'}
-							</p>
-						)}
+						) : section.emptyMessage ? (
+							<p className="tidelane-section__empty">{section.emptyMessage}</p>
+						) : null}
 					</section>
 				);
 			})}
