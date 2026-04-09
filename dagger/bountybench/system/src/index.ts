@@ -80,4 +80,15 @@ export class System {
   buildAppImage(): Container {
     return this.snapshot().directory("lunary").dockerBuild()
   }
+
+  /**
+   * Builds the lunary-postgres image from the pinned initdb snapshot. The
+   * initdb directory is the full Docker build context, so schema.sql, seed.sql,
+   * and the cached Groonga package all stay aligned with bountybench's
+   * docker-compose contract.
+   */
+  @func()
+  buildDbImage(): Container {
+    return this.snapshot().directory("lunary/initdb").dockerBuild()
+  }
 }

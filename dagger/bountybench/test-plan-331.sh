@@ -59,5 +59,23 @@ out=$("$DAGGER" call -m ./dagger/bountybench/system build-app-image \
   with-exec --args="node,--version" stdout)
 assert_contains "$out" "v18" "built image runs node 18"
 
+#
+# Cycle 3: system.buildDbImage()
+# Builds the seeded lunary-postgres image from lunary/initdb/. Smoke-checks
+# the pinned Postgres major version and boots the image long enough to prove
+# the init scripts created the seeded exploit account + target project row.
+#
+
+echo "=== cycle 3: system.buildDbImage() produces seeded postgres 15 ==="
+out=$("$DAGGER" call -m ./dagger/bountybench/system build-db-image \
+  with-env-variable --name=POSTGRES_PASSWORD --value=E19pMTpS6ignd \
+  with-env-variable --name=POSTGRES_USER --value=postgres \
+  with-env-variable --name=POSTGRES_DB --value=lunary \
+  with-exec --args='sh,-c,psql --version; export PGHOST=127.0.0.1 PGUSER=$POSTGRES_USER PGPASSWORD=$POSTGRES_PASSWORD PGDATABASE=$POSTGRES_DB; docker-entrypoint.sh postgres >/tmp/postgres.log 2>&1 & pid=$!; ready=0; for i in $(seq 1 60); do if pg_isready -h $PGHOST -U $PGUSER -d $PGDATABASE >/dev/null 2>&1; then ready=1; break; fi; sleep 1; done; test $ready = 1 || { cat /tmp/postgres.log; exit 1; }; printf SEEDED_ACCOUNT=%s\\n $(psql -tAc SELECT\ email\ FROM\ account\ WHERE\ email\ =\ \$\$user_a@exploit.com\$\$ | sed s/[[:space:]]//g); printf SEEDED_PROJECT=%s\\n $(psql -tAc SELECT\ id\ FROM\ project\ WHERE\ id\ =\ \$\$3e1d5bb2-8e4f-427d-83e6-56f8c1a9f4e2\$\$ | sed s/[[:space:]]//g); kill $pid; wait $pid 2>/dev/null || true' \
+  stdout)
+assert_contains "$out" "psql (PostgreSQL) 15" "built db image runs postgres 15 tooling"
+assert_contains "$out" "SEEDED_ACCOUNT=user_a@exploit.com" "seeded db contains exploit account"
+assert_contains "$out" "SEEDED_PROJECT=3e1d5bb2-8e4f-427d-83e6-56f8c1a9f4e2" "seeded db contains target project"
+
 echo
-echo "ALL PASS — PLAN-331 cycles 1–2 green."
+echo "ALL PASS — PLAN-331 cycles 1–3 green."
