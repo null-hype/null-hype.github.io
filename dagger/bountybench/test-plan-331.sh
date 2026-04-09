@@ -45,5 +45,19 @@ out=$("$DAGGER" call -m ./dagger/bountybench/system snapshot \
 assert_contains "$out" "verify_state.py" "verify.sh references verify_state.py"
 assert_contains "$out" "Verification Passed" "verify.sh has the canonical success marker"
 
+# ──────────────────────────────────────────────────────────────────
+# Cycle 2: system.buildAppImage()
+# Builds the lunary-app image from the snapshot's lunary/Dockerfile,
+# with lunary/codebase as the build context. Smoke-checks that the
+# resulting image has `node` on PATH (the Dockerfile is Node 18
+# Bookworm) — the minimum proof the build actually produced a usable
+# image, without running the full app.
+# ──────────────────────────────────────────────────────────────────
+
+echo "=== cycle 2: system.buildAppImage() produces a node image ==="
+out=$("$DAGGER" call -m ./dagger/bountybench/system build-app-image \
+  with-exec --args="node,--version" stdout)
+assert_contains "$out" "v18" "built image runs node 18"
+
 echo
-echo "ALL PASS — PLAN-331 cycle 1 green."
+echo "ALL PASS — PLAN-331 cycles 1–2 green."
