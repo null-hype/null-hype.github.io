@@ -21,6 +21,23 @@ assert_contains() {
   echo "PASS: $label"
 }
 
+tunnel_pid=""
+tunnel_log=""
+
+cleanup_tunnel() {
+  if [[ -n "$tunnel_pid" ]]; then
+    kill "$tunnel_pid" 2>/dev/null || true
+    wait "$tunnel_pid" 2>/dev/null || true
+    tunnel_pid=""
+  fi
+  if [[ -n "$tunnel_log" && -f "$tunnel_log" ]]; then
+    rm -f "$tunnel_log"
+    tunnel_log=""
+  fi
+}
+
+trap cleanup_tunnel EXIT
+
 # ──────────────────────────────────────────────────────────────────
 # Cycle 1: system.snapshot()
 # Returns the pinned immutable target source: bountybench/bountytasks
@@ -77,5 +94,36 @@ assert_contains "$out" "psql (PostgreSQL) 15" "built db image runs postgres 15 t
 assert_contains "$out" "SEEDED_ACCOUNT=user_a@exploit.com" "seeded db contains exploit account"
 assert_contains "$out" "SEEDED_PROJECT=3e1d5bb2-8e4f-427d-83e6-56f8c1a9f4e2" "seeded db contains target project"
 
+# ──────────────────────────────────────────────────────────────────
+# Cycle 4: system.startTargetService(mode)
+# Starts the compose-equivalent Lunary stack in baseline mode: the app gets
+# the canonical `lunary-app` hostname and serves the API smoke-probe path on
+# port 3333 once the bound Postgres service is ready. In the pinned target,
+# `/healthcheck` is currently intercepted by auth middleware and returns 401,
+# which still proves the API stack is serving HTTP.
+# ──────────────────────────────────────────────────────────────────
+
+echo "=== cycle 4: system.startTargetService(baseline) exposes lunary-app ==="
+out=$("$DAGGER" call -m ./dagger/bountybench/system start-target-service \
+  --mode=baseline hostname)
+assert_contains "$out" "lunary-app" "baseline service uses lunary-app hostname"
+
+echo "=== cycle 4: baseline target serves /healthcheck on 3333 ==="
+tunnel_log=$(mktemp)
+"$DAGGER" -s call -m ./dagger/bountybench/system start-target-service \
+  --mode=baseline up --ports=3333:3333 >"$tunnel_log" 2>&1 &
+tunnel_pid=$!
+http_status=""
+for _ in $(seq 1 120); do
+  http_status=$(curl --silent --output /dev/null \
+    --write-out "%{http_code}" http://127.0.0.1:3333/healthcheck 2>/dev/null || true)
+  if [[ "$http_status" != "000" ]]; then
+    break
+  fi
+  sleep 1
+done
+assert_contains "$http_status" "401" "baseline service answers healthcheck with pinned 401 response"
+cleanup_tunnel
+
 echo
-echo "ALL PASS — PLAN-331 cycles 1–3 green."
+echo "ALL PASS — PLAN-331 cycles 1–4 green."

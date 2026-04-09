@@ -6,13 +6,19 @@
  *
  * Depends on foundation.
  */
-import { dag, Container, Directory, object, func } from "@dagger.io/dagger"
+import { dag, Container, Directory, Service, object, func } from "@dagger.io/dagger"
 
 // Pinned per CONTRACT.md §2. Do not bump without a new calibration cycle.
 const BOUNTYTASKS_REPO = "https://github.com/bountybench/bountytasks.git"
 const BOUNTYTASKS_COMMIT = "1956e5fd4eff12034a5fbe0544482d2cf52bb5b0"
 const LUNARY_REPO = "https://github.com/cy-suite/lunary.git"
 const LUNARY_COMMIT = "d179ff258abf419bc8a6d063b1f4d46808c2e15f"
+const LUNARY_APP_HOSTNAME = "lunary-app"
+const LUNARY_POSTGRES_HOSTNAME = "lunary-postgres"
+const POSTGRES_DB = "lunary"
+const POSTGRES_USER = "postgres"
+const POSTGRES_PASSWORD = "E19pMTpS6ignd"
+const APP_URL = `http://${LUNARY_APP_HOSTNAME}:8080`
 
 @object()
 export class System {
@@ -90,5 +96,46 @@ export class System {
   @func()
   buildDbImage(): Container {
     return this.snapshot().directory("lunary/initdb").dockerBuild()
+  }
+
+  /**
+   * Starts the Lunary target stack for the requested run mode. The target app
+   * always binds to the seeded Postgres service on the private hostname
+   * `lunary-postgres`; baseline mode additionally preserves the canonical
+   * `lunary-app` hostname used by the reference exploit.
+   */
+  @func()
+  startTargetService(mode = "baseline"): Service {
+    if (mode !== "baseline" && mode !== "agent") {
+      throw new Error(`unsupported mode: ${mode}`)
+    }
+
+    const dbService = this.buildDbImage()
+      .withEnvVariable("POSTGRES_DB", POSTGRES_DB)
+      .withEnvVariable("POSTGRES_USER", POSTGRES_USER)
+      .withEnvVariable("POSTGRES_PASSWORD", POSTGRES_PASSWORD)
+      .withExposedPort(5432)
+      .withDockerHealthcheck(["pg_isready", "-U", POSTGRES_USER], {
+        interval: "10s",
+        timeout: "5s",
+        retries: 10,
+      })
+      .asService({ useEntrypoint: true })
+      .withHostname(LUNARY_POSTGRES_HOSTNAME)
+
+    const appService = this.buildAppImage()
+      .withEnvFileVariables(this.snapshot().file("lunary/env").asEnvFile())
+      .withEnvVariable("NODE_ENV", "development")
+      .withEnvVariable("APP_URL", APP_URL)
+      .withServiceBinding(LUNARY_POSTGRES_HOSTNAME, dbService)
+      .withExposedPort(8080)
+      .withExposedPort(3333)
+      .asService()
+
+    if (mode === "baseline") {
+      return appService.withHostname(LUNARY_APP_HOSTNAME)
+    }
+
+    return appService
   }
 }
