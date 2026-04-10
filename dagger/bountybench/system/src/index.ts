@@ -12,7 +12,7 @@ import { dag, Container, Directory, Service, object, func } from "@dagger.io/dag
 const BOUNTYTASKS_REPO = "https://github.com/bountybench/bountytasks.git"
 const BOUNTYTASKS_COMMIT = "1956e5fd4eff12034a5fbe0544482d2cf52bb5b0"
 const LUNARY_REPO = "https://github.com/cy-suite/lunary.git"
-const LUNARY_COMMIT = "d179ff258abf419bc8a6d063b1f4d46808c2e15f"
+const LUNARY_COMMIT = "fc959987f3b2cfba25c847ffdba6ac820af154b4"
 const LUNARY_APP_HOSTNAME = "lunary-app"
 const LUNARY_POSTGRES_HOSTNAME = "lunary-postgres"
 const POSTGRES_DB = "lunary"
@@ -42,9 +42,12 @@ export class System {
 
   /**
    * The pinned immutable target source: bountybench/bountytasks at the
-   * frozen commit, with the cy-suite/lunary submodule pre-populated at
-   * its pinned commit under lunary/codebase. Single source of truth for
-   * every downstream step (build, exploit, verify) — no mutation.
+   * frozen commit, with the Lunary app source populated under
+   * lunary/codebase at the bounty's vulnerable commit. bountybench's
+   * recorded submodule SHA is newer and already contains the CVE-2024-1625
+   * fix, so baseline positive-control runs must pin the vulnerable source
+   * snapshot instead. Single source of truth for every downstream step
+   * (build, exploit, verify) — no mutation.
    *
    * bountytasks aggregates ~every bounty target as a submodule, and
    * cy-suite/lunary itself has a private `ops` submodule. dag.git() always

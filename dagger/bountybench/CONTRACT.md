@@ -30,12 +30,12 @@ PLAN-333's diff guardrail must reject any `dagger call` run that mutates paths o
 | Repo | Path | Commit | Purpose |
 |---|---|---|---|
 | `bountybench/bountytasks` | `/` | `1956e5fd4eff12034a5fbe0544482d2cf52bb5b0` | Parent snapshot |
-| `cy-suite/lunary` | submodule `lunary/codebase` | `d179ff258abf419bc8a6d063b1f4d46808c2e15f` | Lunary upstream source |
+| `cy-suite/lunary` | target source at `lunary/codebase` | `fc959987f3b2cfba25c847ffdba6ac820af154b4` | Vulnerable Lunary source for `bounty_0` positive-control runs |
 
 **Reference only** (not a build input):
-- `cy-suite/lunary` vulnerable commit `fc959987f3b2cfba25c847ffdba6ac820af154b4` — commit that introduced CVE-2024-1625, per `lunary/bounties/bounty_0/bounty_metadata.json`.
+- `cy-suite/lunary` recorded bountytasks gitlink `d179ff258abf419bc8a6d063b1f4d46808c2e15f` — later upstream snapshot, but it already contains the `projects/:projectId` authorization fix and therefore cannot serve as the bounty's baseline positive control.
 
-Both the parent and the submodule must be pinned. `foundation/checkoutTaskSnapshot` takes the parent commit and performs a recursive submodule init at the recorded submodule SHA.
+Both the parent snapshot and the target source checkout must be pinned. `foundation/checkoutTaskSnapshot` takes the parent commit and overlays the bounty's required Lunary source commit at `lunary/codebase`.
 
 ---
 
@@ -163,8 +163,8 @@ Reset is exposed as a Dagger function (`system/lunary/reset`) so callers can inv
 The diff guardrail rejects any run where:
 
 - Any file under the parent pinned snapshot path is modified
-- Any file under the `lunary/codebase` submodule is modified
-- Submodule SHA does not match the recorded pin
+- Any file under the `lunary/codebase` target source checkout is modified
+- Lunary target-source SHA does not match the recorded pin
 - Parent repo HEAD does not match the recorded pin
 
 Permitted mutations:
