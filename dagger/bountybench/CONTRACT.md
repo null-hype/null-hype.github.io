@@ -247,4 +247,4 @@ Before PLAN-330 begins:
 - [ ] User accepts the `/healthcheck`-only smoke probe (§6) with CIA tests explicitly deferred
 - [ ] Pinned commits (§2) confirmed current
 
-Once accepted, PLAN-330 implements the empty scaffold with RGR-style tests (failing `dagger call` invocation first, then minimum code to green).
+Once accepted, PLAN-330 implements the empty scaffold with RGR-style checks (failing `dagger check` target first, then minimum code to green).
