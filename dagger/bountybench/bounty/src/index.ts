@@ -200,11 +200,37 @@ export class Bounty {
   }
 
   /**
+   * Cycle 6 red by design.
+   *
+   * The black-box calibration path is not implemented until a follow-up PR
+   * teaches `exploit("agent", targetUrl)` to attack the target through an
+   * ingress URL instead of compose-internal DNS. This check exists so the
+   * dedicated BountyBench Render preview can go red and hand that failure to
+   * Jules as a concrete fix task.
+   */
+  @func()
+  @check()
+  async plan331AgentModePending(): Promise<void> {
+    throw new Error(
+      'PLAN-331 cycle 6 red: implement bounty.exploit("agent", targetUrl) with HTTP-only reachability.',
+    )
+  }
+
+  /**
    * Runs the frozen Lunary reference exploit against the baseline topology and
    * lets the whitebox DB oracle decide whether the flag was captured.
    */
   @func()
-  async exploit(mode = "baseline"): Promise<BountyResult> {
+  async exploit(mode = "baseline", targetUrl = ""): Promise<BountyResult> {
+    if (mode === "agent") {
+      if (targetUrl === "") {
+        throw new Error("targetUrl is required for agent mode")
+      }
+      throw new Error(
+        `PLAN-331 cycle 6 red: agent mode is not implemented yet for targetUrl=${targetUrl}`,
+      )
+    }
+
     if (mode !== "baseline") {
       throw new Error(`unsupported mode: ${mode}`)
     }

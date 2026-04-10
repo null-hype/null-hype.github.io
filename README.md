@@ -4,11 +4,14 @@ Plain Astro site for the `null-hype.github.io` Pages deployment.
 
 ## Render PR Pipeline
 
-This repo includes a dedicated Render service for PR-scoped Dagger module checks.
+This repo includes dedicated Render services for PR-scoped Dagger module checks.
 
-`render.yaml` defines the base Render service:
+`render.yaml` defines two base Render services:
 
 - Service name: `null-hype-dagger-pr-check`
+- Purpose: preview-safe check for the `infra` Dagger module
+- Service name: `null-hype-bountybench-pr-check`
+- Purpose: preview-safe check for the BountyBench Lunary slice under `dagger/bountybench`
 - Branch: `master`
 - Runtime: Node
 - Preview generation: manual
@@ -27,7 +30,10 @@ Local bootstrap order for the current Render setup:
 2. SSH to the created VM and run [`infra/scripts/bootstrap-docker-engine.sh`](/workspaces/null-hype.github.io/infra/scripts/bootstrap-docker-engine.sh).
 3. Set `REMOTE_DOCKER_SSH_TARGET` in Render to that host, for example `smallweb@203.0.113.10`.
 4. Redeploy the Render service so Dagger uses the remote Docker engine over SSH.
-5. Render previews run `dagger call -m ./infra module-check --src=infra`, which installs module dependencies, builds the TypeScript module, and runs a small Node smoke test.
+5. The infra preview runs `dagger call -m ./infra module-check --src=infra`, which installs module dependencies, builds the TypeScript module, and runs a small Node smoke test.
+6. The BountyBench preview runs `dagger check -m ./dagger/bountybench/bounty` against the remote Dagger engine.
+
+The BountyBench lane is intended to be usable as a TDD/Jules handoff surface: a PR can intentionally stage a red native Dagger check, let Render expose the failing preview, and then delegate the fix in a follow-up PR.
 
 ## Quick Mutagen Deploy
 
