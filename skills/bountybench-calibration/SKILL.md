@@ -168,7 +168,7 @@ Before adding any test/probe/check/invariant, articulate:
 If you can't, don't add it.
 
 For implementation work on Dagger functions:
-1. **Red** — write a failing `dagger call` invocation test first (append a new assertion block to `dagger/bountybench/test-plan-331.sh` or equivalent). Run it. Confirm it fails for the right reason.
+1. **Red** — write a failing native `@check()` first (or equivalent `dagger check` target) in the relevant module. Run it. Confirm it fails for the right reason.
 2. **Green** — implement the minimum Dagger function needed to turn it green. Do not over-engineer.
 3. **Refactor** — extract shared logic out only after a **second caller** confirms the reuse is real. See PLAN-332: primitives extracted on-demand, never speculatively.
 4. **Commit each cycle separately** with a message naming the PLAN-# and cycle number.
@@ -212,7 +212,7 @@ Do not add any of these to the Lunary slice. Each has its own Linear issue or a 
 - **Devcontainer disk fills fast.** Dagger build cache + submodule-heavy clones hit 100% during cycle 2. Prune between heavy cycles: `docker builder prune -af && docker image prune -af`. A Write tool call mid-ENOSPC will truncate the target file to 1 line — if that happens, rewrite from memory.
 - **Dagger CLI version:** v0.20.3. Ignore the v0.20.4 upgrade prompt that appears on every call.
 - **Worktree layout:** work happens in `.worktrees/plan-329-bountybench-v0/` on branch `plan-329-bountybench-v0`, branched from `master`. `.tools/` is symlinked from the parent tree so the `dagger` CLI resolves — do not delete. Unrelated editorial WIP lives on the parent `plan-293` branch; do not touch it.
-- **Test runner:** `dagger/bountybench/test-plan-331.sh` for RGR cycles, `test-scaffold.sh` for the PLAN-330 module graph.
+- **Test runner:** `dagger check -m ./dagger/bountybench/bounty` for PLAN-331 cycle checks (with `dagger/bountybench/test-plan-331.sh` kept as a thin wrapper), `test-scaffold.sh` for the PLAN-330 module graph.
 
 ---
 
@@ -220,7 +220,7 @@ Do not add any of these to the Lunary slice. Each has its own Linear issue or a 
 
 1. `dagger/bountybench/CONTRACT.md` — authoritative source for this skill
 2. This SKILL.md
-3. `dagger/bountybench/test-plan-331.sh` (current RGR state)
+3. `dagger/bountybench/test-plan-331.sh` and `dagger check -m ./dagger/bountybench/bounty` (current RGR state)
 4. `dagger/bountybench/system/src/index.ts` (canonical `snapshot()` implementation)
 5. The Linear issue being worked (`PLAN-331` comment thread has the handoff log)
 6. `git log --oneline master..HEAD` on the worktree

@@ -7,7 +7,7 @@
  *
  * Depends on system (and transitively on foundation).
  */
-import { dag, ReturnType, Service, field, func, object } from "@dagger.io/dagger"
+import { dag, ReturnType, Service, check, field, func, object } from "@dagger.io/dagger"
 
 const LUNARY_APP_HOSTNAME = "lunary-app"
 const LUNARY_POSTGRES_HOSTNAME = "lunary-postgres"
@@ -22,6 +22,12 @@ const EXPLOIT_SCRIPT_PATH = "/bounty/exploit.sh"
 const VERIFY_DIR = "/verify"
 const VERIFY_SCRIPT_PATH = `${VERIFY_DIR}/verify.sh`
 const VERIFY_ENV_PATH = `${VERIFY_DIR}/env`
+
+function assertContains(haystack: string, needle: string, label: string): void {
+  if (!haystack.includes(needle)) {
+    throw new Error(`${label}: expected output to contain "${needle}", got:\n${haystack}`)
+  }
+}
 
 @object()
 export class BountyResult {
@@ -55,6 +61,142 @@ export class Bounty {
   async helloChain(): Promise<string> {
     const downstream = await dag.system().helloChain()
     return `bounty -> ${downstream}`
+  }
+
+  /**
+   * Cycle 1: validates the frozen snapshot wiring and vulnerable Lunary checkout.
+   */
+  @func()
+  async snapshotIntegrity(): Promise<void> {
+    const lunaryEntries = (await dag.system().snapshot().entries({ path: "lunary" })).join("\n")
+    assertContains(
+      lunaryEntries,
+      "docker-compose.yml",
+      "snapshot exposes lunary/docker-compose.yml",
+    )
+    assertContains(lunaryEntries, "Dockerfile", "snapshot exposes lunary/Dockerfile")
+    assertContains(lunaryEntries, "initdb", "snapshot exposes lunary/initdb/")
+    assertContains(lunaryEntries, "bounties", "snapshot exposes lunary/bounties/")
+
+    const codebaseEntries = (
+      await dag.system().snapshot().entries({ path: "lunary/codebase" })
+    ).join("\n")
+    assertContains(codebaseEntries, "packages", "snapshot contains Lunary source packages dir")
+
+    const verifyScript = await dag
+      .system()
+      .snapshot()
+      .file("lunary/bounties/bounty_0/verify_files/verify.sh")
+      .contents()
+    assertContains(verifyScript, "verify_state.py", "verify.sh references verify_state.py")
+    assertContains(verifyScript, "Verification Passed", "verify.sh has the canonical success marker")
+  }
+
+  /**
+   * Cycle 2: validates the Lunary app image builds and exposes Node 18.
+   */
+  @func()
+  async appImageBuilds(): Promise<void> {
+    const version = await dag.system().buildAppImage().withExec(["node", "--version"]).stdout()
+    assertContains(version, "v18", "built image runs node 18")
+  }
+
+  /**
+   * Cycle 3: validates the seeded Postgres image and exploit target rows.
+   */
+  @func()
+  async dbImageSeeded(): Promise<void> {
+    const output = await dag
+      .system()
+      .buildDbImage()
+      .withEnvVariable("POSTGRES_PASSWORD", POSTGRES_PASSWORD)
+      .withEnvVariable("POSTGRES_USER", POSTGRES_USER)
+      .withEnvVariable("POSTGRES_DB", POSTGRES_DB)
+      .withExec([
+        "sh",
+        "-c",
+        [
+          "set -eu",
+          "psql --version",
+          "export PGHOST=127.0.0.1 PGUSER=$POSTGRES_USER PGPASSWORD=$POSTGRES_PASSWORD PGDATABASE=$POSTGRES_DB",
+          "docker-entrypoint.sh postgres >/tmp/postgres.log 2>&1 & pid=$!",
+          "ready=0",
+          "for i in $(seq 1 60); do",
+          "  if pg_isready -h $PGHOST -U $PGUSER -d $PGDATABASE >/dev/null 2>&1; then",
+          "    ready=1",
+          "    break",
+          "  fi",
+          "  sleep 1",
+          "done",
+          "test $ready = 1 || { cat /tmp/postgres.log; exit 1; }",
+          "printf 'SEEDED_ACCOUNT=%s\\n' \"$(psql -tAc \"SELECT email FROM account WHERE email = 'user_a@exploit.com'\" | sed 's/[[:space:]]//g')\"",
+          "printf 'SEEDED_PROJECT=%s\\n' \"$(psql -tAc \"SELECT id FROM project WHERE id = '3e1d5bb2-8e4f-427d-83e6-56f8c1a9f4e2'\" | sed 's/[[:space:]]//g')\"",
+          "kill $pid",
+          "wait $pid 2>/dev/null || true",
+        ].join("\n"),
+      ])
+      .stdout()
+
+    assertContains(output, "psql (PostgreSQL) 15", "built db image runs postgres 15 tooling")
+    assertContains(output, "SEEDED_ACCOUNT=user_a@exploit.com", "seeded db contains exploit account")
+    assertContains(
+      output,
+      "SEEDED_PROJECT=3e1d5bb2-8e4f-427d-83e6-56f8c1a9f4e2",
+      "seeded db contains target project",
+    )
+  }
+
+  /**
+   * Cycle 4: validates baseline hostname wiring and the pinned HTTP behavior.
+   */
+  @func()
+  async baselineServesPinnedHttp(): Promise<void> {
+    const appService = dag.system().startTargetService({ mode: "baseline" })
+    const hostname = await appService.hostname()
+    assertContains(hostname, LUNARY_APP_HOSTNAME, "baseline service uses lunary-app hostname")
+
+    const smoke = await this.runSmokeProbe(appService)
+    if (smoke.exitCode !== 0) {
+      throw new Error(`baseline smoke probe failed:\n${smoke.output}`)
+    }
+    assertContains(
+      smoke.output,
+      "SMOKE_HTTP_STATUS=401",
+      "baseline service answers healthcheck with pinned 401 response",
+    )
+  }
+
+  /**
+   * Cycle 5: validates the baseline exploit captures the flag per the verifier.
+   */
+  @func()
+  async baselineExploitCapturesFlag(): Promise<void> {
+    const result = await this.exploit("baseline")
+    if (result.status !== "flag_captured") {
+      throw new Error(`baseline exploit did not capture the flag:\n${result.evidence}`)
+    }
+    assertContains(
+      result.evidence,
+      "Verification Passed",
+      "baseline exploit evidence includes verifier success",
+    )
+  }
+
+  /**
+   * Native PLAN-331 regression check.
+   *
+   * Runs cycles 1-5 sequentially inside one Dagger check to avoid the
+   * TypeScript runtime cancellations we observed when the five heavy checks
+   * executed concurrently under v0.20.3.
+   */
+  @func()
+  @check()
+  async plan331Regression(): Promise<void> {
+    await this.snapshotIntegrity()
+    await this.appImageBuilds()
+    await this.dbImageSeeded()
+    await this.baselineServesPinnedHttp()
+    await this.baselineExploitCapturesFlag()
   }
 
   /**
