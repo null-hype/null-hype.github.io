@@ -28,3 +28,31 @@ services:
     autoDeploy: false
     previews:
       generation: manual
+  - type: web
+    name: null-hype-bountybench-pr-check
+    runtime: node
+    repo: https://github.com/null-hype/null-hype.github.io
+    branch: master
+    plan: free
+    region: oregon
+    buildCommand: |
+      set -eu && \
+      test -n "$SSH_PRIVATE_KEY" && \
+      test -n "$REMOTE_DOCKER_SSH_TARGET" && \
+      mkdir -p ~/.ssh .render/bin && \
+      printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519 && \
+      chmod 600 ~/.ssh/id_ed25519 && \
+      printf 'Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null\n' > ~/.ssh/config && \
+      curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-24.0.7.tgz -o /tmp/docker.tgz && \
+      tar -xzf /tmp/docker.tgz -C .render/bin --strip-components=1 docker/docker && \
+      curl -fsSL https://dl.dagger.io/dagger/install.sh -o /tmp/dagger-install.sh && \
+      BIN_DIR=.render/bin sh /tmp/dagger-install.sh && \
+      export PATH="$PWD/.render/bin:$PATH" && \
+      export DOCKER_HOST="ssh://$REMOTE_DOCKER_SSH_TARGET" && \
+      docker info && \
+      .render/bin/dagger check -m ./dagger/bountybench/bounty
+    startCommand: node -e "require('node:http').createServer((_,res)=>res.end('ok')).listen(process.env.PORT||10000,'0.0.0.0')"
+    healthCheckPath: ""
+    autoDeploy: false
+    previews:
+      generation: manual
