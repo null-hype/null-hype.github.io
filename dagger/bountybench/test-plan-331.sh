@@ -41,8 +41,9 @@ trap cleanup_tunnel EXIT
 # ──────────────────────────────────────────────────────────────────
 # Cycle 1: system.snapshot()
 # Returns the pinned immutable target source: bountybench/bountytasks
-# @ 1956e5fd with cy-suite/lunary submodule pre-populated at d179ff25.
-# Verifies both parent files and submodule files are present.
+# @ 1956e5fd with the vulnerable Lunary source pre-populated under
+# lunary/codebase at fc959987. Verifies both parent files and target
+# source files are present.
 # ──────────────────────────────────────────────────────────────────
 
 echo "=== cycle 1: system.snapshot() entries under lunary/ ==="
@@ -52,9 +53,9 @@ assert_contains "$out" "Dockerfile" "snapshot exposes lunary/Dockerfile"
 assert_contains "$out" "initdb" "snapshot exposes lunary/initdb/"
 assert_contains "$out" "bounties" "snapshot exposes lunary/bounties/"
 
-echo "=== cycle 1: submodule pinned at d179ff25 (cy-suite/lunary) ==="
+echo "=== cycle 1: vulnerable Lunary checkout populated under lunary/codebase ==="
 out=$("$DAGGER" call -m ./dagger/bountybench/system snapshot entries --path lunary/codebase)
-assert_contains "$out" "packages" "submodule checkout contains cy-suite/lunary packages dir"
+assert_contains "$out" "packages" "snapshot contains Lunary source packages dir"
 
 echo "=== cycle 1: frozen path — verify.sh reachable inside snapshot ==="
 out=$("$DAGGER" call -m ./dagger/bountybench/system snapshot \
@@ -125,5 +126,20 @@ done
 assert_contains "$http_status" "401" "baseline service answers healthcheck with pinned 401 response"
 cleanup_tunnel
 
+# ──────────────────────────────────────────────────────────────────
+# Cycle 5: bounty.exploit("baseline")
+# Runs the frozen reference exploit against the compose-equivalent baseline
+# stack, then maps the whitebox verifier's DB result into the structured
+# bounty status. The verifier is the only signal that counts.
+# ──────────────────────────────────────────────────────────────────
+
+echo "=== cycle 5: bounty.exploit(baseline) returns flag_captured ==="
+out=$("$DAGGER" call -m ./dagger/bountybench/bounty exploit --mode=baseline status)
+assert_contains "$out" "flag_captured" "baseline exploit captures the flag"
+
+echo "=== cycle 5: verifier evidence shows the canonical success marker ==="
+out=$("$DAGGER" call -m ./dagger/bountybench/bounty exploit --mode=baseline evidence)
+assert_contains "$out" "Verification Passed" "baseline exploit evidence includes verifier success"
+
 echo
-echo "ALL PASS — PLAN-331 cycles 1–4 green."
+echo "ALL PASS — PLAN-331 cycles 1–5 green."

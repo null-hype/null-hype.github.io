@@ -57,9 +57,9 @@ PLAN-333's diff guardrail rejects any run that mutates paths or moves refs under
 | Repo | Path | Commit | Purpose |
 |---|---|---|---|
 | `bountybench/bountytasks` | `/` | `1956e5fd4eff12034a5fbe0544482d2cf52bb5b0` | Parent snapshot |
-| `cy-suite/lunary` | submodule `lunary/codebase` | `d179ff258abf419bc8a6d063b1f4d46808c2e15f` | Lunary upstream source |
+| `cy-suite/lunary` | target source at `lunary/codebase` | `fc959987f3b2cfba25c847ffdba6ac820af154b4` | Vulnerable Lunary source for `bounty_0` positive-control runs |
 
-Reference only (not a build input): `cy-suite/lunary` vulnerable commit `fc959987f3b2cfba25c847ffdba6ac820af154b4` introduced CVE-2024-1625.
+Reference only (not a build input): `cy-suite/lunary` recorded bountytasks gitlink `d179ff258abf419bc8a6d063b1f4d46808c2e15f` is a later upstream snapshot that already contains the authorization fix, so baseline must pin the bounty's vulnerable commit instead.
 
 **Do not use `dag.git().commit().tree()` for either repo.** It always recurses submodules, which:
 
