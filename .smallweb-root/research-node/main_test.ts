@@ -6,6 +6,7 @@ import { createApp, createSignature, isFreshTimestamp, verifySignature } from ".
 import { createWorkerApp } from "../../spikes/research-worker-poc/main.ts"
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..")
+const daggerBin = Deno.env.get("DAGGER_BIN")?.trim() || path.join(repoRoot, ".tools", "bin", "dagger")
 
 async function createTestApp(configOverrides: Record<string, unknown> = {}, services: Record<string, unknown> = {}) {
   const runtimeDir = await Deno.makeTempDir({ prefix: "research-node-smallweb-" })
@@ -15,7 +16,7 @@ async function createTestApp(configOverrides: Record<string, unknown> = {}, serv
     allowedTools: ["scope.get_current_target", "findings.record_note"],
     appName: "research-node",
     bountybenchGitRef: "plan-329-bountybench-v0",
-    daggerBin: path.join(repoRoot, ".tools", "bin", "dagger"),
+    daggerBin,
     gitBin: "git",
     mcpBearerToken: "mcp-secret",
     publicBaseUrl: "http://research-node.tidelands.dev",
@@ -383,7 +384,7 @@ Deno.test("webhook worker integration completes the callback loop against /mcp",
     allowedTools: ["scope.get_current_target", "findings.record_note"],
     appName: "research-node",
     bountybenchGitRef: "plan-329-bountybench-v0",
-    daggerBin: path.join(repoRoot, ".tools", "bin", "dagger"),
+    daggerBin,
     gitBin: "git",
     mcpBearerToken: mcpToken,
     publicBaseUrl: "http://127.0.0.1",
@@ -456,7 +457,7 @@ Deno.test("webhook worker integration can invoke target.start_service against re
     allowedTools: ["scope.get_current_target", "target.start_service", "findings.record_note"],
     appName: "research-node",
     bountybenchGitRef,
-    daggerBin: path.join(repoRoot, ".tools", "bin", "dagger"),
+    daggerBin,
     gitBin: "git",
     mcpBearerToken: mcpToken,
     publicBaseUrl: "http://127.0.0.1",
