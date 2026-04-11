@@ -54,6 +54,8 @@ type SessionContext = {
 
 type WorkerStartPayload = {
   allowedTools: string[]
+  callbackToken: string
+  callbackUrl: string
   issueId: string
   issueIdentifier: string
   mcpBearerToken: string
@@ -69,6 +71,12 @@ type WorkerResult = {
     ok: boolean
     tool: string
   }>
+}
+
+type WorkerDispatchResult = {
+  sessionId: string
+  status: "accepted" | "failed"
+  summary: string
 }
 
 type JsonRpcRequest = {
@@ -111,6 +119,13 @@ function empty(status = 204): Response {
       "cache-control": "no-store",
     },
   })
+}
+
+function noStoreHeaders(contentType = "application/json; charset=utf-8"): HeadersInit {
+  return {
+    "cache-control": "no-store",
+    "content-type": contentType,
+  }
 }
 
 function jsonRpcResult(id: number | string | null | undefined, result: unknown, status = 200): Response {
@@ -574,7 +589,8 @@ async function startWorkerSession(
   services: Services,
   session: SessionContext,
   mcpServerUrl: string,
-): Promise<WorkerResult> {
+  callbackUrl: string,
+): Promise<WorkerDispatchResult> {
   if (!config.workerUrl) {
     throw new Error("RESEARCH_NODE_WORKER_URL is not configured.")
   }
@@ -589,6 +605,8 @@ async function startWorkerSession(
 
   const payload: WorkerStartPayload = {
     allowedTools: [...config.allowedTools],
+    callbackToken: config.workerToken,
+    callbackUrl,
     issueId: session.issueId,
     issueIdentifier: session.issueIdentifier,
     mcpBearerToken: config.mcpBearerToken,
@@ -611,7 +629,32 @@ async function startWorkerSession(
     throw new Error(`Worker start failed: ${response.status} ${JSON.stringify(body)}`)
   }
 
-  return normalizeWorkerResult(body, session.sessionId)
+  if (!isRecord(body)) {
+    throw new Error("Worker start response must be an object.")
+  }
+
+  return {
+    sessionId: typeof body.sessionId === "string" ? body.sessionId : session.sessionId,
+    status: body.status === "failed" ? "failed" : "accepted",
+    summary: typeof body.summary === "string" ? body.summary : "Worker accepted the session.",
+  }
+}
+
+async function recordWorkerResult(config: Config, result: WorkerResult): Promise<void> {
+  await appendJsonl(joinPath(config.runtimeDir, "worker-events.jsonl"), {
+    recordedAt: new Date().toISOString(),
+    sessionId: result.sessionId,
+    type: "worker-result",
+    workerResult: result,
+  })
+
+  await appendJsonl(joinPath(config.runtimeDir, "sessions.jsonl"), {
+    event: "worker-finished",
+    recordedAt: new Date().toISOString(),
+    sessionId: result.sessionId,
+    status: result.status,
+    summary: result.summary,
+  })
 }
 
 async function executeJob(
@@ -619,7 +662,7 @@ async function executeJob(
   config: Config,
   services: Services,
   sessionContexts: Map<string, SessionContext>,
-): Promise<WorkerResult> {
+): Promise<WorkerDispatchResult> {
   const createdAt = new Date().toISOString()
   const sessionId = input.sessionId?.trim() || crypto.randomUUID()
   const session: SessionContext = {
@@ -641,44 +684,36 @@ async function executeJob(
 
   const requestBaseUrl = trimTrailingSlash(input.requestOrigin || config.publicBaseUrl)
   const mcpServerUrl = `${requestBaseUrl}/mcp`
+  const callbackUrl = `${requestBaseUrl}/worker-results`
 
   try {
-    const workerResult = await startWorkerSession(config, services, session, mcpServerUrl)
+    const workerDispatch = await startWorkerSession(config, services, session, mcpServerUrl, callbackUrl)
 
     await appendJsonl(joinPath(config.runtimeDir, "worker-events.jsonl"), {
       recordedAt: new Date().toISOString(),
       sessionId,
-      type: "worker-result",
-      workerResult,
+      type: "worker-dispatched",
+      workerDispatch,
     })
 
-    await appendJsonl(joinPath(config.runtimeDir, "sessions.jsonl"), {
-      recordedAt: new Date().toISOString(),
-      sessionId,
-      status: workerResult.status,
-      summary: workerResult.summary,
-      event: "worker-finished",
-    })
-
-    return workerResult
+    return workerDispatch
   } catch (error) {
     await logError(config, "executeJob", error, {
       issueIdentifier: session.issueIdentifier,
       sessionId,
     })
 
-    const failedResult: WorkerResult = {
+    const failedResult: WorkerDispatchResult = {
       sessionId,
       status: "failed",
       summary: error instanceof Error ? error.message : String(error),
-      toolCalls: [],
     }
 
     await appendJsonl(joinPath(config.runtimeDir, "worker-events.jsonl"), {
       recordedAt: new Date().toISOString(),
       sessionId,
-      type: "worker-error",
-      workerResult: failedResult,
+      type: "worker-dispatch-failed",
+      workerDispatch: failedResult,
     })
 
     await appendJsonl(joinPath(config.runtimeDir, "sessions.jsonl"), {
@@ -686,7 +721,7 @@ async function executeJob(
       sessionId,
       status: "failed",
       summary: failedResult.summary,
-      event: "worker-finished",
+      event: "worker-dispatch-failed",
     })
 
     return failedResult
@@ -815,6 +850,46 @@ async function handleMcpRequest(
   return jsonRpcError(payload.id, -32601, `Unknown tool "${requestedTool}".`, 404)
 }
 
+async function handleWorkerResult(
+  req: Request,
+  config: Config,
+  sessionContexts: Map<string, SessionContext>,
+): Promise<Response> {
+  if (!config.workerToken) {
+    return json({ error: "RESEARCH_NODE_WORKER_TOKEN is not configured.", ok: false }, 500)
+  }
+
+  if (!hasValidBearer(req, config.workerToken)) {
+    return json({ error: "Bearer token required for /worker-results.", ok: false }, 401)
+  }
+
+  let payload: WorkerResult
+
+  try {
+    payload = await parseJsonBody<WorkerResult>(req)
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : "Invalid JSON.", ok: false }, 400)
+  }
+
+  const sessionId = typeof payload.sessionId === "string" ? payload.sessionId.trim() : ""
+  if (!sessionId) {
+    return json({ error: 'Expected "sessionId" to be a non-empty string.', ok: false }, 400)
+  }
+
+  const normalizedResult = normalizeWorkerResult(payload, sessionId)
+  await resolveSessionContext(sessionId, config.runtimeDir, sessionContexts)
+  await recordWorkerResult(config, normalizedResult)
+
+  return new Response(JSON.stringify({
+    ok: true,
+    sessionId,
+    status: normalizedResult.status,
+  }, null, 2), {
+    status: 202,
+    headers: noStoreHeaders(),
+  })
+}
+
 async function summarizeStatus(runtimeDir: string): Promise<Record<string, unknown>> {
   const sessions = await readJsonl(joinPath(runtimeDir, "sessions.jsonl")) as Array<Record<string, unknown>>
   const workerEvents = await readJsonl(joinPath(runtimeDir, "worker-events.jsonl")) as Array<Record<string, unknown>>
@@ -879,6 +954,15 @@ export function createApp(config = loadConfig(), services: Services = {}) {
         } catch (error) {
           await logError(config, "handleMcpRequest", error)
           return json({ error: "MCP request failed.", ok: false }, 500)
+        }
+      }
+
+      if (req.method === "POST" && url.pathname === "/worker-results") {
+        try {
+          return await handleWorkerResult(req, config, sessionContexts)
+        } catch (error) {
+          await logError(config, "handleWorkerResult", error)
+          return json({ error: "Worker result handling failed.", ok: false }, 500)
         }
       }
 
@@ -956,11 +1040,11 @@ export function createApp(config = loadConfig(), services: Services = {}) {
       }
 
       return json({
-        ok: result.status === "completed",
+        ok: result.status === "accepted",
         sessionId: result.sessionId,
+        status: result.status,
         summary: result.summary,
-        toolCalls: result.toolCalls,
-      }, result.status === "completed" ? 200 : 202)
+      }, 202)
     },
     run: async (args: string[]): Promise<void> => {
       const command = args[0]

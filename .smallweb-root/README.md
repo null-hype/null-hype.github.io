@@ -6,7 +6,7 @@ It also includes a private `linear-agent` app that receives signed Linear webhoo
 
 It also includes a private `jules` app that proxies authenticated dispatch and session requests into the Jules REST API.
 
-It also includes a private `research-node` app that acts as the PLAN-358 Smallweb specimen: signed Linear webhook ingress plus a bearer-protected `/mcp` surface for a separate worker service.
+It also includes a private `research-node` app that acts as the PLAN-358 Smallweb specimen: signed Linear webhook ingress, a bearer-protected `/mcp` surface for a separate worker service, and a bearer-protected worker callback route for async result delivery.
 
 It also includes public `www` and `null-hype` apps that serve the built Astro site from the repo `dist/` directory.
 
@@ -21,8 +21,8 @@ Files:
 - `jules/smallweb.json`: keeps the Jules app private while exposing `/healthz` plus `/api/**` so the handler can enforce either `Remote-Email` or a shared bearer token
 - `jules/main.ts`: Jules dispatch proxy with JSONL session recording and server-to-server bearer auth support
 - `jules/data/sessions.jsonl`: append-only mapping between Linear issue ids and Jules session ids, created on first dispatch
-- `research-node/smallweb.json`: keeps the research node private while leaving `/healthz`, `/webhooks/**`, and `/mcp` public
-- `research-node/main.ts`: Smallweb-native worker-session manager with signed webhook ingress, JSON-RPC-style `/mcp`, and append-only session logs
+- `research-node/smallweb.json`: keeps the research node private while leaving `/healthz`, `/webhooks/**`, `/mcp`, and `/worker-results` public
+- `research-node/main.ts`: Smallweb-native worker-session manager with signed webhook ingress, JSON-RPC-style `/mcp`, async worker dispatch, worker-result callback handling, and append-only session logs
 - `research-node/data/`: append-only JSONL logs for sessions, worker events, MCP requests, and errors
 - `www/smallweb.json`: points the `www` app at the built Astro output in `../../dist`
 - `null-hype/smallweb.json`: points the `null-hype` subdomain at the built Astro output in `../../dist`
