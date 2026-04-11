@@ -2,7 +2,6 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 import type { TidelaneListSection } from '../components/TidelaneList';
 import type { NowPageMeta } from '../components/NowPageView';
-import { generateTidelaneNodes } from './tidelane';
 
 export interface NowPageData {
 	readonly meta: NowPageMeta;
@@ -10,19 +9,15 @@ export interface NowPageData {
 	readonly isFavorited: boolean;
 }
 
-const NOW_PAGE_TIDELANE_SEED = 26;
-const EMPTY_PROJECTS_SUMMARY = 'No in-progress projects are currently published.';
-const EMPTY_PROJECTS_MESSAGE = 'No active projects are currently published.';
-
-const projectNodes = generateTidelaneNodes(NOW_PAGE_TIDELANE_SEED).filter(
-	(node) => node.phase.name === 'full',
-);
-
 function formatDate(value: string) {
 	return new Intl.DateTimeFormat('en-US', {
 		dateStyle: 'long',
 		timeZone: 'UTC',
 	}).format(new Date(value));
+}
+
+function cleanUpdateText(text: string) {
+	return text.replace(/^[^\n]*\|\s*[^\n]*\n\n/, '').trim();
 }
 
 function getProjectIssueCount(
@@ -48,7 +43,7 @@ function getLastUpdatedLabel(projectEntries: readonly CollectionEntry<'projects'
 		.filter((value) => Number.isFinite(value));
 
 	if (timestamps.length === 0) {
-		return formatDate(new Date().toISOString());
+		return '';
 	}
 
 	return formatDate(new Date(Math.max(...timestamps)).toISOString());
@@ -60,12 +55,9 @@ function buildMeta(activeProjects: readonly CollectionEntry<'projects'>[]): NowP
 
 	return {
 		lastUpdated: getLastUpdatedLabel(activeProjects),
-		title: 'tidelands.dev | Projects',
+		title: 'Projects',
 		intro: [],
-		footer:
-			projectCount > 0
-				? `Published project index built from checked-in Astro content collections. Tracking ${projectCount} in-progress ${projectLabel}.`
-				: 'Published project index built from checked-in Astro content collections.',
+		footer: `${projectCount} in-progress ${projectLabel}`,
 	};
 }
 
@@ -78,8 +70,7 @@ function buildSections(
 			{
 				id: 'projects',
 				title: 'Projects',
-				summary: EMPTY_PROJECTS_SUMMARY,
-				emptyMessage: EMPTY_PROJECTS_MESSAGE,
+				summary: '0 in-progress projects',
 				items: [],
 			},
 		];
@@ -100,27 +91,28 @@ function buildSections(
 	return Array.from(groupedByInitiative.entries()).map(([initiative, projects], groupIndex) => ({
 		id: `initiative-${groupIndex}`,
 		title: initiative,
-		summary: `Tracking ${projects.length} project${projects.length === 1 ? '' : 's'} in this initiative.`,
-		items: projects.map((project, itemIndex) => {
+		summary: `${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`,
+		items: projects.map((project) => {
 			const projectIssueCount = getProjectIssueCount(project, issueEntries);
-			const nodeIndex = (groupIndex * 3 + itemIndex) % projectNodes.length;
-			const node = projectNodes[nodeIndex];
-
-			if (!node) {
-				throw new Error(`Missing tidelane node for project index ${nodeIndex}.`);
-			}
+			const updatedAtIso = project.data['Latest Update Date'] || project.data['Updated At'] || '';
+			const updatedAt = updatedAtIso ? formatDate(updatedAtIso) : '';
 
 			return {
 				title: project.data.Name,
 				body: project.data.Summary || project.data.Description || '',
-				references: `${(project.data.ID ?? '').slice(0, 8).toUpperCase()} // ${project.data.Status === 'In Progress' ? 'Active' : project.data.Status ?? 'Active'}${projectIssueCount > 0 ? ` // ${projectIssueCount} ${projectIssueCount === 1 ? 'entry' : 'entries'}` : ''}`,
 				href: `/projects/${project.id}`,
-				lane: {
-					slug: node.slug,
-					w3w: node.w3w,
-					moon: node.moon,
-					phase: node.phase,
-				},
+				projectId: (project.data.ID ?? '').slice(0, 8).toUpperCase(),
+				status: project.data.Status || '',
+				priority:
+					project.data.Priority && project.data.Priority !== 'No priority'
+						? project.data.Priority
+						: undefined,
+				issueCount: projectIssueCount,
+				updatedAt,
+				updatedAtIso,
+				latestUpdate: project.data['Latest Update']
+					? cleanUpdateText(project.data['Latest Update'])
+					: undefined,
 			};
 		}),
 	}));
@@ -138,23 +130,19 @@ export async function getNowPageDataFromCollections(): Promise<NowPageData> {
 	};
 }
 
-export function createUnavailableNowPageData(now = new Date()): NowPageData {
+export function createUnavailableNowPageData(): NowPageData {
 	return {
 		meta: {
-			lastUpdated: formatDate(now.toISOString()),
-			title: 'tidelands.dev | Projects',
-			intro: [
-				'This page is built from checked-in project and issue CSV snapshots.',
-				'The current build does not have a publishable content snapshot available.',
-			],
-			footer: 'Restore the checked-in project and issue CSV snapshots, then rebuild the Astro site.',
+			lastUpdated: '',
+			title: 'Projects',
+			intro: [],
+			footer: '0 in-progress projects',
 		},
 		sections: [
 			{
 				id: 'projects',
 				title: 'Projects',
-				summary: EMPTY_PROJECTS_SUMMARY,
-				emptyMessage: EMPTY_PROJECTS_MESSAGE,
+				summary: '0 in-progress projects',
 				items: [],
 			},
 		],

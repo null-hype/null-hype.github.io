@@ -1,5 +1,8 @@
 import React from 'react';
 
+import AnalystCallout from './AnalystCallout';
+import ArchiveEntry from './ArchiveEntry';
+import SectionBreak from './SectionBreak';
 import TidelaneList, { type TidelaneListSection } from './TidelaneList';
 import { RedactionBlock } from './DesignSystemComponents';
 
@@ -17,9 +20,10 @@ export interface NowPageViewProps {
 	readonly isFavorited?: boolean;
 }
 
-/**
- * Applies random baseline shifts to a string to mimic manual typesetting errors.
- */
+function toIdFragment(value: string) {
+	return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
 function JitterTitle({ text }: { text: string }) {
 	return (
 		<>
@@ -50,41 +54,123 @@ export default function NowPageView({
 	warning,
 	isFavorited = true,
 }: Readonly<NowPageViewProps>) {
+	const totalProjects = sections.reduce((sum, section) => sum + section.items.length, 0);
+	const totalInitiatives = sections.length;
+	const firstSectionId = sections[0]
+		? sections[0].id ?? toIdFragment(sections[0].title)
+		: 'projects';
+	const latestUpdateItem = sections
+		.flatMap((section) => section.items)
+		.filter((item) => Boolean(item.latestUpdate))
+		.sort((a, b) => (b.updatedAtIso ?? '').localeCompare(a.updatedAtIso ?? ''))[0];
+	const archiveEntries = sections.map((section, index) => {
+		const sectionId = section.id ?? toIdFragment(section.title);
+		const itemCount = section.items.length;
+		return {
+			index: String(index + 1).padStart(3, '0'),
+			title: section.title,
+			href: `#${sectionId}`,
+			archivalId: `${itemCount} ${itemCount === 1 ? 'project' : 'projects'}`,
+			status: section.summary ?? '',
+			statusTone: (itemCount === 0 ? 'restricted' : 'default') as const,
+		};
+	});
+
 	return (
 		<div className="now-page" data-favorited={isFavorited}>
 			<div className="now-page__grain" aria-hidden="true"></div>
 
-			<main className="now-main now-shell">
-				{isFavorited ? (
-					<>
-						<header className="now-page__header">
-							<p className="now-kicker">ACTIVE DISPATCH // <RedactionBlock text={meta.lastUpdated} /></p>
-							<h1 className="now-title"><JitterTitle text="Current Operations" /></h1>
-							{meta.intro.length > 0 && (
-								<div className="now-intro">
-									{meta.intro.map((line, i) => <p key={i}>{line}</p>)}
-								</div>
-							)}
-						</header>
+			<header className="editorial-topbar">
+				<div className="editorial-topbar__inner">
+					<div className="editorial-topbar__group">
+						<a className="editorial-topbar__brand" href="/now">
+							{meta.title}
+						</a>
+						<nav className="editorial-nav" aria-label="Project groups">
+							{sections.map((section) => {
+								const sectionId = section.id ?? toIdFragment(section.title);
+								return (
+									<a key={sectionId} href={`#${sectionId}`}>
+										{section.title}
+									</a>
+								);
+							})}
+						</nav>
+					</div>
 
-						{warning ? (
-							<div className="now-callout" role="status">
-								<span className="font-label text-[10px] font-bold uppercase block mb-2">Warning: Structural Noise</span>
-								<p>{warning}</p>
-							</div>
-						) : null}
+					<div className="editorial-topbar__actions">
+						<a className="editorial-pdf-link" href={`#${firstSectionId}`}>
+							{meta.footer}
+						</a>
+					</div>
+				</div>
+			</header>
 
-						<TidelaneList sections={sections} />
-					</>
-				) : (
-					<div className="now-coming-soon">
-						<p className="now-kicker">STAGING // RESTRICTED ACCESS</p>
-						<h1 className="now-title">Coming Soon!</h1>
-						<div className="now-intro">
-							<p>This view is currently private or under development. Check back soon for the full dossier.</p>
+			<main className="editorial-main">
+				<div className="editorial-section-break-wrap">
+					<div className="editorial-container">
+						<SectionBreak
+							title={meta.title}
+							eyebrow={meta.lastUpdated || meta.footer}
+							meta={`${totalProjects} active // ${totalInitiatives} initiatives`}
+						/>
+					</div>
+				</div>
+
+				{warning ? (
+					<div className="editorial-block editorial-block--tight">
+						<div className="editorial-container">
+							<AnalystCallout
+								label={meta.lastUpdated || meta.title}
+								text={warning}
+								tone="dark"
+							/>
 						</div>
 					</div>
-				)}
+				) : latestUpdateItem?.latestUpdate ? (
+					<div className="editorial-block editorial-block--tight">
+						<div className="editorial-container">
+							<AnalystCallout
+								label={`${latestUpdateItem.projectId} // ${latestUpdateItem.updatedAt ?? meta.lastUpdated}`}
+								text={latestUpdateItem.latestUpdate}
+							/>
+						</div>
+					</div>
+				) : null}
+
+				{archiveEntries.length > 0 ? (
+					<section className="editorial-section archive-section">
+						<div className="editorial-container archive-section__grid">
+							<div className="archive-section__intro">
+								<h2 className="archive-section__title">{meta.title}</h2>
+								<p className="archive-section__eyebrow">{meta.footer}</p>
+							</div>
+
+							<div className="archive-section__list now-archive-list">
+								{archiveEntries.map((entry) => (
+									<ArchiveEntry key={entry.href} {...entry} />
+								))}
+							</div>
+						</div>
+					</section>
+				) : null}
+
+				<section className="editorial-section">
+					<div className="editorial-container now-board-wrap">
+						<header className="now-page__header">
+							{meta.lastUpdated ? (
+								<p className="now-kicker">
+									<RedactionBlock text={meta.lastUpdated} />
+								</p>
+							) : null}
+							<h1 className="now-title">
+								<JitterTitle text={meta.title} />
+							</h1>
+						</header>
+
+						<TidelaneList sections={sections} />
+					</div>
+				</section>
 			</main>
 		</div>
 	);
