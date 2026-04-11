@@ -10,10 +10,12 @@ It exposes a tiny session API:
 
 The worker does not run a real model. It deterministically:
 
-1. lists tools from the Smallweb node's `/mcp` endpoint
-2. calls `scope.get_current_target`
-3. calls `findings.record_note`
-4. stores the completed session summary in memory
+1. handshakes with the Smallweb node's `/mcp` endpoint
+2. lists tools from `/mcp`
+3. calls `scope.get_current_target`
+4. calls `findings.record_note`
+5. posts the final result to the node's worker callback endpoint
+6. stores the completed session summary in memory
 
 Run it locally:
 

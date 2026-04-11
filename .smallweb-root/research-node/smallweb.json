@@ -3,6 +3,7 @@
   "publicRoutes": [
     "/healthz",
     "/webhooks/**",
-    "/mcp"
+    "/mcp",
+    "/worker-results"
   ]
 }
