@@ -212,7 +212,7 @@ export function loadConfig(env = Deno.env.toObject()): Config {
     allowedTools: loadAllowedTools(env.RESEARCH_NODE_ALLOWED_TOOLS),
     appName: env.RESEARCH_NODE_APP_NAME?.trim() || "research-node",
     bountybenchGitRef: env.RESEARCH_NODE_BOUNTYBENCH_GIT_REF?.trim() || "plan-329-bountybench-v0",
-    daggerBin: env.RESEARCH_NODE_DAGGER_BIN?.trim() || `${repoRoot}/.tools/bin/dagger`,
+    daggerBin: env.RESEARCH_NODE_DAGGER_BIN?.trim() || env.DAGGER_BIN?.trim() || `${repoRoot}/.tools/bin/dagger`,
     gitBin: env.RESEARCH_NODE_GIT_BIN?.trim() || "git",
     mcpBearerToken: env.RESEARCH_NODE_MCP_BEARER_TOKEN?.trim() || "",
     publicBaseUrl: trimTrailingSlash(env.RESEARCH_NODE_BASE_URL?.trim() || "http://research-node.tidelands.dev"),
