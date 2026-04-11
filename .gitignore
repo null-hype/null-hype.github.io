@@ -20,6 +20,8 @@ pnpm-debug.log*
 .smallweb-root/linear-agent/data/
 .smallweb-root/jules/.env
 .smallweb-root/jules/data/
+.smallweb-root/research-node/.env
+.smallweb-root/research-node/data/
 .render/
 .tools/
 .tmp-home/
