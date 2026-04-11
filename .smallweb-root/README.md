@@ -6,6 +6,8 @@ It also includes a private `linear-agent` app that receives signed Linear webhoo
 
 It also includes a private `jules` app that proxies authenticated dispatch and session requests into the Jules REST API.
 
+It also includes a private `research-node` app that acts as the PLAN-358 Smallweb specimen: signed Linear webhook ingress, a bearer-protected `/mcp` surface for a separate worker service, and a bearer-protected worker callback route for async result delivery.
+
 It also includes public `www` and `null-hype` apps that serve the built Astro site from the repo `dist/` directory.
 
 Files:
@@ -19,6 +21,9 @@ Files:
 - `jules/smallweb.json`: keeps the Jules app private while exposing `/healthz` plus `/api/**` so the handler can enforce either `Remote-Email` or a shared bearer token
 - `jules/main.ts`: Jules dispatch proxy with JSONL session recording and server-to-server bearer auth support
 - `jules/data/sessions.jsonl`: append-only mapping between Linear issue ids and Jules session ids, created on first dispatch
+- `research-node/smallweb.json`: keeps the research node private while leaving `/healthz`, `/webhooks/**`, `/mcp`, and `/worker-results` public
+- `research-node/main.ts`: Smallweb-native worker-session manager with signed webhook ingress, JSON-RPC-style `/mcp`, async worker dispatch, worker-result callback handling, and append-only session logs
+- `research-node/data/`: append-only JSONL logs for sessions, worker events, MCP requests, and errors
 - `www/smallweb.json`: points the `www` app at the built Astro output in `../../dist`
 - `null-hype/smallweb.json`: points the `null-hype` subdomain at the built Astro output in `../../dist`
 
@@ -37,10 +42,12 @@ Additional environment needed for the Jules proxy:
 ```sh
 export JULES_API_KEY=replace-with-your-jules-api-key
 export JULES_SOURCE_ID=github/null-hype/null-hype.github.io
-export JULES_PROXY_TOKEN=replace-with-shared-proxy-token
+export JULES_STARTING_BRANCH=master
 ```
 
-`JULES_PROXY_TOKEN` is optional for browser-driven use through Smallweb OIDC, but required if another backend such as `linear-agent` needs to call `POST /api/dispatch` directly.
+`JULES_PROXY_TOKEN` is optional. If omitted, the local start script and deploy bundle generate a random shared token for the internal `linear-agent` to `jules` call path. For browser-driven use through Smallweb OIDC, no bearer token is needed.
+
+`JULES_SOURCE_ID` controls which repo Jules opens PRs against. `JULES_STARTING_BRANCH` controls the base branch for created sessions.
 
 Additional environment needed for the Smallweb Linear receiver:
 

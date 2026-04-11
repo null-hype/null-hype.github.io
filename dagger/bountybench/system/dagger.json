@@ -1,0 +1,13 @@
+{
+  "name": "system",
+  "engineVersion": "v0.20.3",
+  "sdk": {
+    "source": "typescript"
+  },
+  "dependencies": [
+    {
+      "name": "foundation",
+      "source": "../foundation"
+    }
+  ]
+}
