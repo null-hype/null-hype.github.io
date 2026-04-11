@@ -6,6 +6,13 @@ const DEFAULT_ALLOWED_TOOLS = [
   "findings.record_note",
 ] as const
 
+const SUPPORTED_MCP_PROTOCOL_VERSIONS = [
+  "2025-11-25",
+  "2025-06-18",
+  "2025-03-26",
+  "2024-11-05",
+] as const
+
 type Config = {
   allowedClockSkewMs: number
   allowedTools: string[]
@@ -93,6 +100,15 @@ function json(data: unknown, status = 200): Response {
     headers: {
       "cache-control": "no-store",
       "content-type": "application/json; charset=utf-8",
+    },
+  })
+}
+
+function empty(status = 204): Response {
+  return new Response(null, {
+    status,
+    headers: {
+      "cache-control": "no-store",
     },
   })
 }
@@ -357,6 +373,58 @@ function toolDefinitions(config: Config): Array<Record<string, unknown>> {
   return config.allowedTools
     .map((name) => availableTools.get(name))
     .filter((tool): tool is Record<string, unknown> => tool !== undefined)
+}
+
+function negotiateProtocolVersion(requestedVersion: unknown): string {
+  if (
+    typeof requestedVersion === "string" &&
+    SUPPORTED_MCP_PROTOCOL_VERSIONS.includes(
+      requestedVersion as (typeof SUPPORTED_MCP_PROTOCOL_VERSIONS)[number],
+    )
+  ) {
+    return requestedVersion
+  }
+
+  return SUPPORTED_MCP_PROTOCOL_VERSIONS[0]
+}
+
+async function resolveSessionContext(
+  sessionId: string,
+  runtimeDir: string,
+  sessionContexts: Map<string, SessionContext>,
+): Promise<SessionContext | null> {
+  const cached = sessionContexts.get(sessionId)
+  if (cached) {
+    return cached
+  }
+
+  const sessionEntries = await readJsonl(joinPath(runtimeDir, "sessions.jsonl")) as Array<Record<string, unknown>>
+
+  for (let index = sessionEntries.length - 1; index >= 0; index -= 1) {
+    const entry = sessionEntries[index]
+    if (
+      entry.event === "session-created" &&
+      entry.sessionId === sessionId &&
+      typeof entry.issueId === "string" &&
+      typeof entry.issueIdentifier === "string" &&
+      typeof entry.source === "string" &&
+      typeof entry.targetLabel === "string"
+    ) {
+      const restored: SessionContext = {
+        createdAt: typeof entry.createdAt === "string" ? entry.createdAt : new Date().toISOString(),
+        issueId: entry.issueId,
+        issueIdentifier: entry.issueIdentifier,
+        sessionId,
+        source: entry.source === "run" ? "run" : "webhook",
+        targetLabel: entry.targetLabel,
+      }
+
+      sessionContexts.set(sessionId, restored)
+      return restored
+    }
+  }
+
+  return null
 }
 
 function renderDashboard(req: Request, config: Config): Response {
@@ -657,6 +725,29 @@ async function handleMcpRequest(
     toolName,
   })
 
+  if (payload.method === "initialize") {
+    return jsonRpcResult(payload.id, {
+      capabilities: {
+        tools: {
+          listChanged: false,
+        },
+      },
+      protocolVersion: negotiateProtocolVersion(payload.params?.protocolVersion),
+      serverInfo: {
+        name: config.appName,
+        version: "0.1.0",
+      },
+    })
+  }
+
+  if (payload.method === "notifications/initialized") {
+    return empty(202)
+  }
+
+  if (payload.method === "ping") {
+    return jsonRpcResult(payload.id, {})
+  }
+
   if (payload.method === "tools/list") {
     return jsonRpcResult(payload.id, {
       tools: toolDefinitions(config),
@@ -672,7 +763,9 @@ async function handleMcpRequest(
     return jsonRpcError(payload.id, -32003, `Tool "${requestedTool}" is not allowed.`, 403)
   }
 
-  const session = sessionId ? sessionContexts.get(sessionId) ?? null : null
+  const session = sessionId
+    ? await resolveSessionContext(sessionId, config.runtimeDir, sessionContexts)
+    : null
 
   if (requestedTool === "scope.get_current_target") {
     return jsonRpcResult(payload.id, {

@@ -134,6 +134,58 @@ Deno.test("mcp requires bearer auth", async () => {
   assert.equal(response.status, 401)
 })
 
+Deno.test("mcp initialize negotiates a supported protocol version", async () => {
+  const { app } = await createTestApp()
+  const response = await app.fetch(new Request("https://research-node.tidelands.dev/mcp", {
+    body: JSON.stringify({
+      id: "initialize-1",
+      jsonrpc: "2.0",
+      method: "initialize",
+      params: {
+        capabilities: {},
+        clientInfo: {
+          name: "test-client",
+          version: "1.0.0",
+        },
+        protocolVersion: "2025-03-26",
+      },
+    }),
+    headers: {
+      "authorization": "Bearer mcp-secret",
+      "content-type": "application/json",
+    },
+    method: "POST",
+  }))
+
+  assert.equal(response.status, 200)
+  const payload = await response.json()
+  assert.equal(payload.result.protocolVersion, "2025-03-26")
+  assert.equal(payload.result.serverInfo.name, "research-node")
+  assert.deepEqual(payload.result.capabilities, {
+    tools: {
+      listChanged: false,
+    },
+  })
+})
+
+Deno.test("mcp initialized notification is accepted without a JSON response body", async () => {
+  const { app } = await createTestApp()
+  const response = await app.fetch(new Request("https://research-node.tidelands.dev/mcp", {
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "notifications/initialized",
+    }),
+    headers: {
+      "authorization": "Bearer mcp-secret",
+      "content-type": "application/json",
+    },
+    method: "POST",
+  }))
+
+  assert.equal(response.status, 202)
+  assert.equal(await response.text(), "")
+})
+
 Deno.test("mcp only lists allowed tools and forbids direct disallowed calls", async () => {
   const { app } = await createTestApp()
   const headers = {
@@ -173,6 +225,43 @@ Deno.test("mcp only lists allowed tools and forbids direct disallowed calls", as
     method: "POST",
   }))
   assert.equal(forbiddenResponse.status, 403)
+})
+
+Deno.test("mcp can recover session context from persisted session records", async () => {
+  const { app, runtimeDir } = await createTestApp()
+  await Deno.writeTextFile(path.join(runtimeDir, "sessions.jsonl"), `${JSON.stringify({
+    createdAt: new Date().toISOString(),
+    event: "session-created",
+    issueId: "issue_research",
+    issueIdentifier: "PLAN-358",
+    sessionId: "session_research",
+    source: "webhook",
+    status: "pending",
+    targetLabel: "lunary-calibration",
+  })}\n`)
+
+  const response = await app.fetch(new Request("https://research-node.tidelands.dev/mcp", {
+    body: JSON.stringify({
+      id: "scope-1",
+      jsonrpc: "2.0",
+      method: "tools/call",
+      params: {
+        arguments: {},
+        name: "scope.get_current_target",
+      },
+    }),
+    headers: {
+      "authorization": "Bearer mcp-secret",
+      "content-type": "application/json",
+      "x-research-session-id": "session_research",
+    },
+    method: "POST",
+  }))
+
+  assert.equal(response.status, 200)
+  const payload = await response.json()
+  assert.equal(payload.result.structuredContent.issueIdentifier, "PLAN-358")
+  assert.equal(payload.result.structuredContent.targetLabel, "lunary-calibration")
 })
 
 Deno.test("webhook worker integration completes the callback loop against /mcp", async () => {
