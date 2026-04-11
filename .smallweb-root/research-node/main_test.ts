@@ -5,6 +5,8 @@ import path from "node:path"
 import { createApp, createSignature, isFreshTimestamp, verifySignature } from "./main.ts"
 import { createWorkerApp } from "../../spikes/research-worker-poc/main.ts"
 
+const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..")
+
 async function createTestApp(configOverrides: Record<string, unknown> = {}, services: Record<string, unknown> = {}) {
   const runtimeDir = await Deno.makeTempDir({ prefix: "research-node-smallweb-" })
   const webhookSecret = "test-webhook-secret"
@@ -12,8 +14,12 @@ async function createTestApp(configOverrides: Record<string, unknown> = {}, serv
     allowedClockSkewMs: 60000,
     allowedTools: ["scope.get_current_target", "findings.record_note"],
     appName: "research-node",
+    bountybenchGitRef: "plan-329-bountybench-v0",
+    daggerBin: path.join(repoRoot, ".tools", "bin", "dagger"),
+    gitBin: "git",
     mcpBearerToken: "mcp-secret",
     publicBaseUrl: "http://research-node.tidelands.dev",
+    repoRoot,
     runtimeDir,
     targetLabel: "lunary-calibration",
     webhookSecret,
@@ -89,6 +95,28 @@ async function waitFor(check: () => Promise<void>, timeoutMs = 2000, intervalMs 
   }
 
   throw lastError instanceof Error ? lastError : new Error("Timed out waiting for condition.")
+}
+
+async function resolveBountyBenchGitRef(): Promise<string> {
+  for (const ref of ["plan-329-bountybench-v0", "origin/plan-329-bountybench-v0"]) {
+    const output = await new Deno.Command("git", {
+      args: ["ls-tree", "-r", "--name-only", ref],
+      cwd: repoRoot,
+      stderr: "null",
+      stdout: "piped",
+    }).output()
+
+    if (output.code !== 0) {
+      continue
+    }
+
+    const files = new TextDecoder().decode(output.stdout)
+    if (files.includes("dagger/bountybench/")) {
+      return ref
+    }
+  }
+
+  throw new Error("Could not resolve a git ref containing dagger/bountybench.")
 }
 
 Deno.test("verifySignature accepts exact raw body signatures", async () => {
@@ -292,6 +320,45 @@ Deno.test("mcp can recover session context from persisted session records", asyn
   assert.equal(payload.result.structuredContent.targetLabel, "lunary-calibration")
 })
 
+Deno.test("mcp can proxy target.start_service through the injected BountyBench bridge", async () => {
+  const { app } = await createTestApp(
+    {
+      allowedTools: ["target.start_service", "target.reset"],
+    },
+    {
+      runBountyBenchTool: async ({ tool }: { tool: string }) => ({
+        endpoint: tool === "target.reset" ? "lunary-app:3334" : "lunary-app:3333",
+        gitRef: "plan-329-bountybench-v0",
+        mode: "baseline",
+        operation: tool === "target.reset" ? "reset" : "start_service",
+      }),
+    },
+  )
+
+  const response = await app.fetch(new Request("https://research-node.tidelands.dev/mcp", {
+    body: JSON.stringify({
+      id: "target-1",
+      jsonrpc: "2.0",
+      method: "tools/call",
+      params: {
+        arguments: { mode: "baseline" },
+        name: "target.start_service",
+      },
+    }),
+    headers: {
+      "authorization": "Bearer mcp-secret",
+      "content-type": "application/json",
+    },
+    method: "POST",
+  }))
+
+  assert.equal(response.status, 200)
+  const payload = await response.json()
+  assert.equal(payload.result.structuredContent.endpoint, "lunary-app:3333")
+  assert.equal(payload.result.structuredContent.operation, "start_service")
+  assert.equal(payload.result.structuredContent.gitRef, "plan-329-bountybench-v0")
+})
+
 Deno.test("webhook worker integration completes the callback loop against /mcp", async () => {
   const runtimeDir = await Deno.makeTempDir({ prefix: "research-node-loop-" })
   const workerToken = "worker-loop-secret"
@@ -315,8 +382,12 @@ Deno.test("webhook worker integration completes the callback loop against /mcp",
     allowedClockSkewMs: 60000,
     allowedTools: ["scope.get_current_target", "findings.record_note"],
     appName: "research-node",
+    bountybenchGitRef: "plan-329-bountybench-v0",
+    daggerBin: path.join(repoRoot, ".tools", "bin", "dagger"),
+    gitBin: "git",
     mcpBearerToken: mcpToken,
     publicBaseUrl: "http://127.0.0.1",
+    repoRoot,
     runtimeDir,
     targetLabel: "lunary-calibration",
     webhookSecret,
@@ -353,6 +424,77 @@ Deno.test("webhook worker integration completes the callback loop against /mcp",
       assert.match(workerEvents, /"type":"finding-note"/)
       assert.match(workerEvents, /"summary":"Recorded a scoped note for PLAN-358 against lunary-calibration\."/)
     })
+  } finally {
+    workerAbort.abort()
+    appAbort.abort()
+    await Promise.allSettled([workerServer.finished, appServer.finished])
+  }
+})
+
+Deno.test("webhook worker integration can invoke target.start_service against real Dagger", async () => {
+  const runtimeDir = await Deno.makeTempDir({ prefix: "research-node-dagger-loop-" })
+  const workerToken = "worker-loop-secret"
+  const mcpToken = "mcp-loop-secret"
+  const webhookSecret = "webhook-loop-secret"
+  const bountybenchGitRef = await resolveBountyBenchGitRef()
+
+  const workerPort = getAvailablePort()
+  const workerAbort = new AbortController()
+  const workerApp = createWorkerApp({
+    port: workerPort,
+    sharedToken: workerToken,
+  })
+  const workerServer = Deno.serve({
+    hostname: "127.0.0.1",
+    onListen() {},
+    port: workerPort,
+    signal: workerAbort.signal,
+  }, workerApp.fetch)
+
+  const appConfig = {
+    allowedClockSkewMs: 60000,
+    allowedTools: ["scope.get_current_target", "target.start_service", "findings.record_note"],
+    appName: "research-node",
+    bountybenchGitRef,
+    daggerBin: path.join(repoRoot, ".tools", "bin", "dagger"),
+    gitBin: "git",
+    mcpBearerToken: mcpToken,
+    publicBaseUrl: "http://127.0.0.1",
+    repoRoot,
+    runtimeDir,
+    targetLabel: "lunary-calibration",
+    webhookSecret,
+    workerToken,
+    workerUrl: `http://127.0.0.1:${workerPort}`,
+  }
+  const app = createApp(appConfig)
+  const appPort = getAvailablePort()
+  const appAbort = new AbortController()
+  const appServer = Deno.serve({
+    hostname: "127.0.0.1",
+    onListen() {},
+    port: appPort,
+    signal: appAbort.signal,
+  }, app.fetch)
+
+  try {
+    const payload = createCreatedWebhook()
+    const response = await fetch(`http://127.0.0.1:${appPort}/webhooks/linear`, {
+      method: "POST",
+      headers: new Headers((await createSignedRequest(webhookSecret, payload, `http://127.0.0.1:${appPort}/webhooks/linear`)).headers),
+      body: JSON.stringify(payload),
+    })
+
+    assert.equal(response.status, 202)
+    const body = await response.json()
+    assert.equal(body.ok, true)
+    assert.equal(body.status, "accepted")
+
+    await waitFor(async () => {
+      const workerEvents = await readFile(path.join(runtimeDir, "worker-events.jsonl"), "utf8")
+      assert.match(workerEvents, /"tool":"target.start_service"/)
+      assert.match(workerEvents, /"summary":"Recorded a scoped note for PLAN-358 against lunary-calibration via lunary-app:3333\."/)
+    }, 300000, 1000)
   } finally {
     workerAbort.abort()
     appAbort.abort()

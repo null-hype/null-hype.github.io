@@ -177,6 +177,31 @@ function extractTargetLabel(result: Record<string, unknown>): string {
   return "unknown-target"
 }
 
+function extractServiceEndpoint(result: Record<string, unknown>): string | null {
+  const structuredContent = isRecord(result.structuredContent) ? result.structuredContent : null
+  if (structuredContent && typeof structuredContent.endpoint === "string" && structuredContent.endpoint.trim() !== "") {
+    return structuredContent.endpoint.trim()
+  }
+
+  return null
+}
+
+function buildFindingNote(issueIdentifier: string, targetLabel: string, serviceEndpoint: string | null): string {
+  if (serviceEndpoint) {
+    return `Worker confirmed ${issueIdentifier} against ${targetLabel} via ${serviceEndpoint}.`
+  }
+
+  return `Worker confirmed ${issueIdentifier} against ${targetLabel}.`
+}
+
+function buildSessionSummary(issueIdentifier: string, targetLabel: string, serviceEndpoint: string | null): string {
+  if (serviceEndpoint) {
+    return `Recorded a scoped note for ${issueIdentifier} against ${targetLabel} via ${serviceEndpoint}.`
+  }
+
+  return `Recorded a scoped note for ${issueIdentifier} against ${targetLabel}.`
+}
+
 async function postWorkerResult(
   fetchImpl: typeof fetch,
   callbackUrl: string,
@@ -228,37 +253,67 @@ async function runSession(
       }
     }
 
-    const currentTarget = await callMcp(
-      fetchImpl,
-      mcpServerUrl,
-      mcpBearerToken,
-      record.sessionId,
-      "tools/call",
-      {
-        arguments: {},
-        name: "scope.get_current_target",
-      },
-    )
-    record.toolCalls.push({ ok: true, tool: "scope.get_current_target" })
+    let serviceEndpoint: string | null = null
+    let targetLabel = "unknown-target"
 
-    const targetLabel = extractTargetLabel(currentTarget)
-    const note = `Worker confirmed ${record.issueIdentifier} against ${targetLabel}.`
+    for (const tool of requiredTools) {
+      if (tool === "scope.get_current_target") {
+        const currentTarget = await callMcp(
+          fetchImpl,
+          mcpServerUrl,
+          mcpBearerToken,
+          record.sessionId,
+          "tools/call",
+          {
+            arguments: {},
+            name: "scope.get_current_target",
+          },
+        )
+        record.toolCalls.push({ ok: true, tool })
+        targetLabel = extractTargetLabel(currentTarget)
+        continue
+      }
 
-    await callMcp(
-      fetchImpl,
-      mcpServerUrl,
-      mcpBearerToken,
-      record.sessionId,
-      "tools/call",
-      {
-        arguments: { note },
-        name: "findings.record_note",
-      },
-    )
-    record.toolCalls.push({ ok: true, tool: "findings.record_note" })
+      if (tool === "target.start_service" || tool === "target.reset") {
+        const targetService = await callMcp(
+          fetchImpl,
+          mcpServerUrl,
+          mcpBearerToken,
+          record.sessionId,
+          "tools/call",
+          {
+            arguments: { mode: "baseline" },
+            name: tool,
+          },
+        )
+        record.toolCalls.push({ ok: true, tool })
+        serviceEndpoint = extractServiceEndpoint(targetService) ?? serviceEndpoint
+        continue
+      }
+
+      if (tool === "findings.record_note") {
+        const note = buildFindingNote(record.issueIdentifier, targetLabel, serviceEndpoint)
+
+        await callMcp(
+          fetchImpl,
+          mcpServerUrl,
+          mcpBearerToken,
+          record.sessionId,
+          "tools/call",
+          {
+            arguments: { note },
+            name: "findings.record_note",
+          },
+        )
+        record.toolCalls.push({ ok: true, tool })
+        continue
+      }
+
+      throw new Error(`Worker does not know how to call tool "${tool}".`)
+    }
 
     record.status = "completed"
-    record.summary = `Recorded a scoped note for ${record.issueIdentifier} against ${targetLabel}.`
+    record.summary = buildSessionSummary(record.issueIdentifier, targetLabel, serviceEndpoint)
     record.updatedAt = new Date().toISOString()
     sessions.set(record.sessionId, record)
 
