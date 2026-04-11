@@ -12,10 +12,11 @@ The worker does not run a real model. It deterministically:
 
 1. handshakes with the Smallweb node's `/mcp` endpoint
 2. lists tools from `/mcp`
-3. calls `scope.get_current_target`
-4. calls `findings.record_note`
-5. posts the final result to the node's worker callback endpoint
-6. stores the completed session summary in memory
+3. calls the configured MCP tools in order
+4. defaults to `scope.get_current_target` then `findings.record_note`
+5. can insert BountyBench tools like `target.start_service` between those steps
+6. posts the final result to the node's worker callback endpoint
+7. stores the completed session summary in memory
 
 Run it locally:
 

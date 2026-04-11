@@ -17,8 +17,12 @@ type Config = {
   allowedClockSkewMs: number
   allowedTools: string[]
   appName: string
+  bountybenchGitRef: string
+  daggerBin: string
+  gitBin: string
   mcpBearerToken: string
   publicBaseUrl: string
+  repoRoot: string
   runtimeDir: string
   targetLabel: string
   webhookSecret: string
@@ -33,6 +37,7 @@ type Services = {
     log?: (...args: unknown[]) => void
   }
   now?: () => number
+  runBountyBenchTool?: (input: BountyBenchToolInput, config: Config) => Promise<BountyBenchToolResult>
 }
 
 type ExecuteJobInput = {
@@ -86,6 +91,21 @@ type JsonRpcRequest = {
   params?: Record<string, unknown>
 }
 
+type BountyBenchToolName = "target.start_service" | "target.reset"
+type BountyBenchRunMode = "baseline" | "agent"
+
+type BountyBenchToolInput = {
+  arguments: Record<string, unknown>
+  tool: BountyBenchToolName
+}
+
+type BountyBenchToolResult = {
+  endpoint: string
+  gitRef: string
+  mode: BountyBenchRunMode
+  operation: "reset" | "start_service"
+}
+
 function parseBoolean(value: string | undefined, fallback = false): boolean {
   if (value === undefined || value === null || value.trim() === "") {
     return fallback
@@ -96,6 +116,10 @@ function parseBoolean(value: string | undefined, fallback = false): boolean {
 
 function trimTrailingSlash(value: string): string {
   return value.endsWith("/") ? value.slice(0, -1) : value
+}
+
+function repoRootFromModule(): string {
+  return trimTrailingSlash(decodeURIComponent(new URL("../../", import.meta.url).pathname))
 }
 
 function joinPath(dir: string, fileName: string): string {
@@ -181,13 +205,18 @@ function loadAllowedTools(rawValue: string | undefined): string[] {
 export function loadConfig(env = Deno.env.toObject()): Config {
   const runtimeDir = env.RESEARCH_NODE_RUNTIME_DIR?.trim() || `${Deno.cwd()}/data`
   const allowedClockSkewMs = Number.parseInt(env.RESEARCH_NODE_ALLOWED_CLOCK_SKEW_MS ?? "60000", 10)
+  const repoRoot = trimTrailingSlash(env.RESEARCH_NODE_REPO_ROOT?.trim() || repoRootFromModule())
 
   return {
     allowedClockSkewMs: Number.isFinite(allowedClockSkewMs) ? allowedClockSkewMs : 60000,
     allowedTools: loadAllowedTools(env.RESEARCH_NODE_ALLOWED_TOOLS),
     appName: env.RESEARCH_NODE_APP_NAME?.trim() || "research-node",
+    bountybenchGitRef: env.RESEARCH_NODE_BOUNTYBENCH_GIT_REF?.trim() || "plan-329-bountybench-v0",
+    daggerBin: env.RESEARCH_NODE_DAGGER_BIN?.trim() || `${repoRoot}/.tools/bin/dagger`,
+    gitBin: env.RESEARCH_NODE_GIT_BIN?.trim() || "git",
     mcpBearerToken: env.RESEARCH_NODE_MCP_BEARER_TOKEN?.trim() || "",
     publicBaseUrl: trimTrailingSlash(env.RESEARCH_NODE_BASE_URL?.trim() || "http://research-node.tidelands.dev"),
+    repoRoot,
     runtimeDir,
     targetLabel: env.RESEARCH_NODE_TARGET_LABEL?.trim() || "lunary-calibration",
     webhookSecret:
@@ -383,6 +412,40 @@ function toolDefinitions(config: Config): Array<Record<string, unknown>> {
         name: "findings.record_note",
       },
     ],
+    [
+      "target.start_service",
+      {
+        description: "Start the real BountyBench Lunary target through the PR-26 Dagger harness and return its endpoint.",
+        inputSchema: {
+          additionalProperties: false,
+          properties: {
+            mode: {
+              enum: ["baseline", "agent"],
+              type: "string",
+            },
+          },
+          type: "object",
+        },
+        name: "target.start_service",
+      },
+    ],
+    [
+      "target.reset",
+      {
+        description: "Reset the BountyBench Lunary target by recreating it through the PR-26 Dagger harness.",
+        inputSchema: {
+          additionalProperties: false,
+          properties: {
+            mode: {
+              enum: ["baseline", "agent"],
+              type: "string",
+            },
+          },
+          type: "object",
+        },
+        name: "target.reset",
+      },
+    ],
   ])
 
   return config.allowedTools
@@ -440,6 +503,137 @@ async function resolveSessionContext(
   }
 
   return null
+}
+
+function parseBountyBenchMode(value: unknown): BountyBenchRunMode {
+  if (value === "agent") {
+    return "agent"
+  }
+
+  return "baseline"
+}
+
+function extractDaggerLines(output: string): string[] {
+  return output
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) =>
+      line !== "" &&
+      !line.startsWith("A new release of dagger is available") &&
+      !line.startsWith("To upgrade, see ") &&
+      !line.startsWith("https://github.com/dagger/dagger/releases/tag/")
+    )
+}
+
+async function runCommand(
+  cwd: string,
+  command: string,
+  args: string[],
+  env: Record<string, string> = {},
+): Promise<{ code: number; stderr: string; stdout: string }> {
+  try {
+    const output = await new Deno.Command(command, {
+      args,
+      cwd,
+      env,
+      stderr: "piped",
+      stdout: "piped",
+    }).output()
+
+    return {
+      code: output.code,
+      stderr: decoder.decode(output.stderr),
+      stdout: decoder.decode(output.stdout),
+    }
+  } catch (error) {
+    if (error instanceof Error && error.name === "NotCapable") {
+      throw new Error(
+        "This runtime cannot execute the Dagger bridge. Run research-node outside the Smallweb sandbox or provide a sidecar bridge.",
+      )
+    }
+
+    throw error
+  }
+}
+
+async function withBountyBenchWorktree<T>(config: Config, run: (worktreeDir: string) => Promise<T>): Promise<T> {
+  await Deno.mkdir(config.runtimeDir, { recursive: true })
+  const worktreeDir = await Deno.makeTempDir({
+    dir: config.runtimeDir,
+    prefix: "bountybench-worktree-",
+  })
+
+  const addResult = await runCommand(config.repoRoot, config.gitBin, [
+    "worktree",
+    "add",
+    "--detach",
+    worktreeDir,
+    config.bountybenchGitRef,
+  ])
+
+  if (addResult.code !== 0) {
+    throw new Error(
+      `Failed to create BountyBench worktree for ${config.bountybenchGitRef}: ${
+        addResult.stderr.trim() || addResult.stdout.trim() || `exit code ${addResult.code}`
+      }`,
+    )
+  }
+
+  try {
+    return await run(worktreeDir)
+  } finally {
+    await runCommand(config.repoRoot, config.gitBin, ["worktree", "remove", "--force", worktreeDir])
+    await Deno.remove(worktreeDir, { recursive: true }).catch(() => {})
+  }
+}
+
+async function runBountyBenchToolViaDagger(
+  input: BountyBenchToolInput,
+  config: Config,
+): Promise<BountyBenchToolResult> {
+  const mode = parseBountyBenchMode(input.arguments.mode)
+
+  return await withBountyBenchWorktree(config, async (worktreeDir) => {
+    const result = await runCommand(
+      worktreeDir,
+      config.daggerBin,
+      [
+        "call",
+        "--silent",
+        "-m",
+        "./dagger/bountybench/system",
+        "start-target-service",
+        "--mode",
+        mode,
+        "endpoint",
+        "--port",
+        "3333",
+      ],
+      {
+        DAGGER_NO_NAG: "1",
+      },
+    )
+
+    if (result.code !== 0) {
+      throw new Error(
+        `BountyBench ${input.tool} failed: ${
+          result.stderr.trim() || result.stdout.trim() || `exit code ${result.code}`
+        }`,
+      )
+    }
+
+    const endpoint = extractDaggerLines(result.stdout)[0]
+    if (!endpoint) {
+      throw new Error(`BountyBench ${input.tool} did not return an endpoint.`)
+    }
+
+    return {
+      endpoint,
+      gitRef: config.bountybenchGitRef,
+      mode,
+      operation: input.tool === "target.reset" ? "reset" : "start_service",
+    }
+  })
 }
 
 function renderDashboard(req: Request, config: Config): Response {
@@ -732,6 +926,7 @@ async function handleMcpRequest(
   req: Request,
   config: Config,
   sessionContexts: Map<string, SessionContext>,
+  services: Services,
 ): Promise<Response> {
   if (!config.mcpBearerToken) {
     return json({ error: "RESEARCH_NODE_MCP_BEARER_TOKEN is not configured.", ok: false }, 500)
@@ -847,6 +1042,32 @@ async function handleMcpRequest(
     })
   }
 
+  if (requestedTool === "target.start_service" || requestedTool === "target.reset") {
+    const args = isRecord(payload.params?.arguments) ? payload.params?.arguments : {}
+    const toolResult = await (services.runBountyBenchTool ?? runBountyBenchToolViaDagger)({
+      arguments: args,
+      tool: requestedTool,
+    }, config)
+
+    return jsonRpcResult(payload.id, {
+      content: [
+        {
+          text: `${requestedTool} -> ${toolResult.endpoint}`,
+          type: "text",
+        },
+      ],
+      structuredContent: {
+        endpoint: toolResult.endpoint,
+        gitRef: toolResult.gitRef,
+        issueIdentifier: session?.issueIdentifier ?? null,
+        mode: toolResult.mode,
+        operation: toolResult.operation,
+        sessionId: sessionId || null,
+        targetLabel: session?.targetLabel ?? config.targetLabel,
+      },
+    })
+  }
+
   return jsonRpcError(payload.id, -32601, `Unknown tool "${requestedTool}".`, 404)
 }
 
@@ -950,7 +1171,7 @@ export function createApp(config = loadConfig(), services: Services = {}) {
 
       if (req.method === "POST" && url.pathname === "/mcp") {
         try {
-          return await handleMcpRequest(req, config, sessionContexts)
+          return await handleMcpRequest(req, config, sessionContexts, services)
         } catch (error) {
           await logError(config, "handleMcpRequest", error)
           return json({ error: "MCP request failed.", ok: false }, 500)
