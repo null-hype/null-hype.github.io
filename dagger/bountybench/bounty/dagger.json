@@ -1,0 +1,13 @@
+{
+  "name": "bounty",
+  "engineVersion": "v0.20.3",
+  "sdk": {
+    "source": "typescript"
+  },
+  "dependencies": [
+    {
+      "name": "system",
+      "source": "../system"
+    }
+  ]
+}
