@@ -74,6 +74,23 @@ function getAvailablePort(): number {
   return port
 }
 
+async function waitFor(check: () => Promise<void>, timeoutMs = 2000, intervalMs = 25): Promise<void> {
+  const startedAt = Date.now()
+  let lastError: unknown = null
+
+  while (Date.now() - startedAt < timeoutMs) {
+    try {
+      await check()
+      return
+    } catch (error) {
+      lastError = error
+      await new Promise((resolve) => setTimeout(resolve, intervalMs))
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("Timed out waiting for condition.")
+}
+
 Deno.test("verifySignature accepts exact raw body signatures", async () => {
   const rawBody = new TextEncoder().encode('{"hello":"world"}')
   const secret = "test-secret"
@@ -99,25 +116,36 @@ Deno.test("webhook starts a worker session and writes session records", async ()
         fetchCalls.push({ init, url })
         return new Response(JSON.stringify({
           sessionId: "session_research",
-          status: "completed",
-          summary: "worker finished",
-          toolCalls: [{ ok: true, tool: "scope.get_current_target" }],
+          status: "accepted",
+          summary: "worker accepted",
         }), {
           headers: { "content-type": "application/json" },
-          status: 200,
+          status: 202,
         })
       },
     },
   )
 
   const response = await app.fetch(await createSignedRequest(webhookSecret, createCreatedWebhook()))
-  assert.equal(response.status, 200)
+  assert.equal(response.status, 202)
+  const responseBody = await response.json()
+  assert.equal(responseBody.status, "accepted")
   assert.equal(fetchCalls.length, 1)
   assert.equal(String(fetchCalls[0].url), "http://127.0.0.1:7791/sessions")
+  assert.deepEqual(JSON.parse(String(fetchCalls[0].init?.body)), {
+    allowedTools: ["scope.get_current_target", "findings.record_note"],
+    callbackToken: "worker-secret",
+    callbackUrl: "https://research-node.tidelands.dev/worker-results",
+    issueId: "issue_research",
+    issueIdentifier: "PLAN-358",
+    mcpBearerToken: "mcp-secret",
+    mcpServerUrl: "https://research-node.tidelands.dev/mcp",
+    sessionId: "session_research",
+  })
 
   const sessionsLog = await readFile(path.join(runtimeDir, "sessions.jsonl"), "utf8")
   assert.match(sessionsLog, /"event":"session-created"/)
-  assert.match(sessionsLog, /"status":"completed"/)
+  assert.doesNotMatch(sessionsLog, /"event":"worker-finished"/)
 })
 
 Deno.test("mcp requires bearer auth", async () => {
@@ -313,14 +341,18 @@ Deno.test("webhook worker integration completes the callback loop against /mcp",
       body: JSON.stringify(payload),
     })
 
-    assert.equal(response.status, 200)
+    assert.equal(response.status, 202)
     const body = await response.json()
     assert.equal(body.ok, true)
+    assert.equal(body.status, "accepted")
 
-    const workerEvents = await readFile(path.join(runtimeDir, "worker-events.jsonl"), "utf8")
-    assert.match(workerEvents, /"tool":"scope.get_current_target"/)
-    assert.match(workerEvents, /"type":"finding-note"/)
-    assert.match(workerEvents, /"summary":"Recorded a scoped note for PLAN-358 against lunary-calibration\."/)
+    await waitFor(async () => {
+      const workerEvents = await readFile(path.join(runtimeDir, "worker-events.jsonl"), "utf8")
+      assert.match(workerEvents, /"type":"worker-result"/)
+      assert.match(workerEvents, /"tool":"scope.get_current_target"/)
+      assert.match(workerEvents, /"type":"finding-note"/)
+      assert.match(workerEvents, /"summary":"Recorded a scoped note for PLAN-358 against lunary-calibration\."/)
+    })
   } finally {
     workerAbort.abort()
     appAbort.abort()
