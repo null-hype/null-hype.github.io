@@ -18,6 +18,23 @@ const config: StorybookConfig = {
   async viteFinal(config) {
     return {
       ...config,
+      plugins: [
+        ...(config.plugins ?? []),
+        {
+          name: 'storybook-astro-content-stub',
+          enforce: 'pre' as const,
+          resolveId(source: string) {
+            if (source === 'astro:content') {
+              return '\0virtual:astro-content-stub';
+            }
+          },
+          load(id: string) {
+            if (id === '\0virtual:astro-content-stub') {
+              return 'export const getCollection = async () => [];\nexport const getEntry = async () => undefined;\n';
+            }
+          },
+        },
+      ],
       server: {
         ...config.server,
         proxy: {

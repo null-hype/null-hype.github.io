@@ -1,6 +1,12 @@
+import { readFile } from 'node:fs/promises';
 
 import { defineCollection, z } from 'astro:content';
-import { file } from 'astro/loaders';
+
+import {
+	overlayLiveIssues,
+	overlayLiveProjects,
+	shouldUseLiveLinearContent,
+} from './lib/linear-content';
 
 // Simple CSV parser that handles quotes and newlines within fields
 function parseCSV(csvText: string) {
@@ -53,18 +59,82 @@ function parseCSV(csvText: string) {
     headerRow.forEach((header, index) => {
       obj[header] = row[index] || '';
     });
-    // Astro loaders expect an 'id' field if not provided by the loader
-    if (!obj.id) {
-        obj.id = obj.ID || obj.UUID || '';
-    }
     return obj;
   });
 }
 
+async function readCollectionFromCsv(filePath: string) {
+	return parseCSV(await readFile(filePath, 'utf8'));
+}
+
+function toSlug(value: string) {
+  return value
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+function withDefaultIds(entries: Record<string, string>[]) {
+  return entries.map((entry) => ({
+    ...entry,
+    id: entry.id || entry.ID || entry.UUID || '',
+  }));
+}
+
+function withProjectSlugs(entries: Record<string, string>[]) {
+  const usedSlugs = new Set<string>();
+
+  return entries.map((entry, index) => {
+    const fallbackId = entry.ID || entry.UUID || `project-${index + 1}`;
+    const baseSlug = toSlug(entry.Name || '') || toSlug(fallbackId) || `project-${index + 1}`;
+    let slug = baseSlug;
+
+    if (usedSlugs.has(slug)) {
+      const suffix = toSlug(fallbackId.slice(0, 8)) || String(index + 1);
+      slug = `${baseSlug}-${suffix}`;
+      let duplicateIndex = 2;
+
+      while (usedSlugs.has(slug)) {
+        slug = `${baseSlug}-${suffix}-${duplicateIndex}`;
+        duplicateIndex += 1;
+      }
+    }
+
+    usedSlugs.add(slug);
+
+    return {
+      ...entry,
+      id: slug,
+    };
+  });
+}
+
+async function loadProjectsCollection() {
+	const scaffoldRows = withProjectSlugs(await readCollectionFromCsv('src/projects/www projects.csv'));
+
+	if (!shouldUseLiveLinearContent()) {
+		return scaffoldRows;
+	}
+
+	console.info(`[content] loading live Linear project data for ${scaffoldRows.length} scaffold rows`);
+	return overlayLiveProjects(scaffoldRows);
+}
+
+async function loadIssuesCollection() {
+	const scaffoldRows = withDefaultIds(await readCollectionFromCsv('src/issues/null-hype issues.csv'));
+
+	if (!shouldUseLiveLinearContent()) {
+		return scaffoldRows;
+	}
+
+	console.info(`[content] loading live Linear issue data for ${scaffoldRows.length} scaffold rows`);
+	return overlayLiveIssues(scaffoldRows);
+}
+
 const projects = defineCollection({
-  loader: file('src/projects/www projects.csv', {
-    parser: (text) => parseCSV(text),
-  }),
+  loader: loadProjectsCollection,
   schema: z.object({
     id: z.string(),
     ID: z.string(),
@@ -81,9 +151,7 @@ const projects = defineCollection({
 });
 
 const issues = defineCollection({
-  loader: file('src/issues/null-hype issues.csv', {
-    parser: (text) => parseCSV(text),
-  }),
+  loader: loadIssuesCollection,
   schema: z.object({
     id: z.string(),
     ID: z.string(),

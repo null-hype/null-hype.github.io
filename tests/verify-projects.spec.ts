@@ -34,7 +34,7 @@ test('home page shows projects collection', async ({ page }) => {
   const projectLink = page.getByRole('link', { name: 'Australian MCP Field Notes' });
   await expect(projectLink).toBeVisible();
   const href = await projectLink.getAttribute('href');
-  expect(href).toMatch(/\/projects\/.+/);
+  expect(href).toBe('/projects/australian-mcp-field-notes');
 
   // Check if it has the correct reference format
   const projectRef = page.getByText(/Project: 2861f9cc-ab68-4f82-9645-860a135e73f6/);
@@ -42,7 +42,7 @@ test('home page shows projects collection', async ({ page }) => {
 
   // Navigate to the project page
   await projectLink.click();
-  await page.waitForURL(/\/projects\/.+/);
+  await page.waitForURL('**/projects/australian-mcp-field-notes');
 
   // Check if Latest Update is rendered on the project page
   const latestUpdateHeading = page.getByRole('heading', { name: /Latest Update/i });
