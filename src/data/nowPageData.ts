@@ -1,11 +1,11 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-import type { TidelaneListSection } from '../components/TidelaneList';
 import type { NowPageMeta } from '../components/NowPageView';
+import type { ProjectLandingSectionData } from '../components/ProjectLandingSection';
 
 export interface NowPageData {
 	readonly meta: NowPageMeta;
-	readonly sections: readonly TidelaneListSection[];
+	readonly sections: readonly ProjectLandingSectionData[];
 	readonly isFavorited: boolean;
 }
 
@@ -16,8 +16,42 @@ function formatDate(value: string) {
 	}).format(new Date(value));
 }
 
+function stripMarkdown(text: string) {
+	return text
+		.replace(/\r\n/g, '\n')
+		.replace(/^#{1,6}\s+/gm, '')
+		.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+		.replace(/\*\*([^*]+)\*\*/g, '$1')
+		.replace(/\*([^*]+)\*/g, '$1')
+		.replace(/`([^`]+)`/g, '$1')
+		.replace(/^[*-]\s+/gm, '')
+		.trim();
+}
+
+function firstParagraph(text: string) {
+	return stripMarkdown(text)
+		.split(/\n\s*\n/)
+		.map((paragraph) => paragraph.trim())
+		.filter(Boolean)[0] ?? '';
+}
+
 function cleanUpdateText(text: string) {
-	return text.replace(/^[^\n]*\|\s*[^\n]*\n\n/, '').trim();
+	const withoutHeader = text.replace(/^[^\n]*\|\s*[^\n]*\n\n/, '').trim();
+	const firstMeaningfulParagraph =
+		withoutHeader
+			.split(/\n\s*\n/)
+			.map((paragraph) => paragraph.trim())
+			.filter(Boolean)
+			.find((paragraph) => !/^read the /i.test(stripMarkdown(paragraph))) ?? withoutHeader;
+
+	return stripMarkdown(firstMeaningfulParagraph)
+		.replace(/Read the (full )?series\s*→?/gi, '')
+		.trim();
+}
+
+function cleanProjectBody(project: CollectionEntry<'projects'>) {
+	const source = project.data.Summary || project.data.Description || '';
+	return firstParagraph(source);
 }
 
 function getProjectIssueCount(
@@ -64,13 +98,13 @@ function buildMeta(activeProjects: readonly CollectionEntry<'projects'>[]): NowP
 function buildSections(
 	activeProjects: readonly CollectionEntry<'projects'>[],
 	issueEntries: readonly CollectionEntry<'issues'>[],
-): readonly TidelaneListSection[] {
+): readonly ProjectLandingSectionData[] {
 	if (activeProjects.length === 0) {
 		return [
 			{
 				id: 'projects',
 				title: 'Projects',
-				summary: '0 in-progress projects',
+				emptyMessage: 'No active projects are currently published.',
 				items: [],
 			},
 		];
@@ -99,7 +133,7 @@ function buildSections(
 
 			return {
 				title: project.data.Name,
-				body: project.data.Summary || project.data.Description || '',
+				body: cleanProjectBody(project),
 				href: `/projects/${project.id}`,
 				projectId: (project.data.ID ?? '').slice(0, 8).toUpperCase(),
 				status: project.data.Status || '',
@@ -142,7 +176,7 @@ export function createUnavailableNowPageData(): NowPageData {
 			{
 				id: 'projects',
 				title: 'Projects',
-				summary: '0 in-progress projects',
+				emptyMessage: 'The project index is currently unavailable.',
 				items: [],
 			},
 		],
