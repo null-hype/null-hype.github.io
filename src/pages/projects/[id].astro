@@ -5,6 +5,7 @@ import '../../styles/editorial.css';
 import AnalystCallout from '../../components/AnalystCallout';
 import ArchiveEntry from '../../components/ArchiveEntry';
 import SectionBreak from '../../components/SectionBreak';
+import { BroadsheetArticleView } from '../../components/BroadsheetArticleView';
 
 export async function getStaticPaths() {
 	const projects = await getCollection('projects');
@@ -103,6 +104,9 @@ const metadataBits = [
 	project.data.Initiatives || '',
 	updateDate,
 ].filter(Boolean);
+
+const projectAbstract = project.data.Summary || (descParagraphs.length > 0 ? descParagraphs[0] : project.data.Name);
+
 const quickIssueEntries = projectIssues.map((issue, index) => {
 	const sl = issueStatusLabel(issue.data.Status as string | undefined);
 	return {
@@ -120,52 +124,26 @@ const quickIssueEntries = projectIssues.map((issue, index) => {
 	title={project.data.Name}
 	description={project.data.Summary || project.data.Description || project.data.Name}
 >
-	<div class="editorial-page project-dossier">
-		<div class="editorial-grain" aria-hidden="true"></div>
-
-		<header class="editorial-topbar">
-			<div class="editorial-topbar__inner">
-				<div class="editorial-topbar__group">
-					<a class="editorial-topbar__brand" href="/">Projects</a>
-					<nav class="editorial-nav" aria-label="Project sections">
-						<a href="/" class="is-active">All</a>
-						{descParagraphs.length > 0 ? <a href="#summary">Summary</a> : null}
-						{entryCount > 0 ? <a href="#entries">Entries</a> : null}
-					</nav>
-				</div>
-
-				<div class="editorial-topbar__actions">
-					<a class="editorial-pdf-link" href="/">{shortRef}</a>
-				</div>
-			</div>
-		</header>
-
-		<main class="editorial-main">
-			<div class="editorial-section-break-wrap">
-				<div class="editorial-container">
-					<SectionBreak
-						title={project.data.Name}
-						eyebrow={`${shortRef} // ${statusLabel}`}
-						meta={metadataBits.join(' // ')}
-					/>
-				</div>
-			</div>
-
+	<BroadsheetArticleView
+		client:load
+		title={project.data.Name.toUpperCase()}
+		subtitle={`${shortRef} // ${statusLabel.toUpperCase()} // ${updateDate.toUpperCase()}`}
+		abstract={projectAbstract}
+	>
+		<div class="project-dossier">
 			{latestUpdate ? (
 				<div class="editorial-block editorial-block--tight">
-					<div class="editorial-container">
-						<AnalystCallout
-							label={`${shortRef} // ${updateDate || statusLabel}`}
-							text={latestUpdate}
-						/>
-					</div>
+					<AnalystCallout
+						label={`${shortRef} // ${updateDate || statusLabel}`}
+						text={latestUpdate}
+					/>
 				</div>
 			) : null}
 
-			{descParagraphs.length > 0 ? (
+			{descParagraphs.length > 1 ? (
 				<section id="summary" class="editorial-section">
-					<div class="editorial-container editorial-prose">
-						{descParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+					<div class="editorial-prose">
+						{descParagraphs.slice(1).map((paragraph) => <p>{paragraph}</p>)}
 					</div>
 				</section>
 			) : null}
@@ -186,82 +164,80 @@ const quickIssueEntries = projectIssues.map((issue, index) => {
 			) : null}
 
 			<section id="entries" class="editorial-section">
-				<div class="editorial-container">
-					{projectIssues.length > 0 ? (
-						<ol class="project-dossier__entries">
-							{
-								projectIssues.map((issue, index) => {
-									const sl = issueStatusLabel(issue.data.Status as string | undefined);
-									const issueId = toIssueAnchorId(issue.data.ID, index);
-									const paragraphs = issue.data.Description
-										? issue.data.Description
-												.split('\n\n')
-												.map((paragraph: string) => paragraph.trim())
-												.filter(Boolean)
-										: [];
+				{projectIssues.length > 0 ? (
+					<ol class="project-dossier__entries">
+						{
+							projectIssues.map((issue, index) => {
+								const sl = issueStatusLabel(issue.data.Status as string | undefined);
+								const issueId = toIssueAnchorId(issue.data.ID, index);
+								const paragraphs = issue.data.Description
+									? issue.data.Description
+											.split('\n\n')
+											.map((paragraph: string) => paragraph.trim())
+											.filter(Boolean)
+									: [];
 
-									return (
-										<li id={issueId} class="project-dossier__entry">
-											<div class="project-dossier__entry-header">
-												<div>
-													<p class="project-dossier__entry-index">
-														{String(index + 1).padStart(2, '0')} // {issue.data.ID}
-													</p>
-													<h2 class="project-dossier__entry-title">{issue.data.Title}</h2>
-												</div>
-
-												<div class="project-dossier__entry-meta">
-													<span
-														class:list={{
-															'project-dossier__entry-status': true,
-															'is-active': sl === 'Active',
-															'is-filed': sl === 'Filed',
-															'is-review': sl === 'In Review',
-															'is-closed': sl === 'Closed',
-														}}
-													>
-														{sl}
-													</span>
-													{issue.data.Priority ? (
-														<span class="project-dossier__entry-pill">
-															{String(issue.data.Priority)}
-														</span>
-													) : null}
-												</div>
+								return (
+									<li id={issueId} class="project-dossier__entry">
+										<div class="project-dossier__entry-header">
+											<div>
+												<p class="project-dossier__entry-index">
+													{String(index + 1).padStart(2, '0')} // {issue.data.ID}
+												</p>
+												<h2 class="project-dossier__entry-title">{issue.data.Title}</h2>
 											</div>
 
-											{paragraphs.length > 0 ? (
-												<div class="editorial-note__copy">
-													{paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-												</div>
+											<div class="project-dossier__entry-meta">
+												<span
+													class:list={{
+														'project-dossier__entry-status': true,
+														'is-active': sl === 'Active',
+														'is-filed': sl === 'Filed',
+														'is-review': sl === 'In Review',
+														'is-closed': sl === 'Closed',
+													}}
+												>
+													{sl}
+												</span>
+												{issue.data.Priority ? (
+													<span class="project-dossier__entry-pill">
+														{String(issue.data.Priority)}
+													</span>
+												) : null}
+											</div>
+										</div>
+
+										{paragraphs.length > 0 ? (
+											<div class="editorial-note__copy">
+												{paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+											</div>
+										) : null}
+
+										<div class="project-dossier__entry-footer">
+											{issue.data['Blocked by'] ? (
+												<span class="project-dossier__entry-linkage">
+													Blocked by {issue.data['Blocked by']}
+												</span>
 											) : null}
-
-											<div class="project-dossier__entry-footer">
-												{issue.data['Blocked by'] ? (
-													<span class="project-dossier__entry-linkage">
-														Blocked by {issue.data['Blocked by']}
-													</span>
-												) : null}
-												{issue.data.Updated ? (
-													<span class="project-dossier__entry-linkage">
-														{formatDate(issue.data.Updated)}
-													</span>
-												) : null}
-											</div>
-										</li>
-									);
-								})
-							}
-						</ol>
-					) : (
-						<div class="editorial-prose">
-							{project.data.Summary ? <p>{project.data.Summary}</p> : null}
-						</div>
-					)}
-				</div>
+											{issue.data.Updated ? (
+												<span class="project-dossier__entry-linkage">
+													{formatDate(issue.data.Updated)}
+												</span>
+											) : null}
+										</div>
+									</li>
+								);
+							})
+						}
+					</ol>
+				) : (
+					<div class="editorial-prose">
+						{project.data.Summary ? <p>{project.data.Summary}</p> : null}
+					</div>
+				)}
 			</section>
-		</main>
-	</div>
+		</div>
+	</BroadsheetArticleView>
 </BaseLayout>
 
 <style>

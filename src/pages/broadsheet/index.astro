@@ -1,0 +1,42 @@
+---
+import { BroadsheetDispatchView } from '../../components/BroadsheetDispatchView';
+import ProjectDigest from '../../components/ProjectDigest';
+import { dispatchesData, platformsData, dummySlots } from '../../data/broadsheetData';
+import '../../styles/editorial.css';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Tidelands // Dispatch</title>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
+	</head>
+	<body>
+		<BroadsheetDispatchView 
+			client:load
+			fleetSlots={dummySlots}
+		>
+			<section className="broadsheet-dispatch-col">
+				<h2 className="dispatch-col-title">DISPATCHES</h2>
+				<div className="dispatch-list">
+					{dispatchesData.map((d) => (
+						<ProjectDigest key={d.title} {...d} />
+					))}
+				</div>
+			</section>
+
+			<section className="broadsheet-dispatch-col">
+				<h2 className="dispatch-col-title">PLATFORMS</h2>
+				<div className="platform-list">
+					{platformsData.map((p) => (
+						<ProjectDigest key={p.title} {...p} />
+					))}
+				</div>
+			</section>
+		</BroadsheetDispatchView>
+	</body>
+</html>

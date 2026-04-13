@@ -19,35 +19,6 @@ The publishing arm of Tidelands. Everything that turns internal customer needs i
 ### Relationship to other projects
 
 Broadsheet *consumes* customer needs from all other projects. A security finding becomes an article. An infrastructure pattern becomes a post. The publishing pipeline is downstream of everything else.","In Progress","High","","Robin Jordan","Robin Jordan","Robin Jordan","2026-04-11T14:00:00.000Z",,,,"2026-03-30T05:26:47.699Z","2026-04-12T21:30:45.079Z","2026-04-12T21:30:45.079Z",,,,"Planning","The Cyber Farm Dispatches","No updates","",,1,,"","Write: ""Grammar as Protocol - How Formal Constraints Enable Agentic Security Re… (In Progress)","","54bcbf3d-3daf-441e-96d0-218bf15df2a5"
-"2861f9cc-ab68-4f82-9645-860a135e73f6","Australian MCP Field Notes","https://linear.app/tidelands-dev/project/australian-mcp-field-notes-1af0109e32d0/overview","Public field notes and dispatches on the emerging Australian MCP and agentic infrastructure scene, derived from LinkedIn reconnaissance and production work.","## Purpose
-
-This page publishes public-facing field notes drawn from LinkedIn reconnaissance and real production work at The Cyber Farm.
-
-The internal source material lives in Planning as recon reports, working notes, and operator fragments. This project is the cleaned public mirror.
-
-## Focus
-
-* the emerging Australian MCP and agentic infrastructure scene
-* the gap between what companies are doing and what job titles say
-* constraint layers, approval systems, and safety architecture for agents
-* the overlap between security research and agent infrastructure
-
-## Format
-
-* the project body is the page shell
-* issue bodies are atomic publishable nodes
-* blocking relations define reading order
-* Pulse updates are LinkedIn-ready dispatches
-
-## Source note
-
-This page is derived primarily from LinkedIn recon work performed inside Planning and then rewritten for a public audience.","In Progress","High","","Robin Jordan","","","2026-04-01T13:00:00.000Z",,,,"2026-04-02T04:42:04.821Z","2026-04-02T04:42:04.831Z","2026-04-02T04:42:04.821Z",,,,"Opensource","The Cyber Farm Dispatches","On track","🟢 On track | Robin Jordan posted an update on Apr 3
-
-I spent two weeks mapping the Australian MCP and agentic AI scene — who is building, who is hiring, and where the gaps are between what companies need and what job titles say.
-
-Five field notes came out of that work. They start with the market itself, move through the structural mismatch in hiring, into the infrastructure thesis that keeps coming back (constraint layers, not more tools), and end at the convergence I keep seeing between security research and agent architecture.
-
-Read the full series →","2026-04-02T20:28:46.000Z",,,"","","","54bcbf3d-3daf-441e-96d0-218bf15df2a5"
 "bf39fec6-f02a-4ebb-8953-ff8b7fe48460","Editorial Interface Testing Plan","https://linear.app/tidelands-dev/project/editorial-interface-testing-plan-8ad36cc02860/overview","Track execution of the editorial interface test plan, starting with the desktop case-sequence layout regression and core navigation, responsive, and accessibility coverage.","## Goal
 
 Turn the editorial interface test plan into tracked work across desktop render, navigation, link integrity, mobile, and accessibility.
