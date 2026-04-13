@@ -1,0 +1,52 @@
+.editorial-abstract {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 4rem 2rem;
+}
+
+.editorial-abstract__circle {
+	width: 400px;
+	height: 400px;
+	border-radius: 50%;
+	border: 1px solid var(--tidelands-ink);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem;
+	text-align: center;
+	position: relative;
+	background: var(--tidelands-paper);
+}
+
+.editorial-abstract__inner {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.editorial-abstract__title {
+	font-family: var(--font-label);
+	font-size: var(--label-size);
+	letter-spacing: 0.2em;
+	color: var(--tidelands-ink);
+	opacity: 0.6;
+}
+
+.editorial-abstract__content {
+	font-family: var(--font-meta);
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var(--tidelands-ink);
+}
+
+@media (max-width: 480px) {
+	.editorial-abstract__circle {
+		width: 300px;
+		height: 300px;
+		padding: 2rem;
+	}
+	.editorial-abstract__content {
+		font-size: 0.875rem;
+	}
+}

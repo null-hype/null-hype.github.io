@@ -1,0 +1,41 @@
+.broadsheet-article-view {
+	--editorial-bg: var(--tidelands-paper);
+	--editorial-ink: var(--tidelands-ink);
+	--editorial-secondary: var(--tidelands-cobalt);
+	--editorial-accent: var(--tidelands-cobalt);
+	--editorial-surface: var(--tidelands-paper);
+	--editorial-surface-low: rgba(10, 24, 40, 0.05);
+	--editorial-outline: rgba(10, 24, 40, 0.15);
+
+	min-height: 100vh;
+	background: var(--tidelands-paper);
+	color: var(--tidelands-ink);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+.broadsheet-article-main {
+	flex: 1;
+	position: relative;
+	z-index: 1;
+}
+
+.broadsheet-article-content {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 4rem 0;
+	font-family: var(--font-meta);
+	font-size: var(--step-0);
+	line-height: 1.7;
+}
+
+.broadsheet-footer {
+	padding: 4rem 2rem;
+	border-top: 1px solid var(--tidelands-ink);
+	font-family: var(--font-label);
+	font-size: var(--label-size);
+	letter-spacing: 0.1em;
+	text-align: center;
+	opacity: 0.6;
+}

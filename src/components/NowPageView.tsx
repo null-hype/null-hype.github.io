@@ -57,6 +57,9 @@ export default function NowPageView({
 					</div>
 
 					<div className="editorial-topbar__actions">
+						<a className="editorial-pdf-link" href="/broadsheet" style={{ marginRight: '1rem' }}>
+							Dispatch
+						</a>
 						<a className="editorial-pdf-link" href={`#${firstSectionId}`}>
 							Browse
 						</a>

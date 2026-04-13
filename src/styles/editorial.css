@@ -1,18 +1,26 @@
 :root {
-	--editorial-bg: #fcf9f8;
-	--editorial-ink: #1c1b1b;
-	--editorial-secondary: #ff3b30;
-	--editorial-accent: #00327d;
+	/* Tidelands Editorial Palette (Default) */
+	--tidelands-paper: #F5F2EB;
+	--tidelands-ink: #0A1828;
+	--tidelands-cobalt: #1D4E89;
+	--tidelands-crimson: #C8102E;
+
+	--editorial-bg: var(--tidelands-paper);
+	--editorial-ink: var(--tidelands-ink);
+	--editorial-secondary: var(--tidelands-cobalt);
+	--editorial-accent: var(--tidelands-cobalt);
 	--editorial-success: #008751;
-	--editorial-surface: #f0eded;
-	--editorial-surface-low: rgba(252, 249, 248, 0.7);
+	--editorial-surface: var(--tidelands-paper);
+	--editorial-surface-low: rgba(10, 24, 40, 0.05);
 	--editorial-surface-high: #e5e2e1;
-	--editorial-outline: rgba(28, 27, 27, 0.15);
-	--editorial-outline-strong: rgba(28, 27, 27, 0.2);
-	--editorial-rgb: 28, 27, 27;
-	--font-display: 'Epilogue', sans-serif;
+	--editorial-outline: rgba(10, 24, 40, 0.15);
+	--editorial-outline-strong: rgba(10, 24, 40, 0.2);
+	--editorial-rgb: 10, 24, 40;
+
+	--font-display: 'Newsreader', serif;
 	--font-label: 'Space Grotesk', monospace;
-	--font-meta: 'Noto Serif', serif;
+	--font-meta: 'Newsreader', serif;
+	--font-body: 'Inter', sans-serif;
 	--scale-ratio: 1.25;
 	--step--1: clamp(0.75rem, 0.71rem + 0.16vw, 0.875rem);
 	--step-0: clamp(1rem, 0.97rem + 0.16vw, 1.125rem);
