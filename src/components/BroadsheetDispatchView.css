@@ -1,4 +1,4 @@
-.broadsheet-dispatch-view {
+.broadsheet-home-dispatch {
 	--editorial-bg: var(--tidelands-paper);
 	--editorial-ink: var(--tidelands-ink);
 	--editorial-secondary: var(--tidelands-cobalt);
@@ -7,6 +7,7 @@
 	--editorial-surface-low: rgba(10, 24, 40, 0.05);
 	--editorial-outline: rgba(10, 24, 40, 0.15);
 
+	width: 100%;
 	min-height: 100vh;
 	background: var(--tidelands-paper);
 	color: var(--tidelands-ink);

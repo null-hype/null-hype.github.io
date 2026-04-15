@@ -18,7 +18,7 @@ export const BroadsheetDispatchView: React.FC<BroadsheetDispatchViewProps> = ({
 	children,
 }) => {
 	return (
-		<div className="broadsheet-dispatch-view">
+		<div className="broadsheet-home-dispatch">
 			<div className="editorial-grain" aria-hidden="true" />
 			<IsoTideBackground density={39} opacity={0.03} strokeWidth={0.3} />
 			<BroadsheetMasthead title="TIDELANDS" subtitle="OFFICIAL DISPATCH // NODE 001" />
