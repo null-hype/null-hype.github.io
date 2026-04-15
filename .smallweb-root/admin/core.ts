@@ -87,6 +87,12 @@ type ConnectionPlan = {
   task: TaskSpec
 }
 
+type DownstreamSessionResult = {
+  sessionId: string
+  stopReason: "cancelled" | "end_turn"
+  summary: string
+}
+
 type PromptTurnResult = {
   messages: AcpMessage[]
   stopReason: "cancelled" | "end_turn"
@@ -196,6 +202,20 @@ function ndjson(messages: readonly AcpMessage[]) {
       "content-type": "application/x-ndjson; charset=utf-8",
     },
   })
+}
+
+async function readNdjson(response: Response) {
+  const body = await response.text()
+
+  if (!body.trim()) {
+    return []
+  }
+
+  return body
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => JSON.parse(line) as AcpMessage)
 }
 
 function escapeHtml(value: string) {
@@ -506,6 +526,10 @@ async function discoverPersonaSlots(slotRoot: string) {
 async function validatePersonaSlot(slot: PersonaSlot) {
   const errors: string[] = []
 
+  if (!slot.acpUrl) {
+    errors.push("Missing ACP_URL")
+  }
+
   if (!slot.timezone) {
     errors.push("Missing TZ")
   }
@@ -704,6 +728,176 @@ function renderWriteback(plan: ConnectionPlan, resultLines: readonly string[]) {
   ].join("\n")
 }
 
+function extractAcpResult(messages: readonly AcpMessage[]) {
+  return messages.find((message) => "result" in message && message.result !== undefined) as JsonRpcResponse | undefined
+}
+
+function collectAgentChunks(messages: readonly AcpMessage[]) {
+  return messages
+    .filter((message) => "method" in message && message.method === "session/update")
+    .map((message) => (message as JsonRpcNotification).params as { update?: Record<string, unknown> } | undefined)
+    .map((params) => params?.update)
+    .filter((update): update is Record<string, unknown> => Boolean(update))
+    .filter((update) => update.sessionUpdate === "agent_message_chunk")
+    .map((update) => {
+      const content = update.content as { text?: string } | undefined
+
+      return content?.text?.trim() ?? ""
+    })
+    .filter(Boolean)
+}
+
+function buildDownstreamPrompt(plan: ConnectionPlan, persona: PersonaSlot) {
+  const lines = [
+    `Issue: ${plan.issue.identifier} — ${plan.issue.title}`,
+    `Task type: ${plan.task.taskType}`,
+    `Persona: ${persona.id}`,
+    `Timezone: ${persona.timezone}`,
+    `Proxy URL: ${persona.proxyUrl}`,
+    `Target URL: ${plan.task.target.url}`,
+    `Target method: ${plan.task.target.method ?? "GET"}`,
+  ]
+
+  if (plan.task.target.expectedTitle) {
+    lines.push(`Expected title: ${plan.task.target.expectedTitle}`)
+  }
+
+  if (plan.task.instructions) {
+    lines.push(`Instructions: ${plan.task.instructions}`)
+  }
+
+  const headers = plan.task.target.headers
+  if (headers && Object.keys(headers).length > 0) {
+    lines.push(`Target headers: ${JSON.stringify(headers)}`)
+  }
+
+  return lines.join("\n")
+}
+
+async function postAcp(
+  url: string,
+  payload: JsonRpcRequest,
+  fetchImpl: typeof fetch,
+) {
+  const response = await fetchImpl(url, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    throw new Error(`ACP request failed: ${response.status}`)
+  }
+
+  return readNdjson(response)
+}
+
+async function runDownstreamPersonaSession(
+  plan: ConnectionPlan,
+  persona: PersonaSlot,
+  fetchImpl: typeof fetch,
+  config: AdminConfig,
+) {
+  const initializeMessages = await postAcp(
+    persona.acpUrl,
+    {
+      id: 0,
+      jsonrpc: "2.0",
+      method: "initialize",
+      params: {
+        clientCapabilities: {
+          fs: {
+            readTextFile: false,
+            writeTextFile: false,
+          },
+          terminal: false,
+        },
+        clientInfo: {
+          name: "tidelands-admin",
+          title: "Tidelands Admin ACP",
+          version: "0.2.0",
+        },
+        protocolVersion: config.protocolVersion,
+      },
+    },
+    fetchImpl,
+  )
+  const initializeResult = extractAcpResult(initializeMessages)
+
+  if (!initializeResult?.result) {
+    throw new Error(`ACP initialize failed for ${persona.id}`)
+  }
+
+  const sessionMessages = await postAcp(
+    persona.acpUrl,
+    {
+      id: 1,
+      jsonrpc: "2.0",
+      method: "session/new",
+      params: {
+        cwd: persona.slotDir,
+        mcpServers: [],
+      },
+    },
+    fetchImpl,
+  )
+  const sessionResult = extractAcpResult(sessionMessages)
+  const downstreamSessionId = String((sessionResult?.result as { sessionId?: string } | undefined)?.sessionId ?? "")
+
+  if (!downstreamSessionId) {
+    throw new Error(`ACP session/new failed for ${persona.id}`)
+  }
+
+  const promptMessages = await postAcp(
+    persona.acpUrl,
+    {
+      id: 2,
+      jsonrpc: "2.0",
+      method: "session/prompt",
+      params: {
+        prompt: [
+          {
+            text: buildDownstreamPrompt(plan, persona),
+            type: "text",
+          },
+        ],
+        sessionId: downstreamSessionId,
+      },
+    },
+    fetchImpl,
+  )
+  const promptResult = extractAcpResult(promptMessages)
+  const stopReason = String((promptResult?.result as { stopReason?: string } | undefined)?.stopReason ?? "")
+
+  if (stopReason !== "end_turn" && stopReason !== "cancelled") {
+    throw new Error(`ACP session/prompt returned invalid stopReason for ${persona.id}`)
+  }
+
+  const summary = collectAgentChunks(promptMessages).join("\n").trim()
+
+  if (!summary) {
+    throw new Error(`ACP session/prompt returned no agent summary for ${persona.id}`)
+  }
+
+  const record = {
+    acpUrl: persona.acpUrl,
+    issueIdentifier: plan.issue.identifier,
+    personaId: persona.id,
+    sessionId: downstreamSessionId,
+    stopReason,
+    summary,
+  }
+  await appendJsonl(joinPath(config.runtimeDir, "persona-sessions.jsonl"), record)
+
+  return {
+    sessionId: downstreamSessionId,
+    stopReason,
+    summary,
+  } satisfies DownstreamSessionResult
+}
+
 async function recordWriteback(
   plan: ConnectionPlan,
   body: string,
@@ -803,36 +997,16 @@ async function runQueueTask(
   const fetchImpl = services.fetchImpl ?? fetch
   const resultLines: string[] = []
   const executeForPersona = async (persona: PersonaSlot) => {
-    const toolCallId = `fetch_${persona.id}`
+    const toolCallId = `acp_${persona.id}`
 
-    notifications.push(makeToolCall(session.sessionId, toolCallId, `Fetch target as ${persona.id}`))
+    notifications.push(makeToolCall(session.sessionId, toolCallId, `Run downstream ACP task as ${persona.id}`))
     notifications.push(makeToolCallUpdate(session.sessionId, toolCallId, "in_progress"))
 
-    const response = await fetchImpl(plan.task.target.url, {
-      method: plan.task.target.method ?? "GET",
-      headers: {
-        ...(plan.task.target.headers ?? {}),
-        "x-tidelane-persona": persona.id,
-        "x-tidelane-proxy-url": persona.proxyUrl,
-        "x-tidelane-timezone": persona.timezone,
-      },
-    })
-    const body = await response.text()
-    const title = extractTitle(body)
-    const expectedTitle = plan.task.target.expectedTitle
+    const downstream = await runDownstreamPersonaSession(plan, persona, fetchImpl, config)
 
     notifications.push(makeToolCallUpdate(session.sessionId, toolCallId, "completed"))
 
-    const pieces = [
-      `${persona.id}: ${response.status}`,
-      title ? `title "${title}"` : "no title",
-    ]
-
-    if (expectedTitle && title !== expectedTitle) {
-      pieces.push(`expected "${expectedTitle}"`)
-    }
-
-    return pieces.join(", ")
+    return `${persona.id}: ${downstream.stopReason}, ${downstream.summary}`
   }
 
   try {

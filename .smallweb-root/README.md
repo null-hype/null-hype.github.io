@@ -13,7 +13,7 @@ Files:
 - `.smallweb/config.json`: domain, OIDC issuer, and app-level allowlist
 - `admin/smallweb.json`: marks the app as private while keeping `/healthz` and `/readyz` public
 - `admin/main.ts`: ACP-first admin surface with a `/acp` endpoint and `smallweb run` session runner
-- `admin/core.ts`: shared ACP/session orchestration, queue selection, persona-slot validation, and dry-run writeback logic
+- `admin/core.ts`: shared ACP/session orchestration, queue selection, persona-slot validation, downstream persona ACP client, and dry-run writeback logic
 - `admin/README.md`: task-spec fixture format and required slot layout for `PLAN-394`
 - `linear-agent/smallweb.json`: keeps the Linear receiver private while leaving `/healthz` and `/webhooks/**` public
 - `linear-agent/main.ts`: Smallweb-native Linear webhook ingress with runtime logging, optional activity posting, and Jules dispatch

@@ -34,6 +34,7 @@ async function createSlot(
   const slotDir = path.join(root, slotId)
   await mkdir(path.join(slotDir, ".playwright-profile"), { recursive: true })
   const envValues = {
+    ACP_URL: `https://${slotId}.persona.test/acp`,
     PROXY_URL: "https://proxy.example.test",
     TZ: "Australia/Sydney",
     ...(overrides.env ?? {}),
@@ -45,6 +46,7 @@ async function createSlot(
     ].join("\n"),
   )
   const networkValues = {
+    acpUrl: `https://${slotId}.persona.test/acp`,
     proxyUrl: "https://proxy.example.test",
     timeZone: "Australia/Sydney",
     ...(overrides.network ?? {}),
@@ -116,7 +118,103 @@ async function createFixtureApp(
   }
 }
 
+function ndjsonResponse(messages: unknown[]) {
+  return new Response(
+    `${messages.map((message) => JSON.stringify(message)).join("\n")}\n`,
+    {
+      headers: {
+        "content-type": "application/x-ndjson; charset=utf-8",
+      },
+      status: 200,
+    },
+  )
+}
+
+function createPersonaAcpFetch(handlers: Record<string, {
+  onPrompt?: (promptText: string) => void
+  summary: string
+}>) {
+  const calls: Array<{ method: string; payload: Record<string, unknown>; url: string }> = []
+
+  const fetchImpl = async (target: string | URL | Request, init?: RequestInit) => {
+    const url = String(target)
+    const handler = handlers[url]
+
+    if (!handler) {
+      throw new Error(`Unexpected downstream ACP URL: ${url}`)
+    }
+
+    const payload = JSON.parse(String(init?.body ?? "{}")) as Record<string, unknown>
+    const method = String(payload.method ?? "")
+    calls.push({ method, payload, url })
+
+    if (method === "initialize") {
+      return ndjsonResponse([
+        {
+          id: payload.id ?? 0,
+          jsonrpc: "2.0",
+          result: {
+            agentCapabilities: {},
+            agentInfo: {
+              name: "persona-agent",
+              version: "0.1.0",
+            },
+            protocolVersion: 1,
+          },
+        },
+      ])
+    }
+
+    if (method === "session/new") {
+      return ndjsonResponse([
+        {
+          id: payload.id ?? 1,
+          jsonrpc: "2.0",
+          result: {
+            sessionId: `persona_${calls.length}`,
+          },
+        },
+      ])
+    }
+
+    if (method === "session/prompt") {
+      const params = payload.params as { prompt?: Array<{ text?: string }> } | undefined
+      const promptText = params?.prompt?.[0]?.text ?? ""
+      handler.onPrompt?.(promptText)
+
+      return ndjsonResponse([
+        {
+          jsonrpc: "2.0",
+          method: "session/update",
+          params: {
+            sessionId: "persona_session",
+            update: {
+              content: {
+                text: handler.summary,
+                type: "text",
+              },
+              sessionUpdate: "agent_message_chunk",
+            },
+          },
+        },
+        {
+          id: payload.id ?? 2,
+          jsonrpc: "2.0",
+          result: {
+            stopReason: "end_turn",
+          },
+        },
+      ])
+    }
+
+    throw new Error(`Unexpected downstream ACP method: ${method}`)
+  }
+
+  return { calls, fetchImpl }
+}
+
 Deno.test("ACP initialize -> session/new -> session/prompt executes a bounded recon fixture", async () => {
+  let observedPrompt = ""
   const issue = {
     description: taskSpec("recon", ["apac-slot-07"], "https://fixture.test/recon"),
     id: "issue_fixture_recon",
@@ -128,14 +226,16 @@ Deno.test("ACP initialize -> session/new -> session/prompt executes a bounded re
     title: "Fixture recon task",
     updatedAt: new Date().toISOString(),
   }
-  const { app, runtimeDir, slotRoot } = await createFixtureApp([issue], {
-    fetchImpl: async (target: string | URL | Request) => {
-      assert.equal(String(target), "https://fixture.test/recon")
-
-      return new Response("<html><head><title>Fixture Target</title></head><body>ok</body></html>", {
-        status: 200,
-      })
+  const downstream = createPersonaAcpFetch({
+    "https://apac-slot-07.persona.test/acp": {
+      onPrompt(promptText) {
+        observedPrompt = promptText
+      },
+      summary: 'Visited https://fixture.test/recon and observed title "Fixture Target".',
     },
+  })
+  const { app, runtimeDir, slotRoot } = await createFixtureApp([issue], {
+    fetchImpl: downstream.fetchImpl,
   })
   await createSlot(slotRoot, "apac-slot-07")
 
@@ -187,15 +287,23 @@ Deno.test("ACP initialize -> session/new -> session/prompt executes a bounded re
 
   assert.match(agentChunks, /Selected PLAN-700/)
   assert.match(agentChunks, /Fixture Target/)
+  assert.match(observedPrompt, /Target URL: https:\/\/fixture\.test\/recon/)
+  assert.match(observedPrompt, /Persona: apac-slot-07/)
+  assert.deepEqual(
+    downstream.calls.map((call) => call.method),
+    ["initialize", "session/new", "session/prompt"],
+  )
   assert.equal(promptMessages.at(-1)?.result.stopReason, "end_turn")
 
   const writebackLog = await readFile(path.join(runtimeDir, "writebacks.jsonl"), "utf8")
   assert.match(writebackLog, /PLAN-700/)
   assert.match(writebackLog, /Fixture Target/)
+  const personaLog = await readFile(path.join(runtimeDir, "persona-sessions.jsonl"), "utf8")
+  assert.match(personaLog, /apac-slot-07/)
+  assert.match(personaLog, /persona_2/)
 })
 
-Deno.test("missing PROXY_URL fails before any fixture fetch happens", async () => {
-  let fetchCount = 0
+Deno.test("missing PROXY_URL fails before any downstream ACP session starts", async () => {
   const issue = {
     description: taskSpec("recon", ["apac-slot-08"], "https://fixture.test/recon"),
     id: "issue_fixture_bad_slot",
@@ -207,12 +315,13 @@ Deno.test("missing PROXY_URL fails before any fixture fetch happens", async () =
     title: "Fixture recon missing proxy",
     updatedAt: new Date().toISOString(),
   }
-  const { app, runtimeDir, slotRoot } = await createFixtureApp([issue], {
-    fetchImpl: async () => {
-      fetchCount += 1
-
-      return new Response("should not execute", { status: 200 })
+  const downstream = createPersonaAcpFetch({
+    "https://apac-slot-08.persona.test/acp": {
+      summary: "should not execute",
     },
+  })
+  const { app, runtimeDir, slotRoot } = await createFixtureApp([issue], {
+    fetchImpl: downstream.fetchImpl,
   })
   await createSlot(slotRoot, "apac-slot-08", {
     env: { PROXY_URL: "" },
@@ -245,7 +354,7 @@ Deno.test("missing PROXY_URL fails before any fixture fetch happens", async () =
     .map((update) => update.content.text)
     .join("\n")
 
-  assert.equal(fetchCount, 0)
+  assert.equal(downstream.calls.length, 0)
   assert.match(agentChunks, /Fail-fast aborted PLAN-701/)
   assert.match(agentChunks, /Missing PROXY_URL/)
 })
@@ -286,17 +395,19 @@ Deno.test("blocked fixture issues are skipped in favor of the next eligible task
     title: "Eligible fixture",
     updatedAt: new Date().toISOString(),
   }
-  const { app, runtimeDir, slotRoot } = await createFixtureApp([blocked, blocker, eligible], {
-    fetchImpl: async (target: string | URL | Request) => {
-      const targetValue = String(target)
-
-      return new Response(
-        `<html><head><title>${targetValue.endsWith("/eligible") ? "Fixture Target" : "Unexpected"}</title></head></html>`,
-        {
-          status: 200,
-        },
-      )
+  const downstream = createPersonaAcpFetch({
+    "https://slot-blocker.persona.test/acp": {
+      summary: 'Visited https://fixture.test/blocker and observed title "Fixture Target".',
     },
+    "https://slot-blocked.persona.test/acp": {
+      summary: 'Visited https://fixture.test/blocked and observed title "Fixture Target".',
+    },
+    "https://slot-eligible.persona.test/acp": {
+      summary: 'Visited https://fixture.test/eligible and observed title "Fixture Target".',
+    },
+  })
+  const { app, runtimeDir, slotRoot } = await createFixtureApp([blocked, blocker, eligible], {
+    fetchImpl: downstream.fetchImpl,
   })
   await createSlot(slotRoot, "slot-blocker")
   await createSlot(slotRoot, "slot-blocked")
@@ -330,6 +441,14 @@ Deno.test("blocked fixture issues are skipped in favor of the next eligible task
 
   assert.match(chunks, /Selected PLAN-702/)
   assert.doesNotMatch(chunks, /Selected PLAN-703/)
+  assert.deepEqual(
+    downstream.calls.map((call) => call.url),
+    [
+      "https://slot-blocker.persona.test/acp",
+      "https://slot-blocker.persona.test/acp",
+      "https://slot-blocker.persona.test/acp",
+    ],
+  )
 })
 
 Deno.test("runCliSession reuses the same ACP session lifecycle without HTTP", async () => {
@@ -344,11 +463,13 @@ Deno.test("runCliSession reuses the same ACP session lifecycle without HTTP", as
     title: "CLI fixture",
     updatedAt: new Date().toISOString(),
   }
+  const downstream = createPersonaAcpFetch({
+    "https://slot-cli.persona.test/acp": {
+      summary: 'Visited https://fixture.test/cli and observed title "Fixture Target".',
+    },
+  })
   const { app, slotRoot } = await createFixtureApp([issue], {
-    fetchImpl: async () =>
-      new Response("<html><head><title>Fixture Target</title></head><body>ok</body></html>", {
-        status: 200,
-      }),
+    fetchImpl: downstream.fetchImpl,
   })
   await createSlot(slotRoot, "slot-cli")
 
@@ -357,4 +478,8 @@ Deno.test("runCliSession reuses the same ACP session lifecycle without HTTP", as
   assert.equal(messages[0].result.protocolVersion, 1)
   assert.equal(messages.at(-1)?.result.stopReason, "end_turn")
   assert.match(JSON.stringify(messages), /PLAN-705/)
+  assert.deepEqual(
+    downstream.calls.map((call) => call.method),
+    ["initialize", "session/new", "session/prompt"],
+  )
 })
