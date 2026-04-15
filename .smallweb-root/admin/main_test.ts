@@ -3,6 +3,8 @@ import os from "node:os"
 import path from "node:path"
 import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises"
 
+import { createRangeFixtureApp } from "../range-fixture/main.ts"
+import { createTestSlotApp } from "../test-slot/main.ts"
 import { createAdminApp, type AdminConfig, type LinearIssue } from "./core.ts"
 
 function taskSpec(taskType: "aging" | "exploit" | "recon", personas: string[], url: string, extra: Record<string, unknown> = {}) {
@@ -10,6 +12,9 @@ function taskSpec(taskType: "aging" | "exploit" | "recon", personas: string[], u
 \`\`\`json
 ${JSON.stringify({
     instructions: `Fixture ${taskType} task`,
+    oracle: {
+      expectedSubstrings: ["Fixture Target", "reflected-search-param"],
+    },
     personas,
     target: {
       expectedTitle: "Fixture Target",
@@ -55,6 +60,22 @@ async function createSlot(
     path.join(slotDir, "network.json"),
     JSON.stringify(networkValues, null, 2),
   )
+}
+
+function createRouterFetch(routes: Record<string, { fetch(req: Request): Response | Promise<Response> }>) {
+  const fetchImpl = async (target: string | URL | Request, init?: RequestInit) => {
+    const request = target instanceof Request ? target : new Request(String(target), init)
+    const url = new URL(request.url)
+    const app = routes[url.host]
+
+    if (!app) {
+      throw new Error(`Unexpected routed host: ${url.host}`)
+    }
+
+    return await app.fetch(request)
+  }
+
+  return fetchImpl
 }
 
 async function readNdjson(response: Response) {
@@ -130,93 +151,9 @@ function ndjsonResponse(messages: unknown[]) {
   )
 }
 
-function createPersonaAcpFetch(handlers: Record<string, {
-  onPrompt?: (promptText: string) => void
-  summary: string
-}>) {
-  const calls: Array<{ method: string; payload: Record<string, unknown>; url: string }> = []
-
-  const fetchImpl = async (target: string | URL | Request, init?: RequestInit) => {
-    const url = String(target)
-    const handler = handlers[url]
-
-    if (!handler) {
-      throw new Error(`Unexpected downstream ACP URL: ${url}`)
-    }
-
-    const payload = JSON.parse(String(init?.body ?? "{}")) as Record<string, unknown>
-    const method = String(payload.method ?? "")
-    calls.push({ method, payload, url })
-
-    if (method === "initialize") {
-      return ndjsonResponse([
-        {
-          id: payload.id ?? 0,
-          jsonrpc: "2.0",
-          result: {
-            agentCapabilities: {},
-            agentInfo: {
-              name: "persona-agent",
-              version: "0.1.0",
-            },
-            protocolVersion: 1,
-          },
-        },
-      ])
-    }
-
-    if (method === "session/new") {
-      return ndjsonResponse([
-        {
-          id: payload.id ?? 1,
-          jsonrpc: "2.0",
-          result: {
-            sessionId: `persona_${calls.length}`,
-          },
-        },
-      ])
-    }
-
-    if (method === "session/prompt") {
-      const params = payload.params as { prompt?: Array<{ text?: string }> } | undefined
-      const promptText = params?.prompt?.[0]?.text ?? ""
-      handler.onPrompt?.(promptText)
-
-      return ndjsonResponse([
-        {
-          jsonrpc: "2.0",
-          method: "session/update",
-          params: {
-            sessionId: "persona_session",
-            update: {
-              content: {
-                text: handler.summary,
-                type: "text",
-              },
-              sessionUpdate: "agent_message_chunk",
-            },
-          },
-        },
-        {
-          id: payload.id ?? 2,
-          jsonrpc: "2.0",
-          result: {
-            stopReason: "end_turn",
-          },
-        },
-      ])
-    }
-
-    throw new Error(`Unexpected downstream ACP method: ${method}`)
-  }
-
-  return { calls, fetchImpl }
-}
-
 Deno.test("ACP initialize -> session/new -> session/prompt executes a bounded recon fixture", async () => {
-  let observedPrompt = ""
   const issue = {
-    description: taskSpec("recon", ["apac-slot-07"], "https://fixture.test/recon"),
+    description: taskSpec("recon", ["apac-slot-07"], "https://range-fixture.tidelands.dev/recon"),
     id: "issue_fixture_recon",
     identifier: "PLAN-700",
     labels: ["test"],
@@ -226,18 +163,32 @@ Deno.test("ACP initialize -> session/new -> session/prompt executes a bounded re
     title: "Fixture recon task",
     updatedAt: new Date().toISOString(),
   }
-  const downstream = createPersonaAcpFetch({
-    "https://apac-slot-07.persona.test/acp": {
-      onPrompt(promptText) {
-        observedPrompt = promptText
-      },
-      summary: 'Visited https://fixture.test/recon and observed title "Fixture Target".',
-    },
+  const rangeFixture = createRangeFixtureApp()
+  const calls: Array<{ method: string; url: string }> = []
+  const routes: Record<string, { fetch(req: Request): Response | Promise<Response> }> = {
+    "range-fixture.tidelands.dev": rangeFixture,
+  }
+  const baseRouter = createRouterFetch(routes)
+  const routedFetch = async (target: string | URL | Request, init?: RequestInit) => {
+    const request = target instanceof Request ? target : new Request(String(target), init)
+    calls.push({
+      method: request.method,
+      url: request.url,
+    })
+
+    return await baseRouter(request)
+  }
+  const testSlot = createTestSlotApp({
+    fetchImpl: routedFetch,
   })
+  routes["apac-slot-07.persona.test"] = testSlot
   const { app, runtimeDir, slotRoot } = await createFixtureApp([issue], {
-    fetchImpl: downstream.fetchImpl,
+    fetchImpl: routedFetch,
   })
-  await createSlot(slotRoot, "apac-slot-07")
+  await createSlot(slotRoot, "apac-slot-07", {
+    env: { SLOT_MODE: "test" },
+    network: { mode: "test" },
+  })
 
   const initializeMessages = await postAcp(app, {
     id: 0,
@@ -287,25 +238,30 @@ Deno.test("ACP initialize -> session/new -> session/prompt executes a bounded re
 
   assert.match(agentChunks, /Selected PLAN-700/)
   assert.match(agentChunks, /Fixture Target/)
-  assert.match(observedPrompt, /Target URL: https:\/\/fixture\.test\/recon/)
-  assert.match(observedPrompt, /Persona: apac-slot-07/)
-  assert.deepEqual(
-    downstream.calls.map((call) => call.method),
-    ["initialize", "session/new", "session/prompt"],
+  assert.match(agentChunks, /oracle PASS 2\/2/)
+  assert.equal(
+    calls.filter((call) => call.url === "https://apac-slot-07.persona.test/acp").length,
+    3,
+  )
+  assert.equal(
+    calls.filter((call) => call.url === "https://range-fixture.tidelands.dev/recon").length,
+    1,
   )
   assert.equal(promptMessages.at(-1)?.result.stopReason, "end_turn")
 
   const writebackLog = await readFile(path.join(runtimeDir, "writebacks.jsonl"), "utf8")
   assert.match(writebackLog, /PLAN-700/)
   assert.match(writebackLog, /Fixture Target/)
+  assert.match(writebackLog, /Slot mode: test/)
+  assert.match(writebackLog, /oracle PASS 2\/2/)
   const personaLog = await readFile(path.join(runtimeDir, "persona-sessions.jsonl"), "utf8")
   assert.match(personaLog, /apac-slot-07/)
-  assert.match(personaLog, /persona_2/)
+  assert.match(personaLog, /reflected-search-param/)
 })
 
 Deno.test("missing PROXY_URL fails before any downstream ACP session starts", async () => {
   const issue = {
-    description: taskSpec("recon", ["apac-slot-08"], "https://fixture.test/recon"),
+    description: taskSpec("recon", ["apac-slot-08"], "https://range-fixture.tidelands.dev/recon"),
     id: "issue_fixture_bad_slot",
     identifier: "PLAN-701",
     labels: ["test"],
@@ -315,13 +271,17 @@ Deno.test("missing PROXY_URL fails before any downstream ACP session starts", as
     title: "Fixture recon missing proxy",
     updatedAt: new Date().toISOString(),
   }
-  const downstream = createPersonaAcpFetch({
-    "https://apac-slot-08.persona.test/acp": {
-      summary: "should not execute",
-    },
+  const rangeFixture = createRangeFixtureApp()
+  const routes: Record<string, { fetch(req: Request): Response | Promise<Response> }> = {
+    "range-fixture.tidelands.dev": rangeFixture,
+  }
+  const routerFetch = createRouterFetch(routes)
+  const testSlot = createTestSlotApp({
+    fetchImpl: routerFetch,
   })
+  routes["apac-slot-08.persona.test"] = testSlot
   const { app, runtimeDir, slotRoot } = await createFixtureApp([issue], {
-    fetchImpl: downstream.fetchImpl,
+    fetchImpl: routerFetch,
   })
   await createSlot(slotRoot, "apac-slot-08", {
     env: { PROXY_URL: "" },
@@ -354,14 +314,86 @@ Deno.test("missing PROXY_URL fails before any downstream ACP session starts", as
     .map((update) => update.content.text)
     .join("\n")
 
-  assert.equal(downstream.calls.length, 0)
+  const personaLogPath = path.join(runtimeDir, "persona-sessions.jsonl")
+  await assert.rejects(() => readFile(personaLogPath, "utf8"))
   assert.match(agentChunks, /Fail-fast aborted PLAN-701/)
   assert.match(agentChunks, /Missing PROXY_URL/)
 })
 
+Deno.test("test-mode slots skip proxy and timezone requirements but still run scoring", async () => {
+  const issue = {
+    description: taskSpec("recon", ["slot-test-mode"], "https://range-fixture.tidelands.dev/recon"),
+    id: "issue_fixture_test_mode",
+    identifier: "PLAN-706",
+    labels: ["test"],
+    priority: 1,
+    stateName: "Backlog",
+    stateType: "unstarted",
+    title: "Fixture test mode task",
+    updatedAt: new Date().toISOString(),
+  }
+  const rangeFixture = createRangeFixtureApp()
+  const routes: Record<string, { fetch(req: Request): Response | Promise<Response> }> = {
+    "range-fixture.tidelands.dev": rangeFixture,
+  }
+  const routedFetch = createRouterFetch(routes)
+  const testSlot = createTestSlotApp({
+    fetchImpl: routedFetch,
+  })
+  routes["slot-test-mode.persona.test"] = testSlot
+  const { app, runtimeDir, slotRoot } = await createFixtureApp([issue], {
+    fetchImpl: routedFetch,
+  })
+  await createSlot(slotRoot, "slot-test-mode", {
+    env: {
+      PROXY_URL: "",
+      SLOT_MODE: "test",
+      TZ: "",
+    },
+    network: {
+      mode: "test",
+      proxyUrl: "",
+      timeZone: "",
+    },
+  })
+
+  const newSession = await postAcp(app, {
+    id: 1,
+    jsonrpc: "2.0",
+    method: "session/new",
+    params: {
+      cwd: runtimeDir,
+      mcpServers: [],
+    },
+  })
+  const sessionId = newSession[0].result.sessionId
+  const promptMessages = await postAcp(app, {
+    id: 2,
+    jsonrpc: "2.0",
+    method: "session/prompt",
+    params: {
+      prompt: [{ text: "Run the next test-mode task", type: "text" }],
+      sessionId,
+    },
+  })
+  const agentChunks = promptMessages
+    .filter((message) => message.method === "session/update")
+    .map((message) => message.params.update)
+    .filter((update) => update.sessionUpdate === "agent_message_chunk")
+    .map((update) => update.content.text)
+    .join("\n")
+
+  assert.match(agentChunks, /Selected PLAN-706/)
+  assert.match(agentChunks, /oracle PASS 2\/2/)
+
+  const writebackLog = await readFile(path.join(runtimeDir, "writebacks.jsonl"), "utf8")
+  assert.match(writebackLog, /PLAN-706/)
+  assert.match(writebackLog, /Slot mode: test/)
+})
+
 Deno.test("blocked fixture issues are skipped in favor of the next eligible task", async () => {
   const blocker = {
-    description: taskSpec("aging", ["slot-blocker"], "https://fixture.test/blocker"),
+    description: taskSpec("aging", ["slot-blocker"], "https://range-fixture.tidelands.dev/recon"),
     id: "issue_blocker",
     identifier: "PLAN-702",
     labels: ["test"],
@@ -372,7 +404,7 @@ Deno.test("blocked fixture issues are skipped in favor of the next eligible task
     updatedAt: new Date().toISOString(),
   }
   const blocked = {
-    description: taskSpec("recon", ["slot-blocked"], "https://fixture.test/blocked", {
+    description: taskSpec("recon", ["slot-blocked"], "https://range-fixture.tidelands.dev/recon", {
       blockedBy: ["PLAN-702"],
     }),
     id: "issue_blocked",
@@ -385,7 +417,7 @@ Deno.test("blocked fixture issues are skipped in favor of the next eligible task
     updatedAt: new Date().toISOString(),
   }
   const eligible = {
-    description: taskSpec("recon", ["slot-eligible"], "https://fixture.test/eligible"),
+    description: taskSpec("recon", ["slot-eligible"], "https://range-fixture.tidelands.dev/recon"),
     id: "issue_eligible",
     identifier: "PLAN-704",
     labels: ["test"],
@@ -395,19 +427,26 @@ Deno.test("blocked fixture issues are skipped in favor of the next eligible task
     title: "Eligible fixture",
     updatedAt: new Date().toISOString(),
   }
-  const downstream = createPersonaAcpFetch({
-    "https://slot-blocker.persona.test/acp": {
-      summary: 'Visited https://fixture.test/blocker and observed title "Fixture Target".',
-    },
-    "https://slot-blocked.persona.test/acp": {
-      summary: 'Visited https://fixture.test/blocked and observed title "Fixture Target".',
-    },
-    "https://slot-eligible.persona.test/acp": {
-      summary: 'Visited https://fixture.test/eligible and observed title "Fixture Target".',
-    },
-  })
+  const rangeFixture = createRangeFixtureApp()
+  const routes: Record<string, { fetch(req: Request): Response | Promise<Response> }> = {
+    "range-fixture.tidelands.dev": rangeFixture,
+  }
+  const routedFetch = createRouterFetch(routes)
+  const slotBlocker = createTestSlotApp({ fetchImpl: routedFetch })
+  const slotBlocked = createTestSlotApp({ fetchImpl: routedFetch })
+  const slotEligible = createTestSlotApp({ fetchImpl: routedFetch })
+  routes["slot-blocker.persona.test"] = slotBlocker
+  routes["slot-blocked.persona.test"] = slotBlocked
+  routes["slot-eligible.persona.test"] = slotEligible
+  const routedCalls: string[] = []
+  const fetchImpl = async (target: string | URL | Request, init?: RequestInit) => {
+    const request = target instanceof Request ? target : new Request(String(target), init)
+    routedCalls.push(request.url)
+
+    return await routedFetch(request)
+  }
   const { app, runtimeDir, slotRoot } = await createFixtureApp([blocked, blocker, eligible], {
-    fetchImpl: downstream.fetchImpl,
+    fetchImpl,
   })
   await createSlot(slotRoot, "slot-blocker")
   await createSlot(slotRoot, "slot-blocked")
@@ -441,19 +480,13 @@ Deno.test("blocked fixture issues are skipped in favor of the next eligible task
 
   assert.match(chunks, /Selected PLAN-702/)
   assert.doesNotMatch(chunks, /Selected PLAN-703/)
-  assert.deepEqual(
-    downstream.calls.map((call) => call.url),
-    [
-      "https://slot-blocker.persona.test/acp",
-      "https://slot-blocker.persona.test/acp",
-      "https://slot-blocker.persona.test/acp",
-    ],
-  )
+  assert.equal(routedCalls.filter((url) => url === "https://slot-blocker.persona.test/acp").length, 3)
+  assert.equal(routedCalls.filter((url) => url === "https://slot-blocked.persona.test/acp").length, 0)
 })
 
 Deno.test("runCliSession reuses the same ACP session lifecycle without HTTP", async () => {
   const issue = {
-    description: taskSpec("recon", ["slot-cli"], "https://fixture.test/cli"),
+    description: taskSpec("recon", ["slot-cli"], "https://range-fixture.tidelands.dev/recon"),
     id: "issue_cli",
     identifier: "PLAN-705",
     labels: ["test"],
@@ -463,13 +496,15 @@ Deno.test("runCliSession reuses the same ACP session lifecycle without HTTP", as
     title: "CLI fixture",
     updatedAt: new Date().toISOString(),
   }
-  const downstream = createPersonaAcpFetch({
-    "https://slot-cli.persona.test/acp": {
-      summary: 'Visited https://fixture.test/cli and observed title "Fixture Target".',
-    },
-  })
+  const rangeFixture = createRangeFixtureApp()
+  const routes: Record<string, { fetch(req: Request): Response | Promise<Response> }> = {
+    "range-fixture.tidelands.dev": rangeFixture,
+  }
+  const routedFetch = createRouterFetch(routes)
+  const slotCli = createTestSlotApp({ fetchImpl: routedFetch })
+  routes["slot-cli.persona.test"] = slotCli
   const { app, slotRoot } = await createFixtureApp([issue], {
-    fetchImpl: downstream.fetchImpl,
+    fetchImpl: routedFetch,
   })
   await createSlot(slotRoot, "slot-cli")
 
@@ -478,8 +513,5 @@ Deno.test("runCliSession reuses the same ACP session lifecycle without HTTP", as
   assert.equal(messages[0].result.protocolVersion, 1)
   assert.equal(messages.at(-1)?.result.stopReason, "end_turn")
   assert.match(JSON.stringify(messages), /PLAN-705/)
-  assert.deepEqual(
-    downstream.calls.map((call) => call.method),
-    ["initialize", "session/new", "session/prompt"],
-  )
+  assert.match(JSON.stringify(messages), /oracle PASS 2\/2/)
 })

@@ -37,8 +37,11 @@ Each fixture issue body must contain an `ACP Task Spec` block:
   "taskType": "recon",
   "personas": ["apac-slot-07"],
   "instructions": "Run a bounded recon pass",
+  "oracle": {
+    "expectedSubstrings": ["Fixture Target", "reflected-search-param"]
+  },
   "target": {
-    "url": "https://fixture.test/recon",
+    "url": "https://range-fixture.tidelands.dev/recon",
     "method": "GET",
     "expectedTitle": "Fixture Target"
   },
@@ -54,6 +57,8 @@ Supported `taskType` values in this spike:
 - `exploit`
 
 At most 3 personas are allowed for one task.
+
+For `PLAN-398`, the oracle is intentionally simple: the downstream agent summary must contain each string listed in `oracle.expectedSubstrings`. That score is written back as `oracle PASS ...` or `oracle FAIL ...`.
 
 ## Persona slot layout
 
@@ -83,6 +88,8 @@ ACP_URL=https://apac-slot-07.persona.tidelands.dev/acp
 TZ=Australia/Sydney
 PROXY_URL=https://proxy.example.test
 ```
+
+Test-mode slots can declare `SLOT_MODE=test` (or `mode: test` in `network.json`). In test mode, `ACP_URL` stays required, but `TZ` and `PROXY_URL` are no longer required because fingerprint engineering is skipped.
 
 ## Runtime
 
