@@ -2,14 +2,18 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import AnalystCallout from '../components/AnalystCallout';
-import ArchiveEntry from '../components/ArchiveEntry';
 import CaseNode from '../components/CaseNode';
 import EpistemicFrame from '../components/EpistemicFrame';
 import EvidenceCard from '../components/EvidenceCard';
 import InlineFigure from '../components/InlineFigure';
 import PullQuote from '../components/PullQuote';
 import SectionBreak from '../components/SectionBreak';
-import WatchlistPanel from '../components/WatchlistPanel';
+import { EditorialTopbar } from '../components/EditorialTopbar';
+import { EditorialSidebar } from '../components/EditorialSidebar';
+import { ArchiveSection } from '../components/ArchiveSection';
+import { ComparisonNotesSection } from '../components/ComparisonNotesSection';
+import { SynthesisSection } from '../components/SynthesisSection';
+import { EditorialFooter } from '../components/EditorialFooter';
 
 import {
 	analystCalloutContent,
@@ -66,57 +70,8 @@ const DossierStep = ({ steps }: { steps: StepFlags }) => (
 	<div className="editorial-page">
 		<div className="editorial-grain" aria-hidden="true" />
 
-		<header className="editorial-topbar">
-			<div className="editorial-topbar__inner">
-				<div className="editorial-topbar__group">
-					<a className="editorial-topbar__brand" href="/now">
-						jungle.roaring.wave
-					</a>
-					<nav className="editorial-nav" aria-label="Primary dossier sections">
-						{topNavItems.map((item) => (
-							<a
-								key={item.label}
-								href={item.href}
-								className={item.active ? 'is-active' : undefined}
-							>
-								{item.label}
-							</a>
-						))}
-					</nav>
-				</div>
-				<div className="editorial-topbar__actions">
-					<a className="editorial-pdf-link" href="/now">
-						Now page
-					</a>
-				</div>
-			</div>
-		</header>
-
-		<aside className="editorial-sidebar" aria-label="Dossier shortcuts">
-			<div className="editorial-sidebar__inner">
-				<div className="editorial-sidebar__brand">
-					<span className="editorial-sidebar__brand-mark">JRW</span>
-					<span className="editorial-sidebar__ref">Ref: PLAN-26 v3.5</span>
-				</div>
-				<nav className="editorial-sidebar__nav" aria-label="Section shortcuts">
-					{sideRailItems.map((item) => (
-						<a
-							key={item.label}
-							href={item.href}
-							className={item.active ? 'is-active' : undefined}
-						>
-							<span
-								className="editorial-sidebar__icon material-symbols-outlined"
-								aria-hidden="true"
-							>
-								{item.icon}
-							</span>
-							<span>{item.label}</span>
-						</a>
-					))}
-				</nav>
-			</div>
-		</aside>
+		<EditorialTopbar navItems={topNavItems} />
+		<EditorialSidebar navItems={sideRailItems} />
 
 		<main className="editorial-main">
 			{steps.frame ? (
@@ -195,107 +150,19 @@ const DossierStep = ({ steps }: { steps: StepFlags }) => (
 				</div>
 			) : null}
 
-			{steps.archive ? (
-				<section className="editorial-section archive-section">
-					<div className="editorial-container archive-section__grid">
-						<div className="archive-section__intro">
-							<h2 className="archive-section__title">Comparative Baselines</h2>
-							<p className="archive-section__eyebrow">
-								Historical precedent, red-team warning, forecast layer.
-							</p>
-							<div className="archive-section__copy">
-								<p>
-									A sequence like this only becomes durable if it survives comparison. That
-									means looking for both historical forms that make it more plausible and
-									warning labels that make overreach easier to spot.
-								</p>
-								<p>
-									The goal is not to flatten everything into one chain. The goal is to locate
-									where the argument gains traction, where it starts flattering itself, and
-									where it can be forced into real questions.
-								</p>
-							</div>
-						</div>
-						<div className="archive-section__list">
-							{archiveEntries.map((entry) => (
-								<ArchiveEntry key={entry.index} {...entry} />
-							))}
-						</div>
-					</div>
-				</section>
-			) : null}
+			{steps.archive ? <ArchiveSection entries={archiveEntries} /> : null}
 
-			{steps.comparisonNotes ? (
-				<section className="editorial-section editorial-section--bordered">
-					<div className="editorial-container editorial-note-stack">
-						{comparisonNotes.map((note) => (
-							<article key={note.id} id={note.id} className="editorial-note">
-								<h3 className="editorial-note__title">{note.title}</h3>
-								<div className="editorial-note__copy">
-									{note.paragraphs.map((paragraph) => (
-										<p key={paragraph}>{paragraph}</p>
-									))}
-								</div>
-							</article>
-						))}
-					</div>
-				</section>
-			) : null}
+			{steps.comparisonNotes ? <ComparisonNotesSection notes={comparisonNotes} /> : null}
 
 			{steps.synthesis || steps.watchlist ? (
-				<section id="forecast" className="editorial-section">
-					<div className="editorial-container synthesis-section__grid">
-						{steps.synthesis ? (
-							<div className="synthesis-section__copy">
-								<h2 className="synthesis-section__title">{synthesisContent.title}</h2>
-								<div className="synthesis-copy">
-									{synthesisContent.paragraphs.map((paragraph, index) => (
-										<p
-											key={paragraph}
-											className={
-												index === synthesisContent.paragraphs.length - 1
-													? 'is-muted'
-													: undefined
-											}
-										>
-											{paragraph}
-										</p>
-									))}
-								</div>
-							</div>
-						) : null}
-						{steps.watchlist ? (
-							<div className="synthesis-section__panel">
-								<WatchlistPanel {...watchlistContent} />
-							</div>
-						) : null}
-					</div>
-				</section>
+				<SynthesisSection
+					synthesisContent={steps.synthesis ? synthesisContent : undefined}
+					watchlistContent={steps.watchlist ? watchlistContent : undefined}
+				/>
 			) : null}
 		</main>
 
-		{steps.watchlist ? (
-			<footer className="editorial-footer">
-				<div className="editorial-container editorial-footer__grid">
-					<div className="editorial-footer__copy">
-						<span className="editorial-footer__brand">jungle.roaring.wave</span>
-						<p className="editorial-footer__meta">PLAN-26 v3.5 rendered March 24, 2026.</p>
-						<p className="editorial-footer__legal">
-							This version treats the sequence as a candidate signal that must survive
-							comparison, counterargument, and future scoring before it earns anything
-							stronger than disciplined suspicion.
-						</p>
-					</div>
-					<div className="editorial-footer__links">
-						{footerLinks.map((link) => (
-							<a key={link.label} href={link.href}>
-								{link.label}
-							</a>
-						))}
-					</div>
-				</div>
-			</footer>
-		) : null}
+		{steps.watchlist ? <EditorialFooter links={footerLinks} /> : null}
 	</div>
 );
 
