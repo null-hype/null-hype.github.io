@@ -58,6 +58,9 @@ export type LinearIssue = {
 type TaskSpec = {
   blockedBy: string[]
   instructions: string
+  oracle?: {
+    expectedSubstrings: string[]
+  }
   personas: string[]
   target: {
     expectedTitle?: string
@@ -73,6 +76,7 @@ type PersonaSlot = {
   acpUrl: string
   envPath: string
   id: string
+  mode: "prod" | "test"
   networkConfigPath: string
   profileDir: string
   proxyUrl: string
@@ -406,6 +410,7 @@ function parseTaskSpec(issue: LinearIssue): TaskSpec {
     ? raw.blockedBy.map((value: unknown) => String(value).trim()).filter(Boolean)
     : []
   const target = raw.target ?? {}
+  const oracle = raw.oracle ?? {}
   const url = String(target.url ?? "").trim()
   const method = String(target.method ?? "GET").trim().toUpperCase()
   const instructions = String(raw.instructions ?? "").trim()
@@ -442,6 +447,13 @@ function parseTaskSpec(issue: LinearIssue): TaskSpec {
   return {
     blockedBy,
     instructions,
+    oracle: Array.isArray(oracle.expectedSubstrings)
+      ? {
+        expectedSubstrings: oracle.expectedSubstrings
+          .map((value: unknown) => String(value).trim())
+          .filter(Boolean),
+      }
+      : undefined,
     personas,
     target: {
       expectedTitle: target.expectedTitle ? String(target.expectedTitle) : undefined,
@@ -494,6 +506,9 @@ async function discoverPersonaSlots(slotRoot: string) {
         acpUrl: pickString(envValues.ACP_URL, network.acpUrl, network.acp_url),
         envPath,
         id: entry.name,
+        mode: pickString(envValues.SLOT_MODE, envValues.MODE, network.slotMode, network.mode).toLowerCase() === "test"
+          ? "test"
+          : "prod",
         networkConfigPath,
         profileDir,
         proxyUrl: pickString(
@@ -530,11 +545,11 @@ async function validatePersonaSlot(slot: PersonaSlot) {
     errors.push("Missing ACP_URL")
   }
 
-  if (!slot.timezone) {
+  if (slot.mode === "prod" && !slot.timezone) {
     errors.push("Missing TZ")
   }
 
-  if (!slot.proxyUrl) {
+  if (slot.mode === "prod" && !slot.proxyUrl) {
     errors.push("Missing PROXY_URL")
   }
 
@@ -716,12 +731,14 @@ function extractTitle(html: string) {
 
 function renderWriteback(plan: ConnectionPlan, resultLines: readonly string[]) {
   const joinedPersonas = plan.personas.map((persona) => persona.id).join(", ")
+  const joinedModes = Array.from(new Set(plan.personas.map((persona) => persona.mode))).join(", ")
   const targetUrl = plan.task.target.url
 
   return [
     `ACP spike run for ${plan.issue.identifier}`,
     "",
     `- Task type: ${plan.task.taskType}`,
+    `- Slot mode: ${joinedModes}`,
     `- Personas: ${joinedPersonas}`,
     `- Target: ${targetUrl}`,
     ...resultLines.map((line) => `- ${line}`),
@@ -752,6 +769,7 @@ function buildDownstreamPrompt(plan: ConnectionPlan, persona: PersonaSlot) {
     `Issue: ${plan.issue.identifier} — ${plan.issue.title}`,
     `Task type: ${plan.task.taskType}`,
     `Persona: ${persona.id}`,
+    `Slot mode: ${persona.mode}`,
     `Timezone: ${persona.timezone}`,
     `Proxy URL: ${persona.proxyUrl}`,
     `Target URL: ${plan.task.target.url}`,
@@ -772,6 +790,22 @@ function buildDownstreamPrompt(plan: ConnectionPlan, persona: PersonaSlot) {
   }
 
   return lines.join("\n")
+}
+
+function scoreOracle(task: TaskSpec, summary: string) {
+  const expectedSubstrings = task.oracle?.expectedSubstrings ?? []
+
+  if (expectedSubstrings.length === 0) {
+    return null
+  }
+
+  const missing = expectedSubstrings.filter((value) => !summary.includes(value))
+
+  return {
+    expected: expectedSubstrings.length,
+    missing,
+    passed: missing.length === 0,
+  }
 }
 
 async function postAcp(
@@ -1003,10 +1037,21 @@ async function runQueueTask(
     notifications.push(makeToolCallUpdate(session.sessionId, toolCallId, "in_progress"))
 
     const downstream = await runDownstreamPersonaSession(plan, persona, fetchImpl, config)
+    const oracle = scoreOracle(plan.task, downstream.summary)
 
     notifications.push(makeToolCallUpdate(session.sessionId, toolCallId, "completed"))
 
-    return `${persona.id}: ${downstream.stopReason}, ${downstream.summary}`
+    const pieces = [`${persona.id}: ${persona.mode}, ${downstream.stopReason}, ${downstream.summary}`]
+
+    if (oracle) {
+      pieces.push(
+        oracle.passed
+          ? `oracle PASS ${oracle.expected}/${oracle.expected}`
+          : `oracle FAIL missing ${oracle.missing.join(", ")}`,
+      )
+    }
+
+    return pieces.join(" | ")
   }
 
   try {

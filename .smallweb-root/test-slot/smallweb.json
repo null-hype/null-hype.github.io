@@ -1,0 +1,6 @@
+{
+  "publicRoutes": [
+    "/acp",
+    "/healthz"
+  ]
+}
