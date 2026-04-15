@@ -15,6 +15,10 @@ Files:
 - `admin/main.ts`: ACP-first admin surface with a `/acp` endpoint and `smallweb run` session runner
 - `admin/core.ts`: shared ACP/session orchestration, queue selection, persona-slot validation, downstream persona ACP client, and dry-run writeback logic
 - `admin/README.md`: task-spec fixture format and required slot layout for `PLAN-394`
+- `test-slot/main.ts`: minimal test-mode persona slot that exposes `/acp` and fetches a target URL on prompt
+- `test-slot/smallweb.json`: keeps the test slot public on `/acp` and `/healthz`
+- `range-fixture/main.ts`: deterministic public range target for the first `PLAN-398` loop
+- `range-fixture/smallweb.json`: exposes the fixture surface on `/`, `/recon`, and `/healthz`
 - `linear-agent/smallweb.json`: keeps the Linear receiver private while leaving `/healthz` and `/webhooks/**` public
 - `linear-agent/main.ts`: Smallweb-native Linear webhook ingress with runtime logging, optional activity posting, and Jules dispatch
 - `linear-agent/data/`: append-only runtime JSONL logs for deliveries, activities, notifications, and errors
@@ -65,6 +69,12 @@ export ADMIN_WRITEBACK_MODE=dry-run
 
 `admin` now exposes a minimal ACP-flavored JSON-RPC surface at `/acp` and uses the same session lifecycle for `smallweb run admin ...`. Queue selection is scoped to Planning issues labeled `test`.
 
+`PLAN-398` adds a minimal test-mode loop to the same Smallweb root:
+
+- `test-slot` is the disposable persona app for `mode=test`
+- `range-fixture` is the deterministic target/oracle surface for the first fast loop
+- `admin` now scores test-mode runs by checking downstream summaries against `oracle.expectedSubstrings`
+
 Local smoke test shape:
 
 ```sh
@@ -75,6 +85,8 @@ npm run smallweb:start
 Expected behavior:
 
 - `http://127.0.0.1:7777/healthz` with `Host: admin.tidelands.dev` returns `200`
+- `http://127.0.0.1:7777/healthz` with `Host: test-slot.tidelands.dev` returns `200`
+- `http://127.0.0.1:7777/healthz` with `Host: range-fixture.tidelands.dev` returns `200`
 - `http://127.0.0.1:7777/healthz` with `Host: linear-agent.tidelands.dev` returns `200`
 - `http://127.0.0.1:7777/healthz` with `Host: jules.tidelands.dev` returns `200`
 - `POST /webhooks/linear` on `Host: linear-agent.tidelands.dev` accepts signed Linear deliveries
