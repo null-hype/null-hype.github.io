@@ -1,6 +1,7 @@
 {
   "private": true,
   "publicRoutes": [
+    "/acp",
     "/healthz",
     "/readyz"
   ]

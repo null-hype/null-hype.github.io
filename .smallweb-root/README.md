@@ -12,7 +12,9 @@ Files:
 
 - `.smallweb/config.json`: domain, OIDC issuer, and app-level allowlist
 - `admin/smallweb.json`: marks the app as private while keeping `/healthz` and `/readyz` public
-- `admin/main.ts`: minimal admin surface that reads the `Remote-Email` header after auth
+- `admin/main.ts`: ACP-first admin surface with a `/acp` endpoint and `smallweb run` session runner
+- `admin/core.ts`: shared ACP/session orchestration, queue selection, persona-slot validation, and dry-run writeback logic
+- `admin/README.md`: task-spec fixture format and required slot layout for `PLAN-394`
 - `linear-agent/smallweb.json`: keeps the Linear receiver private while leaving `/healthz` and `/webhooks/**` public
 - `linear-agent/main.ts`: Smallweb-native Linear webhook ingress with runtime logging, optional activity posting, and Jules dispatch
 - `linear-agent/data/`: append-only runtime JSONL logs for deliveries, activities, notifications, and errors
@@ -50,6 +52,18 @@ export LINEAR_OAUTH_ACCESS_TOKEN=replace-with-your-app-oauth-access-token
 ```
 
 `LINEAR_OAUTH_ACCESS_TOKEN` is optional. Without it, the webhook app stays in dry-run mode and records would-be activities locally instead of posting them back into Linear.
+
+Additional environment needed for the admin ACP spike:
+
+```sh
+export TIDELANE_SLOT_ROOT=/absolute/path/to/tidelane-slots
+export LINEAR_TEST_LABEL=test
+export ADMIN_LINEAR_TEAM=Planning
+export ADMIN_RUNTIME_DIR=/absolute/path/to/admin-runtime
+export ADMIN_WRITEBACK_MODE=dry-run
+```
+
+`admin` now exposes a minimal ACP-flavored JSON-RPC surface at `/acp` and uses the same session lifecycle for `smallweb run admin ...`. Queue selection is scoped to Planning issues labeled `test`.
 
 Local smoke test shape:
 
