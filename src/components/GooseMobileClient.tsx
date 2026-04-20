@@ -1,6 +1,69 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useAcpClient, type NotificationEvent } from 'use-acp';
+import {
+	ClientSideConnection,
+	type Agent,
+	type AgentCapabilities,
+	type Client,
+	type RequestPermissionRequest,
+	type RequestPermissionResponse,
+	type SessionNotification,
+	type Stream,
+} from '@agentclientprotocol/sdk';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './GooseMobileClient.css';
+
+type ConnectionState = {
+	error?: string;
+	status: 'disconnected' | 'connecting' | 'connected' | 'error';
+	url?: string;
+};
+
+type NotificationEvent = {
+	id: string;
+	timestamp: number;
+} & (
+	| {
+			data: SessionNotification;
+			type: 'session_notification';
+	  }
+	| {
+			data: ConnectionState;
+			type: 'connection_change';
+	  }
+	| {
+			data: Error;
+			type: 'error';
+	  }
+);
+
+type PendingPermission = RequestPermissionRequest & {
+	deferredId: string;
+};
+
+type PendingPermissionResolver = {
+	reject: (error: Error) => void;
+	resolve: (response: RequestPermissionResponse) => void;
+};
+
+type TextAcpClientOptions = {
+	autoConnect?: boolean;
+	clientOptions?: Partial<Client>;
+	wsUrl: string;
+};
+
+type TextAcpClientReturn = {
+	activeSessionId: string | null;
+	agent: Agent | null;
+	agentCapabilities: AgentCapabilities | null;
+	clearNotifications: () => void;
+	connect: () => Promise<void>;
+	connectionState: ConnectionState;
+	disconnect: () => void;
+	isSessionLoading: boolean;
+	notifications: NotificationEvent[];
+	pendingPermission: PendingPermission | null;
+	rejectPermission: (error: Error) => void;
+	resolvePermission: (response: RequestPermissionResponse) => void;
+};
 
 type PermissionOption = {
 	kind: string;
@@ -57,6 +120,24 @@ type TerminalMessage = {
 	role: string;
 	text: string;
 };
+
+function getErrorMessage(error: unknown) {
+	if (error instanceof Error) {
+		return error.message;
+	}
+
+	if (error && typeof error === 'object') {
+		const record = error as Record<string, unknown>;
+		const code = typeof record.code === 'number' ? ` ${record.code}` : '';
+		const message = typeof record.message === 'string' ? record.message : undefined;
+
+		if (message) {
+			return `ACP error${code}: ${message}`;
+		}
+	}
+
+	return String(error);
+}
 
 function getContentText(content: unknown) {
 	if (!content || typeof content !== 'object') {
@@ -134,8 +215,15 @@ function resolveSessionWebSocketUrl(wsUrl: string, sessionApiUrl: string) {
 	}
 
 	try {
-		const baseUrl = isAbsoluteHttpUrl(sessionApiUrl) ? sessionApiUrl : window.location.href;
+		const sessionApiIsAbsolute = isAbsoluteHttpUrl(sessionApiUrl);
+		const baseUrl = sessionApiIsAbsolute ? sessionApiUrl : window.location.href;
 		const url = new URL(wsUrl, baseUrl);
+
+		if (!sessionApiIsAbsolute) {
+			const browserUrl = new URL(`${url.pathname}${url.search}${url.hash}`, window.location.href);
+			browserUrl.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+			return browserUrl.toString();
+		}
 
 		if (url.protocol === 'http:') {
 			url.protocol = 'ws:';
@@ -149,6 +237,248 @@ function resolveSessionWebSocketUrl(wsUrl: string, sessionApiUrl: string) {
 	} catch (_error) {
 		return wsUrl;
 	}
+}
+
+async function websocketDataToText(data: MessageEvent['data']) {
+	if (typeof data === 'string') {
+		return data;
+	}
+
+	if (data instanceof ArrayBuffer) {
+		return new TextDecoder().decode(data);
+	}
+
+	if (data instanceof Blob) {
+		return data.text();
+	}
+
+	return String(data);
+}
+
+function createTextWebSocketStream(socket: WebSocket): Stream {
+	let bufferedText = '';
+
+	const readable = new ReadableStream({
+		start(controller) {
+			socket.addEventListener('message', (event) => {
+				void (async () => {
+					const text = await websocketDataToText(event.data);
+					bufferedText += text.endsWith('\n') ? text : `${text}\n`;
+					const lines = bufferedText.split('\n');
+					bufferedText = lines.pop() ?? '';
+
+					for (const line of lines) {
+						const trimmed = line.trim();
+
+						if (!trimmed) {
+							continue;
+						}
+
+						controller.enqueue(JSON.parse(trimmed));
+					}
+				})().catch((error: unknown) => {
+					controller.error(error);
+				});
+			});
+
+			socket.addEventListener('close', () => {
+				controller.close();
+			});
+
+			socket.addEventListener('error', () => {
+				controller.error(new Error('WebSocket connection error'));
+			});
+		},
+	}) as Stream['readable'];
+
+	const writable = new WritableStream({
+		write(message) {
+			if (socket.readyState === WebSocket.OPEN) {
+				socket.send(JSON.stringify(message));
+			}
+		},
+		close() {
+			socket.close();
+		},
+		abort() {
+			socket.close();
+		},
+	}) as Stream['writable'];
+
+	return { readable, writable };
+}
+
+function useTextAcpClient({
+	autoConnect = true,
+	clientOptions = {},
+	wsUrl,
+}: TextAcpClientOptions): TextAcpClientReturn {
+	const [connectionState, setConnectionState] = useState<ConnectionState>({ status: 'disconnected' });
+	const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+	const [agent, setAgent] = useState<Agent | null>(null);
+	const [agentCapabilities, setAgentCapabilities] = useState<AgentCapabilities | null>(null);
+	const [notifications, setNotifications] = useState<NotificationEvent[]>([]);
+	const [pendingPermission, setPendingPermission] = useState<PendingPermission | null>(null);
+	const socketRef = useRef<WebSocket | null>(null);
+	const pendingPermissionResolvers = useRef(new Map<string, PendingPermissionResolver>());
+
+	const addNotification = useCallback((notification: Omit<NotificationEvent, 'id' | 'timestamp'>) => {
+		setNotifications((current) => [
+			...current,
+			{
+				...notification,
+				id: `${Date.now()}-${Math.random()}`,
+				timestamp: Date.now(),
+			} as NotificationEvent,
+		]);
+	}, []);
+
+	const clearNotifications = useCallback(() => {
+		setNotifications([]);
+	}, []);
+
+	const disconnect = useCallback(() => {
+		socketRef.current?.close();
+		socketRef.current = null;
+		pendingPermissionResolvers.current.clear();
+		setActiveSessionId(null);
+		setAgent(null);
+		setAgentCapabilities(null);
+		setPendingPermission(null);
+		setConnectionState({ status: 'disconnected' });
+	}, []);
+
+	const resolvePermission = useCallback((response: RequestPermissionResponse) => {
+		if (!pendingPermission) {
+			return;
+		}
+
+		const resolver = pendingPermissionResolvers.current.get(pendingPermission.deferredId);
+		pendingPermissionResolvers.current.delete(pendingPermission.deferredId);
+		setPendingPermission(null);
+		resolver?.resolve(response);
+	}, [pendingPermission]);
+
+	const rejectPermission = useCallback((error: Error) => {
+		if (!pendingPermission) {
+			return;
+		}
+
+		const resolver = pendingPermissionResolvers.current.get(pendingPermission.deferredId);
+		pendingPermissionResolvers.current.delete(pendingPermission.deferredId);
+		setPendingPermission(null);
+		resolver?.reject(error);
+	}, [pendingPermission]);
+
+	const connect = useCallback(async () => {
+		if (!wsUrl) {
+			throw new Error('Missing ACP WebSocket URL');
+		}
+
+		if (socketRef.current?.readyState === WebSocket.OPEN) {
+			return;
+		}
+
+		setConnectionState({ status: 'connecting', url: wsUrl });
+
+		const socket = new WebSocket(wsUrl);
+		socketRef.current = socket;
+
+		await new Promise<void>((resolve, reject) => {
+			socket.addEventListener('open', () => {
+				setConnectionState({ status: 'connected', url: wsUrl });
+				resolve();
+			}, { once: true });
+
+			socket.addEventListener('error', () => {
+				const error = new Error('WebSocket connection error');
+				setConnectionState({ error: error.message, status: 'error', url: wsUrl });
+				reject(error);
+			}, { once: true });
+		});
+
+		socket.addEventListener('close', () => {
+			if (socketRef.current === socket) {
+				socketRef.current = null;
+				setConnectionState({ status: 'disconnected', url: wsUrl });
+			}
+		});
+
+		const baseAgent = new ClientSideConnection((): Client => ({
+			...clientOptions,
+			readTextFile: async (params) => clientOptions.readTextFile?.(params) ?? { content: '' },
+			requestPermission: (params) => {
+				const deferredId = `${Date.now()}-${Math.random()}`;
+
+				return new Promise<RequestPermissionResponse>((resolve, reject) => {
+					pendingPermissionResolvers.current.set(deferredId, { reject, resolve });
+					setPendingPermission({ ...params, deferredId });
+				});
+			},
+			sessionUpdate: async (params) => {
+				await clientOptions.sessionUpdate?.(params);
+				addNotification({ data: params, type: 'session_notification' });
+			},
+			writeTextFile: async (params) => clientOptions.writeTextFile?.(params) ?? {},
+		}), createTextWebSocketStream(socket));
+
+		const listeningAgent: Agent = {
+			...baseAgent,
+			initialize: async (params) => {
+				const response = await baseAgent.initialize(params);
+				setAgentCapabilities(response.agentCapabilities);
+				return response;
+			},
+			newSession: async (params) => {
+				const response = await baseAgent.newSession(params);
+				setActiveSessionId(response.sessionId);
+				return response;
+			},
+			prompt: async (params) => {
+				for (const prompt of params.prompt) {
+					addNotification({
+						data: {
+							sessionId: params.sessionId,
+							update: {
+								content: prompt,
+								sessionUpdate: 'user_message_chunk',
+							},
+						},
+						type: 'session_notification',
+					});
+				}
+
+				return baseAgent.prompt(params);
+			},
+		};
+
+		setAgent(listeningAgent);
+	}, [addNotification, clientOptions, wsUrl]);
+
+	useEffect(() => {
+		if (!autoConnect) {
+			return undefined;
+		}
+
+		void connect();
+
+		return disconnect;
+	}, [autoConnect, connect, disconnect]);
+
+	return {
+		activeSessionId,
+		agent,
+		agentCapabilities,
+		clearNotifications,
+		connect,
+		connectionState,
+		disconnect,
+		isSessionLoading: false,
+		notifications,
+		pendingPermission,
+		rejectPermission,
+		resolvePermission,
+	};
 }
 
 export function GooseMobileClientView({
@@ -233,6 +563,7 @@ export function GooseMobileClientView({
 						<li
 							key={`${message.role}-${message.text}-${index}`}
 							className={`goose-mobile-terminal-line goose-mobile-terminal-line-${message.role}`}
+							data-message-role={message.role}
 						>
 							{message.text}
 						</li>
@@ -312,7 +643,7 @@ export default function GooseMobileClient({
 		notifications,
 		pendingPermission,
 		resolvePermission,
-	} = useAcpClient({
+	} = useTextAcpClient({
 		autoConnect: false,
 		clientOptions: {
 			readTextFile: async () => ({ content: '' }),
@@ -362,7 +693,7 @@ export default function GooseMobileClient({
 		})()
 			.catch((error: unknown) => {
 				setBootstrapState('error');
-				setErrorMessage(error instanceof Error ? error.message : String(error));
+				setErrorMessage(getErrorMessage(error));
 			})
 			.finally(() => {
 				bootstrapping.current = false;
@@ -376,7 +707,7 @@ export default function GooseMobileClient({
 
 		connectAfterSession.current = false;
 		void connect().catch((error: unknown) => {
-			setErrorMessage(error instanceof Error ? error.message : String(error));
+			setErrorMessage(getErrorMessage(error));
 		});
 	}, [connect, connectionState.status, wsUrl]);
 
@@ -401,7 +732,7 @@ export default function GooseMobileClient({
 			setWsUrl(resolveSessionWebSocketUrl(body.wsUrl, sessionApiUrl));
 			setSessionCwd(cwd ?? body.cwd);
 		} catch (error) {
-			setErrorMessage(error instanceof Error ? error.message : String(error));
+			setErrorMessage(getErrorMessage(error));
 		} finally {
 			setIsBusy(false);
 		}
@@ -427,7 +758,7 @@ export default function GooseMobileClient({
 				sessionId: activeSessionId,
 			});
 		} catch (error) {
-			setErrorMessage(error instanceof Error ? error.message : String(error));
+			setErrorMessage(getErrorMessage(error));
 		} finally {
 			setIsBusy(false);
 		}
@@ -443,7 +774,7 @@ export default function GooseMobileClient({
 		}
 
 		void connect().catch((error: unknown) => {
-			setErrorMessage(error instanceof Error ? error.message : String(error));
+			setErrorMessage(getErrorMessage(error));
 		});
 	};
 
