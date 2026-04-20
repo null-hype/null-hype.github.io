@@ -51,14 +51,14 @@ export class TidelaneInfra {
    */
   @func()
   async plan(
-    src: Directory,
-    cloudflareToken: Secret,
-    sshPublicKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    deploymentSlot = "blue",
+    @argument({ defaultPath: "." }) src: Directory,
+    cloudflareToken?: Secret,
+    sshPublicKey?: Secret,
+    backendBucket = process.env.BACKEND_BUCKET ?? "",
+    backendPrefix = process.env.BACKEND_PREFIX ?? "",
+    gcpProject = process.env.GCP_PROJECT ?? "",
+    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
+    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -67,6 +67,8 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
       backendBucket,
       backendPrefix,
@@ -81,7 +83,7 @@ export class TidelaneInfra {
       manageZoneSettings,
     })
 
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), token, pubKey, config)
       .withExec(["terraform", "plan", ...this.tfVars(config)])
       .stdout()
   }
@@ -91,14 +93,14 @@ export class TidelaneInfra {
    */
   @func()
   async outputs(
-    src: Directory,
-    cloudflareToken: Secret,
-    sshPublicKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    deploymentSlot = "blue",
+    @argument({ defaultPath: "." }) src: Directory,
+    cloudflareToken?: Secret,
+    sshPublicKey?: Secret,
+    backendBucket = process.env.BACKEND_BUCKET ?? "",
+    backendPrefix = process.env.BACKEND_PREFIX ?? "",
+    gcpProject = process.env.GCP_PROJECT ?? "",
+    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
+    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -107,6 +109,8 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
       backendBucket,
       backendPrefix,
@@ -121,7 +125,7 @@ export class TidelaneInfra {
       manageZoneSettings,
     })
 
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), token, pubKey, config)
       .withExec(["terraform", "output", "-json"])
       .stdout()
   }
@@ -132,15 +136,15 @@ export class TidelaneInfra {
    */
   @func()
   async deploy(
-    src: Directory,
-    cloudflareToken: Secret,
-    sshPublicKey: Secret,
-    sshPrivateKey: Secret,
-    openrouterApiKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
+    @argument({ defaultPath: "." }) src: Directory,
+    cloudflareToken?: Secret,
+    sshPublicKey?: Secret,
+    sshPrivateKey?: Secret,
+    openrouterApiKey?: Secret,
+    backendBucket = process.env.BACKEND_BUCKET ?? "",
+    backendPrefix = process.env.BACKEND_PREFIX ?? "",
+    gcpProject = process.env.GCP_PROJECT ?? "",
+    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
     @argument({ defaultPath: "..", ignore: [
       ".git",
       ".tmp-smallweb-mutagen",
@@ -151,8 +155,8 @@ export class TidelaneInfra {
       "node_modules",
     ] }) repo: Directory,
     @argument({ defaultPath: "../.smallweb-root", ignore: [".vscode/"] }) smallwebRoot: Directory,
-    adminAuthorizedEmails = "",
-    deploymentSlot = "blue",
+    adminAuthorizedEmails = process.env.ADMIN_AUTHORIZED_EMAILS ?? "",
+    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -162,6 +166,10 @@ export class TidelaneInfra {
     publicGooseSessionApiUrl = "",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
+    const privKey = sshPrivateKey ?? this.resolveSecret("SSH_PRIVATE_KEY", "ssh-private-key")
+    const openrouterKey = openrouterApiKey ?? this.resolveSecret("OPENROUTER_API_KEY", "openrouter-api-key")
     const config = this.deploymentConfig({
       backendBucket,
       backendPrefix,
@@ -181,8 +189,8 @@ export class TidelaneInfra {
     const outputsJson = await this.tfInit(
       src,
       this.resolveGcpCredentials(gcpCredentials),
-      cloudflareToken,
-      sshPublicKey,
+      token,
+      pubKey,
       config,
     )
       .withEnvVariable("DAGGER_TERRAFORM_APPLY_NONCE", applyNonce)
@@ -204,9 +212,9 @@ export class TidelaneInfra {
       src.file("scripts/bootstrap.sh"),
       ipv4,
       config.domain,
-      sshPrivateKey,
-      cloudflareToken,
-      openrouterApiKey,
+      privKey,
+      token,
+      openrouterKey,
     )
 
     return `${outputsJson.trim()}\n\n${runtimeLog}`
@@ -217,14 +225,14 @@ export class TidelaneInfra {
    */
   @func()
   async destroy(
-    src: Directory,
-    cloudflareToken: Secret,
-    sshPublicKey: Secret,
-    backendBucket: string,
-    backendPrefix: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    deploymentSlot = "blue",
+    @argument({ defaultPath: "." }) src: Directory,
+    cloudflareToken?: Secret,
+    sshPublicKey?: Secret,
+    backendBucket = process.env.BACKEND_BUCKET ?? "",
+    backendPrefix = process.env.BACKEND_PREFIX ?? "",
+    gcpProject = process.env.GCP_PROJECT ?? "",
+    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
+    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -233,6 +241,8 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
       backendBucket,
       backendPrefix,
@@ -247,7 +257,7 @@ export class TidelaneInfra {
       manageZoneSettings,
     })
 
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), cloudflareToken, sshPublicKey, config)
+    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), token, pubKey, config)
       .withEnvVariable("DAGGER_TERRAFORM_DESTROY_NONCE", new Date().toISOString())
       .withExec(["terraform", "destroy", "-auto-approve", ...this.tfVars(config)])
       .stdout()
@@ -314,23 +324,25 @@ echo "Results: $PASS passed, $FAIL failed"
    */
   @func()
   async check(
-    src: Directory,
-    cloudflareToken: Secret,
-    sshPublicKey: Secret,
-    backendBucket: string,
-    gcpProject: string,
-    cloudflareZoneId: string,
-    backendPrefixRoot = "tidelands-test",
+    @argument({ defaultPath: "." }) src: Directory,
+    cloudflareToken?: Secret,
+    sshPublicKey?: Secret,
+    backendBucket = process.env.BACKEND_BUCKET ?? "",
+    gcpProject = process.env.GCP_PROJECT ?? "",
+    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
+    backendPrefixRoot = process.env.BACKEND_PREFIX_ROOT ?? "tidelands-test",
     preserveOnFailure = false,
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
     let ctr = dag.container()
       .from("golang:1.22-bookworm")
       .withDirectory("/workspace", src)
-      .withSecretVariable("CLOUDFLARE_API_TOKEN", cloudflareToken)
-      .withSecretVariable("TF_VAR_cloudflare_api_token", cloudflareToken)
-      .withSecretVariable("TF_VAR_ssh_public_key", sshPublicKey)
+      .withSecretVariable("CLOUDFLARE_API_TOKEN", token)
+      .withSecretVariable("TF_VAR_cloudflare_api_token", token)
+      .withSecretVariable("TF_VAR_ssh_public_key", pubKey)
 
     if (resolvedGcpCredentials !== null) {
       ctr = ctr.withSecretVariable("GOOGLE_CREDENTIALS", resolvedGcpCredentials)
@@ -617,6 +629,12 @@ systemctl --user --no-pager --plain status smallweb | sed -n '1,20p'
       ...input,
       backendPrefix: input.backendPrefix.replaceAll("{slot}", input.deploymentSlot),
     }
+  }
+
+  private resolveSecret(envVar: string, name: string): Secret {
+    const val = process.env[envVar]
+    if (!val?.trim()) throw new Error(`${envVar} environment variable is not set`)
+    return dag.setSecret(name, val)
   }
 
   private resolveGcpCredentials(gcpCredentials?: Secret): Secret | null {
