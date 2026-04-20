@@ -74,24 +74,112 @@ Non-secret config passed as plain args:
 
 ---
 
+## Secrets management with Proton Pass
+
+Secrets are stored in a Proton Pass vault. `infra/.env` contains only vault
+references — no plaintext values — and is safe to commit.
+
+### One-time vault setup
+
+Create a vault named **Tidelane** (or any name; update the references in
+`infra/.env` to match). Add the following items:
+
+| Item title            | Field name        | Contents                                   |
+|-----------------------|-------------------|--------------------------------------------|
+| `Cloudflare`          | `api_token`       | Cloudflare API token                       |
+| `SSH-tidelane`        | `public_key`      | Full contents of `~/.ssh/tidelane.pub`     |
+| `SSH-tidelane`        | `private_key`     | Full contents of `~/.ssh/tidelane`         |
+| `GCP-service-account` | `credential_file` | Full contents of the GCP service account JSON file |
+| `OpenRouter`          | `api_key`         | OpenRouter API key                         |
+
+`SSH_PUBLIC_KEY` and `SSH_PRIVATE_KEY` store key **content** (full text of the
+key file), not file paths.
+
+### Configure `infra/.env`
+
+`infra/.env` holds vault references for all secrets plus plaintext values for
+non-secret config. Edit the non-secret section directly:
+
+```sh
+BACKEND_BUCKET=my-tf-state-bucket
+BACKEND_PREFIX=tidelands-dev/{slot}/terraform.tfstate
+GCP_PROJECT=my-gcp-project-id
+CLOUDFLARE_ZONE_ID=abc123def456
+DEPLOYMENT_SLOT=green
+```
+
+Verify it is not swept up by the root `.gitignore`:
+
+```sh
+git check-ignore -v infra/.env
+```
+
+It should print nothing (not ignored). If it does match, the `!infra/.env`
+negation in `.gitignore` should fix it.
+
+### Running dagger via pass-cli
+
+The Dagger module reads all secrets and config from environment variables when
+they are not passed explicitly. `pass-cli run` resolves the vault references
+in `infra/.env` and injects them before dagger starts.
+
+**Interactive session (enter once, call any function):**
+
+```sh
+pass-cli run --env-file infra/.env -- dagger -m infra/
+```
+
+**One-shot invocations:**
+
+```sh
+# Plan (non-mutating)
+pass-cli run --env-file infra/.env -- dagger call -m infra/ plan
+
+# Deploy (production-mutating)
+pass-cli run --env-file infra/.env -- dagger call -m infra/ deploy
+
+# Destroy (production-mutating) — run with care
+pass-cli run --env-file infra/.env -- dagger call -m infra/ destroy
+
+# Mutagen sync (local dev)
+pass-cli run --env-file infra/.env -- ./infra/scripts/start-smallweb-mutagen-sync.sh
+```
+
+### Smoke-test vault resolution
+
+Before running deploy for the first time, confirm `pass-cli` is resolving
+secrets correctly:
+
+```sh
+pass-cli run --env-file infra/.env -- bash -c 'echo "CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:0:6}..."'
+```
+
+If the SSH private key contains newlines and is being stripped by `pass-cli`,
+store it base64-encoded in the vault and decode it before use.
+
+### Rotating secrets
+
+Update the item in the **Tidelane** vault. No changes to `infra/.env` are
+needed — the reference stays the same, only the resolved value changes.
+
+---
+
 ## Normal workflows
 
 ### Plan (non-mutating)
 
 Preview what Terraform would change. Safe to run at any time.
 
+With env loaded via `pass-cli run --env-file infra/.env`:
+
 ```sh
-dagger call plan \
-  --src infra                                      \
-  --gcp-credentials file:$HOME/.config/gcp/sa.json \
-  --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
-  --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
-  --backend-bucket my-tf-state-bucket               \
-  --backend-prefix 'tidelands-dev/{slot}/terraform.tfstate' \
-  --gcp-project my-gcp-project-id                   \
-  --cloudflare-zone-id abc123def456                 \
-  --deployment-slot green                           \
-  --manage-direct-dns-records=false
+dagger call -m infra/ plan
+```
+
+Or with explicit overrides (any arg can be passed to override the env default):
+
+```sh
+dagger call -m infra/ plan --deployment-slot green --manage-direct-dns-records=false
 ```
 
 ### Check (ephemeral, net non-mutating)
@@ -100,14 +188,7 @@ Runs the Terratest suite. Creates and destroys isolated `tidelane-test-<hex>`
 resources. Never touches production state.
 
 ```sh
-dagger call check \
-  --src infra                                      \
-  --gcp-credentials file:$HOME/.config/gcp/sa.json \
-  --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
-  --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
-  --backend-bucket my-tf-state-bucket               \
-  --gcp-project my-gcp-project-id                   \
-  --cloudflare-zone-id abc123def456
+dagger call -m infra/ check
 ```
 
 To preserve test resources on failure (for debugging):
@@ -125,20 +206,11 @@ Provisions infrastructure and bootstraps smallweb. Runs `terraform apply` then
 SSHs into the instance.
 
 ```sh
-dagger call deploy \
-  --src infra                                      \
-  --gcp-credentials file:$HOME/.config/gcp/sa.json \
-  --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
-  --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
-  --ssh-private-key file:$HOME/.ssh/tidelane         \
-  --openrouter-api-key env:OPENROUTER_API_KEY       \
-  --backend-bucket my-tf-state-bucket               \
-  --backend-prefix 'tidelands-dev/{slot}/terraform.tfstate' \
-  --gcp-project my-gcp-project-id                   \
-  --cloudflare-zone-id abc123def456                 \
-  --deployment-slot green                           \
-  --manage-direct-dns-records=false
+dagger call -m infra/ deploy
 ```
+
+Pass `--manage-direct-dns-records=true` only for the slot that should receive
+live Cloudflare apex/wildcard traffic:
 
 Outputs JSON from `terraform output` on success, then builds the Astro site,
 uploads the Smallweb bundle, configures Goose, and starts Smallweb behind Caddy.
@@ -170,17 +242,7 @@ Tears down all Terraform-managed resources including the instance, firewall
 rules, and Cloudflare DNS records.
 
 ```sh
-dagger call destroy \
-  --src infra                                      \
-  --gcp-credentials file:$HOME/.config/gcp/sa.json \
-  --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
-  --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
-  --backend-bucket my-tf-state-bucket               \
-  --backend-prefix 'tidelands-dev/{slot}/terraform.tfstate' \
-  --gcp-project my-gcp-project-id                   \
-  --cloudflare-zone-id abc123def456                 \
-  --deployment-slot green                           \
-  --manage-direct-dns-records=false
+dagger call -m infra/ destroy
 ```
 
 ---
