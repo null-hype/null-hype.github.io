@@ -35,7 +35,7 @@ variable "deployment_slot" {
 variable "machine_type" {
   description = "GCE machine type"
   type        = string
-  default     = "e2-small"
+  default     = "e2-medium"
 }
 
 variable "cloudflare_api_token" {
@@ -81,6 +81,12 @@ variable "manage_zone_settings" {
 
 variable "manage_direct_dns_records" {
   description = "Whether this state should own the apex and wildcard A records directly. Disable when provisioning independent blue/green origins behind a load balancer."
+  type        = bool
+  default     = true
+}
+
+variable "manage_slot_origin_dns_record" {
+  description = "Whether this state should own the DNS-only per-slot origin record."
   type        = bool
   default     = true
 }

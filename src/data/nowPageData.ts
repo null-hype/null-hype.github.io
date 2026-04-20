@@ -9,6 +9,31 @@ export interface NowPageData {
 	readonly isFavorited: boolean;
 }
 
+function isPublishedMode() {
+	return import.meta.env.PROD;
+}
+
+function normalizeStatus(value: string | undefined) {
+	return (value ?? '').trim().toLowerCase();
+}
+
+function normalizeHealth(value: string | undefined) {
+	return (value ?? '').trim().toLowerCase();
+}
+
+function getVisibleProjects(projectEntries: readonly CollectionEntry<'projects'>[]) {
+	return projectEntries.filter((project) => {
+		const status = normalizeStatus(project.data.Status);
+		const health = normalizeHealth(project.data.Health);
+
+		if (isPublishedMode()) {
+			return status === 'in progress' && health === 'on track';
+		}
+
+		return status !== 'completed' && status !== 'archived' && status !== 'canceled';
+	});
+}
+
 function formatDate(value: string) {
 	return new Intl.DateTimeFormat('en-US', {
 		dateStyle: 'long',
@@ -86,12 +111,13 @@ function getLastUpdatedLabel(projectEntries: readonly CollectionEntry<'projects'
 function buildMeta(activeProjects: readonly CollectionEntry<'projects'>[]): NowPageMeta {
 	const projectCount = activeProjects.length;
 	const projectLabel = projectCount === 1 ? 'project' : 'projects';
+	const visibilityLabel = isPublishedMode() ? 'release-ready' : 'working';
 
 	return {
 		lastUpdated: getLastUpdatedLabel(activeProjects),
 		title: 'Projects',
 		intro: [],
-		footer: `${projectCount} in-progress ${projectLabel}`,
+		footer: `${projectCount} ${visibilityLabel} ${projectLabel}`,
 	};
 }
 
@@ -100,11 +126,15 @@ function buildSections(
 	issueEntries: readonly CollectionEntry<'issues'>[],
 ): readonly ProjectLandingSectionData[] {
 	if (activeProjects.length === 0) {
+		const emptyMessage = isPublishedMode()
+			? 'No release-ready projects are currently in this snapshot.'
+			: 'No working projects are currently available in this snapshot.';
+
 		return [
 			{
 				id: 'projects',
 				title: 'Projects',
-				emptyMessage: 'No active projects are currently published.',
+				emptyMessage,
 				items: [],
 			},
 		];
@@ -155,7 +185,7 @@ function buildSections(
 export async function getNowPageDataFromCollections(): Promise<NowPageData> {
 	const projectEntries = await getCollection('projects');
 	const issueEntries = await getCollection('issues');
-	const activeProjects = projectEntries.filter((project) => project.data.Status === 'In Progress');
+	const activeProjects = getVisibleProjects(projectEntries);
 
 	return {
 		meta: buildMeta(activeProjects),
@@ -170,7 +200,7 @@ export function createUnavailableNowPageData(): NowPageData {
 			lastUpdated: '',
 			title: 'Projects',
 			intro: [],
-			footer: '0 in-progress projects',
+			footer: '0 snapshot projects',
 		},
 		sections: [
 			{

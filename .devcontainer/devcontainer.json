@@ -13,7 +13,6 @@
   "overrideFeatureInstallOrder": [
     "ghcr.io/devcontainers/features/docker-in-docker",
     "./features/src/operator-tools",
-    "ghcr.io/devcontainers/features/desktop-lite",
     "ghcr.io/devcontainers/features/sshd"
   ],
   "features": {
@@ -25,15 +24,13 @@
       "smallwebVersion": "0.28.4",
       "installGcloud": true
     },
-    "ghcr.io/devcontainers/features/desktop-lite:1": {},
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/sshd:1": {
       "version": "latest"
     }
   },
   "forwardPorts": [
-    4321,
-    6080
+    4321
   ],
   "secrets": {
     "ANTHROPIC_API_KEY": {
@@ -56,9 +53,6 @@
   "portsAttributes": {
     "4321": {
       "label": "astro"
-    },
-    "6080": {
-      "label": "desktop"
     }
   },
   "customizations": {

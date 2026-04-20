@@ -38,6 +38,15 @@ const config: StorybookConfig = {
       server: {
         ...config.server,
         proxy: {
+          '/api/goose-sessions': {
+            target: 'http://127.0.0.1:8080',
+            changeOrigin: true,
+          },
+          '/acp/ws': {
+            target: 'ws://127.0.0.1:8080',
+            changeOrigin: false,
+            ws: true,
+          },
           '/api': {
             target: 'http://localhost:4321',
             changeOrigin: true,

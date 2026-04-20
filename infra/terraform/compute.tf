@@ -41,7 +41,6 @@ resource "google_compute_instance" "smallweb" {
 
   # Minimal scope — this instance serves HTTP only, no GCP API calls needed.
   service_account {
-    email  = "default"
     scopes = ["https://www.googleapis.com/auth/logging.write"]
   }
 
@@ -67,6 +66,21 @@ resource "google_compute_firewall" "smallweb_web" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+  target_tags   = [local.slot_network_tag]
+}
+
+# Dev workstation SSH: container SSHD on port 2222 for Zed/VS Code Remote.
+# Same source restrictions as host SSH.
+resource "google_compute_firewall" "smallweb_dev_ssh" {
+  name    = "${local.slot_instance_name}-dev-ssh"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["2222"]
+  }
+
+  source_ranges = var.ssh_source_ranges
   target_tags   = [local.slot_network_tag]
 }
 

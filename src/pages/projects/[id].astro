@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { marked } from 'marked';
 import '../../styles/editorial.css';
 import AnalystCallout from '../../components/AnalystCallout';
 import ArchiveEntry from '../../components/ArchiveEntry';
@@ -77,6 +78,18 @@ function formatDate(value: string | undefined) {
 	}).format(new Date(value));
 }
 
+function stripMarkdown(text: string): string {
+	return text
+		.replace(/\r\n/g, '\n')
+		.replace(/^#{1,6}\s+/gm, '')
+		.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+		.replace(/\*\*([^*]+)\*\*/g, '$1')
+		.replace(/\*([^*]+)\*/g, '$1')
+		.replace(/`([^`]+)`/g, '$1')
+		.replace(/^[*-]\s+/gm, '')
+		.trim();
+}
+
 const shortRef = (project.data.ID?.slice(0, 8) ?? '--------').toUpperCase();
 const statusLabel =
 	project.data.Status === 'In Progress'
@@ -89,15 +102,16 @@ const statusLabel =
 const entryCount = projectIssues.length;
 const entryLabel = entryCount === 1 ? 'Entry' : 'Entries';
 const latestUpdate = project.data['Latest Update']
-	? cleanUpdateText(project.data['Latest Update'])
+	? stripMarkdown(cleanUpdateText(project.data['Latest Update']))
 	: '';
 const updateDate = formatDate(project.data['Latest Update Date'] || project.data['Updated At']);
-const descParagraphs = project.data.Description
-	? project.data.Description
-			.split('\n\n')
-			.map((paragraph: string) => paragraph.trim())
-			.filter(Boolean)
-	: [];
+const descFirstParagraph = project.data.Description
+	? (project.data.Description.split('\n\n')[0]?.trim() || '')
+	: '';
+const descRemainder = project.data.Description
+	? project.data.Description.slice(descFirstParagraph.length).trim()
+	: '';
+const descRemainderHtml = descRemainder ? (marked.parse(descRemainder) as string) : '';
 const metadataBits = [
 	statusLabel,
 	project.data.Priority && project.data.Priority !== 'No priority' ? project.data.Priority : '',
@@ -105,7 +119,9 @@ const metadataBits = [
 	updateDate,
 ].filter(Boolean);
 
-const projectAbstract = project.data.Summary || (descParagraphs.length > 0 ? descParagraphs[0] : project.data.Name);
+const projectAbstract = stripMarkdown(
+	project.data.Summary || descFirstParagraph || project.data.Name,
+);
 
 const quickIssueEntries = projectIssues.map((issue, index) => {
 	const sl = issueStatusLabel(issue.data.Status as string | undefined);
@@ -122,7 +138,7 @@ const quickIssueEntries = projectIssues.map((issue, index) => {
 
 <BaseLayout
 	title={project.data.Name}
-	description={project.data.Summary || project.data.Description || project.data.Name}
+	description={stripMarkdown(project.data.Summary || project.data.Description || project.data.Name)}
 >
 	<BroadsheetArticleView
 		client:load
@@ -140,11 +156,9 @@ const quickIssueEntries = projectIssues.map((issue, index) => {
 				</div>
 			) : null}
 
-			{descParagraphs.length > 1 ? (
+			{descRemainderHtml ? (
 				<section id="summary" class="editorial-section">
-					<div class="editorial-prose">
-						{descParagraphs.slice(1).map((paragraph) => <p>{paragraph}</p>)}
-					</div>
+					<div class="editorial-prose" set:html={descRemainderHtml} />
 				</section>
 			) : null}
 
@@ -170,12 +184,9 @@ const quickIssueEntries = projectIssues.map((issue, index) => {
 							projectIssues.map((issue, index) => {
 								const sl = issueStatusLabel(issue.data.Status as string | undefined);
 								const issueId = toIssueAnchorId(issue.data.ID, index);
-								const paragraphs = issue.data.Description
-									? issue.data.Description
-											.split('\n\n')
-											.map((paragraph: string) => paragraph.trim())
-											.filter(Boolean)
-									: [];
+								const issueHtml = issue.data.Description
+									? (marked.parse(issue.data.Description) as string)
+									: '';
 
 								return (
 									<li id={issueId} class="project-dossier__entry">
@@ -207,10 +218,8 @@ const quickIssueEntries = projectIssues.map((issue, index) => {
 											</div>
 										</div>
 
-										{paragraphs.length > 0 ? (
-											<div class="editorial-note__copy">
-												{paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-											</div>
+										{issueHtml ? (
+											<div class="editorial-note__copy" set:html={issueHtml} />
 										) : null}
 
 										<div class="project-dossier__entry-footer">
