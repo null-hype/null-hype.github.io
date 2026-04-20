@@ -192,10 +192,34 @@ const runBridgeFlow: NonNullable<Story['play']> = async ({ canvas, canvasElement
 
 	await waitFor(
 		() => {
-			expect(canvas.getByText('PONG')).toBeTruthy();
+			const alert = canvasElement.querySelector('[role="alert"]');
+			const assistantLines = Array.from(
+				canvasElement.querySelectorAll('[data-message-role="assistant"]'),
+			);
+			const hasPongResponse = assistantLines.some(
+				(line) => line.textContent?.trim() === 'PONG',
+			);
+			const hasTerminalError = assistantLines.some((line) =>
+				/(authentication|unauthorized|\b401\b|\berror\b)/i.test(line.textContent ?? ''),
+			);
+
+			expect(Boolean(alert) || hasTerminalError || hasPongResponse).toBe(true);
 		},
 		{ timeout: 60_000 },
 	);
+
+	const alert = canvasElement.querySelector('[role="alert"]');
+	const assistantLines = Array.from(
+		canvasElement.querySelectorAll('[data-message-role="assistant"]'),
+	);
+	const assistantText = assistantLines.map((line) => line.textContent ?? '').join('\n');
+	const hasPongResponse = assistantLines.some(
+		(line) => line.textContent?.trim() === 'PONG',
+	);
+
+	expect(alert).toBeNull();
+	expect(assistantText).not.toMatch(/(authentication|unauthorized|\b401\b|\berror\b)/i);
+	expect(hasPongResponse).toBe(true);
 };
 
 export const MockBridge: Story = {
@@ -237,7 +261,8 @@ export const LiveBridge: Story = {
 	render: () => (
 		<GooseMobileClient
 			title="Goose Mobile"
-			sessionApiUrl="/api/goose-sessions"
+			initialWsUrl="ws://127.0.0.1:7780/acp"
+			sessionApiUrl=""
 			cwd="/workspaces/null-hype.github.io"
 		/>
 	),

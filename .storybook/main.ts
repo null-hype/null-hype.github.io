@@ -1,5 +1,8 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 
+const smallwebAdminHost = process.env.STORYBOOK_SMALLWEB_ADMIN_HOST ?? 'admin.tidelands.dev';
+const smallwebAdminProxyHeaders = { host: smallwebAdminHost };
+
 const config: StorybookConfig = {
   "stories": [
     "../src/**/*.mdx",
@@ -18,6 +21,13 @@ const config: StorybookConfig = {
   async viteFinal(config) {
     return {
       ...config,
+      optimizeDeps: {
+        ...config.optimizeDeps,
+        include: [
+          ...(config.optimizeDeps?.include ?? []),
+          '@agentclientprotocol/sdk',
+        ],
+      },
       plugins: [
         ...(config.plugins ?? []),
         {
@@ -40,11 +50,13 @@ const config: StorybookConfig = {
         proxy: {
           '/api/goose-sessions': {
             target: 'http://127.0.0.1:8080',
-            changeOrigin: true,
+            changeOrigin: false,
+            headers: smallwebAdminProxyHeaders,
           },
           '/acp/ws': {
             target: 'ws://127.0.0.1:8080',
             changeOrigin: false,
+            headers: smallwebAdminProxyHeaders,
             ws: true,
           },
           '/api': {
