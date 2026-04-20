@@ -328,7 +328,7 @@ export default function GooseMobileClient({
 	useEffect(() => {
 		if (
 			!agent ||
-			activeSessionId ||
+			bootstrapState !== 'idle' ||
 			bootstrapping.current ||
 			connectionState.status !== 'connected'
 		) {
@@ -350,10 +350,14 @@ export default function GooseMobileClient({
 				},
 				protocolVersion: 1,
 			});
-			await agent.newSession({
-				cwd: sessionCwd,
-				mcpServers: [],
-			});
+
+			if (!activeSessionId) {
+				await agent.newSession({
+					cwd: sessionCwd,
+					mcpServers: [],
+				});
+			}
+
 			setBootstrapState('ready');
 		})()
 			.catch((error: unknown) => {
@@ -363,7 +367,7 @@ export default function GooseMobileClient({
 			.finally(() => {
 				bootstrapping.current = false;
 			});
-	}, [activeSessionId, agent, connectionState.status, sessionCwd]);
+	}, [activeSessionId, agent, bootstrapState, connectionState.status, sessionCwd]);
 
 	useEffect(() => {
 		if (!connectAfterSession.current || !wsUrl || connectionState.status !== 'disconnected') {
