@@ -1,6 +1,10 @@
 {
+  "admin": true,
   "private": true,
   "publicRoutes": [
+    "/acp",
+    "/acp/ws/**",
+    "/api/goose-sessions",
     "/healthz",
     "/readyz"
   ]

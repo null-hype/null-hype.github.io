@@ -1,65 +1,61 @@
 #!/usr/bin/env bash
-# bootstrap.sh — run once on a fresh GCE instance after terraform apply.
-# Installs Deno, smallweb, writes domain config, creates health app.
-# Idempotent: safe to re-run if a previous run was interrupted.
+# bootstrap.sh — idempotently prepare a fresh Smallweb origin VM.
 set -euo pipefail
 
 DOMAIN="${1:?usage: bootstrap.sh <domain>}"
 
-# ── Deno ───────────────────────────────────────────────────────────────────────
-if ! command -v deno &>/dev/null; then
+export DEBIAN_FRONTEND=noninteractive
+export DENO_INSTALL="$HOME/.deno"
+export PATH="$HOME/.deno/bin:$HOME/.local/bin:$HOME/.smallweb/bin:$PATH"
+
+echo "[bootstrap] installing base packages"
+sudo apt-get update
+sudo apt-get install -y \
+  apt-transport-https \
+  bash \
+  bzip2 \
+  ca-certificates \
+  curl \
+  debian-archive-keyring \
+  debian-keyring \
+  gnupg \
+  jq \
+  libgomp1 \
+  openssl \
+  unzip
+
+if ! command -v deno >/dev/null 2>&1; then
   echo "[bootstrap] installing Deno"
   curl -fsSL https://deno.land/install.sh | sh
 fi
-export DENO_INSTALL="$HOME/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
 deno --version
 
-# ── smallweb ───────────────────────────────────────────────────────────────────
-if ! command -v smallweb &>/dev/null; then
-  echo "[bootstrap] installing smallweb"
+if ! command -v smallweb >/dev/null 2>&1; then
+  echo "[bootstrap] installing Smallweb"
   curl -fsSL https://install.smallweb.run | sh
-  export PATH="$HOME/.smallweb/bin:$PATH"
 fi
 smallweb --version
 
-# ── domain config ──────────────────────────────────────────────────────────────
-SMALLWEB_DIR="$HOME/smallweb"
-CONFIG_DIR="$SMALLWEB_DIR/.smallweb"
-mkdir -p "$CONFIG_DIR"
-
-cat > "$CONFIG_DIR/config.json" <<CONFIG
-{
-  "domain": "$DOMAIN"
-}
-CONFIG
-echo "[bootstrap] wrote $CONFIG_DIR/config.json"
-
-# ── health app (required by smoke tests) ───────────────────────────────────────
-HEALTH_DIR="$SMALLWEB_DIR/health"
-mkdir -p "$HEALTH_DIR"
-
-cat > "$HEALTH_DIR/main.ts" <<'HEALTHAPP'
-export default {
-  fetch(req: Request): Response {
-    return new Response(
-      JSON.stringify({ ok: true, host: req.headers.get("host") }),
-      { headers: { "content-type": "application/json" } },
-    )
-  },
-}
-HEALTHAPP
-echo "[bootstrap] wrote $HEALTH_DIR/main.ts"
-
-# ── smallweb service ───────────────────────────────────────────────────────────
-if ! systemctl --user is-active smallweb &>/dev/null 2>&1; then
-  echo "[bootstrap] installing smallweb systemd service"
-  smallweb service install
-  systemctl --user daemon-reload
-  systemctl --user enable --now smallweb
-else
-  echo "[bootstrap] smallweb service already running, reloading"
-  systemctl --user restart smallweb
+if ! command -v goose >/dev/null 2>&1; then
+  echo "[bootstrap] installing Goose CLI"
+  curl -fsSL https://github.com/aaif-goose/goose/releases/download/stable/download_cli.sh | CONFIGURE=false bash
 fi
+goose --version || true
 
-echo "[bootstrap] complete — smallweb serving $DOMAIN"
+if ! command -v caddy >/dev/null 2>&1; then
+  echo "[bootstrap] installing Caddy"
+  curl -1sLf https://dl.cloudsmith.io/public/caddy/stable/gpg.key \
+    | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+  curl -1sLf https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt \
+    | sudo tee /etc/apt/sources.list.d/caddy-stable.list >/dev/null
+  sudo apt-get update
+  sudo apt-get install -y caddy
+fi
+caddy version
+
+ROOT="$HOME/tidelands"
+mkdir -p "$ROOT/.smallweb-root" "$HOME/.config/tidelands" "$HOME/.cache/deno"
+
+sudo loginctl enable-linger "$(id -un)" || true
+
+echo "[bootstrap] prepared $ROOT for $DOMAIN"

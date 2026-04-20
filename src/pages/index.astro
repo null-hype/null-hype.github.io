@@ -1,63 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { BroadsheetDispatchView } from '../components/BroadsheetDispatchView';
-import ProjectDigest from '../components/ProjectDigest';
-import { getNowPageDataFromCollections } from '../data/nowPageData';
-import { dummySlots } from '../data/broadsheetData';
-import '../styles/editorial.css';
+import GooseMobileClient from '../components/GooseMobileClient';
 
-const pageData = await getNowPageDataFromCollections();
-
-// Split projects into "Dispatches" (Editorial/Content) and "Platforms" (Infrastructure/Systems)
-const allProjects = pageData.sections.flatMap(section => section.items);
-
-const dispatches = allProjects.filter(p => 
-	p.title.includes('Broadsheet') || 
-	p.title.includes('Notes') || 
-	p.title.includes('Stack') || 
-	p.title.includes('Grammar') ||
-    p.title.includes('Dossier')
-);
-
-const platforms = allProjects.filter(p => !dispatches.includes(p));
+const sessionApiUrl = import.meta.env.PUBLIC_GOOSE_SESSION_API_URL || '/api/goose-sessions';
+const cwd = import.meta.env.PUBLIC_GOOSE_SESSION_CWD;
 ---
 
 <BaseLayout
-	title="TIDELANDS // Dispatch"
-	description="Autonomous security research and agentic infrastructure platform."
+	title="Smallweb Admin"
+	description="Terminal chat interface for the Smallweb admin Goose bridge."
 >
-	<BroadsheetDispatchView 
-		client:load
-		fleetSlots={dummySlots}
-	>
-		<section className="broadsheet-dispatch-col">
-			<h2 className="dispatch-col-title">DISPATCHES</h2>
-			<div className="dispatch-list">
-				{dispatches.map((d) => (
-					<ProjectDigest 
-						key={d.title} 
-						title={d.title}
-						body={d.body}
-						href={d.href}
-						latestUpdate={d.latestUpdate}
-					/>
-				))}
-			</div>
-		</section>
-
-		<section className="broadsheet-dispatch-col">
-			<h2 className="dispatch-col-title">PLATFORMS</h2>
-			<div className="platform-list">
-				{platforms.map((p) => (
-					<ProjectDigest 
-						key={p.title} 
-						title={p.title}
-						body={p.body}
-						href={p.href}
-						latestUpdate={p.latestUpdate}
-					/>
-				))}
-			</div>
-		</section>
-	</BroadsheetDispatchView>
+	<GooseMobileClient
+		client:only="react"
+		cwd={cwd}
+		sessionApiUrl={sessionApiUrl}
+	/>
 </BaseLayout>

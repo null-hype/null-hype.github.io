@@ -82,14 +82,16 @@ Preview what Terraform would change. Safe to run at any time.
 
 ```sh
 dagger call plan \
-  --src .                                          \
+  --src infra                                      \
   --gcp-credentials file:$HOME/.config/gcp/sa.json \
   --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
   --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
   --backend-bucket my-tf-state-bucket               \
-  --backend-prefix tidelands-dev/terraform.tfstate  \
+  --backend-prefix 'tidelands-dev/{slot}/terraform.tfstate' \
   --gcp-project my-gcp-project-id                   \
-  --cloudflare-zone-id abc123def456
+  --cloudflare-zone-id abc123def456                 \
+  --deployment-slot green                           \
+  --manage-direct-dns-records=false
 ```
 
 ### Check (ephemeral, net non-mutating)
@@ -99,9 +101,11 @@ resources. Never touches production state.
 
 ```sh
 dagger call check \
-  --src .                                          \
+  --src infra                                      \
   --gcp-credentials file:$HOME/.config/gcp/sa.json \
   --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
+  --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
+  --backend-bucket my-tf-state-bucket               \
   --gcp-project my-gcp-project-id                   \
   --cloudflare-zone-id abc123def456
 ```
@@ -122,19 +126,24 @@ SSHs into the instance.
 
 ```sh
 dagger call deploy \
-  --src .                                          \
+  --src infra                                      \
   --gcp-credentials file:$HOME/.config/gcp/sa.json \
   --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
   --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
   --ssh-private-key file:$HOME/.ssh/tidelane         \
+  --openrouter-api-key env:OPENROUTER_API_KEY       \
   --backend-bucket my-tf-state-bucket               \
-  --backend-prefix tidelands-dev/terraform.tfstate  \
+  --backend-prefix 'tidelands-dev/{slot}/terraform.tfstate' \
   --gcp-project my-gcp-project-id                   \
-  --cloudflare-zone-id abc123def456
+  --cloudflare-zone-id abc123def456                 \
+  --deployment-slot green                           \
+  --manage-direct-dns-records=false
 ```
 
-Outputs JSON from `terraform output` on success. Bootstrap logs print to stdout
-as the SSH session progresses.
+Outputs JSON from `terraform output` on success, then builds the Astro site,
+uploads the Smallweb bundle, configures Goose, and starts Smallweb behind Caddy.
+Use `--manage-direct-dns-records=true` only for the slot that should receive
+live Cloudflare apex/wildcard traffic.
 
 ### Verify (non-mutating)
 
@@ -147,10 +156,10 @@ dagger call verify --domain tidelands.dev
 Expected output:
 
 ```
-[PASS] apex HTTP 200
-[PASS] health app HTTP 200
-[PASS] Cloudflare proxy (CF-Ray header)
-[PASS] wildcard routing (health subdomain via wildcard)
+[PASS] null-hype HTTPS 200
+[PASS] admin health HTTPS 200
+[PASS] admin CORS preflight
+[PASS] Cloudflare proxy header
 
 Results: 4 passed, 0 failed
 ```
@@ -162,14 +171,16 @@ rules, and Cloudflare DNS records.
 
 ```sh
 dagger call destroy \
-  --src .                                          \
+  --src infra                                      \
   --gcp-credentials file:$HOME/.config/gcp/sa.json \
   --cloudflare-token env:CLOUDFLARE_API_TOKEN       \
   --ssh-public-key file:$HOME/.ssh/tidelane.pub     \
   --backend-bucket my-tf-state-bucket               \
-  --backend-prefix tidelands-dev/terraform.tfstate  \
+  --backend-prefix 'tidelands-dev/{slot}/terraform.tfstate' \
   --gcp-project my-gcp-project-id                   \
-  --cloudflare-zone-id abc123def456
+  --cloudflare-zone-id abc123def456                 \
+  --deployment-slot green                           \
+  --manage-direct-dns-records=false
 ```
 
 ---

@@ -2,12 +2,6 @@ import { readFile } from 'node:fs/promises';
 
 import { defineCollection, z } from 'astro:content';
 
-import {
-	overlayLiveIssues,
-	overlayLiveProjects,
-	shouldUseLiveLinearContent,
-} from './lib/linear-content';
-
 // Simple CSV parser that handles quotes and newlines within fields
 function parseCSV(csvText: string) {
   const rows: string[][] = [];
@@ -112,25 +106,11 @@ function withProjectSlugs(entries: Record<string, string>[]) {
 }
 
 async function loadProjectsCollection() {
-	const scaffoldRows = withProjectSlugs(await readCollectionFromCsv('src/projects/www projects.csv'));
-
-	if (!shouldUseLiveLinearContent()) {
-		return scaffoldRows;
-	}
-
-	console.info(`[content] loading live Linear project data for ${scaffoldRows.length} scaffold rows`);
-	return overlayLiveProjects(scaffoldRows);
+	return withProjectSlugs(await readCollectionFromCsv('src/projects/www projects.csv'));
 }
 
 async function loadIssuesCollection() {
-	const scaffoldRows = withDefaultIds(await readCollectionFromCsv('src/issues/null-hype issues.csv'));
-
-	if (!shouldUseLiveLinearContent()) {
-		return scaffoldRows;
-	}
-
-	console.info(`[content] loading live Linear issue data for ${scaffoldRows.length} scaffold rows`);
-	return overlayLiveIssues(scaffoldRows);
+	return withDefaultIds(await readCollectionFromCsv('src/issues/null-hype issues.csv'));
 }
 
 const projects = defineCollection({
@@ -142,6 +122,7 @@ const projects = defineCollection({
     Summary: z.string().optional(),
     Description: z.string().optional(),
     Status: z.string(),
+    Health: z.string().optional(),
     Priority: z.string().optional().nullable(),
     Initiatives: z.string().optional(),
     "Updated At": z.string().optional(),
