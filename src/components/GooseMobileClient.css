@@ -22,6 +22,9 @@
 	position: relative;
 	min-height: calc(100vh - 28px);
 	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
 }
 
 .goose-mobile-terminal-lines {
