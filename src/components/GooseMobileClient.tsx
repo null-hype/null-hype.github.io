@@ -10,6 +10,7 @@ import {
 } from '@agentclientprotocol/sdk';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './GooseMobileClient.css';
+import GoosePromptEditor from './GoosePromptEditor';
 
 type ConnectionState = {
 	error?: string;
@@ -104,6 +105,7 @@ type GooseMobileClientViewProps = {
 	onStartChat: () => void;
 	pendingPermission: PermissionPrompt | null;
 	prompt: string;
+	promptHintMode?: 'mock-goose' | 'off';
 	title?: string;
 	wsUrl: string;
 };
@@ -112,6 +114,7 @@ export type GooseMobileClientProps = {
 	autoConnect?: boolean;
 	cwd?: string;
 	initialWsUrl?: string;
+	promptHintMode?: 'mock-goose' | 'off';
 	sessionApiUrl?: string;
 	title?: string;
 };
@@ -497,17 +500,13 @@ export function GooseMobileClientView({
 	onStartChat,
 	pendingPermission,
 	prompt,
+	promptHintMode = 'mock-goose',
 	wsUrl,
 }: GooseMobileClientViewProps) {
-	const inputRef = useRef<HTMLInputElement>(null);
 	const messages = buildTerminalMessages(notifications);
 	const isConnecting = connectionStatus === 'connecting';
 	const isReady =
 		Boolean(activeSessionId) && bootstrapState === 'ready' && connectionStatus === 'connected';
-
-	useEffect(() => {
-		inputRef.current?.focus();
-	}, []);
 
 	const submitPrompt = () => {
 		if (prompt.trim()) {
@@ -529,7 +528,6 @@ export function GooseMobileClientView({
 			data-connection-status={connectionStatus}
 			data-has-ws-url={wsUrl ? 'true' : 'false'}
 			data-session-ready={isReady ? 'true' : 'false'}
-			onClick={() => inputRef.current?.focus()}
 		>
 			{pendingPermission ? (
 				<section className="goose-mobile-permission" aria-label="Permission request">
@@ -573,30 +571,14 @@ export function GooseMobileClientView({
 							error: {errorMessage}
 						</li>
 					) : null}
-					<li className="goose-mobile-terminal-input-line">
-						<span className="goose-mobile-terminal-command">{prompt}</span>
-						<span className="goose-mobile-block-cursor" aria-hidden="true" />
-					</li>
 				</ol>
-				<label className="goose-mobile-sr-only" htmlFor="goose-mobile-prompt">
-					Terminal input
-				</label>
-				<input
-					ref={inputRef}
-					id="goose-mobile-prompt"
-					className="goose-mobile-terminal-input"
+				<GoosePromptEditor
+					ariaLabel="Goose prompt editor"
+					disabled={isBusy || isConnecting}
+					hintMode={promptHintMode}
 					value={prompt}
-					onChange={(event) => onPromptChange(event.target.value)}
-					onKeyDown={(event) => {
-						if (event.key === 'Enter') {
-							event.preventDefault();
-							submitPrompt();
-						}
-					}}
-					autoComplete="off"
-					autoCapitalize="none"
-					spellCheck={false}
-					aria-label="Terminal input"
+					onChange={onPromptChange}
+					onSubmit={submitPrompt}
 				/>
 				<button className="goose-mobile-sr-only" type="submit">
 					Send
@@ -618,6 +600,7 @@ export default function GooseMobileClient({
 	autoConnect = true,
 	cwd,
 	initialWsUrl = '',
+	promptHintMode = 'mock-goose',
 	sessionApiUrl = '/api/goose-sessions',
 	title,
 }: GooseMobileClientProps) {
@@ -852,6 +835,7 @@ export default function GooseMobileClient({
 			onStartChat={startChat}
 			pendingPermission={pendingPermissionView}
 			prompt={prompt}
+			promptHintMode={promptHintMode}
 			title={title}
 			wsUrl={wsUrl}
 		/>
