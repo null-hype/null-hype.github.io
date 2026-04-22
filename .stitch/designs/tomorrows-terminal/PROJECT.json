@@ -1,0 +1,19 @@
+{
+  "projectId": "9529534908703671150",
+  "projectTitle": "Tomorrow's Terminal",
+  "designSystemId": "assets/12605004968695095814",
+  "screens": [
+    {
+      "id": "9c31fb8d8488457480b2a81e8aa421e2",
+      "title": "Tomorrow's Terminal - Red Team",
+      "mode": "DARK",
+      "image": "red-team.png"
+    },
+    {
+      "id": "6e1453fce6ed49c69c0b8d34c534b628",
+      "title": "Tomorrow's Terminal - Blue Team",
+      "mode": "LIGHT",
+      "image": "blue-team.png"
+    }
+  ]
+}
