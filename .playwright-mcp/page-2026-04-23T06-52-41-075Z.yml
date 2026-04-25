@@ -1,0 +1,82 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - button "Toggle Theme" [ref=e11] [cursor=pointer]
+    - generic [ref=e13]:
+      - generic [ref=e15]:
+        - button "The Execution Protocol" [ref=e17] [cursor=pointer]:
+          - strong [ref=e19]: The Execution Protocol
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - heading "The Execution Protocol" [level=1] [ref=e22]
+            - paragraph [ref=e23]:
+              - text: In this final lesson, we see the true power of
+              - strong [ref=e24]: Grammar as Protocol
+              - text: .
+            - paragraph [ref=e25]: Programming languages won’t let you run code with syntax errors. Why should an Agent execute a natural language instruction that is ambiguous or grammatically broken?
+            - generic [ref=e26]: ● Initializing Execution Protocol...
+            - heading "The Task" [level=3] [ref=e27]
+            - paragraph [ref=e28]:
+              - text: "On the right, you see:"
+              - code [ref=e29]: Ich danke meinen Vater.
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - strong [ref=e32]: Observe
+                - text: ": The “Run Skill” button is missing because the protocol is invalid."
+              - listitem [ref=e33]:
+                - strong [ref=e34]: Fix the Code
+                - text: ": Change"
+                - code [ref=e35]: meinen
+                - text: to
+                - code [ref=e36]: meinem
+                - text: (Dative).
+              - listitem [ref=e37]:
+                - strong [ref=e38]: Execute
+                - text: ": Once fixed, the"
+                - strong [ref=e39]: ▶ RUN SKILL
+                - text: button will appear in the editor. Click it to trigger the agentic action.
+          - link "The Gender Protocol" [ref=e42] [cursor=pointer]:
+            - /url: /tutorial-app/part-1/chapter-1/lesson-2
+            - generic [ref=e43]: The Gender Protocol
+          - link "Powered by WebContainers" [ref=e45] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e49]:
+        - generic [ref=e51]:
+          - generic:
+            - generic:
+              - generic: Files
+            - generic:
+              - button "Verbs.pkl" [ref=e52] [cursor=pointer]:
+                - generic [ref=e53]: Verbs.pkl
+              - button "exercise.de" [ref=e54] [cursor=pointer]:
+                - generic [ref=e55]: exercise.de
+          - separator
+          - button "Reset" [disabled] [ref=e58]: Reset
+        - separator
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: Preparing Environment
+            - button "Toggle Terminal" [ref=e66] [cursor=pointer]: Toggle Terminal
+          - generic [ref=e67]: No preview to run nor steps to show
+        - separator
+        - tablist [ref=e72]:
+          - listitem [ref=e73]:
+            - tab "Output" [selected] [ref=e74] [cursor=pointer]: Output
+  - generic [ref=e78]:
+    - button "Menu" [ref=e79]:
+      - img [ref=e81]
+      - generic: Menu
+    - button "Inspect" [ref=e85]:
+      - img [ref=e87]
+      - generic: Inspect
+    - button "Audit" [ref=e89]:
+      - img [ref=e91]
+      - generic: Audit
+    - button "Settings" [ref=e94]:
+      - img [ref=e96]
+      - generic: Settings

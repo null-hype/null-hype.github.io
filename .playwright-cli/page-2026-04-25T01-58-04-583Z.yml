@@ -1,0 +1,112 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - button "Toggle Theme" [ref=e11] [cursor=pointer]
+    - generic [ref=e13]:
+      - generic [ref=e15]:
+        - button "Fingerspitzengefühl" [ref=e17] [cursor=pointer]:
+          - strong [ref=e19]: Fingerspitzengefühl
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - heading "Fingerspitzengefühl" [level=1] [ref=e22]
+            - paragraph [ref=e23]: This lesson resolves by refusing a false translation.
+            - paragraph [ref=e24]:
+              - text: Start in
+              - code [ref=e25]: translation.en
+              - text: and try an English gloss. The squiggle stays because the lesson rule rejects every flattening of
+              - code [ref=e26]: Fingerspitzengefühl
+              - text: .
+            - heading "The Task" [level=3] [ref=e27]
+            - list [ref=e28]:
+              - listitem [ref=e29]:
+                - text: Try an English gloss in
+                - code [ref=e30]: translation.en
+                - text: .
+              - listitem [ref=e31]: Hover the squiggle to inspect the aggregate Pkl rule.
+              - listitem [ref=e32]: Read the static warm log in the preview. Each loss axis expands to the relevant rule region.
+              - listitem [ref=e33]:
+                - text: Switch to
+                - code [ref=e34]: PersonalVocabulary.pkl
+                - text: and adopt
+                - code [ref=e35]: Fingerspitzengefühl
+                - text: as an English loanword.
+              - listitem [ref=e36]:
+                - text: "When validation passes, the preview should name the move:"
+                - code [ref=e37]: you solved this by adopting the word, not translating it
+                - text: .
+            - heading "What you are seeing" [level=3] [ref=e38]
+            - list [ref=e39]:
+              - listitem [ref=e40]:
+                - code [ref=e41]: CompoundTranslationRules.pkl
+                - text: is the authoring source for the aggregate loss rule.
+              - listitem [ref=e42]:
+                - code [ref=e43]: compound-translation-rules.json
+                - text: is the runtime artifact the browser uses for validation.
+              - listitem [ref=e44]:
+                - code [ref=e45]: PersonalVocabulary.pkl
+                - text: is the lesson-local vocabulary file that governs completion.
+              - listitem [ref=e46]:
+                - code [ref=e47]: loss-axes-story.json
+                - text: is the static warm-log fixture rendered in Monaco.
+          - link "Authorization by Benutzer-ID" [ref=e50] [cursor=pointer]:
+            - /url: /tutorial-app/part-2/chapter-1/lesson-1
+            - generic [ref=e51]: Authorization by Benutzer-ID
+          - link "Powered by WebContainers" [ref=e53] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e57]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e62]: Files
+            - generic [ref=e63]:
+              - button "CompoundTranslationRules.pkl" [ref=e64] [cursor=pointer]:
+                - generic [ref=e65]: CompoundTranslationRules.pkl
+              - button "PersonalVocabulary.pkl" [ref=e66] [cursor=pointer]:
+                - generic [ref=e67]: PersonalVocabulary.pkl
+              - button "compound-translation-rules.json" [ref=e68] [cursor=pointer]:
+                - generic [ref=e69]: compound-translation-rules.json
+              - button "loss-axes-story.json" [ref=e70] [cursor=pointer]:
+                - generic [ref=e71]: loss-axes-story.json
+              - button "translation.en" [pressed] [ref=e72] [cursor=pointer]:
+                - generic [ref=e73]: translation.en
+          - separator
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - generic [ref=e76]: translation.en
+              - button "Solve" [disabled] [ref=e77]: Solve
+            - generic [ref=e82]:
+              - generic [ref=e84]:
+                - generic [ref=e85]: "1"
+                - generic [ref=e86]: "2"
+              - textbox "Editor" [ref=e89]:
+                - generic [ref=e90]: tact
+        - separator
+        - generic [ref=e93]:
+          - generic [ref=e95]: Preparing Environment
+          - list [ref=e97]:
+            - listitem [ref=e98]:
+              - generic [ref=e99]: npm install
+            - listitem [ref=e100]:
+              - generic [ref=e101]: npm run dev
+        - separator
+        - tablist [ref=e106]
+  - generic [ref=e110]:
+    - button "Menu" [ref=e111]:
+      - img [ref=e113]
+      - generic: Menu
+    - button "Inspect" [ref=e117]:
+      - img [ref=e119]
+      - generic: Inspect
+    - button "Audit" [ref=e121]:
+      - generic [ref=e122]:
+        - img [ref=e123]
+        - img [ref=e126]
+      - generic: Audit
+    - button "Settings" [ref=e129]:
+      - img [ref=e131]
+      - generic: Settings
+  - button [ref=e134]

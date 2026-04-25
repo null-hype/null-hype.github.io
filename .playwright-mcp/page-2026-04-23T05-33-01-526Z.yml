@@ -1,0 +1,102 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - button "Introduction to Grammar as Protocol" [ref=e14] [cursor=pointer]:
+          - strong [ref=e16]: Introduction to Grammar as Protocol
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - heading "Grammar as Protocol" [level=1] [ref=e19]
+            - paragraph [ref=e20]: What if natural language was treated with the same rigor as source code?
+            - generic [ref=e21]: ● Initializing Grammar Protocol...
+            - paragraph [ref=e22]:
+              - text: In this lesson, we explore the concept of
+              - strong [ref=e23]: Grammar as Protocol
+              - text: . Instead of viewing a German sentence as a mere string of characters, we treat it as a
+              - strong [ref=e24]: Typed Object
+              - text: that must adhere to a formal schema.
+            - heading "The Dative Constraint" [level=2] [ref=e25]
+            - paragraph [ref=e26]:
+              - text: In German, certain verbs (like
+              - emphasis [ref=e27]: helfen
+              - text: ) take a “Dative” object. If you use an “Accusative” object instead, the sentence doesn’t just sound “wrong”—it
+              - strong [ref=e28]: violates the protocol
+              - text: .
+            - heading "The Task" [level=3] [ref=e29]
+            - paragraph [ref=e30]:
+              - text: "Look at the editor on the right. You’ll see the sentence:"
+              - code [ref=e31]: Ich helfe meinen Bruder.
+            - paragraph [ref=e32]:
+              - text: This sentence contains a type error. The verb
+              - code [ref=e33]: helfen
+              - text: is defined in our grammar as requiring a Dative object.
+              - code [ref=e34]: meinen Bruder
+              - text: is Accusative.
+            - list [ref=e35]:
+              - listitem [ref=e36]:
+                - strong [ref=e37]: Hover
+                - text: over the word
+                - code [ref=e38]: meinen
+                - text: in the editor.
+              - listitem [ref=e39]:
+                - text: See the
+                - strong [ref=e40]: LSP Diagnostic
+                - text: explaining the dative requirement.
+              - listitem [ref=e41]:
+                - text: Fix the sentence by changing
+                - code [ref=e42]: meinen
+                - text: to
+                - code [ref=e43]: meinem
+                - text: .
+            - heading "Formal Verification" [level=3] [ref=e44]
+            - paragraph [ref=e45]:
+              - text: Note the
+              - code [ref=e46]: GermanGrammar.pkl
+              - text: file in the sidebar. That is our
+              - strong [ref=e47]: Source of Truth
+              - text: . It defines the “Types” of German verbs. By changing that file, you would change the rules of the language itself.
+          - link "Powered by WebContainers" [ref=e48] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e52]:
+        - generic [ref=e54]:
+          - generic:
+            - generic:
+              - generic: Files
+            - generic:
+              - button "GermanGrammar.pkl" [ref=e55] [cursor=pointer]:
+                - generic [ref=e56]: GermanGrammar.pkl
+              - button "exercise.de" [ref=e57] [cursor=pointer]:
+                - generic [ref=e58]: exercise.de
+          - separator
+          - button "Reset" [disabled] [ref=e61]: Reset
+        - separator
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: Preparing Environment
+            - button "Toggle Terminal" [ref=e69] [cursor=pointer]: Toggle Terminal
+          - generic [ref=e70]: No preview to run nor steps to show
+        - separator
+        - tablist [ref=e75]:
+          - listitem [ref=e76]:
+            - tab "Output" [selected] [ref=e77] [cursor=pointer]: Output
+  - generic [ref=e81]:
+    - button "Menu" [ref=e82]:
+      - img [ref=e84]
+      - generic: Menu
+    - button "Inspect" [ref=e88]:
+      - img [ref=e90]
+      - generic: Inspect
+    - button "Audit" [ref=e92]:
+      - generic [ref=e93]:
+        - img [ref=e94]
+        - img [ref=e97]
+      - generic: Audit
+    - button "Settings" [ref=e100]:
+      - img [ref=e102]
+      - generic: Settings

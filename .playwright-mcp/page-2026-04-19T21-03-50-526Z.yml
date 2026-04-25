@@ -1,0 +1,334 @@
+- generic [ref=e2]:
+  - heading "0 notifications" [level=2] [ref=e3]
+  - generic [ref=e4]:
+    - generic:
+      - button [ref=e5] [cursor=pointer]:
+        - generic [ref=e7]: Skip to main content
+      - button [ref=e8] [cursor=pointer]
+    - generic [ref=e11]:
+      - banner [ref=e13]:
+        - generic [ref=e16]:
+          - button [ref=e17] [cursor=pointer]
+          - generic [ref=e20]:
+            - navigation [ref=e23]:
+              - list [ref=e24]:
+                - listitem [ref=e25]:
+                  - button "Home, 1 new notification" [ref=e26] [cursor=pointer]:
+                    - generic [ref=e30]: Home
+                - listitem [ref=e31]:
+                  - link "My Network, 0 new notifications" [ref=e32] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork
+                    - generic [ref=e36]: My Network
+                - listitem [ref=e37]:
+                  - link "Jobs, 0 new notifications" [ref=e38] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/
+                    - generic [ref=e42]: Jobs
+                - listitem [ref=e43]:
+                  - link "Messaging, 0 new notifications" [ref=e44] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/
+                    - generic [ref=e48]: Messaging
+                - listitem [ref=e49]:
+                  - link "Notifications, 15 new notifications" [ref=e50] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/
+                    - generic [ref=e54]: Notifications
+                - listitem [ref=e55]:
+                  - button "Me" [ref=e56] [cursor=pointer]:
+                    - figure [ref=e58]
+                    - generic [ref=e60]: Me
+            - navigation [ref=e64]:
+              - list [ref=e65]:
+                - listitem [ref=e66]:
+                  - button "For Business" [ref=e67] [cursor=pointer]:
+                    - generic [ref=e71]: For Business
+                - listitem [ref=e73]:
+                  - link "0 new notifications" [ref=e74] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts/
+                    - generic [ref=e78]: Advertise
+      - main [ref=e79]:
+        - generic [ref=e80]:
+          - toolbar [ref=e81]:
+            - generic [ref=e85]:
+              - link "Nate Airulla" [ref=e86] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/nate-airulla/
+                - generic "Nate Airulla" [ref=e87]:
+                  - figure [ref=e88]
+                  - generic [ref=e89]:
+                    - paragraph [ref=e90]: Nate Airulla
+                    - paragraph [ref=e92]: Principal Global Talent Acquisition Specialist at Accuris
+              - generic [ref=e93]:
+                - button "More" [ref=e95] [cursor=pointer]:
+                  - generic [ref=e97]: More
+                - link "Message" [ref=e99] [cursor=pointer]:
+                  - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&recipient=ACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                  - generic [ref=e102]: Message
+          - main [ref=e103]:
+            - generic [ref=e105]:
+              - generic [ref=e113]:
+                - generic [ref=e114]:
+                  - link [ref=e117] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/in/nate-airulla/overlay/background-photo/
+                    - figure [ref=e118]:
+                      - img "Cover photo" [ref=e119]
+                  - link "Profile photo" [ref=e120] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/
+                    - generic "Profile photo" [ref=e121]:
+                      - figure [ref=e122]
+                  - link [ref=e125] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/
+                - generic [ref=e127]:
+                  - generic [ref=e128]:
+                    - generic [ref=e130]:
+                      - generic [ref=e131]:
+                        - link "Nate Airulla" [ref=e134] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/
+                          - heading "Nate Airulla" [level=2] [ref=e137]
+                        - paragraph [ref=e139]: · 3rd
+                      - paragraph [ref=e140]: Principal Global Talent Acquisition Specialist at Accuris
+                      - generic [ref=e141]:
+                        - paragraph [ref=e142]: Denver, Colorado, United States
+                        - paragraph [ref=e143]: ·
+                        - paragraph [ref=e144]:
+                          - link "Contact info" [ref=e145] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/nate-airulla/overlay/contact-info/
+                    - generic [ref=e147]:
+                      - button "Accuris" [ref=e148] [cursor=pointer]:
+                        - generic [ref=e149]:
+                          - figure [ref=e150]
+                          - paragraph [ref=e154]: Accuris
+                      - button "University of Arizona" [ref=e155] [cursor=pointer]:
+                        - generic [ref=e156]:
+                          - figure [ref=e157]
+                          - paragraph [ref=e161]: University of Arizona
+                  - generic [ref=e162]:
+                    - paragraph [ref=e163]: 6,534 followers
+                    - paragraph [ref=e164]: ·
+                    - paragraph [ref=e165]: 500+
+                    - paragraph [ref=e166]: connections
+                  - generic [ref=e170]:
+                    - link "Message" [ref=e172] [cursor=pointer]:
+                      - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&recipient=ACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                      - generic [ref=e175]: Message
+                    - button "More" [ref=e177] [cursor=pointer]:
+                      - generic [ref=e179]: More
+              - generic [ref=e234]:
+                - iframe [ref=e237]
+                - generic [ref=e240]:
+                  - heading "Explore Premium profiles" [level=2] [ref=e242]
+                  - generic [ref=e244]:
+                    - generic [ref=e246]:
+                      - generic [ref=e248]:
+                        - link:
+                          - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                        - generic [ref=e249]:
+                          - link [ref=e250] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                            - figure [ref=e251]
+                          - generic [ref=e252]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                            - generic [ref=e253]:
+                              - link:
+                                - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                              - generic [ref=e254]:
+                                - link:
+                                  - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                                - paragraph [ref=e255]:
+                                  - link:
+                                    - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                                  - link "Tochukwu Muoneme Premium" [ref=e256] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                                    - text: Tochukwu Muoneme
+                                    - img "Premium" [ref=e257]
+                              - paragraph [ref=e259]: · 3rd
+                            - paragraph [ref=e261]: Service Operations Engineer & Analyst @ Australian Securities and Investment Commision
+                      - link "Message" [ref=e265] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAFQOphgBRCqx1_nLsFkOxrnYdZdgUg1VYDI&recipient=ACoAAFQOphgBRCqx1_nLsFkOxrnYdZdgUg1VYDI&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e268]: Message
+                    - generic [ref=e270]:
+                      - generic [ref=e272]:
+                        - link:
+                          - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                        - generic [ref=e273]:
+                          - link [ref=e274] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                            - figure [ref=e275]
+                          - generic [ref=e276]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                            - generic [ref=e277]:
+                              - link:
+                                - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                              - generic [ref=e278]:
+                                - link:
+                                  - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                                - paragraph [ref=e279]:
+                                  - link:
+                                    - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                                  - link "Anantha Kandiah Premium" [ref=e280] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                                    - text: Anantha Kandiah
+                                    - img "Premium" [ref=e281]
+                              - paragraph [ref=e283]: · 3rd
+                            - paragraph [ref=e285]: Engineering Director and Co-founder at Teron Labs
+                      - link "Message" [ref=e289] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAAaBspIB-o5kWmkKAI3BHvjKXN7MaCdapSk&recipient=ACoAAAaBspIB-o5kWmkKAI3BHvjKXN7MaCdapSk&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e292]: Message
+                    - generic [ref=e294]:
+                      - generic [ref=e296]:
+                        - link:
+                          - /url: https://www.linkedin.com/in/suresh-kharel/
+                        - generic [ref=e297]:
+                          - link [ref=e298] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/suresh-kharel/
+                            - figure [ref=e299]
+                          - generic [ref=e300]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/suresh-kharel/
+                            - generic [ref=e301]:
+                              - link:
+                                - /url: https://www.linkedin.com/in/suresh-kharel/
+                              - generic [ref=e302]:
+                                - link:
+                                  - /url: https://www.linkedin.com/in/suresh-kharel/
+                                - paragraph [ref=e303]:
+                                  - link:
+                                    - /url: https://www.linkedin.com/in/suresh-kharel/
+                                  - link "Suresh Kharel Premium" [ref=e304] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/suresh-kharel/
+                                    - text: Suresh Kharel
+                                    - img "Premium" [ref=e305]
+                              - paragraph [ref=e307]: · 3rd
+                            - paragraph [ref=e309]: Software QA Engineer at Greenbeam
+                      - link "Message" [ref=e313] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAACFEyz8B4lirq12cBJDDd2xZK3Yww3KD5ik&recipient=ACoAACFEyz8B4lirq12cBJDDd2xZK3Yww3KD5ik&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e316]: Message
+                    - generic [ref=e318]:
+                      - generic [ref=e320]:
+                        - link:
+                          - /url: https://www.linkedin.com/in/derek-h-2559926/
+                        - generic [ref=e321]:
+                          - link [ref=e322] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/derek-h-2559926/
+                            - figure [ref=e323]
+                          - generic [ref=e324]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/derek-h-2559926/
+                            - generic [ref=e325]:
+                              - link:
+                                - /url: https://www.linkedin.com/in/derek-h-2559926/
+                              - generic [ref=e326]:
+                                - link:
+                                  - /url: https://www.linkedin.com/in/derek-h-2559926/
+                                - paragraph [ref=e327]:
+                                  - link:
+                                    - /url: https://www.linkedin.com/in/derek-h-2559926/
+                                  - link "Derek H. Premium" [ref=e328] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/derek-h-2559926/
+                                    - text: Derek H.
+                                    - img "Premium" [ref=e329]
+                              - paragraph [ref=e331]: · 3rd
+                            - paragraph [ref=e333]: DevOps / Cloud Engineer
+                      - link "Message" [ref=e337] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAAE2c-EBX0zFAmv3ZcjxZ7WWiZApraoUYAs&recipient=ACoAAAE2c-EBX0zFAmv3ZcjxZ7WWiZApraoUYAs&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e340]: Message
+              - generic [ref=e344]:
+                - generic [ref=e345]:
+                  - navigation [ref=e346]:
+                    - link "About" [ref=e347] [cursor=pointer]:
+                      - /url: https://about.linkedin.com/
+                      - paragraph [ref=e348]: About
+                    - link "Accessibility" [ref=e349] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/accessibility/
+                      - paragraph [ref=e350]: Accessibility
+                    - link "Talent Solutions" [ref=e351] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/talent-solutions?trk=flagship_nav&veh=li-footer-lts-control&src=li-footer
+                      - paragraph [ref=e352]: Talent Solutions
+                    - link "Community Guidelines" [ref=e353] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/legal/professional-community-policies/
+                      - paragraph [ref=e354]: Community Guidelines
+                    - link "Careers" [ref=e355] [cursor=pointer]:
+                      - /url: https://careers.linkedin.com/
+                      - paragraph [ref=e356]: Careers
+                    - link "Marketing Solutions" [ref=e357] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/advertise?trk=n_nav_lms_f&src=li-footer
+                      - paragraph [ref=e358]: Marketing Solutions
+                    - button "Privacy & Terms" [ref=e359] [cursor=pointer]:
+                      - paragraph [ref=e361]: Privacy & Terms
+                    - link "Ad Choices" [ref=e363] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/answer/62931/
+                      - paragraph [ref=e364]: Ad Choices
+                    - link "Advertising" [ref=e365] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/ad/start/?trk=n_nav_ads_rr
+                      - paragraph [ref=e366]: Advertising
+                    - link "Sales Solutions" [ref=e367] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/sales-solutions?trk=flagship_nav&veh=li-footer-lss-control&src=li-footer
+                      - paragraph [ref=e368]: Sales Solutions
+                    - link "Mobile" [ref=e369] [cursor=pointer]:
+                      - /url: https://mobile.linkedin.com/
+                      - paragraph [ref=e370]: Mobile
+                    - link "Small Business" [ref=e371] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/grow?src=li-footer
+                      - paragraph [ref=e372]: Small Business
+                    - link "Safety Center" [ref=e373] [cursor=pointer]:
+                      - /url: https://safety.linkedin.com/
+                      - paragraph [ref=e374]: Safety Center
+                  - paragraph [ref=e376]: LinkedIn Corporation © 2026
+                - generic [ref=e377]:
+                  - list [ref=e378]:
+                    - listitem [ref=e379]:
+                      - generic [ref=e382]:
+                        - link "Questions?" [ref=e383] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/help/linkedin/
+                          - paragraph [ref=e384]: Questions?
+                        - paragraph [ref=e385]: Visit our Help Center.
+                    - listitem [ref=e386]:
+                      - generic [ref=e389]:
+                        - link "Manage your account and privacy" [ref=e390] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/mypreferences/d/
+                          - paragraph [ref=e391]: Manage your account and privacy
+                        - paragraph [ref=e392]: Go to your Settings.
+                    - listitem [ref=e393]:
+                      - generic [ref=e396]:
+                        - link "Recommendation transparency" [ref=e397] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/help/linkedin/answer/a1339724/
+                          - paragraph [ref=e398]: Recommendation transparency
+                        - paragraph [ref=e399]: Learn more about Recommended Content.
+                  - generic [ref=e401]:
+                    - paragraph [ref=e403]: Select language
+                    - combobox "Select language" [ref=e405] [cursor=pointer]:
+                      - option "العربية (Arabic)"
+                      - option "বাংলা (Bangla)"
+                      - option "Čeština (Czech)"
+                      - option "Dansk (Danish)"
+                      - option "Deutsch (German)"
+                      - option "Ελληνικά (Greek)"
+                      - option "English (English)" [selected]
+                      - option "Español (Spanish)"
+                      - option "فارسی (Persian)"
+                      - option "Suomi (Finnish)"
+                      - option "Français (French)"
+                      - option "हिंदी (Hindi)"
+                      - option "Magyar (Hungarian)"
+                      - option "Bahasa Indonesia (Indonesian)"
+                      - option "Italiano (Italian)"
+                      - option "עברית (Hebrew)"
+                      - option "日本語 (Japanese)"
+                      - option "한국어 (Korean)"
+                      - option "मराठी (Marathi)"
+                      - option "Bahasa Malaysia (Malay)"
+                      - option "Nederlands (Dutch)"
+                      - option "Norsk (Norwegian)"
+                      - option "ਪੰਜਾਬੀ (Punjabi)"
+                      - option "Polski (Polish)"
+                      - option "Português (Portuguese)"
+                      - option "Română (Romanian)"
+                      - option "Русский (Russian)"
+                      - option "Svenska (Swedish)"
+                      - option "తెలుగు (Telugu)"
+                      - option "ภาษาไทย (Thai)"
+                      - option "Tagalog (Tagalog)"
+                      - option "Türkçe (Turkish)"
+                      - option "Українська (Ukrainian)"
+                      - option "Tiếng Việt (Vietnamese)"
+                      - option "简体中文 (Chinese (Simplified))"
+                      - option "正體中文 (Chinese (Traditional))"

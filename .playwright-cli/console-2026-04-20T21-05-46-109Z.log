@@ -1,0 +1,8 @@
+[    8813ms] [LOG] Gemini Debug: Listening to WebSocket messages @ :1
+[   14610ms] [LOG] Gemini Debug: Listening to WebSocket messages @ :1
+[   40792ms] [LOG] Gemini Debug: Init script running @ :2
+[   41034ms] [ERROR] Access to fetch at 'https://admin.tidelands.dev/api/goose-sessions' from origin 'https://www.tidelands.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://www.tidelands.dev/:0
+[   41035ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://admin.tidelands.dev/api/goose-sessions:0
+[  121586ms] [LOG] Gemini Debug: data-has-ws-url: false @ :2
+[  121586ms] [LOG] Gemini Debug: data-session-ready: false @ :3
+[  121586ms] [LOG] Gemini Debug: data-connection-status: disconnected @ :4

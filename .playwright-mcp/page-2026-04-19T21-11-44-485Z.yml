@@ -1,0 +1,359 @@
+- generic [ref=e2]:
+  - heading "0 notifications" [level=2] [ref=e3]
+  - generic [ref=e4]:
+    - generic:
+      - button [ref=e5] [cursor=pointer]:
+        - generic [ref=e7]: Skip to main content
+      - button [ref=e8] [cursor=pointer]
+    - generic [ref=e11]:
+      - banner [ref=e13]:
+        - generic [ref=e16]:
+          - button [ref=e17] [cursor=pointer]
+          - generic [ref=e20]:
+            - navigation [ref=e23]:
+              - list [ref=e24]:
+                - listitem [ref=e25]:
+                  - button "Home, 1 new notification" [ref=e26] [cursor=pointer]:
+                    - generic [ref=e30]: Home
+                - listitem [ref=e31]:
+                  - link "My Network, 0 new notifications" [ref=e32] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork
+                    - generic [ref=e36]: My Network
+                - listitem [ref=e37]:
+                  - link "Jobs, 0 new notifications" [ref=e38] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/
+                    - generic [ref=e42]: Jobs
+                - listitem [ref=e43]:
+                  - link "Messaging, 0 new notifications" [ref=e44] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/
+                    - generic [ref=e48]: Messaging
+                - listitem [ref=e49]:
+                  - link "Notifications, 15 new notifications" [ref=e50] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/
+                    - generic [ref=e54]: Notifications
+                - listitem [ref=e55]:
+                  - button "Me" [ref=e56] [cursor=pointer]:
+                    - figure [ref=e58]
+                    - generic [ref=e60]: Me
+            - navigation [ref=e64]:
+              - list [ref=e65]:
+                - listitem [ref=e66]:
+                  - button "For Business" [ref=e67] [cursor=pointer]:
+                    - generic [ref=e71]: For Business
+                - listitem [ref=e73]:
+                  - link "0 new notifications" [ref=e74] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts/
+                    - generic [ref=e78]: Advertise
+      - generic [ref=e79]:
+        - toolbar [ref=e80]
+        - main [ref=e94]:
+          - main [ref=e95]:
+            - generic [ref=e101]:
+              - list [ref=e103]:
+                - listitem [ref=e105]:
+                  - generic [ref=e106]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/diego-f-guillen-nakamura-ab35b2121/
+                    - generic [ref=e107]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/diego-f-guillen-nakamura-ab35b2121/
+                      - generic [ref=e108]:
+                        - link [ref=e109] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/diego-f-guillen-nakamura-ab35b2121/
+                          - figure [ref=e110]
+                        - generic [ref=e111]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/diego-f-guillen-nakamura-ab35b2121/
+                          - paragraph [ref=e112]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/diego-f-guillen-nakamura-ab35b2121/
+                            - link "Diego F Guillen Nakamura" [ref=e113] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/diego-f-guillen-nakamura-ab35b2121/
+                            - generic [ref=e114]: • 3rd+
+                          - paragraph [ref=e116]: Software Engineer at QCIF Australia
+                          - paragraph [ref=e118]: Pacific Pines, Queensland, Australia
+                      - paragraph [ref=e120]:
+                        - text: "Past: Software Engineer at Fujitsu Australia Limited - ...Department at Macquarie University ("
+                        - strong [ref=e121]: Sydney
+                        - text: ). Technologies...
+                - listitem [ref=e123]:
+                  - generic [ref=e124]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/diego-alberto-macias-f-a31b122a2/
+                    - generic [ref=e125]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/diego-alberto-macias-f-a31b122a2/
+                      - generic [ref=e126]:
+                        - link [ref=e127] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/diego-alberto-macias-f-a31b122a2/
+                          - figure [ref=e128]
+                        - generic [ref=e129]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/diego-alberto-macias-f-a31b122a2/
+                          - paragraph [ref=e130]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/diego-alberto-macias-f-a31b122a2/
+                            - link "Diego Alberto Macias F" [ref=e131] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/diego-alberto-macias-f-a31b122a2/
+                            - generic [ref=e132]: • 3rd+
+                          - paragraph [ref=e134]: "--"
+                          - paragraph [ref=e136]: Millers Point, New South Wales, Australia
+                - listitem [ref=e138]:
+                  - generic [ref=e139]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/diegomogollon/
+                    - generic [ref=e140]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/diegomogollon/
+                      - generic [ref=e141]:
+                        - link [ref=e142] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/diegomogollon/
+                          - figure [ref=e143]
+                        - generic [ref=e144]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/diegomogollon/
+                          - paragraph [ref=e145]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/diegomogollon/
+                            - link "Diego M. Premium" [ref=e146] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/diegomogollon/
+                              - text: Diego M.
+                              - img "Premium" [ref=e147]
+                            - generic [ref=e149]: • 3rd+
+                          - paragraph [ref=e151]: ⚡️ Full Stack AI Builder | Shipping enterprise-grade agents in days
+                          - paragraph [ref=e153]: Sydney, New South Wales, Australia
+                      - paragraph [ref=e155]:
+                        - text: "Past: Digital Manager at"
+                        - strong [ref=e156]: Sydney
+                        - text: Harbour Escapes
+                      - paragraph [ref=e160]:
+                        - link "4K followers" [ref=e161] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/search/results/people/?origin=SHARED_FOLLOWERS_CANNED_SEARCH&followerOf=%5B%22ACoAAAaE_8IB-ud4Nu5KVV4M3GPx6mfaFQ066-s%22%5D
+                      - paragraph [ref=e162]:
+                        - link "View my services" [ref=e163] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/services/page/800836333615861a33/
+                - listitem [ref=e165]:
+                  - generic [ref=e166]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/kyrablake/
+                    - generic [ref=e167]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/kyrablake/
+                      - generic [ref=e168]:
+                        - link [ref=e169] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/kyrablake/
+                          - figure [ref=e170]
+                        - generic [ref=e171]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/kyrablake/
+                          - paragraph [ref=e172]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/kyrablake/
+                            - link "Kyra B. Verified" [ref=e173] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/kyrablake/
+                              - text: Kyra B.
+                              - img "Verified" [ref=e174]
+                            - generic [ref=e176]: • 2nd
+                          - paragraph [ref=e178]: Tech Talent Partner at ELMO | AI Enthusiast 🚀
+                          - paragraph [ref=e180]: Sydney, New South Wales, Australia
+                      - paragraph [ref=e182]:
+                        - text: "Past: Technical JavaScript Recruiter at Hyre. - I match JavaScript Engineers with engineering teams in"
+                        - strong [ref=e183]: Sydney
+                        - text: . I am passionate about technological...
+                      - paragraph [ref=e187]:
+                        - link "20K followers" [ref=e188] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/search/results/people/?origin=SHARED_FOLLOWERS_CANNED_SEARCH&followerOf=%5B%22ACoAACa65lcB4svki8EOSzGSl61FGC4CyUlXw7w%22%5D
+                      - generic [ref=e189]:
+                        - figure [ref=e190]
+                        - figure [ref=e191]
+                        - paragraph [ref=e193]:
+                          - link "👨🏼‍💻 Chris Herring 👨🏼‍💻" [ref=e194] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/chrisherringinau/
+                            - strong [ref=e195]: 👨🏼‍💻 Chris Herring 👨🏼‍💻
+                          - text: and
+                          - link "Nirlep Adhikari" [ref=e196] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/nirlep-adhikari/
+                            - strong [ref=e197]: Nirlep Adhikari
+                          - text: are mutual connections
+                - listitem [ref=e199]:
+                  - generic [ref=e200]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/diego-silva-b7622556/
+                    - generic [ref=e201]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/diego-silva-b7622556/
+                      - generic [ref=e202]:
+                        - link [ref=e203] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/diego-silva-b7622556/
+                          - figure [ref=e204]
+                        - generic [ref=e205]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/diego-silva-b7622556/
+                          - paragraph [ref=e206]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/diego-silva-b7622556/
+                            - link "Diego Silva Premium" [ref=e207] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/diego-silva-b7622556/
+                              - text: Diego Silva
+                              - img "Premium" [ref=e208]
+                            - generic [ref=e210]: • 3rd+
+                          - paragraph [ref=e212]: Cyber Security / Threat Intelligence / Data Science
+                          - paragraph [ref=e214]: Sydney, New South Wales, Australia
+                      - paragraph [ref=e216]:
+                        - text: "Past: Academic Tutor - Authentication and System Security at UTS: University of Technology,"
+                        - strong [ref=e217]: Sydney
+                - listitem [ref=e219]:
+                  - generic [ref=e220]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/andrew-ward-leader/
+                    - generic [ref=e221]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/andrew-ward-leader/
+                      - generic [ref=e222]:
+                        - link [ref=e223] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/andrew-ward-leader/
+                          - figure [ref=e224]
+                        - generic [ref=e225]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/andrew-ward-leader/
+                          - paragraph [ref=e226]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/andrew-ward-leader/
+                            - link "Andrew Ward Verified" [ref=e227] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/andrew-ward-leader/
+                              - text: Andrew Ward
+                              - img "Verified" [ref=e228]
+                            - generic [ref=e230]: • 3rd+
+                          - paragraph [ref=e232]: Global GTM Executive | Senior Director at Salesforce | Enterprise AI & Agentic Transformation | Strategic Brand Repositioning
+                          - paragraph [ref=e234]: Greater Sydney Area
+                      - paragraph [ref=e236]:
+                        - text: "Past: Marketing Director - Asia Pacific at"
+                        - strong [ref=e237]: F
+                        - text: "-Secure Corporation"
+                      - paragraph [ref=e241]:
+                        - link "3K followers" [ref=e242] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/search/results/people/?origin=SHARED_FOLLOWERS_CANNED_SEARCH&followerOf=%5B%22ACoAAABqL-UBh39F-xgwBzOay6NQb6fDxLXMd_Q%22%5D
+                - listitem [ref=e244]:
+                  - generic [ref=e245]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/matthew-f-buckley-472480125/
+                    - generic [ref=e246]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/matthew-f-buckley-472480125/
+                      - generic [ref=e247]:
+                        - link [ref=e248] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/matthew-f-buckley-472480125/
+                          - figure [ref=e249]
+                        - generic [ref=e250]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/matthew-f-buckley-472480125/
+                          - paragraph [ref=e251]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/matthew-f-buckley-472480125/
+                            - link "Matthew F Buckley Premium" [ref=e252] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/matthew-f-buckley-472480125/
+                              - text: Matthew F Buckley
+                              - img "Premium" [ref=e253]
+                            - generic [ref=e255]: • 2nd
+                          - paragraph [ref=e257]: Principal at Buckley Lawyers Pty Ltd
+                          - paragraph [ref=e259]: Greater Sydney Area
+                      - paragraph [ref=e261]:
+                        - text: "Education: University of"
+                        - strong [ref=e262]: Sydney
+                      - paragraph [ref=e266]:
+                        - link "11K followers" [ref=e267] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/search/results/people/?origin=SHARED_FOLLOWERS_CANNED_SEARCH&followerOf=%5B%22ACoAAB7cCpYBoRHwP4UXlYuvYuIi5RGlbmokU20%22%5D
+                      - paragraph [ref=e268]:
+                        - link "Visit my website" [ref=e269] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/safety/go/?url=http%3A%2F%2Fwww%2Ebuckleylawyers%2Ecom%2Eau&urlhash=6c39&isSdui=true
+                - listitem [ref=e271]:
+                  - generic [ref=e272]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/stevenmclaughlin/
+                    - generic [ref=e273]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/stevenmclaughlin/
+                      - generic [ref=e274]:
+                        - link [ref=e275] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/stevenmclaughlin/
+                          - figure [ref=e276]
+                        - generic [ref=e277]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/stevenmclaughlin/
+                          - paragraph [ref=e278]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/stevenmclaughlin/
+                            - link "Steve McLaughlin Verified" [ref=e279] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/stevenmclaughlin/
+                              - text: Steve McLaughlin
+                              - img "Verified" [ref=e280]
+                            - generic [ref=e282]: • 2nd
+                          - paragraph [ref=e284]: Cyber Security Research, Penetration Testing, Risk Assessment, Security Audit, Aerobatic Pilot.
+                          - paragraph [ref=e286]: Greater Sydney Area
+                      - paragraph [ref=e288]:
+                        - text: "Past: Cyber Security Governance Lead (Contract) at University of"
+                        - strong [ref=e289]: Sydney
+                - listitem [ref=e291]:
+                  - generic [ref=e292]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/kerry-f-80591b105/
+                    - generic [ref=e293]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/kerry-f-80591b105/
+                      - generic [ref=e294]:
+                        - link [ref=e295] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/kerry-f-80591b105/
+                          - figure [ref=e296]
+                        - generic [ref=e297]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/kerry-f-80591b105/
+                          - paragraph [ref=e298]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/kerry-f-80591b105/
+                            - link "Kerry F. Premium" [ref=e299] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/kerry-f-80591b105/
+                              - text: Kerry F.
+                              - img "Premium" [ref=e300]
+                            - generic [ref=e302]: • 2nd
+                          - paragraph [ref=e304]: Lender | Immediate Finance | Supporting Businesses Through Cash Flow Shortfalls, ATO Debt, Receivership, Wind-Up & Liquidation Scenarios
+                          - paragraph [ref=e306]: Greater Sydney Area
+                      - paragraph [ref=e308]:
+                        - text: "Education: University of"
+                        - strong [ref=e309]: Sydney
+                      - paragraph [ref=e310]:
+                        - link "Visit my website" [ref=e311] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/safety/go/?url=http%3A%2F%2Fwww%2Esurgefinance%2Ecom%2Eau&urlhash=pUup&isSdui=true
+                - listitem [ref=e313]:
+                  - generic [ref=e314]:
+                    - link:
+                      - /url: https://www.linkedin.com/in/raffaele-ciriello/
+                    - generic [ref=e315]:
+                      - link:
+                        - /url: https://www.linkedin.com/in/raffaele-ciriello/
+                      - generic [ref=e316]:
+                        - link [ref=e317] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/in/raffaele-ciriello/
+                          - figure [ref=e318]
+                        - generic [ref=e319]:
+                          - link:
+                            - /url: https://www.linkedin.com/in/raffaele-ciriello/
+                          - paragraph [ref=e320]:
+                            - link:
+                              - /url: https://www.linkedin.com/in/raffaele-ciriello/
+                            - link "Raffaele F Ciriello Verified" [ref=e321] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/raffaele-ciriello/
+                              - text: Raffaele F Ciriello
+                              - img "Verified" [ref=e322]
+                            - generic [ref=e324]: • 3rd+
+                          - paragraph [ref=e326]: Compassionate Digital Innovation | University of Sydney
+                          - paragraph [ref=e328]: Australia
+                      - paragraph [ref=e330]:
+                        - text: "Current: Senior Lecturer in Business Information Systems at University of"
+                        - strong [ref=e331]: Sydney
+                      - paragraph [ref=e335]:
+                        - link "4K followers" [ref=e336] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/search/results/people/?origin=SHARED_FOLLOWERS_CANNED_SEARCH&followerOf=%5B%22ACoAAA33LUUBJTGSbgf6IiwIaeY5OVYlVzsnHpY%22%5D
+              - generic [ref=e338]:
+                - list
+                - button "Next" [ref=e339] [cursor=pointer]:
+                  - generic [ref=e342]: Next

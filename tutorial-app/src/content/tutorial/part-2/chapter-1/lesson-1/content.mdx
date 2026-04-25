@@ -1,0 +1,47 @@
+---
+type: lesson
+title: Authorization by Benutzer-ID
+template: otel-warm-log
+focus: /exercise.de
+prepareCommands:
+  - npm install
+mainCommand: npm run dev
+previews:
+  - [4173, "Warm Log"]
+terminal: false
+editor:
+  fileTree: false
+custom:
+  ruleTrace:
+    commandFile: /exercise.de
+    grammarFile: /AuthorizationGrammar.pkl
+    runtimeFile: /authorization-grammar.json
+    storyFile: /trace-story.json
+    scenario: opentrader-idor
+---
+
+import RuleTraceBridge from '../../../../../components/RuleTraceBridge';
+
+# Authorization by Benutzer-ID
+
+<RuleTraceBridge client:load />
+
+Lesson 1 opens the Black Thursday loop.
+
+The editor on the right validates a missing article against a lesson-local Pkl grammar rule. The preview pane replays a mocked OpenTrader warm log once the phrase is repaired.
+
+### The Task
+Complete the sentence:
+
+`Die API prüft die Berechtigung anhand _____ Benutzer-ID`
+
+1. Fill the blank with the required article.
+2. If the answer is wrong, hover the squiggle to peek the governing Pkl rule.
+3. When the squiggle clears, the preview renders the mocked IDOR warm log.
+4. Expand the anomaly span to inspect the security rule that flags the auth drift.
+
+### What you are seeing
+- `AuthorizationGrammar.pkl` defines the lesson grammar contract.
+- `authorization-grammar.json` is the generated runtime artifact the browser uses for validation.
+- `OpenTraderSecurityRules.pkl` is the policy source surfaced inside the anomaly span.
+- `trace-story.json` is the mocked OTel story fixture consumed by the Monaco preview.

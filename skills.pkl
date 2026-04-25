@@ -1,0 +1,27 @@
+import "Skill.pkl"
+
+// A registry of skills in the workspace, validated by the Skill grammar
+skills: Mapping<String, Skill.Skill> = new {
+  ["playwright-test-planner"] {
+    name = "playwright-test-planner"
+    // ERROR: Description too short (violates this.length > 10)
+    description = "Short desc" 
+    
+    tools {
+      "search"
+      "playwright-test/browser_click"
+    }
+    
+    instructions = "Plan some tests..."
+  }
+  
+  ["broken-skill"] {
+    name = "broken-skill"
+    description = "This skill has no tools, which violates our grammar's !isEmpty constraint."
+    
+    // ERROR: Empty tools list (violates !isEmpty)
+    tools {} 
+    
+    instructions = "I do nothing."
+  }
+}

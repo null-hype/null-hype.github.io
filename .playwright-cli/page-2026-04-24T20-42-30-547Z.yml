@@ -1,0 +1,73 @@
+- main [ref=e2]:
+  - navigation [ref=e3]:
+    - generic:
+      - link:
+        - /url: /
+    - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - button "Run the App" [ref=e14] [cursor=pointer]:
+        - strong [ref=e16]: Run the App
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - heading "Run the App" [level=1] [ref=e19]
+          - paragraph [ref=e20]: This lesson is the capstone loop.
+          - paragraph [ref=e21]: The editor on the right is a real CodeMirror surface with local command diagnostics. The preview is a real TutorialKit template running a read-only Monaco trace viewer.
+          - heading "The Task" [level=3] [ref=e22]
+          - paragraph [ref=e23]: "Your command starts blocked:"
+          - paragraph [ref=e24]:
+            - code [ref=e25]: Starte den App.
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - text: Change
+              - code [ref=e28]: den
+              - text: to
+              - code [ref=e29]: die
+              - text: .
+            - listitem [ref=e30]: The editor squiggle should clear immediately.
+            - listitem [ref=e31]:
+              - text: The preview should replace its blocked message with
+              - code [ref=e32]: Gut gemacht
+              - text: .
+          - heading "What you are seeing" [level=3] [ref=e33]
+          - list [ref=e34]:
+            - listitem [ref=e35]:
+              - code [ref=e36]: CommandProtocol.pkl
+              - text: is the authoring source of truth for the command contract.
+            - listitem [ref=e37]:
+              - code [ref=e38]: command-protocol.json
+              - text: is the generated runtime artifact the browser uses for local validation.
+            - listitem [ref=e39]:
+              - text: The preview listens for a normalized
+              - code [ref=e40]: run_app
+              - text: command state from TutorialKit and swaps the Monaco content when the command becomes valid.
+        - link "Agentic Protocol Integration" [ref=e43] [cursor=pointer]:
+          - /url: /part-1/chapter-1/lesson-3
+          - generic [ref=e44]: Agentic Protocol Integration
+        - link "Powered by WebContainers" [ref=e46] [cursor=pointer]:
+          - /url: https://webcontainers.io/
+    - generic [ref=e50]:
+      - generic [ref=e52]:
+        - generic:
+          - generic:
+            - generic: Files
+          - generic:
+            - button "CommandProtocol.pkl" [ref=e53] [cursor=pointer]:
+              - generic [ref=e54]: CommandProtocol.pkl
+            - button "command-protocol.json" [ref=e55] [cursor=pointer]:
+              - generic [ref=e56]: command-protocol.json
+            - button "exercise.de" [ref=e57] [cursor=pointer]:
+              - generic [ref=e58]: exercise.de
+        - separator
+        - button "Reset" [disabled] [ref=e61]: Reset
+      - separator
+      - generic [ref=e66]:
+        - generic [ref=e68]: Preparing Environment
+        - list [ref=e70]:
+          - listitem [ref=e71]:
+            - generic [ref=e72]: npm install
+          - listitem [ref=e73]:
+            - generic [ref=e74]: npm run dev
+      - separator
+      - tablist [ref=e79]

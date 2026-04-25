@@ -1,0 +1,374 @@
+- generic [ref=e2]:
+  - heading "0 notifications" [level=2] [ref=e3]
+  - generic [ref=e4]:
+    - generic:
+      - button [ref=e5] [cursor=pointer]:
+        - generic [ref=e7]: Skip to main content
+      - button [ref=e8] [cursor=pointer]:
+        - img [ref=e181]
+    - generic [ref=e11]:
+      - banner [ref=e13]:
+        - generic [ref=e16]:
+          - button "LinkedIn" [ref=e183] [cursor=pointer]:
+            - img "LinkedIn" [ref=e184]
+          - search [ref=e20]:
+            - generic [ref=e21]:
+              - img [ref=e186]
+              - textbox "Search" [ref=e24]: Marcus Schappi Ninja.ai
+          - generic [ref=e26]:
+            - figure [ref=e192]
+            - navigation [ref=e29]:
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - button "Home, 1 new notification" [ref=e32] [cursor=pointer]:
+                    - img [ref=e193]
+                    - generic [ref=e37]: Home
+                - listitem [ref=e38]:
+                  - link "My Network, 0 new notifications" [ref=e39] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork
+                    - img [ref=e195]
+                    - generic [ref=e43]: My Network
+                - listitem [ref=e44]:
+                  - link "Jobs, 0 new notifications" [ref=e45] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/
+                    - img [ref=e197]
+                    - generic [ref=e49]: Jobs
+                - listitem [ref=e50]:
+                  - link "Messaging, 0 new notifications" [ref=e51] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/
+                    - img [ref=e199]
+                    - generic [ref=e55]: Messaging
+                - listitem [ref=e56]:
+                  - link "Notifications, 16 new notifications" [ref=e57] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/
+                    - generic [ref=e58]:
+                      - img [ref=e201]
+                      - generic [ref=e60]: "16"
+                    - generic [ref=e62]: Notifications
+                - listitem [ref=e63]:
+                  - button "Me" [ref=e64] [cursor=pointer]:
+                    - figure [ref=e66]
+                    - generic [ref=e68]:
+                      - text: Me
+                      - img [ref=e203]
+            - navigation [ref=e72]:
+              - list [ref=e73]:
+                - listitem [ref=e74]:
+                  - button "For Business" [ref=e75] [cursor=pointer]:
+                    - img [ref=e205]
+                    - generic [ref=e79]:
+                      - text: For Business
+                      - img [ref=e207]
+                - listitem [ref=e81]:
+                  - link "0 new notifications" [ref=e82] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts/
+                    - img [ref=e209]
+                    - generic [ref=e86]: Advertise
+      - generic [ref=e87]:
+        - toolbar [ref=e88]:
+          - generic [ref=e213]:
+            - button "Filter by People" [ref=e215] [cursor=pointer]:
+              - generic "Filter by People" [ref=e216]:
+                - checkbox "People" [checked]
+                - generic [ref=e217]:
+                  - text: People
+                  - img [ref=e218]
+            - radio "Filter by 1st connections" [ref=e220] [cursor=pointer]:
+              - generic "Filter by 1st connections" [ref=e221]:
+                - checkbox "1st"
+                - generic [ref=e222]: 1st
+            - radio "Filter by 2nd connections" [ref=e223] [cursor=pointer]:
+              - generic "Filter by 2nd connections" [ref=e224]:
+                - checkbox "2nd"
+                - generic [ref=e225]: 2nd
+            - radio "Filter by 3rd+ connections" [ref=e226] [cursor=pointer]:
+              - generic "Filter by 3rd+ connections" [ref=e227]:
+                - checkbox "3rd+"
+                - generic [ref=e228]: 3rd+
+            - button "Premium Actively hiring" [ref=e229] [cursor=pointer]:
+              - generic "Premium Actively hiring" [ref=e230]:
+                - checkbox "Actively hiring"
+                - generic [ref=e231]:
+                  - img [ref=e232]
+                  - text: Actively hiring
+                  - img [ref=e235]
+            - button "Filter by Locations" [ref=e237] [cursor=pointer]:
+              - generic "Filter by Locations" [ref=e238]:
+                - checkbox "Locations"
+                - generic [ref=e239]:
+                  - text: Locations
+                  - img [ref=e240]
+            - button "Filter by Current companies" [ref=e242] [cursor=pointer]:
+              - generic "Filter by Current companies" [ref=e243]:
+                - checkbox "Current companies"
+                - generic [ref=e244]:
+                  - text: Current companies
+                  - img [ref=e245]
+            - button "All filters" [ref=e247] [cursor=pointer]:
+              - generic [ref=e249]: All filters
+        - main [ref=e102]:
+          - main [ref=e103]:
+            - generic [ref=e105]:
+              - generic [ref=e109]:
+                - list [ref=e111]:
+                  - listitem [ref=e113]:
+                    - 'link "Marcus Schappi Premium • 3rd+ CEO & Co-Founder at Ninja.ai | Pioneering the Model Context Protocol (MCP) for AI Assistant Integration Sydney, New South Wales, Australia Send a message to Marcus Schappi Current: Co-Founder at Ninja.ai Book an appointment" [ref=e250] [cursor=pointer]':
+                      - /url: https://www.linkedin.com/in/schappi/
+                      - generic [ref=e116]:
+                        - generic [ref=e117]:
+                          - figure [ref=e118]:
+                            - img "Marcus Schappi" [ref=e251]
+                          - generic [ref=e119]:
+                            - paragraph [ref=e120]:
+                              - link "Marcus Schappi Premium" [ref=e121]:
+                                - /url: https://www.linkedin.com/in/schappi/
+                                - text: Marcus Schappi
+                                - img "Premium" [ref=e122]:
+                                  - img [ref=e252]
+                              - generic [ref=e124]: • 3rd+
+                            - paragraph [ref=e126]: CEO & Co-Founder at Ninja.ai | Pioneering the Model Context Protocol (MCP) for AI Assistant Integration
+                            - paragraph [ref=e128]: Sydney, New South Wales, Australia
+                          - link "Send a message to Marcus Schappi" [ref=e259]:
+                            - /url: https://www.linkedin.com/messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAAHvM6IBofBpt12DH7pHuGh4V_2QvbTa-Cc&recipient=ACoAAAHvM6IBofBpt12DH7pHuGh4V_2QvbTa-Cc&screenContext=SEARCH&interop=msgOverlay
+                            - generic [ref=e260]:
+                              - img [ref=e261]
+                              - generic [ref=e263]: Message
+                        - paragraph [ref=e130]:
+                          - text: "Current: Co-Founder at"
+                          - strong [ref=e131]: Ninja
+                          - text: .
+                          - strong [ref=e132]: ai
+                        - paragraph [ref=e133]:
+                          - link "Book an appointment" [ref=e134]:
+                            - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Fcalendly%2Ecom%2Fschappi%2F30min&urlhash=J0x9&isSdui=true
+                - generic [ref=e137]:
+                  - generic [ref=e138]:
+                    - paragraph [ref=e139]: Are these results helpful?
+                    - paragraph [ref=e140]: Your feedback helps us improve search results
+                  - generic [ref=e141]:
+                    - button "Are these results helpful? Yes, these search results are helpful" [ref=e142] [cursor=pointer]:
+                      - img [ref=e264]
+                    - button "Are these results helpful? No, these search results are not helpful" [ref=e145] [cursor=pointer]:
+                      - img [ref=e266]
+              - generic [ref=e152]:
+                - iframe [ref=e153]:
+                  - generic [ref=f80e2]:
+                    - generic [ref=f80e3]: Ad
+                    - img "overflow-web-small" [ref=f80e6] [cursor=pointer]
+                    - link "LinkedIn for Marketing" [ref=f80e10] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/li/tscp/sct?destinationUrl=https%3A%2F%2Fbusiness.linkedin.com%2Fcontent%2Fdam%2Fbusiness%2Fmarketing-solutions%2Fglobal%2Fen_US%2Fsite%2Fpdf%2Finfographics%2Fboosting-with-linkedin.pdf%3Fmcid%3D7404249582903468042%26src%3Dli-dynamic%26trk%3D202512_APAC_EN_BoostBestPractice2RC_CompanyPageAdmins_547%26li_fat_id%3Dc6f90b69-beb1-4327-a29a-4225fe8ca160&trackingEvent=%5B%7B%22eventInfo%22%3A%7B%22appId%22%3A%22com.linkedin.ads.rendering.d_web%22%2C%22eventName%22%3A%22SponsoredRightRailContentActionEvent%22%2C%22topicName%22%3A%22SponsoredRightRailContentActionEvent%22%7D%2C%22eventBody%22%3A%7B%22sponsoredEventHeader%22%3A%7B%22encryptedTrackingData%22%3A%22CwEAAAGdp_11MAjKZS8KJaa1FmXmE5NdoGNgOeUiF5zvcVJ_bWnndOgor-eR9Z9oryl3GjYzhroYD-eBOvWOl4T_dUjQGEajBVCK8L0Fe6rL2RdDriyQBxBJV-XGDoqyQQ3goG3EuKfo6Vvh-oi7IKYDQlIwwt0n8VVPXRrOkjkjV9CnMnrZd2ewGcgKbhHD5EBSkoaoCG7pHh1TmIifR50Y8yKhlw7pEr94YaN-Q0W6mrmWlq8YlEbC3UD0R-eUOvoqFY8RS_ILTRWNXUYwEzRC_qY4PCb__XzVBDuDC-YmFJqUm20_-xHkrXi5IUcOu25Wf3eIi6gPqUEqD8sqRZLfAcgN_bk7-5OP0iQMqvF_vne0U-E4BMUDPhupQce-tdLHnb_kFZTyGjbdau_MIRIH-IJi1x-i3jjOYqTsTTF3xrIZf7R6ajHmK9HtGhlv7SLxIuQa1pgUgnOxPYitMqxAUJ1jVhwRjsOxEyjG77ElWnFCeKsW3fHsUGVUOeHYZ3FRbBNDSlTcAv4fBYh0dH92mVlUonJUe3MsqdLQ2ENiryWQuIlreNTVIvA-gX6uk_7pBwTsPDskGuLqFhsHdLCWDl0dsD0z5jEMVoWRZOvsyuhpQRVefOo9rJJ0EdtoKmfSMUl1ESuGc275-Tet5k2QiXTPFnOVyS9vUyRscQWr2z7-Zht9JE9zsD6fpTjWxtGENrLxYWplMveVocEun1i23953csWZmmmvd7XzkhG5opTCNAAz3L-3zqY0xYODvjHfxlrR185hJsHrqNr3edti2O3GVgL5UFYV5sJ2QqvvJ8FK5HTnxtY_Fib6mxdU3R4jvj5tEnT2h1i3RG5PyeAVcYanhepxeRn9DyUugDvUS4awW2ggjluLW7k8MTPMeAIFcY_psElFxGeLYxyT0rOVV8lLsznwrV5IlkbTapujkvR3oZD5hnUTGuFbm3eR9M_LJlNjdXo130Z6CNe36jM4mCIYPeLPzDo30SeaoaNyrOE1DFZ19mUeFuYlEjZDQiniicGf86oiWJi5TvuNnVzdOhmKHXqVmySwQoOxj29fumGyPmj15cV8twomwiuHhvlITeY8cOiEgziwAR-2BhTxwGvbe-m6owJdBqLS0GMyA9kbjg9BPz4sVH4sQuCLNjpJAAR1ixS8Cq7qw5BqrbRnXAzGOVSJLRjFFmCSgUWBjBg800mcxXN9XaucqTM%22%7D%2C%22header%22%3A%7B%22pageInstance%22%3A%7B%22pageUrn%22%3A%22urn%3Ali%3Apage%3Ad_flagship3_search_srp_people%22%2C%22trackingId%22%3A%22cbb1970c-41fb-4566-9746-48a7698c22bf%22%7D%2C%22time%22%3A1776639898867%2C%22version%22%3A%220.0.0%22%7D%2C%22requestHeader%22%3A%7B%22pageKey%22%3A%22d_flagship3_search_srp_people%22%2C%22interfaceLocale%22%3A%22en-US%22%7D%7D%7D%5D&csrfToken=ajax%3A7663274659791041878
+                    - generic [ref=f80e11]:
+                      - heading "Turn organic engagement into real results" [level=2] [ref=f80e14]
+                      - generic [ref=f80e15]:
+                        - generic [ref=f80e16]:
+                          - img "Richard" [ref=f80e17]
+                          - generic [ref=f80e18]:
+                            - link "LinkedIn for Marketing" [ref=f80e19] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/li/tscp/sct?destinationUrl=https%3A%2F%2Fbusiness.linkedin.com%2Fcontent%2Fdam%2Fbusiness%2Fmarketing-solutions%2Fglobal%2Fen_US%2Fsite%2Fpdf%2Finfographics%2Fboosting-with-linkedin.pdf%3Fmcid%3D7404249582903468042%26src%3Dli-dynamic%26trk%3D202512_APAC_EN_BoostBestPractice2RC_CompanyPageAdmins_547%26li_fat_id%3Dc6f90b69-beb1-4327-a29a-4225fe8ca160&trackingEvent=%5B%7B%22eventInfo%22%3A%7B%22appId%22%3A%22com.linkedin.ads.rendering.d_web%22%2C%22eventName%22%3A%22SponsoredRightRailContentActionEvent%22%2C%22topicName%22%3A%22SponsoredRightRailContentActionEvent%22%7D%2C%22eventBody%22%3A%7B%22sponsoredEventHeader%22%3A%7B%22encryptedTrackingData%22%3A%22CwEAAAGdp_11MAjKZS8KJaa1FmXmE5NdoGNgOeUiF5zvcVJ_bWnndOgor-eR9Z9oryl3GjYzhroYD-eBOvWOl4T_dUjQGEajBVCK8L0Fe6rL2RdDriyQBxBJV-XGDoqyQQ3goG3EuKfo6Vvh-oi7IKYDQlIwwt0n8VVPXRrOkjkjV9CnMnrZd2ewGcgKbhHD5EBSkoaoCG7pHh1TmIifR50Y8yKhlw7pEr94YaN-Q0W6mrmWlq8YlEbC3UD0R-eUOvoqFY8RS_ILTRWNXUYwEzRC_qY4PCb__XzVBDuDC-YmFJqUm20_-xHkrXi5IUcOu25Wf3eIi6gPqUEqD8sqRZLfAcgN_bk7-5OP0iQMqvF_vne0U-E4BMUDPhupQce-tdLHnb_kFZTyGjbdau_MIRIH-IJi1x-i3jjOYqTsTTF3xrIZf7R6ajHmK9HtGhlv7SLxIuQa1pgUgnOxPYitMqxAUJ1jVhwRjsOxEyjG77ElWnFCeKsW3fHsUGVUOeHYZ3FRbBNDSlTcAv4fBYh0dH92mVlUonJUe3MsqdLQ2ENiryWQuIlreNTVIvA-gX6uk_7pBwTsPDskGuLqFhsHdLCWDl0dsD0z5jEMVoWRZOvsyuhpQRVefOo9rJJ0EdtoKmfSMUl1ESuGc275-Tet5k2QiXTPFnOVyS9vUyRscQWr2z7-Zht9JE9zsD6fpTjWxtGENrLxYWplMveVocEun1i23953csWZmmmvd7XzkhG5opTCNAAz3L-3zqY0xYODvjHfxlrR185hJsHrqNr3edti2O3GVgL5UFYV5sJ2QqvvJ8FK5HTnxtY_Fib6mxdU3R4jvj5tEnT2h1i3RG5PyeAVcYanhepxeRn9DyUugDvUS4awW2ggjluLW7k8MTPMeAIFcY_psElFxGeLYxyT0rOVV8lLsznwrV5IlkbTapujkvR3oZD5hnUTGuFbm3eR9M_LJlNjdXo130Z6CNe36jM4mCIYPeLPzDo30SeaoaNyrOE1DFZ19mUeFuYlEjZDQiniicGf86oiWJi5TvuNnVzdOhmKHXqVmySwQoOxj29fumGyPmj15cV8twomwiuHhvlITeY8cOiEgziwAR-2BhTxwGvbe-m6owJdBqLS0GMyA9kbjg9BPz4sVH4sQuCLNjpJAAR1ixS8Cq7qw5BqrbRnXAzGOVSJLRjFFmCSgUWBjBg800mcxXN9XaucqTM%22%7D%2C%22header%22%3A%7B%22pageInstance%22%3A%7B%22pageUrn%22%3A%22urn%3Ali%3Apage%3Ad_flagship3_search_srp_people%22%2C%22trackingId%22%3A%22cbb1970c-41fb-4566-9746-48a7698c22bf%22%7D%2C%22time%22%3A1776639898867%2C%22version%22%3A%220.0.0%22%7D%2C%22requestHeader%22%3A%7B%22pageKey%22%3A%22d_flagship3_search_srp_people%22%2C%22interfaceLocale%22%3A%22en-US%22%7D%7D%7D%5D&csrfToken=ajax%3A7663274659791041878
+                              - img "LinkedIn for Marketing" [ref=f80e20]
+                            - tooltip "LinkedIn for Marketing" [ref=f80e21]
+                        - img [ref=f80e22]
+                      - generic [ref=f80e23]:
+                        - heading "Get the Boosting Guide" [level=2] [ref=f80e26]
+                        - link "Read Now" [ref=f80e28] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/li/tscp/sct?destinationUrl=https%3A%2F%2Fbusiness.linkedin.com%2Fcontent%2Fdam%2Fbusiness%2Fmarketing-solutions%2Fglobal%2Fen_US%2Fsite%2Fpdf%2Finfographics%2Fboosting-with-linkedin.pdf%3Fmcid%3D7404249582903468042%26src%3Dli-dynamic%26trk%3D202512_APAC_EN_BoostBestPractice2RC_CompanyPageAdmins_547%26li_fat_id%3Dc6f90b69-beb1-4327-a29a-4225fe8ca160&trackingEvent=%5B%7B%22eventInfo%22%3A%7B%22appId%22%3A%22com.linkedin.ads.rendering.d_web%22%2C%22eventName%22%3A%22SponsoredRightRailContentActionEvent%22%2C%22topicName%22%3A%22SponsoredRightRailContentActionEvent%22%7D%2C%22eventBody%22%3A%7B%22sponsoredEventHeader%22%3A%7B%22encryptedTrackingData%22%3A%22CwEAAAGdp_11MAjKZS8KJaa1FmXmE5NdoGNgOeUiF5zvcVJ_bWnndOgor-eR9Z9oryl3GjYzhroYD-eBOvWOl4T_dUjQGEajBVCK8L0Fe6rL2RdDriyQBxBJV-XGDoqyQQ3goG3EuKfo6Vvh-oi7IKYDQlIwwt0n8VVPXRrOkjkjV9CnMnrZd2ewGcgKbhHD5EBSkoaoCG7pHh1TmIifR50Y8yKhlw7pEr94YaN-Q0W6mrmWlq8YlEbC3UD0R-eUOvoqFY8RS_ILTRWNXUYwEzRC_qY4PCb__XzVBDuDC-YmFJqUm20_-xHkrXi5IUcOu25Wf3eIi6gPqUEqD8sqRZLfAcgN_bk7-5OP0iQMqvF_vne0U-E4BMUDPhupQce-tdLHnb_kFZTyGjbdau_MIRIH-IJi1x-i3jjOYqTsTTF3xrIZf7R6ajHmK9HtGhlv7SLxIuQa1pgUgnOxPYitMqxAUJ1jVhwRjsOxEyjG77ElWnFCeKsW3fHsUGVUOeHYZ3FRbBNDSlTcAv4fBYh0dH92mVlUonJUe3MsqdLQ2ENiryWQuIlreNTVIvA-gX6uk_7pBwTsPDskGuLqFhsHdLCWDl0dsD0z5jEMVoWRZOvsyuhpQRVefOo9rJJ0EdtoKmfSMUl1ESuGc275-Tet5k2QiXTPFnOVyS9vUyRscQWr2z7-Zht9JE9zsD6fpTjWxtGENrLxYWplMveVocEun1i23953csWZmmmvd7XzkhG5opTCNAAz3L-3zqY0xYODvjHfxlrR185hJsHrqNr3edti2O3GVgL5UFYV5sJ2QqvvJ8FK5HTnxtY_Fib6mxdU3R4jvj5tEnT2h1i3RG5PyeAVcYanhepxeRn9DyUugDvUS4awW2ggjluLW7k8MTPMeAIFcY_psElFxGeLYxyT0rOVV8lLsznwrV5IlkbTapujkvR3oZD5hnUTGuFbm3eR9M_LJlNjdXo130Z6CNe36jM4mCIYPeLPzDo30SeaoaNyrOE1DFZ19mUeFuYlEjZDQiniicGf86oiWJi5TvuNnVzdOhmKHXqVmySwQoOxj29fumGyPmj15cV8twomwiuHhvlITeY8cOiEgziwAR-2BhTxwGvbe-m6owJdBqLS0GMyA9kbjg9BPz4sVH4sQuCLNjpJAAR1ixS8Cq7qw5BqrbRnXAzGOVSJLRjFFmCSgUWBjBg800mcxXN9XaucqTM%22%7D%2C%22header%22%3A%7B%22pageInstance%22%3A%7B%22pageUrn%22%3A%22urn%3Ali%3Apage%3Ad_flagship3_search_srp_people%22%2C%22trackingId%22%3A%22cbb1970c-41fb-4566-9746-48a7698c22bf%22%7D%2C%22time%22%3A1776639898867%2C%22version%22%3A%220.0.0%22%7D%2C%22requestHeader%22%3A%7B%22pageKey%22%3A%22d_flagship3_search_srp_people%22%2C%22interfaceLocale%22%3A%22en-US%22%7D%7D%7D%5D&csrfToken=ajax%3A7663274659791041878
+                - generic [ref=e154]:
+                  - generic [ref=e155]:
+                    - link "About" [ref=e156] [cursor=pointer]:
+                      - /url: https://about.linkedin.com/
+                      - paragraph [ref=e157]: About
+                    - link "Accessibility" [ref=e158] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/accessibility/
+                      - paragraph [ref=e159]: Accessibility
+                    - link "Help Center" [ref=e160] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/
+                      - paragraph [ref=e161]: Help Center
+                    - button "Privacy & Terms" [ref=e162] [cursor=pointer]:
+                      - generic [ref=e163]:
+                        - paragraph [ref=e164]: Privacy & Terms
+                        - img [ref=e268]
+                    - link "Ad Choices" [ref=e166] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/answer/62931/
+                      - paragraph [ref=e167]: Ad Choices
+                    - link "Advertising" [ref=e168] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/ad/start/?trk=n_nav_ads_rr
+                      - paragraph [ref=e169]: Advertising
+                    - button "Business Services" [ref=e170] [cursor=pointer]:
+                      - generic [ref=e171]:
+                        - paragraph [ref=e172]: Business Services
+                        - img [ref=e270]
+                    - link "Get the LinkedIn app" [ref=e174] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/mobile/
+                      - paragraph [ref=e175]: Get the LinkedIn app
+                    - link "More" [ref=e176] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/search/results/people/?keywords=Marcus%20Schappi%20Ninja.ai
+                      - paragraph [ref=e177]: More
+                  - generic [ref=e178]:
+                    - img [ref=e272]
+                    - paragraph [ref=e180]: LinkedIn Corporation © 2026
+  - generic [active]:
+    - generic:
+      - generic:
+        - generic:
+          - complementary:
+            - generic [ref=e275]:
+              - generic [ref=e276]:
+                - generic [ref=e278] [cursor=pointer]:
+                  - generic [ref=e279]:
+                    - img "Richard Anthony" [ref=e280]
+                    - generic [ref=e282]: Status is online
+                  - button "You are on the messaging overlay. Press enter to open the list of conversations." [ref=e283]:
+                    - generic [ref=e284]:
+                      - generic [ref=e285]: Messaging
+                      - generic [ref=e286]: You are on the messaging overlay. Press enter to open the list of conversations.
+                - generic [ref=e287]:
+                  - button "Open messenger dropdown menu" [ref=e289] [cursor=pointer]:
+                    - img "Open messenger dropdown menu" [ref=e290]
+                  - button "Compose message" [ref=e293] [cursor=pointer]:
+                    - img [ref=e294]
+                    - generic [ref=e296]: Compose message
+                  - button "You are on the messaging overlay. Press enter to open the list of conversations." [ref=e297] [cursor=pointer]:
+                    - img [ref=e298]
+                    - generic [ref=e300]: You are on the messaging overlay. Press enter to open the list of conversations.
+              - link "Mr. Frundles picture Mr. Frundles" [ref=e301] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/82159361/admin/inbox
+                - img "Mr. Frundles picture" [ref=e302]
+                - generic [ref=e303]: Mr. Frundles
+                - img [ref=e304]
+            - dialog "Messaging" [ref=e306]:
+              - generic [ref=e307]:
+                - generic [ref=e308] [cursor=pointer]:
+                  - heading "New message" [level=2] [ref=e313]
+                  - generic [ref=e314]:
+                    - button "Minimize your conversation" [expanded] [ref=e315]:
+                      - img [ref=e316]
+                      - generic [ref=e318]: Minimize your conversation
+                    - button "Close your draft conversation" [ref=e319]:
+                      - img [ref=e320]
+                      - generic [ref=e322]: Close your draft conversation
+                - generic [ref=e324]:
+                  - link "Book an appointment" [ref=e327] [cursor=pointer]:
+                    - /url: https://calendly.com/schappi/30min
+                    - strong [ref=e328]: Book an appointment
+                  - generic [ref=e329]:
+                    - generic [ref=e330]:
+                      - link "Marcus Schappi" [ref=e331] [cursor=pointer]:
+                        - /url: /in/schappi/
+                        - img "Marcus Schappi" [ref=e334]
+                      - generic [ref=e335]:
+                        - link "Marcus Schappi" [ref=e337] [cursor=pointer]:
+                          - /url: /in/schappi/
+                        - generic [ref=e338]: CEO & Co-Founder at Ninja.ai | Pioneering the Model Context Protocol (MCP) for AI Assistant Integration
+                    - generic [ref=e340]:
+                      - generic [ref=e341]:
+                        - generic [ref=e342]: Premium InMail composer
+                        - img "Premium" [ref=e343]:
+                          - img [ref=e344]
+                        - paragraph [ref=e346]:
+                          - text: Free message |
+                          - strong [ref=e347]:
+                            - link "Why?" [ref=e348] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/help/linkedin/answer/139
+                      - generic "Add a subject to your message to convey what your message is about" [ref=e350]:
+                        - textbox "Subject (optional)" [ref=e352]
+                      - generic [ref=e353]:
+                        - generic [ref=e355]:
+                          - textbox "Write a message…" [ref=e356]:
+                            - paragraph [ref=e357]
+                          - text: Write a message…
+                        - button [disabled] [ref=e358]:
+                          - img
+                      - generic [ref=e359]:
+                        - button "Write with AI" [ref=e361] [cursor=pointer]:
+                          - generic [ref=e363]:
+                            - img [ref=e364]
+                            - text: Write with AI
+                        - generic [ref=e366]:
+                          - button "Attach an image" [ref=e368] [cursor=pointer]:
+                            - img [ref=e369]
+                            - generic [ref=e371]: Attach an image
+                          - button "Attach a file" [ref=e373] [cursor=pointer]:
+                            - img [ref=e374]
+                            - generic [ref=e376]: Attach a file
+                          - button "Open Emoji Keyboard" [ref=e379] [cursor=pointer]:
+                            - img
+                            - generic [ref=e380]: Open Emoji Keyboard
+          - complementary "AI-powered assistant to get help with your career, jobs etc"
+  - iframe [ref=e274]:
+    - generic [active] [ref=f81e1]:
+      - generic:
+        - region "Toast message":
+          - heading "0 notifications total" [level=2] [ref=f81e3]
+          - alert
+      - region [ref=f81e4]
+      - generic [ref=f81e5]:
+        - generic [ref=f81e7]:
+          - button "Skip to search" [ref=f81e8] [cursor=pointer]:
+            - generic [ref=f81e9]: Skip to search
+          - button "Skip to main content" [ref=f81e10] [cursor=pointer]:
+            - generic [ref=f81e11]: Skip to main content
+          - button "Keyboard shortcuts" [ref=f81e12] [cursor=pointer]:
+            - generic [ref=f81e13]: Keyboard shortcuts
+          - button "Close jump menu" [ref=f81e14] [cursor=pointer]:
+            - img [ref=f81e15]
+            - generic [ref=f81e17]: Close jump menu
+        - banner "Global Navigation" [ref=f81e18]:
+          - generic [ref=f81e19]:
+            - link "LinkedIn" [ref=f81e20] [cursor=pointer]:
+              - /url: https://www.linkedin.com/feed/?nis=true
+              - img "LinkedIn" [ref=f81e23]:
+                - img [ref=f81e24]
+            - generic [ref=f81e28]:
+              - combobox "Search" [ref=f81e29]
+              - generic:
+                - img
+            - navigation "Primary Navigation" [ref=f81e30]:
+              - list [ref=f81e31]:
+                - listitem [ref=f81e32]:
+                  - link "new feed updates notifications Home" [ref=f81e33] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/feed/
+                    - generic [ref=f81e34]:
+                      - generic [ref=f81e37]: new feed updates notifications
+                      - img [ref=f81e41]
+                    - generic "Home" [ref=f81e43]
+                - listitem [ref=f81e44]:
+                  - link "My Network" [ref=f81e45] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork/?
+                    - img [ref=f81e49]
+                    - generic "My Network" [ref=f81e51]
+                - listitem [ref=f81e52]:
+                  - link "Jobs" [ref=f81e53] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/?
+                    - img [ref=f81e57]
+                    - generic "Jobs" [ref=f81e59]
+                - listitem [ref=f81e60]:
+                  - link "Messaging" [ref=f81e61] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/?
+                    - img [ref=f81e65]
+                    - generic "Messaging" [ref=f81e67]
+                - listitem [ref=f81e68]:
+                  - link "16 new notifications Notifications" [ref=f81e69] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/?
+                    - generic [ref=f81e70]:
+                      - generic [ref=f81e71]:
+                        - generic [ref=f81e72]: "16"
+                        - generic [ref=f81e73]: 16 new notifications
+                      - img [ref=f81e77]
+                    - generic "Notifications" [ref=f81e79]
+                - listitem [ref=f81e80]:
+                  - button "Richard Anthony Me" [ref=f81e82] [cursor=pointer]:
+                    - img "Richard Anthony" [ref=f81e83]
+                    - generic [ref=f81e84]:
+                      - text: Me
+                      - img [ref=f81e85]
+                - listitem [ref=f81e87]:
+                  - button "For Business" [ref=f81e89] [cursor=pointer]:
+                    - img [ref=f81e93]
+                    - generic "For Business" [ref=f81e95]:
+                      - text: For Business
+                      - img [ref=f81e96]
+                - listitem [ref=f81e98]:
+                  - link "Advertise" [ref=f81e99] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts?
+                    - img [ref=f81e103]
+                    - generic "Advertise" [ref=f81e106]

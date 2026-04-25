@@ -1,0 +1,40 @@
+Cycle,Verb,Domain,BasePlace,Phase,Timezone,PlaceName,Latitude,Longitude
+1,coordinate,orchestration,The Signal Ridge,waxing,APAC,The Khingan Ridge,49.0,122.0
+1,coordinate,orchestration,The Signal Ridge,full,EMEA,The Alpine Ridge,46.5,9.5
+1,coordinate,orchestration,The Signal Ridge,waning,Americas,The Cascades,47.0,-121.5
+2,excavate,reconnaissance,The White Expanse,waxing,APAC,The Hokkaido Drift,43.5,142.5
+2,excavate,reconnaissance,The White Expanse,full,EMEA,The Svalbard Icefield,78.0,16.0
+2,excavate,reconnaissance,The White Expanse,waning,Americas,The Baffin Shelf,70.0,-68.0
+3,triangulate,constraint-design,The Deep Tunnels,waxing,APAC,The Deccan Karst,19.0,75.0
+3,triangulate,constraint-design,The Deep Tunnels,full,EMEA,The Catacombs,48.83,2.33
+3,triangulate,constraint-design,The Deep Tunnels,waning,Americas,The Cenote Network,20.6,-88.5
+4,synthesize,signal-analysis,The Dawn Terrace,waxing,APAC,The Kyoto Gardens,35.0,135.7
+4,synthesize,signal-analysis,The Dawn Terrace,full,EMEA,The Levantine Coast,33.9,35.5
+4,synthesize,signal-analysis,The Dawn Terrace,waning,Americas,The Sonora Atrium,30.5,-110.0
+5,intercept,boundary-testing,The High Canopy,waxing,APAC,The Mekong Delta,10.0,105.5
+5,intercept,boundary-testing,The High Canopy,full,EMEA,The Black Forest,48.3,8.2
+5,intercept,boundary-testing,The High Canopy,waning,Americas,The Amazon Basin,-3.0,-60.0
+6,enumerate,pattern-extraction,The Summer Valley,waxing,APAC,The Kashmir Valley,34.1,74.8
+6,enumerate,pattern-extraction,The Summer Valley,full,EMEA,The Loire Valley,47.4,0.7
+6,enumerate,pattern-extraction,The Summer Valley,waning,Americas,The Willamette Valley,44.9,-123.0
+7,calibrate,calibration,The Crown Summit,waxing,APAC,The Karakoram Peak,35.88,76.51
+7,calibrate,calibration,The Crown Summit,full,EMEA,The Matterhorn,45.97,7.65
+7,calibrate,calibration,The Crown Summit,waning,Americas,The Denali Crown,63.07,-151.0
+8,transpose,translation,The Deep Current,waxing,APAC,The Mariana Trench,11.35,142.2
+8,transpose,translation,The Deep Current,full,EMEA,The Baltic Deep,57.3,20.0
+8,transpose,translation,The Deep Current,waning,Americas,The Laurentian Abyss,43.0,-56.0
+9,arbitrate,arbitration,The Great Granary,waxing,APAC,The Punjab Plains,30.0,75.0
+9,arbitrate,arbitration,The Great Granary,full,EMEA,The Steppe Silos,48.0,40.0
+9,arbitrate,arbitration,The Great Granary,waning,Americas,The Prairie Vaults,41.0,-100.0
+10,cultivate,cultivation,The Tracking Grounds,waxing,APAC,The Taiga Steppe,60.0,100.0
+10,cultivate,cultivation,The Tracking Grounds,full,EMEA,The Caledonian Forest,57.1,-4.6
+10,cultivate,cultivation,The Tracking Grounds,waning,Americas,The High Chaparral,31.0,-109.0
+11,distill,distillation,The Riverworks,waxing,APAC,The Yangtze Gates,30.8,111.0
+11,distill,distillation,The Riverworks,full,EMEA,The Rhine Locks,50.0,8.0
+11,distill,distillation,The Riverworks,waning,Americas,The Columbia Dams,47.95,-118.98
+12,navigate,navigation,The Winter Wall,waxing,APAC,The Siberian Shield,65.0,105.0
+12,navigate,navigation,The Winter Wall,full,EMEA,The Nordic Bastion,68.0,20.0
+12,navigate,navigation,The Winter Wall,waning,Americas,The Yukon Perimeter,64.0,-135.0
+13,reconcile,reconciliation,The Thirteenth Station,waxing,APAC,Station Okhotsk,59.0,143.0
+13,reconcile,reconciliation,The Thirteenth Station,full,EMEA,Station Jan Mayen,70.9,-8.5
+13,reconcile,reconciliation,The Thirteenth Station,waning,Americas,Station Tierra del Fuego,-54.0,-69.0

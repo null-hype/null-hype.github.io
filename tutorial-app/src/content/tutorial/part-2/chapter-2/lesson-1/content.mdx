@@ -1,0 +1,43 @@
+---
+type: lesson
+title: Fingerspitzengefühl
+template: otel-warm-log
+focus: /translation.en
+prepareCommands:
+  - npm install
+mainCommand: npm run dev
+previews:
+  - [4173, "Warm Log"]
+terminal: false
+editor:
+  fileTree: false
+custom:
+  loanwordArc:
+    lessonId: fingerspitzengefuhl
+    translationFile: /translation.en
+    runtimeFile: /loanword-runtime.json
+    storyFile: /warm-log-story.json
+    scenario: fingerspitzengefuhl-preservation
+---
+
+import LoanwordArcBridge from '../../../../../components/LoanwordArcBridge';
+
+# Fingerspitzengefühl
+
+<LoanwordArcBridge client:load />
+
+This lesson resolves by preserving the German surface inside English.
+
+Start in `translation.en` and replace the failed gloss. The squiggle stays until the English file itself becomes `Fingerspitzengefühl`.
+
+### The Task
+1. Edit `translation.en`.
+2. Hover the squiggle to inspect the structural-loss rule.
+3. Read the static warm log in the preview. Each loss axis folds to the relevant rule region.
+4. Type `Fingerspitzengefühl` directly in the English file.
+5. When validation passes, the preview should say: `you solved this by preserving the word, not paraphrasing it`.
+
+### What you are seeing
+- `LoanwordRules.pkl` is the authoring source for the structural-loss rule.
+- `loanword-runtime.json` is the runtime artifact the browser uses for validation.
+- `warm-log-story.json` is the static warm-log fixture rendered in Monaco.

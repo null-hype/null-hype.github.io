@@ -1,0 +1,97 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - button "Agentic Protocol Integration" [ref=e14] [cursor=pointer]:
+          - strong [ref=e16]: Agentic Protocol Integration
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - heading "Agentic Protocol Integration" [level=1] [ref=e19]
+            - paragraph [ref=e20]:
+              - text: In this lesson, the preview on the right is a real
+              - strong [ref=e21]: TutorialKit code template
+              - text: .
+            - paragraph [ref=e22]:
+              - text: It reads the lesson workspace directly and reflects the current contents of
+              - code [ref=e23]: /exercise.de
+              - text: .
+            - heading "The Task" [level=3] [ref=e24]
+            - paragraph [ref=e25]:
+              - text: The preview should immediately show a visible custom page. It starts in a
+              - strong [ref=e26]: Blocked
+              - text: state.
+            - list [ref=e27]:
+              - listitem [ref=e28]:
+                - strong [ref=e29]: Correct the grammar
+                - text: "in the editor: Change"
+                - code [ref=e30]: meinen
+                - text: to
+                - code [ref=e31]: meinem
+                - text: .
+              - listitem [ref=e32]:
+                - text: The preview should flip to
+                - strong [ref=e33]: Ready
+                - text: within a second.
+              - listitem [ref=e34]:
+                - text: The
+                - code [ref=e35]: /exercise.de
+                - text: panel in the preview should update to match the editor.
+            - heading "How it works" [level=3] [ref=e36]
+            - paragraph [ref=e37]:
+              - text: The preview runs from
+              - code [ref=e38]: src/templates/goose-client/server.cjs
+              - text: . TutorialKit applies this lesson’s
+              - code [ref=e39]: _files
+              - text: on top of that template, then starts the template app and exposes port
+              - code [ref=e40]: "4173"
+              - text: .
+          - link "The Gender Protocol" [ref=e43] [cursor=pointer]:
+            - /url: /tutorial-app/part-1/chapter-1/lesson-2
+            - generic [ref=e44]: The Gender Protocol
+          - link "Powered by WebContainers" [ref=e46] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e50]:
+        - generic [ref=e52]:
+          - generic:
+            - generic:
+              - generic: Files
+            - generic:
+              - button "Verbs.pkl" [ref=e53] [cursor=pointer]:
+                - generic [ref=e54]: Verbs.pkl
+              - button "exercise.de" [ref=e55] [cursor=pointer]:
+                - generic [ref=e56]: exercise.de
+          - separator
+          - button "Reset" [disabled] [ref=e59]: Reset
+        - separator
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: Preparing Environment
+            - button "Toggle Terminal" [ref=e67] [cursor=pointer]: Toggle Terminal
+          - list [ref=e69]:
+            - listitem [ref=e70]:
+              - generic [ref=e71]: npm run dev
+        - separator
+        - tablist [ref=e76]:
+          - listitem [ref=e77]:
+            - tab "Output" [selected] [ref=e78] [cursor=pointer]: Output
+  - generic [ref=e82]:
+    - button "Menu" [ref=e83]:
+      - img [ref=e85]
+      - generic: Menu
+    - button "Inspect" [ref=e89]:
+      - img [ref=e91]
+      - generic: Inspect
+    - button "Audit" [ref=e93]:
+      - generic [ref=e94]:
+        - img [ref=e95]
+        - img [ref=e98]
+      - generic: Audit
+    - button "Settings" [ref=e101]:
+      - img [ref=e103]
+      - generic: Settings
