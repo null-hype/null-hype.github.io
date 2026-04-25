@@ -54,11 +54,11 @@ export class TidelaneInfra {
     @argument({ defaultPath: "." }) src: Directory,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
-    backendBucket = process.env.BACKEND_BUCKET ?? "",
-    backendPrefix = process.env.BACKEND_PREFIX ?? "",
-    gcpProject = process.env.GCP_PROJECT ?? "",
-    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
-    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
+    backendBucket?: string,
+    backendPrefix?: string,
+    gcpProject?: string,
+    cloudflareZoneId?: string,
+    deploymentSlot?: string,
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -67,15 +67,21 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
+    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
+    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
+    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
+    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
+
     const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
     const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
-      backendBucket,
-      backendPrefix,
-      cloudflareZoneId,
-      deploymentSlot,
+      backendBucket: bucket,
+      backendPrefix: prefix,
+      cloudflareZoneId: zoneId,
+      deploymentSlot: slot,
       domain,
-      gcpProject,
+      gcpProject: project,
       gcpZone,
       instanceName,
       manageDirectDnsRecords,
@@ -96,11 +102,11 @@ export class TidelaneInfra {
     @argument({ defaultPath: "." }) src: Directory,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
-    backendBucket = process.env.BACKEND_BUCKET ?? "",
-    backendPrefix = process.env.BACKEND_PREFIX ?? "",
-    gcpProject = process.env.GCP_PROJECT ?? "",
-    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
-    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
+    backendBucket?: string,
+    backendPrefix?: string,
+    gcpProject?: string,
+    cloudflareZoneId?: string,
+    deploymentSlot?: string,
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -109,15 +115,21 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
+    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
+    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
+    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
+    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
+
     const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
     const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
-      backendBucket,
-      backendPrefix,
-      cloudflareZoneId,
-      deploymentSlot,
+      backendBucket: bucket,
+      backendPrefix: prefix,
+      cloudflareZoneId: zoneId,
+      deploymentSlot: slot,
       domain,
-      gcpProject,
+      gcpProject: project,
       gcpZone,
       instanceName,
       manageDirectDnsRecords,
@@ -141,10 +153,10 @@ export class TidelaneInfra {
     sshPublicKey?: Secret,
     sshPrivateKey?: Secret,
     openrouterApiKey?: Secret,
-    backendBucket = process.env.BACKEND_BUCKET ?? "",
-    backendPrefix = process.env.BACKEND_PREFIX ?? "",
-    gcpProject = process.env.GCP_PROJECT ?? "",
-    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
+    backendBucket?: string,
+    backendPrefix?: string,
+    gcpProject?: string,
+    cloudflareZoneId?: string,
     @argument({ defaultPath: "..", ignore: [
       ".git",
       ".tmp-smallweb-mutagen",
@@ -155,8 +167,8 @@ export class TidelaneInfra {
       "node_modules",
     ] }) repo: Directory,
     @argument({ defaultPath: "../.smallweb-root", ignore: [".vscode/"] }) smallwebRoot: Directory,
-    adminAuthorizedEmails = process.env.ADMIN_AUTHORIZED_EMAILS ?? "",
-    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
+    adminAuthorizedEmails?: string,
+    deploymentSlot?: string,
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -166,17 +178,24 @@ export class TidelaneInfra {
     publicGooseSessionApiUrl = "",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
+    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
+    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
+    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
+    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
+    const authorizedEmails = adminAuthorizedEmails ?? process.env.ADMIN_AUTHORIZED_EMAILS ?? ""
+
     const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
     const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const privKey = sshPrivateKey ?? this.resolveSecret("SSH_PRIVATE_KEY", "ssh-private-key")
     const openrouterKey = openrouterApiKey ?? this.resolveSecret("OPENROUTER_API_KEY", "openrouter-api-key")
     const config = this.deploymentConfig({
-      backendBucket,
-      backendPrefix,
-      cloudflareZoneId,
-      deploymentSlot,
+      backendBucket: bucket,
+      backendPrefix: prefix,
+      cloudflareZoneId: zoneId,
+      deploymentSlot: slot,
       domain,
-      gcpProject,
+      gcpProject: project,
       gcpZone,
       instanceName,
       manageDirectDnsRecords,
@@ -206,7 +225,7 @@ export class TidelaneInfra {
     }
 
     const dist = this.buildAstroDist(repo, sessionApiUrl)
-    const bundle = await this.smallwebBundle(smallwebRoot, dist, adminAuthorizedEmails)
+    const bundle = await this.smallwebBundle(smallwebRoot, dist, authorizedEmails)
     const runtimeLog = await this.deployRuntime(
       bundle,
       src.file("scripts/bootstrap.sh"),
@@ -228,11 +247,11 @@ export class TidelaneInfra {
     @argument({ defaultPath: "." }) src: Directory,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
-    backendBucket = process.env.BACKEND_BUCKET ?? "",
-    backendPrefix = process.env.BACKEND_PREFIX ?? "",
-    gcpProject = process.env.GCP_PROJECT ?? "",
-    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
-    deploymentSlot = process.env.DEPLOYMENT_SLOT ?? "blue",
+    backendBucket?: string,
+    backendPrefix?: string,
+    gcpProject?: string,
+    cloudflareZoneId?: string,
+    deploymentSlot?: string,
     manageDirectDnsRecords = true,
     manageSlotOriginDnsRecord = true,
     manageZoneSettings = false,
@@ -241,15 +260,21 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
+    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
+    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
+    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
+    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
+
     const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
     const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
-      backendBucket,
-      backendPrefix,
-      cloudflareZoneId,
-      deploymentSlot,
+      backendBucket: bucket,
+      backendPrefix: prefix,
+      cloudflareZoneId: zoneId,
+      deploymentSlot: slot,
       domain,
-      gcpProject,
+      gcpProject: project,
       gcpZone,
       instanceName,
       manageDirectDnsRecords,
@@ -327,13 +352,18 @@ echo "Results: $PASS passed, $FAIL failed"
     @argument({ defaultPath: "." }) src: Directory,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
-    backendBucket = process.env.BACKEND_BUCKET ?? "",
-    gcpProject = process.env.GCP_PROJECT ?? "",
-    cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID ?? "",
-    backendPrefixRoot = process.env.BACKEND_PREFIX_ROOT ?? "tidelands-test",
+    backendBucket?: string,
+    gcpProject?: string,
+    cloudflareZoneId?: string,
+    backendPrefixRoot?: string,
     preserveOnFailure = false,
     gcpCredentials?: Secret,
   ): Promise<string> {
+    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
+    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
+    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
+    const prefixRoot = backendPrefixRoot ?? process.env.BACKEND_PREFIX_ROOT ?? "tidelands-test"
+
     const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
     const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
     const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
@@ -354,10 +384,10 @@ echo "Results: $PASS passed, $FAIL failed"
     }
 
     return ctr
-      .withEnvVariable("BACKEND_BUCKET", backendBucket)
-      .withEnvVariable("BACKEND_PREFIX_ROOT", backendPrefixRoot)
-      .withEnvVariable("GCP_PROJECT", gcpProject)
-      .withEnvVariable("CLOUDFLARE_ZONE_ID", cloudflareZoneId)
+      .withEnvVariable("BACKEND_BUCKET", bucket)
+      .withEnvVariable("BACKEND_PREFIX_ROOT", prefixRoot)
+      .withEnvVariable("GCP_PROJECT", project)
+      .withEnvVariable("CLOUDFLARE_ZONE_ID", zoneId)
       .withEnvVariable("PRESERVE_ON_FAILURE", preserveOnFailure ? "1" : "0")
       .withWorkdir("/workspace/test")
       .withExec([
