@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 
 import { defineCollection, z } from 'astro:content';
+import { tutorialLoader } from '@tutorialkit/astro';
 
 // Simple CSV parser that handles quotes and newlines within fields
 function parseCSV(csvText: string) {
@@ -148,4 +149,8 @@ const issues = defineCollection({
   }),
 });
 
-export const collections = { projects, issues };
+const tutorial = defineCollection({
+  loader: tutorialLoader(),
+});
+
+export const collections = { projects, issues, tutorial };

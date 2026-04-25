@@ -57,3 +57,4 @@ infra/terraform/prod.tfvars
 # Bootstrap-generated deploy key (written by `dagger call bootstrap`)
 infra/.deploy-key.json
 infra/tidelanes-deploy.json
+.playwright-cli/console-2026-04-20T21-05-46-109Z.log
