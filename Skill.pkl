@@ -1,0 +1,26 @@
+module Skill
+
+// The formal grammar for a Gemini CLI Skill
+class Skill {
+  name: String
+  description: String(this.length > 10) // Must be a descriptive string
+  
+  // Optional model specification
+  model: String?
+  
+  // List of tools used by the skill
+  tools: Listing<String>(!isEmpty) // Must use at least one tool
+  
+  // Optional MCP server configurations
+  mcpServers: Mapping<String, McpServer>?
+  
+  // The actual instructions for the agent (the markdown body)
+  instructions: String
+}
+
+class McpServer {
+  type: "stdio" | "http" // Currently supported types
+  command: String
+  args: Listing<String>?
+  tools: Listing<String>
+}

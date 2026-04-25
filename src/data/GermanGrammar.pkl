@@ -1,0 +1,31 @@
+module GermanGrammar
+
+type Case = "Nominative" | "Accusative" | "Dative" | "Genitive"
+
+class Verb {
+  infinitve: String
+  requiresCase: Case
+  exampleCorrect: String
+  explanation: String
+}
+
+dativeVerbs: Mapping<String, Verb> = new {
+  ["helfen"] {
+    infinitve = "helfen"
+    requiresCase = "Dative"
+    exampleCorrect = "Ich helfe dem Mann."
+    explanation = "The verb 'helfen' (to help) always takes a dative object. You are providing help 'to' someone."
+  }
+  ["danken"] {
+    infinitve = "danken"
+    requiresCase = "Dative"
+    exampleCorrect = "Ich danke dir."
+    explanation = "Gratitude in German is directed 'to' a person, requiring the dative case."
+  }
+  ["folgen"] {
+    infinitve = "folgen"
+    requiresCase = "Dative"
+    exampleCorrect = "Ich folge dem Anführer."
+    explanation = "The verb 'folgen' (to follow) requires the dative case."
+  }
+}
