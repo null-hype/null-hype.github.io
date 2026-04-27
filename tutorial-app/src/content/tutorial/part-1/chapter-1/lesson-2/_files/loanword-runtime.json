@@ -7,7 +7,7 @@
   "messages": {
     "empty": "Type an English attempt in `translation.en`.",
     "paraphraseLoss": "Any gloss still drops lexicalization, Gefühl register, Spitzen valence, and lineage. Preserve `Fingerspitzengefühl` directly.",
-    "pendingAdmission": "`Fingerspitzengefühl` preserves the surface, but this lesson still blocks it until `PersonalVocabulary.pkl` admits the loanword.",
+    "pendingAdmission": "`Fingerspitzengefühl` preserves the surface, but this word isn't part of English yet.",
     "vocabularyMissing": "Add the loanword to `entries` as a `LoanwordEntry` before this translation can pass.",
     "vocabularyShape": "Finish the `LoanwordEntry` block so `PersonalVocabulary.pkl` can admit the loanword."
   },
@@ -27,7 +27,7 @@
   },
   "completion": {
     "title": "loanword(Fingerspitzengefühl) -> preserved",
-    "message": "you solved this by preserving the word, not paraphrasing it"
+    "message": "you solved this by preserving the word, not paraphrasing it (though it is not yet English)"
   },
   "lossAxes": [
     {
