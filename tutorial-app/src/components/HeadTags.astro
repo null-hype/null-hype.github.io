@@ -15,4 +15,26 @@
     flex: 1 1 auto;
     min-height: 0;
   }
+
+  /* Fix transparent navigation dropdown and components */
+  [class*='_NavContainer_'] {
+    background-color: var(--tk-elements-app-backgroundColor, #ffffff) !important;
+    border: 1px solid var(--tk-elements-app-borderColor, rgba(0, 0, 0, 0.1)) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  [class*='_ToggleButton_'] {
+    background-color: transparent !important;
+    color: var(--tk-elements-app-textColor, #111827) !important;
+  }
+
+  [data-theme='dark'] [class*='_NavContainer_'] {
+    background-color: var(--tk-elements-app-backgroundColor, #1f2937) !important;
+    border-color: var(--tk-elements-app-borderColor, rgba(255, 255, 255, 0.1)) !important;
+  }
+
+  [data-theme='dark'] [class*='_ToggleButton_'] {
+    color: var(--tk-elements-app-textColor, #f9fafb) !important;
+  }
 </style>
