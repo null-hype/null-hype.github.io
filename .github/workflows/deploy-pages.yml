@@ -30,11 +30,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd tutorial-app && npm install
+          cd tutorial-app && npm ci
 
       - name: Build Tutorial App
         run: |
           cd tutorial-app && npm run build
+
+      - name: Debug - List dist directory
+        run: ls -R tutorial-app/dist
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
