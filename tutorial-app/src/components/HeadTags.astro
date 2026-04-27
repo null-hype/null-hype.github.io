@@ -43,10 +43,10 @@
   header nav,
   nav[class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'] {
     background-color: var(--tk-background-primary) !important;
-    border: 1px solid var(--tk-border-primary, rgba(0, 0, 0, 0.1)) !important;
+    border: 1px solid var(--tk-border-primary, #e4e6e9) !important;
     border-radius: 8px !important;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-    z-index: 100 !important;
+    z-index: 1000 !important;
   }
 
   [data-theme='dark'] [class*='_NavContainer_'],
@@ -62,10 +62,13 @@
     padding: 0.75rem 1rem !important;
   }
 
+  /* Force dropdown lists to have solid background */
   [class*='_NavList_'],
   [class*='_NavList_'] ul,
+  ul[class*='_NavList_'],
   [class*='_AccordionContent_'] {
     background-color: var(--tk-background-primary) !important;
+    opacity: 1 !important;
   }
 
   [class*='_NavListItem_'] {
