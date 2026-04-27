@@ -1,4 +1,4 @@
-name: Deploy Storybook to GitHub Pages
+name: Deploy Tutorial App to GitHub Pages
 
 on:
   push:
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-storybook:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,18 +29,20 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd tutorial-app && npm install
 
-      - name: Build Storybook
-        run: npm run build-storybook
+      - name: Build Tutorial App
+        run: |
+          cd tutorial-app && npm run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./storybook-static
+          path: ./tutorial-app/dist
 
-  deploy-pages:
-    needs: build-storybook
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
 
     environment:
