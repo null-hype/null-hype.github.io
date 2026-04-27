@@ -143,8 +143,8 @@ export class TidelaneInfra {
   }
 
   /**
-   * deploy — production-mutating. Applies Terraform, builds the site, uploads
-   * the Smallweb bundle, and configures runtime services on the VM.
+   * deploy — production-mutating. Applies Terraform, builds the public sites,
+   * uploads the Smallweb bundle, and configures runtime services on the VM.
    */
   @func()
   async deploy(
@@ -165,6 +165,9 @@ export class TidelaneInfra {
       "dist",
       "infra/node_modules",
       "node_modules",
+      "tutorial-app/.astro",
+      "tutorial-app/dist",
+      "tutorial-app/node_modules",
     ] }) repo: Directory,
     @argument({ defaultPath: "../.smallweb-root", ignore: [".vscode/"] }) smallwebRoot: Directory,
     adminAuthorizedEmails?: string,
@@ -225,7 +228,8 @@ export class TidelaneInfra {
     }
 
     const dist = this.buildAstroDist(repo, sessionApiUrl)
-    const bundle = await this.smallwebBundle(smallwebRoot, dist, authorizedEmails)
+    const tutorialDist = this.buildTutorialDist(repo)
+    const bundle = await this.smallwebBundle(smallwebRoot, dist, tutorialDist, authorizedEmails)
     const runtimeLog = await this.deployRuntime(
       bundle,
       src.file("scripts/bootstrap.sh"),
@@ -423,17 +427,19 @@ echo "Results: $PASS passed, $FAIL failed"
   }
 
   /**
-   * smallwebBundle — creates a deployable bundle from Smallweb root + Astro dist.
+   * smallwebBundle — creates a deployable bundle from Smallweb root + public site builds.
    */
   @func()
   async smallwebBundle(
     @argument({ defaultPath: "../.smallweb-root", ignore: [".vscode/"] }) smallwebRoot: Directory,
     @argument({ defaultPath: "../dist" }) dist: Directory,
+    @argument({ defaultPath: "../tutorial-app/dist" }) tutorialDist: Directory,
     adminAuthorizedEmails = "",
   ): Promise<Directory> {
     return dag.directory()
       .withDirectory(".smallweb-root", await this.renderSmallwebRoot(smallwebRoot, adminAuthorizedEmails))
       .withDirectory("dist", dist)
+      .withDirectory("tutorial-app/dist", tutorialDist)
   }
 
   private buildAstroDist(repo: Directory, publicGooseSessionApiUrl: string): Directory {
@@ -445,6 +451,16 @@ echo "Results: $PASS passed, $FAIL failed"
       .withExec(["npm", "ci"])
       .withExec(["npm", "run", "build"])
       .directory("/workspace/dist")
+  }
+
+  private buildTutorialDist(repo: Directory): Directory {
+    return dag.container()
+      .from("node:22-bookworm")
+      .withDirectory("/workspace", repo)
+      .withWorkdir("/workspace/tutorial-app")
+      .withExec(["npm", "ci"])
+      .withExec(["npm", "run", "build"])
+      .directory("/workspace/tutorial-app/dist")
   }
 
   private async deployRuntime(
