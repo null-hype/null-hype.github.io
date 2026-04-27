@@ -1,0 +1,46 @@
+---
+type: lesson
+title: Schadenfreude
+template: otel-warm-log
+focus: /translation.en
+prepareCommands:
+  - npm install
+mainCommand: npm run dev
+previews:
+  - [4173, "Warm Log"]
+terminal: false
+editor:
+  fileTree: true
+custom:
+  loanwordArc:
+    lessonId: schadenfreude
+    translationFile: /translation.en
+    vocabularyFile: /PersonalVocabulary.pkl
+    runtimeFile: /loanword-runtime.json
+    storyFile: /warm-log-story.json
+    scenario: schadenfreude-admission
+---
+
+import LoanwordArcBridge from '../../../../../components/LoanwordArcBridge';
+
+# Schadenfreude
+
+<LoanwordArcBridge client:load />
+
+Lesson 1 introduces the preservation move and then blocks it.
+
+Start in `translation.en`. A paraphrase still squiggles. If you switch the English text to `Schadenfreude`, the squiggle stays for a new reason: the word is not yet admitted into `PersonalVocabulary.pkl`.
+
+### The Task
+1. Edit `translation.en`.
+2. Hover the squiggle to inspect the same four structural-loss axes.
+3. Type `Schadenfreude` directly and notice that the lesson still stays blocked.
+4. Locate `PersonalVocabulary.pkl` in the file tree on the left and open it.
+5. Add the loanword `Schadenfreude` to the `entries` mapping.
+6. When validation passes, the preview should say: `you solved this by amending vocabulary, not by refining the gloss`.
+
+### What you are seeing
+- **`LoanwordRules.pkl`**: The authoring source for the structural-loss rule.
+- **`loanword-runtime.json`**: The runtime artifact the browser uses for validation.
+- **`PersonalVocabulary.pkl`**: A type-safe configuration file for admitted loanwords. Using Pkl ensures that our vocabulary list isn't just a text file, but a validated data structure.
+- **`warm-log-story.json`**: The static warm-log fixture rendered in Monaco.
