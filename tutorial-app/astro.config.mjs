@@ -6,7 +6,7 @@ const site = isNetlify ? process.env.URL || 'https://null-hype-tutorial-app.netl
 
 export default defineConfig({
   site,
-  base: isNetlify ? '/' : '/tutorial-app/',
+  base: '/',
   integrations: [
     tutorialkit({
       components: {

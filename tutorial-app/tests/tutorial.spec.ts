@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test('navigate through the tutorial app', async ({ page }) => {
-  console.log('Navigating to http://localhost:4321/tutorial-app/');
-  await page.goto('http://localhost:4321/tutorial-app/');
+  console.log('Navigating to http://localhost:4321/');
+  await page.goto('http://localhost:4321/');
   
   await page.waitForTimeout(3000);
 
