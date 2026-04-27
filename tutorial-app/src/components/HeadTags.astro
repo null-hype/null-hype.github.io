@@ -18,30 +18,30 @@
 
   /* Fix transparent navigation dropdown and components */
   [class*='_NavContainer_'],
-  [class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'] {
-    background-color: var(--tk-background-primary, var(--tk-elements-app-backgroundColor, #ffffff)) !important;
-    border: 1px solid var(--tk-elements-app-borderColor, rgba(0, 0, 0, 0.1)) !important;
+  [class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'],
+  header nav[class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'] {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
     border-radius: 8px !important;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
     z-index: 100 !important;
   }
 
-  /* Ensure the motion.nav dropdown also has a solid background */
-  header nav[class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'] {
-    background-color: var(--tk-background-primary, #ffffff) !important;
-  }
-
   [data-theme='dark'] [class*='_NavContainer_'],
   [data-theme='dark'] [class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'],
   [data-theme='dark'] header nav[class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'] {
-    background-color: var(--tk-background-primary, #1f2937) !important;
-    border-color: var(--tk-elements-app-borderColor, rgba(255, 255, 255, 0.1)) !important;
+    background-color: #1f2937 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
   [class*='_ToggleButton_'] {
     background-color: transparent !important;
-    color: var(--tk-elements-app-textColor, #111827) !important;
+    color: #111827 !important;
     padding: 0.75rem 1rem !important;
+  }
+
+  [data-theme='dark'] [class*='_ToggleButton_'] {
+    color: #f9fafb !important;
   }
 
   [class*='_NavList_'] {
@@ -50,22 +50,21 @@
   }
 
   [class*='_NavListItem_'] {
-    color: var(--tk-elements-app-textColor, #374151) !important;
+    color: #374151 !important;
     border-radius: 6px !important;
     margin: 2px 0 !important;
     background-color: transparent !important;
   }
 
   [class*='_NavListItem_']:hover {
-    background-color: var(--tk-elements-app-backgroundColorHover, rgba(0, 0, 0, 0.05)) !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
   }
 
-  [data-theme='dark'] [class*='_ToggleButton_'],
   [data-theme='dark'] [class*='_NavListItem_'] {
-    color: var(--tk-elements-app-textColor, #f9fafb) !important;
+    color: #f9fafb !important;
   }
 
   [data-theme='dark'] [class*='_NavListItem_']:hover {
-    background-color: var(--tk-elements-app-backgroundColorHover, rgba(255, 255, 255, 0.1)) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
   }
 </style>
