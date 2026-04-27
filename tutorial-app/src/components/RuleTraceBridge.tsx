@@ -50,7 +50,7 @@ export default function RuleTraceBridge({
         value: string | Uint8Array;
       }
     | undefined;
-  const revisionRef = useRef(0);
+  const revisionRef = useRef(Date.now());
   const lesson = tutorialStore.lesson as LessonRecord | undefined;
   const resolvedConfig = useMemo(() => {
     const customConfig = resolveRuleTraceConfig(lesson?.data?.custom);
@@ -83,7 +83,7 @@ export default function RuleTraceBridge({
       source: 'tk-rule-trace-bridge',
       type: 'lesson-state',
     };
-    const delays = [0, 300, 900, 1600];
+    const delays = [300, 900, 1600, 3200, 6400];
     const timeoutIds = delays.map((delay) =>
       window.setTimeout(() => {
         for (const frame of getPreviewFrames()) {
@@ -114,9 +114,7 @@ export default function RuleTraceBridge({
 }
 
 function getPreviewFrames() {
-  return Array.from(document.querySelectorAll('#previews-container iframe')).filter((frame) => {
-    return !frame.classList.contains('hidden');
-  });
+  return Array.from(document.querySelectorAll('#previews-container iframe, .previews-container iframe')) as HTMLIFrameElement[];
 }
 
 function installRuleOverlay(diagnostics: ReturnType<typeof buildRuleTraceState>['diagnostics']) {

@@ -37,7 +37,7 @@ export default function CommandProtocolBridge({
         value: string | Uint8Array;
       }
     | undefined;
-  const revisionRef = useRef(0);
+  const revisionRef = useRef(Date.now());
 
   const commandText = valueToText(documents[commandFile]?.value);
   const runtimeText = valueToText(documents[runtimeFile]?.value);
@@ -57,7 +57,7 @@ export default function CommandProtocolBridge({
       source: 'tk-command-bridge',
       type: 'command-state',
     };
-    const delays = [0, 300, 900, 1600];
+    const delays = [300, 900, 1600, 3200, 6400];
     const timeoutIds = delays.map((delay) =>
       window.setTimeout(() => {
         for (const frame of getPreviewFrames()) {
@@ -88,9 +88,7 @@ export default function CommandProtocolBridge({
 }
 
 function getPreviewFrames() {
-  return Array.from(document.querySelectorAll('#previews-container iframe')).filter((frame) => {
-    return !frame.classList.contains('hidden');
-  });
+  return Array.from(document.querySelectorAll('#previews-container iframe, .previews-container iframe')) as HTMLIFrameElement[];
 }
 
 function installProtocolOverlay(
