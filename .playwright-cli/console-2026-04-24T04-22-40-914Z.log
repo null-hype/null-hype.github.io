@@ -1,0 +1,66 @@
+[     503ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:20103
+[    2196ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:4321/favicon.ico:0
+[    6012ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[    9932ms] [ERROR] Element already has context attribute @ https://5ea49f1ddtet7fktsef16grz0cvsbv-lg3n--4173--4c73681d.local-corp.webcontainer-api.io/.webcontainer@runtime.4c73681d.js:25
+[   12632ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  226303ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:20103
+[  229881ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  233461ms] [ERROR] Element already has context attribute @ https://5ea49f1ddtet7fktsef16grz0cvsbv-lg3n--4173--4c73681d.local-corp.webcontainer-api.io/.webcontainer@runtime.4c73681d.js:25
+[  236176ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  241278ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:20103
+[  244934ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  248313ms] [ERROR] Element already has context attribute @ https://5ea49f1ddtet7fktsef16grz0cvsbv-lg3n--4173--4c73681d.local-corp.webcontainer-api.io/.webcontainer@runtime.4c73681d.js:25
+[  251233ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  421346ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:20103
+[  424712ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  427775ms] [ERROR] Element already has context attribute @ https://5ea49f1ddtet7fktsef16grz0cvsbv-lg3n--4173--4c73681d.local-corp.webcontainer-api.io/.webcontainer@runtime.4c73681d.js:25
+[  430701ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  627113ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:20103
+[  627881ms] [ERROR] Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:4321/node_modules/.vite/deps/chunk-7GY2265W.js?v=61579a48:391
+[  627883ms] [ERROR] Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:4321/node_modules/.vite/deps/chunk-7GY2265W.js?v=61579a48:391
+[  627884ms] TypeError: Cannot read properties of null (reading 'useCallback')
+    at exports.useCallback (http://localhost:4321/node_modules/.vite/deps/chunk-7GY2265W.js?v=61579a48:904:35)
+    at useStore (http://localhost:4321/node_modules/.vite/deps/chunk-5ATUVA7P.js?v=61579a48:24:48)
+    at CommandProtocolBridge (http://localhost:4321/src/components/CommandProtocolBridge.tsx:32:21)
+    at Object.react_stack_bottom_frame (http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:18510:20)
+    at renderWithHooks (http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:5655:24)
+    at updateFunctionComponent (http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:7476:21)
+    at beginWork (http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:8526:20)
+    at runWithFiberInDEV (http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:998:72)
+    at performUnitOfWork (http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:12562:98)
+    at workLoopSync (http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:12425:43)
+[  627884ms] [WARNING] %s
+
+%s
+ An error occurred in the <CommandProtocolBridge> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=e1c9a15b:6966
+[  629094ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=61579a48:20103
+[  632684ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  636012ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=61579a48:20103
+[  636162ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=61579a48:20103
+[  639660ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  642952ms] [ERROR] Element already has context attribute @ https://5ea49f1ddtet7fktsef16grz0cvsbv-lg3n--4173--4c73681d.local-corp.webcontainer-api.io/.webcontainer@runtime.4c73681d.js:25
+[  645603ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  717862ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=61579a48:20103
+[  721302ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[  724080ms] [ERROR] Element already has context attribute @ https://5ea49f1ddtet7fktsef16grz0cvsbv-lg3n--4173--4c73681d.local-corp.webcontainer-api.io/.webcontainer@runtime.4c73681d.js:25
+[  726790ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[ 1440760ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:4321/@vite/client:1246
+[ 1440787ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:4321/:0
+[ 1441067ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=61579a48:20103
+[ 1445354ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[ 2715688ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:4321/@vite/client:1246
+[ 2715703ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:4321/:0
+[ 2716003ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=61579a48:20103
+[ 7279438ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4321/node_modules/.vite/deps/@astrojs_react_client__js.js?v=61579a48:20103
+[ 7283005ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0
+[ 7286146ms] [ERROR] Element already has context attribute @ https://5ea49f1ddtet7fktsef16grz0cvsbv-lg3n--4173--4c73681d.local-corp.webcontainer-api.io/.webcontainer@runtime.4c73681d.js:25
+[ 7288767ms] [WARNING] The resource https://w-corp-staticblitz.com/fetch.worker.4c73681d.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://stackblitz.com/headless?version=1.5.1:0

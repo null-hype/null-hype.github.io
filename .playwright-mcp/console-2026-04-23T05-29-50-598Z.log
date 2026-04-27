@@ -1,0 +1,6 @@
+[     257ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     259ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     259ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     292ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     292ms] Identifier 'injectIntoGlobalHook' has already been declared
+[  143432ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:4321/tutorial-app/1-grammar-as-protocol/1-dative-verbs/1-intro:0

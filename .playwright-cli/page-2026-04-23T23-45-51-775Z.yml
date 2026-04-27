@@ -1,0 +1,111 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - button "Toggle Theme" [ref=e11] [cursor=pointer]
+    - generic [ref=e13]:
+      - generic [ref=e15]:
+        - button "Agentic Protocol Integration" [ref=e17] [cursor=pointer]:
+          - strong [ref=e19]: Agentic Protocol Integration
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - heading "Agentic Protocol Integration" [level=1] [ref=e22]
+            - paragraph [ref=e23]:
+              - text: In this lesson, the preview on the right is a real
+              - strong [ref=e24]: TutorialKit code template
+              - text: .
+            - paragraph [ref=e25]:
+              - text: It reads the lesson workspace directly and reflects the current contents of
+              - code [ref=e26]: /exercise.de
+              - text: .
+            - heading "The Task" [level=3] [ref=e27]
+            - paragraph [ref=e28]:
+              - text: The preview should immediately show a visible custom page. It starts in a
+              - strong [ref=e29]: Blocked
+              - text: state.
+            - list [ref=e30]:
+              - listitem [ref=e31]:
+                - strong [ref=e32]: Correct the grammar
+                - text: "in the editor: Change"
+                - code [ref=e33]: meinen
+                - text: to
+                - code [ref=e34]: meinem
+                - text: .
+              - listitem [ref=e35]:
+                - text: The preview should flip to
+                - strong [ref=e36]: Ready
+                - text: within a second.
+              - listitem [ref=e37]:
+                - text: The
+                - code [ref=e38]: /exercise.de
+                - text: panel in the preview should update to match the editor.
+            - heading "How it works" [level=3] [ref=e39]
+            - paragraph [ref=e40]:
+              - text: The preview runs from
+              - code [ref=e41]: src/templates/goose-client/server.cjs
+              - text: . TutorialKit applies this lesson’s
+              - code [ref=e42]: _files
+              - text: on top of that template, then starts the template app and exposes port
+              - code [ref=e43]: "4173"
+              - text: .
+          - link "The Gender Protocol" [ref=e46] [cursor=pointer]:
+            - /url: /tutorial-app/part-1/chapter-1/lesson-2
+            - generic [ref=e47]: The Gender Protocol
+          - link "Powered by WebContainers" [ref=e49] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e53]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - generic [ref=e58]: Files
+            - generic [ref=e59]:
+              - button "Verbs.pkl" [ref=e60] [cursor=pointer]:
+                - generic [ref=e61]: Verbs.pkl
+              - button "exercise.de" [pressed] [ref=e62] [cursor=pointer]:
+                - generic [ref=e63]: exercise.de
+          - separator
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - generic [ref=e66]: exercise.de
+              - button "Reset" [disabled] [ref=e67]: Reset
+            - generic [ref=e72]:
+              - generic [ref=e74]:
+                - generic [ref=e75]: "1"
+                - generic [ref=e76]: "2"
+              - textbox "Editor" [ref=e79]:
+                - generic [ref=e80]: Ich danke meinen Vater.
+        - separator
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]: Preparing Environment
+            - button "Toggle Terminal" [ref=e86] [cursor=pointer]: Toggle Terminal
+          - list [ref=e88]:
+            - listitem [ref=e89]:
+              - generic [ref=e90]: npm run dev
+        - separator
+        - generic [ref=e92]:
+          - tablist [ref=e95]:
+            - listitem [ref=e96]:
+              - tab "Output" [selected] [ref=e97] [cursor=pointer]: Output
+          - tabpanel "Output" [ref=e99]:
+            - generic [ref=e102]:
+              - generic:
+                - textbox "Terminal input"
+  - generic [ref=e132]:
+    - button "Menu" [ref=e133]:
+      - img [ref=e135]
+      - generic: Menu
+    - button "Inspect" [ref=e139]:
+      - img [ref=e141]
+      - generic: Inspect
+    - button "Audit" [ref=e143]:
+      - generic [ref=e144]:
+        - img [ref=e145]
+        - img [ref=e148]
+      - generic: Audit
+    - button "Settings" [ref=e151]:
+      - img [ref=e153]
+      - generic: Settings

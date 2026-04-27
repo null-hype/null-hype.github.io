@@ -1,0 +1,288 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "jungle.roaring.wave" [ref=e6] [cursor=pointer]:
+          - /url: /now
+        - navigation "Primary dossier sections" [ref=e7]:
+          - link "Frame" [ref=e8] [cursor=pointer]:
+            - /url: "#epistemic"
+          - link "Sequence" [ref=e9] [cursor=pointer]:
+            - /url: "#cases"
+          - link "Comparisons" [ref=e10] [cursor=pointer]:
+            - /url: "#comparisons"
+          - link "Forecast" [ref=e11] [cursor=pointer]:
+            - /url: "#forecast"
+      - link "Now page" [ref=e13] [cursor=pointer]:
+        - /url: /now
+  - complementary "Dossier shortcuts" [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]: JRW
+        - generic [ref=e18]: "Ref: PLAN-26 v3.5"
+      - navigation "Section shortcuts" [ref=e19]:
+        - link "Contract" [ref=e20] [cursor=pointer]:
+          - /url: "#epistemic"
+          - generic [ref=e21]: fact_check
+          - generic [ref=e22]: Contract
+        - link "Nodes" [ref=e23] [cursor=pointer]:
+          - /url: "#cases"
+          - generic [ref=e24]: timeline
+          - generic [ref=e25]: Nodes
+        - link "Tests" [ref=e26] [cursor=pointer]:
+          - /url: "#comparisons"
+          - generic [ref=e27]: balance
+          - generic [ref=e28]: Tests
+        - link "Next" [ref=e29] [cursor=pointer]:
+          - /url: "#forecast"
+          - generic [ref=e30]: insights
+          - generic [ref=e31]: Next
+  - main [ref=e32]:
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]: PLAN-26 // Dossier v3.5
+        - heading "Obviously, It Just Looks That Way." [level=1] [ref=e38]
+        - generic "Epistemic markers" [ref=e39]:
+          - generic [ref=e40]: Candidate Signal
+          - generic [ref=e41]: Perception Matters
+          - generic [ref=e42]: Needs Scoring
+        - generic [ref=e43]:
+          - generic [ref=e44]: Boundary Condition // What This Dossier Is Not Claiming
+          - list [ref=e45]:
+            - listitem [ref=e46]:
+              - strong [ref=e47]: "01."
+              - generic [ref=e48]: Not that Assad, Valdai, Maduro, and Khamenei were centrally authored as one hidden operation.
+            - listitem [ref=e49]:
+              - strong [ref=e50]: "02."
+              - generic [ref=e51]: Not that resemblance alone is enough to upgrade coincidence into proof.
+            - listitem [ref=e52]:
+              - strong [ref=e53]: "03."
+              - generic [ref=e54]: Not that contested or inflated events deserve the same evidentiary weight as hard operational facts.
+            - listitem [ref=e55]:
+              - strong [ref=e56]: "04."
+              - generic [ref=e57]: Not that this essay can substitute for a live forecasting framework.
+      - generic [ref=e58]:
+        - paragraph [ref=e59]: "The stronger claim is smaller: once leader-targeting events cluster in a way rivals are forced to read as a message, that interpretive pressure becomes geopolitically real before authorship is settled."
+        - generic [ref=e60]:
+          - paragraph [ref=e61]: We usually package wars and crises as self-contained episodes. Syria was about Syria. Venezuela was about Maduro. Iran was about nukes. Each gets its own explainer, its own graphic package, and a fresh timeline starting at zero.
+          - paragraph [ref=e62]: This dossier keeps the original pattern-recognition instinct but revises the burden of proof. The interesting question is no longer whether the whole chain has already been proven. The question is whether the chain has become legible enough that serious actors have to price it in.
+          - paragraph [ref=e63]: "That is why the next move is neither awe nor dismissal. It is operationalization: define what would strengthen the pattern, what would weaken it, and which future observations deserve to be scored instead of merely admired."
+        - link "Proceed to the four-node sequence" [ref=e64] [cursor=pointer]:
+          - /url: "#cases"
+    - figure "Plate 1.1 Four residences, three continents, fourteen months. The point is not that the map explains itself. The point is that it has become legible enough to force a reading." [ref=e67]:
+      - img "Abstract monochrome topological wave used to visualize clustered strategic pressure." [ref=e70]
+      - generic [ref=e71]:
+        - text: Plate 1.1
+        - paragraph [ref=e72]: Four residences, three continents, fourteen months. The point is not that the map explains itself. The point is that it has become legible enough to force a reading.
+    - generic [ref=e74]:
+      - paragraph [ref=e75]: "The four-node sequence is the hook: Bashar al-Assad falls in December 2024, Valdai enters the briefing cycle in December 2025, Nicolas Maduro is extracted on January 3, 2026, and Ayatollah Khamenei is killed on February 28, 2026."
+      - paragraph [ref=e76]: "Each event has a local explanation. The question is why, taken together, they begin to look residence-shaped: allied rulers removed, threatened, or publicly framed as vulnerable in or around the places where power was supposed to be most secure."
+      - paragraph [ref=e77]: If you are Moscow, Beijing, or Tehran, you do not get to wave that away as a literary coincidence. You have to decide whether the sequence is noise, message, or the kind of noisy message that still changes behaviour.
+    - generic [ref=e79]:
+      - generic [ref=e80]:
+        - heading "Case Sequence" [level=2] [ref=e81]
+        - paragraph [ref=e82]: The chain only matters if each node survives a colder reading.
+      - generic [ref=e83]:
+        - paragraph [ref=e84]: v3.5 keeps the original sequence but stops pretending every node carries equal evidentiary weight. Assad and Maduro are hard events. Valdai is contested. Khamenei sits inside both alliance politics and wider demonstration.
+        - paragraph [ref=e85]: That unevenness is not a bug to hide. It is part of the argument. The question is not whether the sequence is perfectly tidy. The question is whether it is structured enough that rivals may still be forced to act as if it means something.
+      - generic [ref=e86]:
+        - article [ref=e87]:
+          - generic [ref=e88]:
+            - generic [ref=e89]: Node 01 // December 2024
+            - heading "Assad Falls" [level=3] [ref=e90]:
+              - text: Assad
+              - text: Falls
+          - generic [ref=e91]:
+            - paragraph [ref=e92]: "After a decade of Russian investment in Tartus, Khmeimim, arms, and advisers, the Damascus regime collapses in days. Assad flees to Moscow. The first rupture is not abstract: an allied ruler leaves home because the patron can no longer hold the room together."
+            - generic [ref=e93]:
+              - generic [ref=e94]:
+                - generic [ref=e95]: Movement
+                - generic [ref=e96]: Damascus -> Moscow
+              - generic [ref=e97]:
+                - generic [ref=e98]: Role In Sequence
+                - generic [ref=e99]: First hard rupture
+          - complementary [ref=e101]:
+            - generic [ref=e102]: Red Team Counterargument
+            - paragraph [ref=e103]: Syria can still be read as plain battlefield attrition plus Russian overstretch. If that reading is sufficient, the first node weakens any claim that a larger signalling chain is needed at all.
+        - blockquote [ref=e104]:
+          - generic: "\""
+          - text: The sequence does not need to be centrally authored to become geopolitically real.
+          - generic [ref=e105]: Operational patch
+        - article [ref=e106]:
+          - generic [ref=e107]:
+            - generic [ref=e108]: Node 02 // December 2025
+            - heading "Valdai Becomes Legible" [level=3] [ref=e109]:
+              - text: Valdai Becomes
+              - text: Legible
+          - generic [ref=e110]:
+            - paragraph [ref=e111]: Russia says Ukraine launched 91 drones at Valdai, Putin's retreat. The reporting is thin, the story inflates as it travels, and outside intelligence reportedly doubts it happened. But once the claim enters the system, residence-targeting shifts from event to interpretation.
+            - generic [ref=e112]:
+              - generic [ref=e113]:
+                - generic [ref=e114]: Claim
+                - generic [ref=e115]: 91 drones / Lavrov
+              - generic [ref=e116]:
+                - generic [ref=e117]: Counter-Signal
+                - generic [ref=e118]: Likely false
+          - complementary [ref=e120]:
+            - generic [ref=e121]: Red Team Counterargument
+            - paragraph [ref=e122]: Valdai is the weak node. If it remains in the chain, it can only stay as evidence that perception matters, not as equal proof. Otherwise the reader is right to suspect bead-stringing after the fact.
+        - generic [ref=e123]:
+          - article [ref=e124]:
+            - generic [ref=e125]: Compression // Residences
+            - generic [ref=e126]: 4 / 14
+            - paragraph [ref=e127]: Four leader residences or compounds inside fourteen months, across three continents and multiple theatres.
+          - article [ref=e128]:
+            - generic [ref=e129]: Method // Revision
+            - paragraph [ref=e130]: The point is not that the chain is already proven. The point is that it is well-formed enough to interrogate systematically.
+          - article [ref=e131]:
+            - generic [ref=e132]: Claim Ladder // v3.5
+            - paragraph [ref=e137]: Resembles a signal -> is read as a signal -> can be scored as a signal.
+        - complementary [ref=e138]:
+          - generic [ref=e139]: Analyst Note // Weak Node Discipline
+          - paragraph [ref=e140]: Valdai stays in the dossier only as a lesson in interpretive pressure. If the event was inflated or invented, that does not make it equal proof. It makes it evidence that public claims about leader vulnerability can matter even when the strike itself is contested.
+        - article [ref=e141]:
+          - generic [ref=e142]:
+            - generic [ref=e143]: Node 03 // January 3, 2026
+            - heading "Maduro Extracted" [level=3] [ref=e144]:
+              - text: Maduro
+              - text: Extracted
+          - generic [ref=e145]:
+            - paragraph [ref=e146]: U.S. special forces cut through the presidential palace in Caracas, remove Nicolas Maduro, and move him through the USS Iwo Jima to a Brooklyn courthouse. Whatever else it was, it was a vivid demonstration that allied leadership compounds were no longer sacred space.
+            - list [ref=e148]:
+              - listitem [ref=e149]:
+                - generic [ref=e150]: Transit
+                - strong [ref=e151]: USS Iwo Jima
+              - listitem [ref=e152]:
+                - generic [ref=e153]: End State
+                - strong [ref=e154]: Brooklyn court
+          - complementary [ref=e156]:
+            - generic [ref=e157]: Red Team Counterargument
+            - paragraph [ref=e158]: Maduro may still be a one-off Venezuelan opportunity shaped by local access, intelligence, and timing. The operation does not need a grand chain behind it to make sense on its own terms.
+        - article [ref=e159]:
+          - generic [ref=e160]:
+            - generic [ref=e161]: Node 04 // February 28, 2026
+            - heading "Khamenei Struck" [level=3] [ref=e162]:
+              - text: Khamenei
+              - text: Struck
+          - generic [ref=e163]:
+            - paragraph [ref=e164]: "A joint U.S.-Israeli strike kills Ayatollah Khamenei in his compound after thirty-six years in power. The sequence reaches its most lethal point: not exile, not contested threat, not extraction, but irreversible removal at the centre of the Iranian system."
+            - generic [ref=e165]:
+              - generic [ref=e166]:
+                - generic [ref=e167]: Operation
+                - generic [ref=e168]: Joint U.S.-Israeli strike
+              - generic [ref=e169]:
+                - generic [ref=e170]: Aftermath
+                - generic [ref=e171]: Forty days mourning
+          - complementary [ref=e173]:
+            - generic [ref=e174]: Red Team Counterargument
+            - paragraph [ref=e175]: Iran can also be read through Israeli timelines and Netanyahu's long-running agenda. If that explanation saturates the event, the continuity may reflect alliance convenience rather than a coherent chain.
+    - generic [ref=e178]:
+      - heading "Comparative Tests" [level=2] [ref=e179]
+      - generic [ref=e180]:
+        - generic [ref=e181]: Why this pattern, and why now?
+        - generic [ref=e182]: Two precedents, one warning label, one scoring layer
+    - generic [ref=e184]:
+      - generic [ref=e185]:
+        - heading "Comparative Baselines" [level=2] [ref=e186]
+        - paragraph [ref=e187]: Historical precedent, red-team warning, forecast layer.
+        - generic [ref=e188]:
+          - paragraph [ref=e189]: A sequence like this only becomes durable if it survives comparison. That means looking for both historical forms that make it more plausible and warning labels that make overreach easier to spot.
+          - paragraph [ref=e190]: The goal is not to flatten everything into one chain. The goal is to locate where the argument gains traction, where it starts flattering itself, and where it can be forced into real questions.
+      - generic [ref=e191]:
+        - 'link "001 Iraq 2003: Decapitation Without Payoff Comparison: Overfit warning Status: Warning label" [ref=e192] [cursor=pointer]':
+          - /url: "#iraq-baseline"
+          - generic [ref=e194]:
+            - generic [ref=e195]: "001"
+            - generic [ref=e196]: "Iraq 2003: Decapitation Without Payoff"
+          - generic [ref=e197]:
+            - generic [ref=e198]: "Comparison: Overfit warning"
+            - generic [ref=e199]: "Status: Warning label"
+        - 'link "002 Beirut To Grenada: Compensation By Demonstration Comparison: Historical precedent Status: Strengthens" [ref=e200] [cursor=pointer]':
+          - /url: "#beirut-grenada"
+          - generic [ref=e202]:
+            - generic [ref=e203]: "002"
+            - generic [ref=e204]: "Beirut To Grenada: Compensation By Demonstration"
+          - generic [ref=e205]:
+            - generic [ref=e206]: "Comparison: Historical precedent"
+            - generic [ref=e207]: "Status: Strengthens"
+        - 'link "003 Aluminium Tubes And The Story-Shaped Trap Comparison: Intelligence overreach Status: Warning label" [ref=e208] [cursor=pointer]':
+          - /url: "#tubes-warning"
+          - generic [ref=e210]:
+            - generic [ref=e211]: "003"
+            - generic [ref=e212]: Aluminium Tubes And The Story-Shaped Trap
+          - generic [ref=e213]:
+            - generic [ref=e214]: "Comparison: Intelligence overreach"
+            - generic [ref=e215]: "Status: Warning label"
+        - 'link "004 Prediction Markets As The Missing Discipline Comparison: Operationalization Status: Next layer" [ref=e216] [cursor=pointer]':
+          - /url: "#forecast-layer"
+          - generic [ref=e218]:
+            - generic [ref=e219]: "004"
+            - generic [ref=e220]: Prediction Markets As The Missing Discipline
+          - generic [ref=e221]:
+            - generic [ref=e222]: "Comparison: Operationalization"
+            - generic [ref=e223]: "Status: Next layer"
+    - generic [ref=e225]:
+      - article [ref=e226]:
+        - heading "Iraq 2003 shows why pattern recognition has to pay rent." [level=3] [ref=e227]
+        - generic [ref=e228]:
+          - paragraph [ref=e229]: The opening decapitation strike on Saddam Hussein is the obvious warning label for this whole style of argument. Fifty leadership strikes, no kills, and civilian deaths anyway is what it looks like when compelling fragments harden into official certainty faster than reality can support them.
+          - paragraph [ref=e230]: That precedent does not kill the current sequence. It sets the evidentiary standard. A good dossier cannot merely feel coherent. It has to survive the possibility that coherence is exactly what makes it dangerous.
+      - article [ref=e231]:
+        - heading "Beirut to Grenada is the cleanest precedent for compensatory demonstration." [level=3] [ref=e232]
+        - generic [ref=e233]:
+          - paragraph [ref=e234]: After the 1983 Beirut barracks bombing killed 241 U.S. Marines, the Grenada invasion followed within forty-eight hours. It remains a sharp example of how states answer reputational injury with a demonstration that is legible both operationally and symbolically.
+          - paragraph [ref=e235]: That does not prove today's sequence. It does establish that reputational repair through visible action is not mystical pattern-hunting. It has historical form.
+      - article [ref=e236]:
+        - heading "The essay fails if it can metabolize every contradiction." [level=3] [ref=e237]
+        - generic [ref=e238]:
+          - paragraph [ref=e239]: "This is the strongest red-team critique from the PLAN-26 thread: if every outcome feeds the frame, then the frame is too elegant to trust. A dubious Valdai report, a clean Maduro extraction, an Israel-shaped Iran strike, and a Syrian collapse cannot all count as equally flattering evidence."
+          - paragraph [ref=e240]: The patch is to separate three claims. First, the sequence resembles a signal. Second, rivals may read it as a signal. Third, some of that perception can be turned into testable indicators. Conflating those layers is how the argument turns from analysis into prestige display.
+      - article [ref=e241]:
+        - heading "Prediction is the missing layer between intuition and method." [level=3] [ref=e242]
+        - generic [ref=e243]:
+          - paragraph [ref=e244]: The original blog closed on a market number. v3.5 keeps the instinct but moves the emphasis. The value of a market or scoring framework is not rhetorical flair. It is that it forces explicit statements about what future observations would strengthen or weaken the hypothesis.
+          - paragraph [ref=e245]: That is why this dossier ends with forward tests rather than a triumphal reveal. If the sequence matters, it should produce questions that can lose.
+    - generic [ref=e247]:
+      - generic [ref=e248]:
+        - heading "From Pattern To Forecast" [level=2] [ref=e249]
+        - generic [ref=e250]:
+          - paragraph [ref=e251]: The strongest version of the essay is no longer "here is the hidden playbook." It is "here is a playbook-shaped pattern, and here is how not to lie to ourselves while investigating it."
+          - paragraph [ref=e252]: That shift matters because perception in adversarial systems is not commentary layered on top of events. It changes bargaining range, retaliation thresholds, and the amount of ambiguity a rival can safely tolerate.
+          - paragraph [ref=e253]: The serious response, then, is pre-registration. Which future residence-targeting events, analyst reactions, market repricings, or retaliatory moves would strengthen the hypothesis? Which would kill it? If we cannot answer that, we are not analysing the pattern. We are just enjoying it.
+      - complementary [ref=e255]:
+        - generic [ref=e256]:
+          - generic [ref=e257]: Forward Tests
+          - generic [ref=e258]: March 2026
+        - heading "What Would Count Next" [level=3] [ref=e259]
+        - list [ref=e260]:
+          - listitem [ref=e261]:
+            - text: Indicator 01 // Residence Pattern
+            - paragraph [ref=e262]: Another allied-node residence becomes a public target
+            - paragraph [ref=e263]: Watch for a new leader-compound episode tied to Moscow's remaining network. The signal is not the strike alone but the speed with which it is narrated as part of a chain.
+          - listitem [ref=e264]:
+            - text: Indicator 02 // Observer Mismatch
+            - paragraph [ref=e265]: Serious observers say the stated motive does not saturate the event
+            - paragraph [ref=e266]: Comments of the form "there must be something else going on here" are not proof, but they are measurable clues that the official explanation is failing to close the interpretive gap.
+          - listitem [ref=e267]:
+            - text: Indicator 03 // Forecast Layer
+            - paragraph [ref=e268]: The pattern gets turned into live questions
+            - paragraph [ref=e269]: If analysts can define scored indicators that would strengthen or weaken the hypothesis, the essay stops behaving like a mood board and starts behaving like research.
+        - generic [ref=e270]:
+          - link "Define live tests" [ref=e271] [cursor=pointer]:
+            - /url: "#forecast-layer"
+          - paragraph [ref=e272]: PLAN-26 v3.5 // March 2026
+  - contentinfo [ref=e273]:
+    - generic [ref=e274]:
+      - generic [ref=e275]:
+        - generic [ref=e276]: jungle.roaring.wave
+        - paragraph [ref=e277]: PLAN-26 v3.5 rendered March 24, 2026.
+        - paragraph [ref=e278]: This version treats the sequence as a candidate signal that must survive comparison, counterargument, and future scoring before it earns anything stronger than disciplined suspicion.
+      - generic [ref=e279]:
+        - link "Epistemic Contract" [ref=e280] [cursor=pointer]:
+          - /url: "#epistemic"
+        - link "Case Sequence" [ref=e281] [cursor=pointer]:
+          - /url: "#cases"
+        - link "Comparative Tests" [ref=e282] [cursor=pointer]:
+          - /url: "#comparisons"
+        - link "Forward Tests" [ref=e283] [cursor=pointer]:
+          - /url: "#forecast"

@@ -1,0 +1,85 @@
+- main [ref=e2]:
+  - navigation [ref=e3]:
+    - generic:
+      - link:
+        - /url: /
+    - button "Open in StackBlitz" [ref=e6]:
+      - img [ref=e7]
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - generic [ref=e14]:
+        - link:
+          - /url: /tutorial-app/part-1/chapter-1/lesson-3
+        - button "Grammar as Protocol/From Grammar to Action/Run the App" [ref=e17]:
+          - generic [ref=e18]:
+            - text: Grammar as Protocol/From Grammar to Action/
+            - strong [ref=e19]: Run the App
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - heading "Run the App" [level=1] [ref=e22]
+          - paragraph [ref=e23]: This lesson is the capstone loop.
+          - paragraph [ref=e24]: The editor on the right is a real CodeMirror surface with local command diagnostics. The preview is a real TutorialKit template running a read-only Monaco trace viewer.
+          - heading "The Task" [level=3] [ref=e25]
+          - paragraph [ref=e26]: "Your command starts blocked:"
+          - paragraph [ref=e27]:
+            - code [ref=e28]: Starte den App.
+          - list [ref=e29]:
+            - listitem [ref=e30]:
+              - text: Change
+              - code [ref=e31]: den
+              - text: to
+              - code [ref=e32]: die
+              - text: .
+            - listitem [ref=e33]: The editor squiggle should clear immediately.
+            - listitem [ref=e34]:
+              - text: The preview should replace its blocked message with
+              - code [ref=e35]: Gut gemacht
+              - text: .
+          - heading "What you are seeing" [level=3] [ref=e36]
+          - list [ref=e37]:
+            - listitem [ref=e38]:
+              - code [ref=e39]: CommandProtocol.pkl
+              - text: is the authoring source of truth for the command contract.
+            - listitem [ref=e40]:
+              - code [ref=e41]: command-protocol.json
+              - text: is the generated runtime artifact the browser uses for local validation.
+            - listitem [ref=e42]:
+              - text: The preview listens for a normalized
+              - code [ref=e43]: run_app
+              - text: command state from TutorialKit and swaps the Monaco content when the command becomes valid.
+        - link "Agentic Protocol Integration" [ref=e46] [cursor=pointer]:
+          - /url: /tutorial-app/part-1/chapter-1/lesson-3
+          - text: Agentic Protocol Integration
+        - link "Powered by WebContainers" [ref=e47] [cursor=pointer]:
+          - /url: https://webcontainers.io/
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Files
+                  - generic:
+                    - button "CommandProtocol.pkl" [ref=e48]: CommandProtocol.pkl
+                    - button "command-protocol.json" [ref=e49]: command-protocol.json
+                    - button "exercise.de" [ref=e50]: exercise.de
+                - separator
+                - button "Reset" [disabled] [ref=e52]: Reset
+            - separator
+            - generic [ref=e53]:
+              - generic [ref=e55]: Preparing Environment
+              - list [ref=e57]:
+                - listitem [ref=e58]: npm install
+                - listitem [ref=e59]: npm run dev
+            - separator
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - tablist
+  - generic [ref=e60]:
+    - button "Tutorial" [ref=e61]
+    - button [ref=e62]
+    - button "Editor" [ref=e63]

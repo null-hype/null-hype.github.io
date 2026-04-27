@@ -1,0 +1,123 @@
+- generic [ref=e2]:
+  - heading "0 notifications" [level=2] [ref=e3]
+  - generic [ref=e4]:
+    - generic:
+      - button [ref=e5] [cursor=pointer]:
+        - generic [ref=e7]: Skip to main content
+      - button [ref=e8] [cursor=pointer]
+    - generic [ref=e11]:
+      - banner [ref=e13]:
+        - generic [ref=e16]:
+          - button [ref=e17] [cursor=pointer]
+          - search [ref=e20]:
+            - textbox "Search" [ref=e24]: Nate Airulla Accuris
+          - generic [ref=e26]:
+            - navigation [ref=e29]:
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - button "Home, 1 new notification" [ref=e32] [cursor=pointer]:
+                    - generic [ref=e37]: Home
+                - listitem [ref=e38]:
+                  - link "My Network, 0 new notifications" [ref=e39] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork
+                    - generic [ref=e43]: My Network
+                - listitem [ref=e44]:
+                  - link "Jobs, 0 new notifications" [ref=e45] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/
+                    - generic [ref=e49]: Jobs
+                - listitem [ref=e50]:
+                  - link "Messaging, 0 new notifications" [ref=e51] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/
+                    - generic [ref=e55]: Messaging
+                - listitem [ref=e56]:
+                  - link "Notifications, 16 new notifications" [ref=e57] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/
+                    - generic [ref=e60]: "16"
+                    - generic [ref=e62]: Notifications
+                - listitem [ref=e63]:
+                  - button "Me" [ref=e64] [cursor=pointer]:
+                    - figure [ref=e66]
+                    - generic [ref=e68]: Me
+            - navigation [ref=e72]:
+              - list [ref=e73]:
+                - listitem [ref=e74]:
+                  - button "For Business" [ref=e75] [cursor=pointer]:
+                    - generic [ref=e79]: For Business
+                - listitem [ref=e81]:
+                  - link "0 new notifications" [ref=e82] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts/
+                    - generic [ref=e86]: Advertise
+      - generic [ref=e87]:
+        - toolbar [ref=e88]
+        - main [ref=e102]:
+          - main [ref=e103]:
+            - generic [ref=e105]:
+              - generic [ref=e109]:
+                - generic [ref=e111]:
+                  - generic [ref=e113]:
+                    - paragraph [ref=e114]: Hiring? Automatically find qualified people with advanced filters
+                    - paragraph [ref=e115]: Get 25 candidates daily matched to your criteria
+                    - link "Get started" [ref=e116] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/job-posting/?trk=linkedin-com-flagship-people-search-banner_postjob
+                      - generic [ref=e118]: Get started
+                  - button "Dismiss verification card" [ref=e120] [cursor=pointer]
+                - list [ref=e124]:
+                  - listitem [ref=e126]:
+                    - 'link "Nate Airulla Premium • 3rd+ Principal Global Talent Acquisition Specialist at Accuris Denver, Colorado, United States Current: Principal Global Talent Acquisition Specialist at Accuris 7K followers" [ref=e128] [cursor=pointer]':
+                      - /url: https://www.linkedin.com/in/nate-airulla/
+                      - generic [ref=e129]:
+                        - generic [ref=e130]:
+                          - figure [ref=e131]
+                          - generic [ref=e132]:
+                            - paragraph [ref=e133]:
+                              - link "Nate Airulla Premium" [ref=e134]:
+                                - /url: https://www.linkedin.com/in/nate-airulla/
+                                - text: Nate Airulla
+                                - img "Premium" [ref=e135]
+                              - generic [ref=e137]: • 3rd+
+                            - paragraph [ref=e139]: Principal Global Talent Acquisition Specialist at Accuris
+                            - paragraph [ref=e141]: Denver, Colorado, United States
+                        - paragraph [ref=e143]:
+                          - text: "Current: Principal Global Talent Acquisition Specialist at"
+                          - strong [ref=e144]: Accuris
+                        - paragraph [ref=e148]:
+                          - link "7K followers" [ref=e149]:
+                            - /url: https://www.linkedin.com/search/results/people/?origin=SHARED_FOLLOWERS_CANNED_SEARCH&followerOf=%5B%22ACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U%22%5D
+                - generic [ref=e152]:
+                  - generic [ref=e153]:
+                    - paragraph [ref=e154]: Are these results helpful?
+                    - paragraph [ref=e155]: Your feedback helps us improve search results
+                  - generic [ref=e156]:
+                    - button "Are these results helpful? Yes, these search results are helpful" [ref=e157] [cursor=pointer]
+                    - button "Are these results helpful? No, these search results are not helpful" [ref=e160] [cursor=pointer]
+              - generic [ref=e167]:
+                - iframe [ref=e168]:
+                  
+                - generic [ref=e169]:
+                  - generic [ref=e170]:
+                    - link "About" [ref=e171] [cursor=pointer]:
+                      - /url: https://about.linkedin.com/
+                      - paragraph [ref=e172]: About
+                    - link "Accessibility" [ref=e173] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/accessibility/
+                      - paragraph [ref=e174]: Accessibility
+                    - link "Help Center" [ref=e175] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/
+                      - paragraph [ref=e176]: Help Center
+                    - button "Privacy & Terms" [ref=e177] [cursor=pointer]:
+                      - paragraph [ref=e179]: Privacy & Terms
+                    - link "Ad Choices" [ref=e181] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/answer/62931/
+                      - paragraph [ref=e182]: Ad Choices
+                    - link "Advertising" [ref=e183] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/ad/start/?trk=n_nav_ads_rr
+                      - paragraph [ref=e184]: Advertising
+                    - button "Business Services" [ref=e185] [cursor=pointer]:
+                      - paragraph [ref=e187]: Business Services
+                    - link "Get the LinkedIn app" [ref=e189] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/mobile/
+                      - paragraph [ref=e190]: Get the LinkedIn app
+                    - link "More" [ref=e191] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/search/results/people/?keywords=Nate%20Airulla%20Accuris
+                      - paragraph [ref=e192]: More
+                  - paragraph [ref=e195]: LinkedIn Corporation © 2026

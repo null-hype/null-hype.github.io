@@ -1,0 +1,39 @@
+- generic [ref=e2]:
+  - link "LastLogin" [ref=e4] [cursor=pointer]:
+    - /url: /
+    - img [ref=e5]
+    - text: LastLogin
+  - link "Login" [ref=e7] [cursor=pointer]:
+    - /url: /login
+    - button "Login" [ref=e8]
+  - paragraph [ref=e9]: admin.tidelands.dev wants to log you in.
+  - paragraph [ref=e10]: "To log in, add an identity:"
+  - generic [ref=e11]:
+    - button "Add identity with Email" [ref=e14] [cursor=pointer]:
+      - generic [ref=e15]:
+        - img [ref=e16]
+        - generic [ref=e19]: Add identity with Email
+    - button "Add identity with QR code" [ref=e22] [cursor=pointer]:
+      - generic [ref=e23]:
+        - img [ref=e24]
+        - generic [ref=e36]: Add identity with QR code
+    - button "Add identity with Google" [ref=e39] [cursor=pointer]:
+      - generic [ref=e40]:
+        - img [ref=e41]
+        - generic [ref=e43]: Add identity with Google
+    - button "Add identity with GitHub" [ref=e46] [cursor=pointer]:
+      - generic [ref=e47]:
+        - img [ref=e48]
+        - generic [ref=e50]: Add identity with GitHub
+    - button "Add identity with GitLab" [ref=e53] [cursor=pointer]:
+      - generic [ref=e54]:
+        - img [ref=e55]
+        - generic [ref=e57]: Add identity with GitLab
+    - button "Add identity with Facebook" [ref=e60] [cursor=pointer]:
+      - generic [ref=e61]:
+        - img [ref=e62]
+        - generic [ref=e64]: Add identity with Facebook
+    - button "Add identity with Hellō" [ref=e67] [cursor=pointer]:
+      - generic [ref=e68]:
+        - img [ref=e69]
+        - generic [ref=e71]: Add identity with Hellō

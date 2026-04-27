@@ -1,0 +1,273 @@
+.goose-prompt-editor {
+	position: relative;
+	width: 100%;
+	margin-top: auto;
+	border-top: 1px solid #000;
+	padding-top: 12px;
+}
+
+.goose-prompt-editor-workbench {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 10px;
+}
+
+.goose-prompt-editor:has(.goose-prompt-reference-peek) .goose-prompt-editor-workbench {
+	grid-template-columns: minmax(0, 1fr) minmax(220px, 0.42fr);
+}
+
+.goose-prompt-editor-surface {
+	width: 100%;
+	min-height: 156px;
+	border: 1px solid #000;
+	background: #fff;
+}
+
+.goose-prompt-editor-surface .monaco-editor,
+.goose-prompt-editor-surface .monaco-editor-background,
+.goose-prompt-editor-surface .monaco-editor .margin {
+	background: #fff;
+}
+
+.goose-prompt-editor-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.goose-prompt-editor-action,
+.goose-prompt-editor-send {
+	min-height: 34px;
+	padding: 0 10px;
+	border: 1px solid #000;
+	background: #fff;
+	color: #000;
+	font: inherit;
+	cursor: pointer;
+}
+
+.goose-prompt-editor-action:hover,
+.goose-prompt-editor-send:hover {
+	background: #000;
+	color: #fff;
+}
+
+.goose-prompt-editor-action:focus-visible,
+.goose-prompt-editor-send:focus-visible {
+	outline: 2px solid #000;
+	outline-offset: 2px;
+}
+
+.goose-prompt-editor-send:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+}
+
+.goose-prompt-editor-send:disabled:hover {
+	background: #fff;
+	color: #000;
+}
+
+.goose-prompt-diagnostics {
+	margin-top: 8px;
+	border: 1px solid #000;
+	background: #fff;
+	font-size: 13px;
+	line-height: 1.35;
+}
+
+.goose-prompt-diagnostics-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 6px 8px;
+	border-bottom: 1px solid #000;
+}
+
+.goose-prompt-diagnostics-header p {
+	margin: 0;
+	font-weight: 700;
+}
+
+.goose-prompt-diagnostics-header span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	min-height: 22px;
+	border: 1px solid #000;
+}
+
+.goose-prompt-diagnostics ul {
+	display: grid;
+	gap: 6px;
+	margin: 0;
+	padding: 8px;
+	list-style: none;
+}
+
+.goose-prompt-diagnostics li {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.goose-prompt-diagnostics li span {
+	min-width: 0;
+}
+
+.goose-prompt-diagnostics button {
+	flex: 0 0 auto;
+	min-height: 30px;
+	padding: 0 8px;
+	border: 1px solid #000;
+	background: #fff;
+	color: #000;
+	font: inherit;
+	cursor: pointer;
+}
+
+.goose-prompt-diagnostics button:hover {
+	background: #000;
+	color: #fff;
+}
+
+.goose-prompt-hints {
+	margin-top: 8px;
+	font-size: 13px;
+	line-height: 1.35;
+}
+
+.goose-prompt-hints p {
+	margin: 0;
+}
+
+.goose-prompt-hints ul {
+	margin: 6px 0 0;
+	padding-left: 16px;
+}
+
+.goose-prompt-hints li {
+	margin: 0;
+}
+
+.goose-prompt-provider-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 1ch;
+	margin-bottom: 4px;
+	font-weight: 700;
+}
+
+.goose-prompt-provider-status::before {
+	display: inline-block;
+	width: 0.7em;
+	height: 0.7em;
+	border: 1px solid #000;
+	content: "";
+}
+
+.goose-prompt-provider-status[data-loading="true"]::before {
+	background: repeating-linear-gradient(
+		90deg,
+		#000 0,
+		#000 2px,
+		#fff 2px,
+		#fff 4px
+	);
+}
+
+.goose-prompt-provider-status[data-loading="false"]::before {
+	background: #000;
+}
+
+.goose-prompt-reference-button {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #000;
+	font: inherit;
+	font-weight: 700;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.goose-prompt-reference-button:focus-visible {
+	outline: 2px solid #000;
+	outline-offset: 2px;
+}
+
+.goose-prompt-reference-peek {
+	min-height: 156px;
+	padding: 10px;
+	border: 1px solid #000;
+	background: #f7f7f7;
+	color: #000;
+}
+
+.goose-prompt-reference-peek-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 10px;
+}
+
+.goose-prompt-reference-peek-header p,
+.goose-prompt-reference-peek p,
+.goose-prompt-reference-peek dl {
+	margin: 0;
+}
+
+.goose-prompt-reference-peek-header p {
+	font-weight: 700;
+}
+
+.goose-prompt-reference-peek-header button {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #000;
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.goose-prompt-reference-peek dl {
+	display: grid;
+	gap: 6px;
+	margin-bottom: 10px;
+}
+
+.goose-prompt-reference-peek dt {
+	font-size: 11px;
+	text-transform: uppercase;
+}
+
+.goose-prompt-reference-peek dd {
+	margin: 0;
+}
+
+@media (max-width: 720px) {
+	.goose-prompt-editor:has(.goose-prompt-reference-peek) .goose-prompt-editor-workbench {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.goose-prompt-editor-surface,
+	.goose-prompt-reference-peek {
+		min-height: 132px;
+	}
+
+	.goose-prompt-diagnostics li {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.goose-prompt-diagnostics button {
+		width: 100%;
+	}
+}

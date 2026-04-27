@@ -1,0 +1,6 @@
+[      37ms] [LOG] Grammar Protocol Script Loaded @ http://localhost:4321/tutorial-app/1-grammar-as-protocol/1-dative-verbs/1-intro:1637
+[     105ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     105ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     105ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     105ms] Identifier 'injectIntoGlobalHook' has already been declared
+[  831763ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:4321/tutorial-app/1-grammar-as-protocol/1-dative-verbs/1-intro:0

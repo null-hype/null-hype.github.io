@@ -1,0 +1,5 @@
+[  326237ms] [LOG] Gemini Debug: Checking goose-mobile-shell attributes @ :1
+[  326237ms] [LOG] can-send: false @ :4
+[  326237ms] [LOG] session-ready: false @ :5
+[  326237ms] [LOG] connection-status: connected @ :6
+[  370637ms] [LOG] Gemini Debug: keydown Enter Enter @ :2

@@ -1,0 +1,350 @@
+- generic [ref=e2]:
+  - heading "0 notifications" [level=2] [ref=e138]
+  - generic [ref=e139]:
+    - generic:
+      - button [ref=e140] [cursor=pointer]:
+        - generic [ref=e142]: Skip to main content
+      - button [ref=e143] [cursor=pointer]:
+        - img [ref=e145]
+    - generic [ref=e147]:
+      - banner [ref=e149]:
+        - generic [ref=e152]:
+          - button "LinkedIn" [ref=e153] [cursor=pointer]:
+            - img "LinkedIn" [ref=e154]
+          - search [ref=e157]:
+            - generic [ref=e158]:
+              - img [ref=e160]
+              - textbox "Search" [ref=e162]: Sam Alba Mendral
+          - generic [ref=e164]:
+            - figure [ref=e169]
+            - navigation [ref=e172]:
+              - list [ref=e173]:
+                - listitem [ref=e174]:
+                  - button "Home, 1 new notification" [ref=e175] [cursor=pointer]:
+                    - img [ref=e177]
+                    - generic [ref=e181]: Home
+                - listitem [ref=e182]:
+                  - link "My Network, 0 new notifications" [ref=e183] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork
+                    - img [ref=e185]
+                    - generic [ref=e188]: My Network
+                - listitem [ref=e189]:
+                  - link "Jobs, 0 new notifications" [ref=e190] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/
+                    - img [ref=e192]
+                    - generic [ref=e195]: Jobs
+                - listitem [ref=e196]:
+                  - link "Messaging, 0 new notifications" [ref=e197] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/
+                    - img [ref=e199]
+                    - generic [ref=e202]: Messaging
+                - listitem [ref=e203]:
+                  - link "Notifications, 15 new notifications" [ref=e204] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/
+                    - generic [ref=e205]:
+                      - img [ref=e206]
+                      - generic [ref=e208]: "15"
+                    - generic [ref=e210]: Notifications
+                - listitem [ref=e211]:
+                  - button "Me" [ref=e212] [cursor=pointer]:
+                    - figure [ref=e214]
+                    - generic [ref=e216]:
+                      - text: Me
+                      - img [ref=e217]
+            - navigation [ref=e221]:
+              - list [ref=e222]:
+                - listitem [ref=e223]:
+                  - button "For Business" [ref=e224] [cursor=pointer]:
+                    - img [ref=e226]
+                    - generic [ref=e229]:
+                      - text: For Business
+                      - img [ref=e230]
+                - listitem [ref=e232]:
+                  - link "0 new notifications" [ref=e233] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts/
+                    - img [ref=e235]
+                    - generic [ref=e239]: Advertise
+      - generic [ref=e240]:
+        - toolbar [ref=e241]:
+          - generic [ref=e246]:
+            - button "Filter by People" [ref=e248] [cursor=pointer]:
+              - generic "Filter by People" [ref=e249]:
+                - checkbox "People" [checked]
+                - generic [ref=e250]:
+                  - text: People
+                  - img [ref=e251]
+            - radio "Filter by 1st connections" [ref=e253] [cursor=pointer]:
+              - generic "Filter by 1st connections" [ref=e254]:
+                - checkbox "1st"
+                - generic [ref=e255]: 1st
+            - radio "Filter by 2nd connections" [ref=e256] [cursor=pointer]:
+              - generic "Filter by 2nd connections" [ref=e257]:
+                - checkbox "2nd"
+                - generic [ref=e258]: 2nd
+            - radio "Filter by 3rd+ connections" [ref=e259] [cursor=pointer]:
+              - generic "Filter by 3rd+ connections" [ref=e260]:
+                - checkbox "3rd+"
+                - generic [ref=e261]: 3rd+
+            - button "Premium Actively hiring" [ref=e262] [cursor=pointer]:
+              - generic "Premium Actively hiring" [ref=e263]:
+                - checkbox "Actively hiring"
+                - generic [ref=e264]:
+                  - img [ref=e265]
+                  - text: Actively hiring
+                  - img [ref=e268]
+            - button "Filter by Locations" [ref=e270] [cursor=pointer]:
+              - generic "Filter by Locations" [ref=e271]:
+                - checkbox "Locations"
+                - generic [ref=e272]:
+                  - text: Locations
+                  - img [ref=e273]
+            - button "Filter by Current companies" [ref=e275] [cursor=pointer]:
+              - generic "Filter by Current companies" [ref=e276]:
+                - checkbox "Current companies"
+                - generic [ref=e277]:
+                  - text: Current companies
+                  - img [ref=e278]
+            - button "All filters" [ref=e280] [cursor=pointer]:
+              - generic [ref=e282]: All filters
+        - main [ref=e283]:
+          - main [ref=e284]:
+            - generic [ref=e286]:
+              - generic [ref=e290]:
+                - paragraph [ref=e293]:
+                  - text: Did you mean
+                  - link "sam alba mendrala" [ref=e294] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/search/results/people/?keywords=sam+alba+mendrala&origin=SPELL_CHECK_DID_YOU_MEAN&spellCorrectionEnabled=false
+                    - strong [ref=e295]: sam alba mendrala
+                  - text: "?"
+                - list [ref=e297]:
+                  - listitem [ref=e299]:
+                    - 'link "Sam Alba Verified • 2nd Your CI fixes itself now. | Co-founder @ Mendral (YC W26) | ex-Docker (1st hire, VP Eng) San Francisco Bay Area Invite Sam Alba to connect Current: Co-Founder at Mendral Tim Petricola is a mutual connection Visit my website" [ref=e301] [cursor=pointer]':
+                      - /url: https://www.linkedin.com/in/samalba/
+                      - generic [ref=e302]:
+                        - generic [ref=e303]:
+                          - figure [ref=e304]:
+                            - img "Sam Alba" [ref=e305]
+                          - generic [ref=e306]:
+                            - paragraph [ref=e307]:
+                              - link "Sam Alba Verified" [ref=e308]:
+                                - /url: https://www.linkedin.com/in/samalba/
+                                - text: Sam Alba
+                                - img "Verified" [ref=e309]:
+                                  - img [ref=e310]
+                              - generic [ref=e312]: • 2nd
+                            - paragraph [ref=e314]: Your CI fixes itself now. | Co-founder @ Mendral (YC W26) | ex-Docker (1st hire, VP Eng)
+                            - paragraph [ref=e316]: San Francisco Bay Area
+                          - link "Invite Sam Alba to connect" [ref=e322]:
+                            - /url: https://www.linkedin.com/preload/search-custom-invite/?vanityName=samalba
+                            - generic [ref=e323]:
+                              - img [ref=e324]
+                              - generic [ref=e327]: Connect
+                        - paragraph [ref=e329]:
+                          - text: "Current: Co-Founder at"
+                          - strong [ref=e330]: Mendral
+                        - generic [ref=e331]:
+                          - figure [ref=e332]
+                          - paragraph [ref=e334]:
+                            - link "Tim Petricola" [ref=e335]:
+                              - /url: https://www.linkedin.com/in/timpetricola/en/
+                              - strong [ref=e336]: Tim Petricola
+                            - text: is a mutual connection
+                        - paragraph [ref=e337]:
+                          - link "Visit my website" [ref=e338]:
+                            - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Fmendral%2Ecom&urlhash=M_TD&isSdui=true
+                - generic [ref=e341]:
+                  - generic [ref=e342]:
+                    - paragraph [ref=e343]: Are these results helpful?
+                    - paragraph [ref=e344]: Your feedback helps us improve search results
+                  - generic [ref=e345]:
+                    - button "Are these results helpful? Yes, these search results are helpful" [ref=e346] [cursor=pointer]:
+                      - img [ref=e348]
+                    - button "Are these results helpful? No, these search results are not helpful" [ref=e350] [cursor=pointer]:
+                      - img [ref=e352]
+              - generic [ref=e358]:
+                - iframe [ref=e359]:
+                  - main "Work With Us Container" [ref=f64e3]:
+                    - generic [ref=f64e4]:
+                      - img [ref=f64e6]
+                      - generic [ref=f64e7]:
+                        - img "Richard" [ref=f64e8]
+                        - link "Macquarie Technology" [ref=f64e9] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/li/tscp/sct?destinationUrl=http%3A%2F%2Fwww.linkedin.com%2Fcompany%2F8587%2Flife&trackingEvent=%5B%7B%22eventInfo%22%3A%7B%22appId%22%3A%22com.linkedin.ads.rendering.d_web%22%2C%22eventName%22%3A%22SponsoredRightRailContentActionEvent%22%2C%22topicName%22%3A%22SponsoredRightRailContentActionEvent%22%7D%2C%22eventBody%22%3A%7B%22sponsoredEventHeader%22%3A%7B%22encryptedTrackingData%22%3A%22CwEAAAGdp6wXeZgddrgn7UCZa-bw2h-7sTwWoIdAml8K4zVEBFTZw-YnjiDfzD7h3To-EGvh-sQ44fUPkYPLtoLgd8kmZLCq_dHtf-_352Sh-7FPilZXplFesHsHvNq1v25MMs7Q93QBXSC9pYSDYWxMIT-KEwGNuRlkBOljqSJ5_OKN6-Va4SnBcYUhpjvla044E48pj9UHB5PfM3C3I7JBg2ZQhE6MmJv1X929iSFZDmS9jfi_1QSjaIssnqF_4dm7jnXhzIoTip3yRByHeOvdWQKTydYvvfybSMqwYYCeFqX6S5m7j7COHMnmDI96Wn2G-sytAru6mPDdLtca2CfLEbL2TCXQr3mLLwy8N3bLohGtBvUUo9JaD8XEkoe1wIDrK4XqPU2Vsda5zkUc_s9zJ05wBg0KeXzqtuwNylnUzb9N4W6sOa58ABIZNyd6Ol1bztmVm_Wn1oi5VRil2eWv7J9GID9Rq7KuYXMN9C315eAno3ZZ9KRLBCtdnLHAmougC_7w7yuADu3w44m9cqngsu4lE59vPgN6vLQjz3IkuiLV4edMKemKTgmzRuWii1DXizuy7sBllngBBMNtrJ1GXnT5yZltSrEv3LBpgwWMjhfdOg4ZYAJ07dnTOT9BS5aw0rS3F_LZpUoIe2M1XUp4Xgw-32TwvIikBB49HSqJPHnQrSCYt4qRrXE1jWTR01bQlx3_vnyMfAfGglTbnIRLKUbvid90-kewYxg-ZAruIKwM3AcnP-vU0iKP_tefpY7FbZw-_sEm9_WMjyF9TXj2MsrC9P3bQm__1YMpStM38sVH8aYh4fsrhrHNs_KkeL5naP3Hwyye-ppKLkIwGvUqGFltpP1_hidskNYuXBtVVBAoaG_uqPVXKFvAImCCPmzRxw_ofDFjXoLujBKyP6O1r6pNd3eIYADrUdpDsmWJNcj-IyJbICfFVa2wSJngmF3GMBkwyrXME27Sjqt6-lqsgUeow3cgc4H5RV99Icu1M_ixSoBeGZf5-dER2Phs6u-_v6lBLjtzi4NCN9ASA9O_yWM1KPaLFZTb2Ir72bcB0wo66iIgzZmZCzPZhjcWerccFvJDYdGtbg6MAWzC8wwTuy5VnUSXhTe_twir3M2LEYGAKW9F0d72kFvKIGDe3VLMG3952AGFAJkAeRP0NpxUvAv2OhtCSitD8ezXq5aEMJNODXhPqkOxL8x_rfZHqmOnbtbkBI7Q%22%7D%2C%22header%22%3A%7B%22pageInstance%22%3A%7B%22pageUrn%22%3A%22urn%3Ali%3Apage%3Ad_flagship3_search_srp_people%22%2C%22trackingId%22%3A%22c2e09dc8-e4a6-47cd-986c-03f64df138d0%22%7D%2C%22time%22%3A1776634566483%2C%22version%22%3A%220.0.0%22%7D%2C%22requestHeader%22%3A%7B%22pageKey%22%3A%22d_flagship3_search_srp_people%22%2C%22interfaceLocale%22%3A%22en-US%22%7D%7D%7D%5D&csrfToken=ajax%3A7663274659791041878
+                          - img "Macquarie Technology" [ref=f64e10]
+                    - generic [ref=f64e11]:
+                      - generic [ref=f64e12]:
+                        - paragraph [ref=f64e13]: Richard, explore relevant opportunities with Macquarie Technology
+                        - paragraph [ref=f64e14]: Get the latest jobs and industry news
+                      - link "Follow" [ref=f64e15] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/li/tscp/sct?destinationUrl=http%3A%2F%2Fwww.linkedin.com%2Fcompany%2F8587%2Flife%3FisFollowingPage%3Dtrue&trackingEvent=%5B%7B%22eventInfo%22%3A%7B%22appId%22%3A%22com.linkedin.ads.rendering.d_web%22%2C%22eventName%22%3A%22SponsoredRightRailContentActionEvent%22%2C%22topicName%22%3A%22SponsoredRightRailContentActionEvent%22%7D%2C%22eventBody%22%3A%7B%22sponsoredEventHeader%22%3A%7B%22encryptedTrackingData%22%3A%22CwEAAAGdp6wXeb6WJEIDJzeL--i7w04RUm01U1mUBT_DtrEP1TOMyEXuQUO6nnkAaV-MiavGLQapdzMOIY4ikI57r4cnNBMEkubzHKxre6puPYEUIc0ItAHusJXBr4UnNaC6f4FZVminJSqWqpRuz8NRYW9fb6dkhVFw3QoHjlhwwtRdsA-btW-ZNj80_mLn0nYxpZSOJvQ0DijRHZrKvGiUQSyU2o73qABsbyJ6kDkJd2mX0BLn3KkmW2iJNEDXDmvFLVdsXSk6YSAM5zZSRtnCDDQvrTbNtTmmoaeZ-cXeViUwoQJMKZ5ojSlXzzRHFOzjpr20l-SxrF7tEdMGdZHVQ-gVilzSqVPtJhCbdlbFq1o2d_XMADO0VXxDOrtTUmmOQYXSBVFMa1-p8EWgI3vYyCGDiBaJmHm5qM79oGCiH56YMt6GPj8whVBfBnqxEDMDJs1_L7Cg8YS2Z8OoTZwR2x3saCqBf-CoU53mCatRBljwynfCvzcdg-UIUKSgNCvlVEJXw39LMaONKZJfU-1CTpRe5QxsYPDz1P4p1G3x3u5nzzN1zdNgHhUmjMsQXnXCwo9IXHQOiQX8RtJhnQXSHN1ytTcqGCcmWzmwKNRXlHEScbV7uaaDtHQyLju9lmfQl0TwXuPz8piCxu1GUkZ1gd38Y_0hFs96a0Dbj0DBUQHI1jZiaroUOMWUIbplW5_hVsJ8Aqg9Kb0Xo979-s1JFnrX5NKAVfNdazvCrhIVu5lmz7StnFHKT2qoVOm94iK3s3T1c1zzTm8K7dc1HMeCCbno8rkC7gDpalL8IvGmqdAL2wQbhGW-9K7B2KoHJW0wSYtvsaLkmr3VDf3kvod-5NDgTSHYkuePWU9msiM1XqhMCZYJMKw-Lh5vG-bSrcSrJ7ky40p9BqO3SUg44n9B99qHmPHX9e8ikc6XpxNfGXZpSR70efVVq_iX8qvLUhN0ERUAa2ZZgbnsIWDSCMnk4A-e6aCOUT4ZAUQ0U83Zz7f6IntbZ0C_kb4-OPz2nvj2OMiAHqjWruVs9g5XEXu_sHQ22IcFp6Ki0xNoBcsGEoS0gt6AMq3BRT9wL7k98lbY3ccQ4zQzeKe1JTyvblc-bmUWchlN7czd0Y1BXfOy29rUKk3WR9GAN2DFbv3VOMQJinbvkgmWY1s9BMUoFHxqoy-U5lDzIz6CjGOcLEuVi34jQ-z_6kAfkwTY6y859l30jCe2SU9a5G1wfIA05GR84RS-GyRbrEDZT4hzhKz2EUsQVHk%22%7D%2C%22header%22%3A%7B%22pageInstance%22%3A%7B%22pageUrn%22%3A%22urn%3Ali%3Apage%3Ad_flagship3_search_srp_people%22%2C%22trackingId%22%3A%224fe00096-f65d-4be2-9d69-faf2012a067b%22%7D%2C%22time%22%3A1776634566483%2C%22version%22%3A%220.0.0%22%7D%2C%22requestHeader%22%3A%7B%22pageKey%22%3A%22d_flagship3_search_srp_people%22%2C%22interfaceLocale%22%3A%22en-US%22%7D%7D%7D%5D&csrfToken=ajax%3A7663274659791041878
+                    - generic [ref=f64e16]:
+                      - paragraph [ref=f64e17]: Promoted
+                      - button "Ad Options" [ref=f64e18] [cursor=pointer]:
+                        - img [ref=f64e19]
+                        - generic [ref=f64e23]: Ad Options
+                - generic [ref=e360]:
+                  - generic [ref=e361]:
+                    - link "About" [ref=e362] [cursor=pointer]:
+                      - /url: https://about.linkedin.com/
+                      - paragraph [ref=e363]: About
+                    - link "Accessibility" [ref=e364] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/accessibility/
+                      - paragraph [ref=e365]: Accessibility
+                    - link "Help Center" [ref=e366] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/
+                      - paragraph [ref=e367]: Help Center
+                    - button "Privacy & Terms" [ref=e368] [cursor=pointer]:
+                      - generic [ref=e369]:
+                        - paragraph [ref=e370]: Privacy & Terms
+                        - img [ref=e371]
+                    - link "Ad Choices" [ref=e373] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/answer/62931/
+                      - paragraph [ref=e374]: Ad Choices
+                    - link "Advertising" [ref=e375] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/ad/start/?trk=n_nav_ads_rr
+                      - paragraph [ref=e376]: Advertising
+                    - button "Business Services" [ref=e377] [cursor=pointer]:
+                      - generic [ref=e378]:
+                        - paragraph [ref=e379]: Business Services
+                        - img [ref=e380]
+                    - link "Get the LinkedIn app" [ref=e382] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/mobile/
+                      - paragraph [ref=e383]: Get the LinkedIn app
+                    - link "More" [ref=e384] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/search/results/people/?keywords=Sam%20Alba%20Mendral
+                      - paragraph [ref=e385]: More
+                  - generic [ref=e386]:
+                    - img [ref=e387]
+                    - paragraph [ref=e389]: LinkedIn Corporation © 2026
+  - generic [active]:
+    - generic:
+      - dialog "Add a note to your invitation" [ref=e450]:
+        - generic [ref=e424]: Dialog content start.
+        - button "Dismiss" [ref=e425] [cursor=pointer]:
+          - img [ref=e426]
+        - heading "Add a note to your invitation" [level=2] [ref=e452]
+        - generic [ref=e453]:
+          - img "Premium" [ref=e455]:
+            - img [ref=e456]
+          - generic [ref=e458]:
+            - generic [ref=e459]: Please limit personal note to 300 characters.
+            - paragraph [ref=e460]: LinkedIn members are more likely to accept invitations that include a personal note.
+          - generic [ref=e461]:
+            - textbox "Please limit personal note to 300 characters. LinkedIn members are more likely to accept invitations that include a personal note." [ref=e463]:
+              - /placeholder: "Ex: We know each other from…"
+            - generic [ref=e465]: 0/300
+        - generic [ref=e466]:
+          - button "Write with AI" [ref=e467] [cursor=pointer]:
+            - img [ref=e468]
+            - generic [ref=e470]: Write with AI
+          - button "Cancel adding a note" [ref=e471] [cursor=pointer]:
+            - generic [ref=e472]: Cancel
+          - button "Send invitation" [disabled] [ref=e473]:
+            - generic: Send
+        - generic [ref=e444]: Dialog content end.
+      - generic:
+        - generic:
+          - complementary:
+            - generic [ref=e390]:
+              - generic [ref=e391]:
+                - generic [ref=e393] [cursor=pointer]:
+                  - generic [ref=e394]:
+                    - img "Richard Anthony" [ref=e395]
+                    - generic [ref=e397]: Status is online
+                  - button "You are on the messaging overlay. Press enter to open the list of conversations." [ref=e398]:
+                    - generic [ref=e399]:
+                      - generic [ref=e400]: Messaging
+                      - generic [ref=e401]: You are on the messaging overlay. Press enter to open the list of conversations.
+                - generic [ref=e402]:
+                  - button "Open messenger dropdown menu" [ref=e404] [cursor=pointer]:
+                    - img "Open messenger dropdown menu" [ref=e405]
+                  - button "Compose message" [ref=e408] [cursor=pointer]:
+                    - img [ref=e409]
+                    - generic [ref=e411]: Compose message
+                  - button "You are on the messaging overlay. Press enter to open the list of conversations." [ref=e412] [cursor=pointer]:
+                    - img [ref=e413]
+                    - generic [ref=e415]: You are on the messaging overlay. Press enter to open the list of conversations.
+              - link "Mr. Frundles picture Mr. Frundles" [ref=e445] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/82159361/admin/inbox
+                - img "Mr. Frundles picture" [ref=e446]
+                - generic [ref=e447]: Mr. Frundles
+                - img [ref=e448]
+          - complementary "AI-powered assistant to get help with your career, jobs etc"
+  - iframe [ref=e421]:
+    - generic [active] [ref=f65e1]:
+      - generic:
+        - region "Toast message":
+          - heading "0 notifications total" [level=2] [ref=f65e3]
+          - alert
+      - region [ref=f65e4]
+      - generic [ref=f65e5]:
+        - generic [ref=f65e7]:
+          - button [ref=f65e122] [cursor=pointer]:
+            - generic [ref=f65e9]: Skip to search
+          - button [ref=f65e123] [cursor=pointer]:
+            - generic [ref=f65e11]: Skip to main content
+          - button [ref=f65e124] [cursor=pointer]:
+            - generic [ref=f65e13]: Keyboard shortcuts
+          - button [ref=f65e125] [cursor=pointer]:
+            - img [ref=f65e15]
+            - generic [ref=f65e17]: Close jump menu
+        - banner [ref=f65e126]:
+          - generic [ref=f65e19]:
+            - link [ref=f65e127] [cursor=pointer]:
+              - /url: https://www.linkedin.com/feed/?nis=true
+              - img [ref=f65e128]:
+                - img [ref=f65e24]
+            - generic [ref=f65e28]:
+              - combobox [ref=f65e129]
+              - generic:
+                - img
+            - navigation [ref=f65e130]:
+              - list [ref=f65e31]:
+                - listitem [ref=f65e32]:
+                  - link [ref=f65e131] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/feed/
+                    - generic [ref=f65e34]:
+                      - generic [ref=f65e37]: new feed updates notifications
+                      - img [ref=f65e133]
+                    - generic [ref=f65e135]: Home
+                - listitem [ref=f65e44]:
+                  - link [ref=f65e136] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork/?
+                    - img [ref=f65e138]
+                    - generic [ref=f65e140]: My Network
+                - listitem [ref=f65e52]:
+                  - link [ref=f65e141] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/?
+                    - img [ref=f65e143]
+                    - generic [ref=f65e145]: Jobs
+                - listitem [ref=f65e60]:
+                  - link [ref=f65e146] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/?
+                    - img [ref=f65e148]
+                    - generic [ref=f65e150]: Messaging
+                - listitem [ref=f65e68]:
+                  - link [ref=f65e151] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/?
+                    - generic [ref=f65e70]:
+                      - generic [ref=f65e71]:
+                        - generic [ref=f65e72]: "15"
+                        - generic [ref=f65e73]: 15 new notifications
+                      - img [ref=f65e153]
+                    - generic [ref=f65e155]: Notifications
+                - listitem [ref=f65e80]:
+                  - button [ref=f65e156] [cursor=pointer]:
+                    - img [ref=f65e157]
+                    - generic [ref=f65e84]:
+                      - text: Me
+                      - img [ref=f65e85]
+                - listitem [ref=f65e87]:
+                  - button [ref=f65e158] [cursor=pointer]:
+                    - img [ref=f65e93]
+                    - generic [ref=f65e159]:
+                      - text: For Business
+                      - img [ref=f65e96]
+                - listitem [ref=f65e98]:
+                  - link [ref=f65e160] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts?
+                    - img [ref=f65e162]
+                    - generic [ref=f65e165]: Advertise

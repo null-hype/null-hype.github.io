@@ -2,12 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 
 const LINES = [
   '> Profile.init()',
-  '> Loading... done.',
-  '> Human-shaped compiler seeking meaningful',
-  '  peer-to-peer connection.',
-  '> Building dev tools nobody asked for.',
-  '> Drinking irresponsible amounts of coffee.',
-  '> Status: probably debugging something right now.',
+  '> Richard Anthony // @public-rant',
+  '> Security Researcher & Platform Engineer',
+  '> Agentic Vulnerability Automation',
+  '> Terraform · ArgoCD · Dagger | Bug Bounty',
+  '> Status: building Cyber Farm infrastructure',
 ];
 
 const SPEED = 32;   // ms per character

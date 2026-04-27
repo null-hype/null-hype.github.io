@@ -1,0 +1,160 @@
+- generic [ref=e1]:
+  - iframe [ref=e115]:
+    - generic [active] [ref=f15e1]:
+      - main [ref=f15e2]:
+        - generic [ref=f15e3]:
+          - generic [ref=f15e4]:
+            - paragraph [ref=f15e5]: Monaco Trace Viewer
+            - heading "Read the agent run" [level=1] [ref=f15e6]
+            - paragraph [ref=f15e7]: The shell sends a normalized command state into this preview. When the command becomes valid, a mock session streams warm trace text into Monaco as spans close.
+            - generic [ref=f15e8]: Trace reader booted
+            - paragraph [ref=f15e10]: Waiting for a valid command from TutorialKit.
+          - generic [ref=f15e11]:
+            - generic [ref=f15e12]:
+              - generic [ref=f15e13]: App State
+              - generic [ref=f15e14]:
+                - generic [ref=f15e15]: Stopped
+                - strong [ref=f15e16]: run(app) blocked
+            - generic [ref=f15e17]:
+              - generic [ref=f15e18]: Depth Compression
+              - generic [ref=f15e19]:
+                - button "Root" [ref=f15e20] [cursor=pointer]
+                - button "Branch" [ref=f15e21] [cursor=pointer]
+                - button "All" [ref=f15e22] [cursor=pointer]
+              - paragraph [ref=f15e23]:
+                - text: Use
+                - code [ref=f15e24]: "["
+                - text: and
+                - code [ref=f15e25]: "]"
+                - text: to move between depth levels while keeping the warm rendering register fixed.
+            - generic [ref=f15e26]:
+              - generic [ref=f15e27]: Trace
+              - generic [ref=f15e29]:
+                - code [ref=f15e30]:
+                  - generic [ref=f15e31]:
+                    - textbox "Editor content"
+                    - textbox [ref=f15e32]
+                    - generic [ref=f15e37] [cursor=pointer]: 
+                    - generic [ref=f15e45]:
+                      - generic [ref=f15e47]: "#region run(app) blocked"
+                      - generic [ref=f15e49]: "note: waiting for the shell to send a valid run_app command"
+                      - generic [ref=f15e51]: "#endregion"
+                - code [ref=f15e53]:
+                  - generic [ref=f15e54]:
+                    - textbox "Editor content"
+                    - textbox [ref=f15e55]
+                    - generic [ref=f15e60] [cursor=pointer]: 
+                    - generic [ref=f15e68]:
+                      - generic [ref=f15e70]: "#region run(app) blocked"
+                      - generic [ref=f15e72]: "note: waiting for the shell to send a valid run_app command"
+                      - generic [ref=f15e74]: "#endregion"
+      - generic [ref=f15e76]:
+        - alert
+        - alert
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - button "Toggle Theme" [ref=e118] [cursor=pointer]
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - button "Run the App" [ref=e14] [cursor=pointer]:
+          - strong [ref=e16]: Run the App
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - heading "Run the App" [level=1] [ref=e19]
+            - paragraph [ref=e20]: This lesson is the capstone loop.
+            - paragraph [ref=e21]: The editor on the right is a real CodeMirror surface with local command diagnostics. The preview is a real TutorialKit template running a read-only Monaco trace viewer.
+            - heading "The Task" [level=3] [ref=e22]
+            - paragraph [ref=e23]: "Your command starts blocked:"
+            - paragraph [ref=e24]:
+              - code [ref=e25]: Starte den App.
+            - list [ref=e26]:
+              - listitem [ref=e27]:
+                - text: Change
+                - code [ref=e28]: den
+                - text: to
+                - code [ref=e29]: die
+                - text: .
+              - listitem [ref=e30]: The editor squiggle should clear immediately.
+              - listitem [ref=e31]:
+                - text: The preview should stream a mock agent trace and finish in a
+                - code [ref=e32]: Running
+                - text: state.
+            - heading "What you are seeing" [level=3] [ref=e33]
+            - list [ref=e34]:
+              - listitem [ref=e35]:
+                - code [ref=e36]: CommandProtocol.pkl
+                - text: is the authoring source of truth for the command contract.
+              - listitem [ref=e37]:
+                - code [ref=e38]: command-protocol.json
+                - text: is the generated runtime artifact the browser uses for local validation.
+              - listitem [ref=e39]:
+                - text: The preview listens for a normalized
+                - code [ref=e40]: run_app
+                - text: command state from TutorialKit and renders the resulting trace in Monaco.
+            - heading "Reading the trace" [level=3] [ref=e41]
+            - paragraph [ref=e42]: "Use the depth buttons in the preview to compress or expand the session:"
+            - list [ref=e43]:
+              - listitem [ref=e44]:
+                - code [ref=e45]: Root
+                - text: shows the top-level outcome.
+              - listitem [ref=e46]:
+                - code [ref=e47]: Branch
+                - text: shows the first level of work.
+              - listitem [ref=e48]:
+                - code [ref=e49]: All
+                - text: shows the full mocked run.
+          - link "Agentic Protocol Integration" [ref=e52] [cursor=pointer]:
+            - /url: /tutorial-app/part-1/chapter-1/lesson-3
+            - generic [ref=e53]: Agentic Protocol Integration
+          - link "Powered by WebContainers" [ref=e55] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e59]:
+        - generic [ref=e61]:
+          - generic [ref=e119]:
+            - generic [ref=e120]: Files
+            - generic [ref=e63]:
+              - button "CommandProtocol.pkl" [ref=e64] [cursor=pointer]:
+                - generic [ref=e65]: CommandProtocol.pkl
+              - button "command-protocol.json" [ref=e66] [cursor=pointer]:
+                - generic [ref=e67]: command-protocol.json
+              - button "exercise.de" [pressed] [ref=e68] [cursor=pointer]:
+                - generic [ref=e69]: exercise.de
+          - separator
+          - generic [ref=e70]:
+            - generic [ref=e71]:
+              - generic [ref=e121]: exercise.de
+              - button "Solve" [ref=e122] [cursor=pointer]: Solve
+            - generic [ref=e124]:
+              - generic [ref=e126]:
+                - generic [ref=e127]: "1"
+                - generic [ref=e128]: "2"
+              - textbox "Editor" [active] [ref=e131]:
+                - generic [ref=e132]: Starte den App.
+        - separator
+        - generic [ref=e137]:
+          - generic [ref=e138]:
+            - button "Reload Preview" [ref=e139] [cursor=pointer]
+            - text: Trace
+          - button "Toggle Terminal" [ref=e140] [cursor=pointer]: Toggle Terminal
+        - separator
+        - tablist [ref=e90]
+  - generic [ref=e94]:
+    - button "Menu" [ref=e95]:
+      - img [ref=e97]
+      - generic: Menu
+    - button "Inspect" [ref=e101]:
+      - img [ref=e103]
+      - generic: Inspect
+    - button "Audit" [ref=e105]:
+      - generic [ref=e106]:
+        - img [ref=e107]
+        - img [ref=e143]
+      - generic: Audit
+    - button "Settings" [ref=e110]:
+      - img [ref=e112]
+      - generic: Settings

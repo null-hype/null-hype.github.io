@@ -1,6 +1,14 @@
 {
   "coreTools": [],
   "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--extension"],
+      "env": {
+        "PLAYWRIGHT_MCP_EXTENSION_TOKEN":
+          "ighobOTsub5G8AsPIYTfgALjS8mGnNIz-R7lkXjYBqc"
+      }
+    },
     "container-use": {
       "command": "container-use",
       "args": [

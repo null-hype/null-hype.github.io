@@ -1,0 +1,11 @@
+- generic [active]:
+  - generic:
+    - region "Toast message":
+      - heading "0 notifications total" [level=2] [ref=e2]
+      - alert
+  - img [ref=e8]
+  - region [ref=e12]
+  - generic:
+    - generic:
+      - generic:
+        - complementary "AI-powered assistant to get help with your career, jobs etc"

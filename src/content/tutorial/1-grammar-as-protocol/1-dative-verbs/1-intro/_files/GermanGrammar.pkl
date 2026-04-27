@@ -1,0 +1,15 @@
+module GermanGrammar
+
+type Case = "Nominative" | "Accusative" | "Dative" | "Genitive"
+
+class Verb {
+  infinitve: String
+  requiresCase: Case
+}
+
+dativeVerbs: Mapping<String, Verb> = new {
+  ["helfen"] {
+    infinitve = "helfen"
+    requiresCase = "Dative"
+  }
+}

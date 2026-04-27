@@ -1,0 +1,16 @@
+
+> null-hype.github.io@0.0.1 dev
+> astro dev
+
+14:51:50 [WARN] [router] The route "/" is defined in both "src/pages/index.astro" and "node_modules/@tutorialkit/astro/dist/default/pages/index.astro". A static route cannot be defined more than once.
+14:51:50 [WARN] [router] A collision will result in a hard error in following versions of Astro.
+[vite] connected.
+Missing "./jsx/server.js" specifier in "astro" package
+  Location:
+    virtual:astro:renderers:3:24
+  Stack trace:
+    at e (file:///Users/rant/Desktop/github.com/null-hype/null-hype.github.io/node_modules/vite/dist/node/chunks/config.js:6651:8)
+    at o (file:///Users/rant/Desktop/github.com/null-hype/null-hype.github.io/node_modules/vite/dist/node/chunks/config.js:6691:10)
+    at resolveDeepImport (file:///Users/rant/Desktop/github.com/null-hype/null-hype.github.io/node_modules/vite/dist/node/chunks/config.js:32841:22)
+    at ResolveIdContext.handler (file:///Users/rant/Desktop/github.com/null-hype/null-hype.github.io/node_modules/vite/dist/node/chunks/config.js:32555:16)
+    at async ResolveIdContext.resolve (file:///Users/rant/Desktop/github.com/null-hype/null-hype.github.io/node_modules/vite/dist/node/chunks/config.js:28929:13)

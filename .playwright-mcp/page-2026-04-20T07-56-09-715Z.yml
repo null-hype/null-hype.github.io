@@ -1,0 +1,8 @@
+- region "Goose terminal" [ref=e3]:
+  - generic [ref=e4]:
+    - list "Terminal transcript" [ref=e5]:
+      - listitem [ref=e6]
+    - generic [ref=e8]: Terminal input
+    - textbox "Terminal input" [active] [ref=e9]
+    - button "Send" [ref=e10]
+    - button "Disconnect" [disabled] [ref=e11]

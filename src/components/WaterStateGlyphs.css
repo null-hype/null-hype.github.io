@@ -1,0 +1,10 @@
+.water-glyph {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.water-glyph svg {
+	width: 100%;
+	height: 100%;
+}

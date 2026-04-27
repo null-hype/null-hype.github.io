@@ -1,5 +1,18 @@
 ---
-import NowPage from '../components/NowPage.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GooseMobileClient from '../components/GooseMobileClient';
+
+const sessionApiUrl = import.meta.env.PUBLIC_GOOSE_SESSION_API_URL || '/api/goose-sessions';
+const cwd = import.meta.env.PUBLIC_GOOSE_SESSION_CWD;
 ---
 
-<NowPage />
+<BaseLayout
+	title="Smallweb Admin"
+	description="Terminal chat interface for the Smallweb admin Goose bridge."
+>
+	<GooseMobileClient
+		client:only="react"
+		cwd={cwd}
+		sessionApiUrl={sessionApiUrl}
+	/>
+</BaseLayout>

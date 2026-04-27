@@ -1,0 +1,9 @@
+module German
+
+name: String = "Pkl Configuration"
+
+// Violation: -10 is not > 0
+timeout: Int(this > 0) = -10
+
+// Violation: "1.0.0" is not an Int
+version: Int = "1.0.0"

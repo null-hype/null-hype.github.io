@@ -1,0 +1,85 @@
+- main [ref=e2]:
+  - navigation [ref=e3]:
+    - generic:
+      - link:
+        - /url: /
+    - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - button "Introduction to Grammar as Protocol" [ref=e14] [cursor=pointer]:
+        - strong [ref=e16]: Introduction to Grammar as Protocol
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - heading "Grammar as Protocol" [level=1] [ref=e19]
+          - paragraph [ref=e20]: What if natural language was treated with the same rigor as source code?
+          - paragraph [ref=e21]:
+            - text: In this lesson, we explore the concept of
+            - strong [ref=e22]: Grammar as Protocol
+            - text: . Instead of viewing a German sentence as a mere string of characters, we treat it as a
+            - strong [ref=e23]: Typed Object
+            - text: that must adhere to a formal schema.
+          - heading "The Dative Constraint" [level=2] [ref=e24]
+          - paragraph [ref=e25]:
+            - text: In German, certain verbs (like
+            - emphasis [ref=e26]: helfen
+            - text: ) take a “Dative” object. If you use an “Accusative” object instead, the sentence doesn’t just sound “wrong”—it
+            - strong [ref=e27]: violates the protocol
+            - text: .
+          - heading "The Task" [level=3] [ref=e28]
+          - paragraph [ref=e29]:
+            - text: "Look at the editor on the right. You’ll see the sentence:"
+            - code [ref=e30]: Ich helfe meinen Bruder.
+          - paragraph [ref=e31]:
+            - text: This sentence contains a type error. The verb
+            - code [ref=e32]: helfen
+            - text: is defined in our grammar as requiring a Dative object.
+            - code [ref=e33]: meinen Bruder
+            - text: is Accusative.
+          - list [ref=e34]:
+            - listitem [ref=e35]:
+              - strong [ref=e36]: Hover
+              - text: over the word
+              - code [ref=e37]: meinen
+              - text: in the editor.
+            - listitem [ref=e38]:
+              - text: See the
+              - strong [ref=e39]: LSP Diagnostic
+              - text: explaining the dative requirement.
+            - listitem [ref=e40]:
+              - text: Fix the sentence by changing
+              - code [ref=e41]: meinen
+              - text: to
+              - code [ref=e42]: meinem
+              - text: .
+          - heading "Formal Verification" [level=3] [ref=e43]
+          - paragraph [ref=e44]:
+            - text: Note the
+            - code [ref=e45]: GermanGrammar.pkl
+            - text: file in the sidebar. That is our
+            - strong [ref=e46]: Source of Truth
+            - text: . It defines the “Types” of German verbs. By changing that file, you would change the rules of the language itself.
+        - link "Powered by WebContainers" [ref=e47] [cursor=pointer]:
+          - /url: https://webcontainers.io/
+    - generic [ref=e51]:
+      - generic [ref=e53]:
+        - generic:
+          - generic:
+            - generic: Files
+          - generic:
+            - button "GermanGrammar.pkl" [ref=e54] [cursor=pointer]:
+              - generic [ref=e55]: GermanGrammar.pkl
+            - button "exercise.de" [ref=e56] [cursor=pointer]:
+              - generic [ref=e57]: exercise.de
+        - separator
+        - button "Reset" [disabled] [ref=e60]: Reset
+      - separator
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]: Preparing Environment
+          - button "Toggle Terminal" [ref=e68] [cursor=pointer]: Toggle Terminal
+        - generic [ref=e69]: No preview to run nor steps to show
+      - separator
+      - tablist [ref=e74]:
+        - listitem [ref=e75]:
+          - tab "Output" [selected] [ref=e76] [cursor=pointer]: Output

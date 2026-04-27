@@ -1,6 +1,8 @@
 import React from 'react';
 
-import TidelaneList, { type TidelaneListSection } from './TidelaneList';
+import SectionBreak from './SectionBreak';
+import TidelaneList from './TidelaneList';
+import { type ProjectLandingSectionData } from './ProjectLandingSection';
 
 export interface NowPageMeta {
 	readonly lastUpdated: string;
@@ -11,36 +13,13 @@ export interface NowPageMeta {
 
 export interface NowPageViewProps {
 	readonly meta: NowPageMeta;
-	readonly sections: readonly TidelaneListSection[];
+	readonly sections: readonly ProjectLandingSectionData[];
 	readonly warning?: string;
 	readonly isFavorited?: boolean;
 }
 
-/**
- * Applies random baseline shifts to a string to mimic manual typesetting errors.
- */
-function JitterTitle({ text }: { text: string }) {
-	return (
-		<>
-			{text.split(' ').map((word, wordIndex) => (
-				<span key={wordIndex} className="now-title__word">
-					{word.split('').map((char, charIndex) => {
-						const jitter = (wordIndex + charIndex) % 7 === 0;
-						const dir = (wordIndex + charIndex) % 2 === 0 ? 'up' : 'down';
-						return (
-							<span 
-								key={charIndex} 
-								className={jitter ? `baseline-shift-${dir}` : undefined}
-							>
-								{char}
-							</span>
-						);
-					})}
-					{' '}
-				</span>
-			))}
-		</>
-	);
+function toIdFragment(value: string) {
+	return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
 export default function NowPageView({
@@ -49,63 +28,79 @@ export default function NowPageView({
 	warning,
 	isFavorited = true,
 }: Readonly<NowPageViewProps>) {
+	const totalProjects = sections.reduce((sum, section) => sum + section.items.length, 0);
+	const totalInitiatives = sections.length;
+	const firstSectionId = sections[0]
+		? sections[0].id ?? toIdFragment(sections[0].title)
+		: 'projects';
+
 	return (
 		<div className="now-page" data-favorited={isFavorited}>
 			<div className="now-page__grain" aria-hidden="true"></div>
 
-			<header className="now-header">
-				<div className="now-shell now-header__inner">
-					<a className="now-header__brand" href="/now">
-						jungle.roaring.wave
-					</a>
-					<nav className="now-header__nav" aria-label="Primary">
-						<a href="#now">Now</a>
-						<a href="#recently-done">Recently done</a>
-						<a href="/dossier">Dossier</a>
-					</nav>
+			<header className="editorial-topbar">
+				<div className="editorial-topbar__inner">
+					<div className="editorial-topbar__group">
+						<a className="editorial-topbar__brand" href="/">
+							{meta.title}
+						</a>
+						<nav className="editorial-nav" aria-label="Project groups">
+							{sections.map((section) => {
+								const sectionId = section.id ?? toIdFragment(section.title);
+								return (
+									<a key={sectionId} href={`#${sectionId}`}>
+										{section.title}
+									</a>
+								);
+							})}
+						</nav>
+					</div>
+
+					<div className="editorial-topbar__actions">
+						<a className="editorial-pdf-link" href="/broadsheet" style={{ marginRight: '1rem' }}>
+							Dispatch
+						</a>
+						<a className="editorial-pdf-link" href={`#${firstSectionId}`}>
+							Browse
+						</a>
+					</div>
 				</div>
 			</header>
 
-			<main className="now-main now-shell">
-				{isFavorited ? (
-					<>
-						<p className="now-kicker">CLASSIFIED // {meta.lastUpdated}</p>
-						<h1 className="now-title">
-							<JitterTitle text={meta.title} />
-						</h1>
+			<main className="editorial-main">
+				<div className="editorial-section-break-wrap">
+					<div className="editorial-container">
+						<SectionBreak
+							title={meta.title}
+							eyebrow={meta.lastUpdated || 'Active project index'}
+							meta={`${totalProjects} active // ${totalInitiatives} initiatives`}
+						/>
+					</div>
+				</div>
 
-						<div className="now-intro">
+				{warning ? (
+					<div className="editorial-block editorial-block--tight">
+						<div className="editorial-container editorial-prose">
+							<p className="project-landing__warning">{warning}</p>
+						</div>
+					</div>
+				) : null}
+
+				{meta.intro.length > 0 ? (
+					<div className="editorial-block editorial-block--tight">
+						<div className="editorial-container editorial-prose editorial-prose--lead">
 							{meta.intro.map((paragraph) => (
 								<p key={paragraph}>{paragraph}</p>
 							))}
 						</div>
-
-						{warning ? (
-							<div className="now-callout" role="status">
-								<span className="font-label text-[10px] font-bold uppercase block mb-2">Warning: Structural Noise</span>
-								<p>{warning}</p>
-							</div>
-						) : null}
-
-						<TidelaneList sections={sections} />
-					</>
-				) : (
-					<div className="now-coming-soon">
-						<p className="now-kicker">STAGING // RESTRICTED ACCESS</p>
-						<h1 className="now-title">Coming Soon!</h1>
-						<div className="now-intro">
-							<p>This view is currently private or under development. Check back soon for the full dossier.</p>
-						</div>
 					</div>
-				)}
+				) : null}
 
-				<footer className="now-footer">
-					<p>{meta.footer}</p>
-					<p>
-						The deeper version of the current obsession lives in the{' '}
-						<a href="/dossier">dossier</a>.
-					</p>
-				</footer>
+				<section className="editorial-section project-landing">
+					<div className="editorial-container">
+						<TidelaneList sections={sections} />
+					</div>
+				</section>
 			</main>
 		</div>
 	);

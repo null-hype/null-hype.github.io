@@ -1,0 +1,360 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { marked } from 'marked';
+import '../../styles/editorial.css';
+import AnalystCallout from '../../components/AnalystCallout';
+import ArchiveEntry from '../../components/ArchiveEntry';
+import SectionBreak from '../../components/SectionBreak';
+import { BroadsheetArticleView } from '../../components/BroadsheetArticleView';
+
+export async function getStaticPaths() {
+	const projects = await getCollection('projects');
+	return projects.map((project) => ({
+		params: { id: project.id },
+		props: { project },
+	}));
+}
+
+const { project } = Astro.props;
+
+const allIssues = await getCollection('issues');
+let projectIssues = allIssues.filter(
+	(issue) =>
+		issue.data.Project === project.data.Name || issue.data['Project ID'] === project.data.ID,
+);
+
+const priorityRank: Record<string, number> = {
+	Urgent: 1,
+	High: 2,
+	Medium: 3,
+	Low: 4,
+	'No priority': 5,
+};
+
+projectIssues.sort((a, b) => {
+	const rankA = priorityRank[String(a.data.Priority ?? 'No priority')] ?? 5;
+	const rankB = priorityRank[String(b.data.Priority ?? 'No priority')] ?? 5;
+	if (rankA !== rankB) return rankA - rankB;
+
+	const aBlockedBy = a.data['Blocked by'] || '';
+	const bBlockedBy = b.data['Blocked by'] || '';
+	if (aBlockedBy.includes(b.data.ID)) return 1;
+	if (bBlockedBy.includes(a.data.ID)) return -1;
+	if (aBlockedBy && !bBlockedBy) return 1;
+	if (!aBlockedBy && bBlockedBy) return -1;
+	return 0;
+});
+
+function issueStatusLabel(status: string | undefined): string {
+	if (!status) return 'Active';
+	if (status === 'In Progress') return 'Active';
+	if (status === 'Done') return 'Filed';
+	if (status === 'In Review') return 'In Review';
+	if (status === 'Cancelled') return 'Closed';
+	if (status === 'Backlog') return 'Queued';
+	return status;
+}
+
+function cleanUpdateText(text: string): string {
+	return text.replace(/^[^\n]*\|\s*[^\n]*\n\n/, '').trim();
+}
+
+function toIssueAnchorId(id: string, index: number) {
+	return `issue-${(id || `entry-${index + 1}`)
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/(^-|-$)/g, '')}`;
+}
+
+function formatDate(value: string | undefined) {
+	if (!value) {
+		return '';
+	}
+
+	return new Intl.DateTimeFormat('en-US', {
+		dateStyle: 'long',
+		timeZone: 'UTC',
+	}).format(new Date(value));
+}
+
+function stripMarkdown(text: string): string {
+	return text
+		.replace(/\r\n/g, '\n')
+		.replace(/^#{1,6}\s+/gm, '')
+		.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+		.replace(/\*\*([^*]+)\*\*/g, '$1')
+		.replace(/\*([^*]+)\*/g, '$1')
+		.replace(/`([^`]+)`/g, '$1')
+		.replace(/^[*-]\s+/gm, '')
+		.trim();
+}
+
+const shortRef = (project.data.ID?.slice(0, 8) ?? '--------').toUpperCase();
+const statusLabel =
+	project.data.Status === 'In Progress'
+		? 'Active'
+		: project.data.Status === 'Completed'
+			? 'Filed'
+			: project.data.Status === 'Cancelled'
+				? 'Closed'
+				: project.data.Status || 'Active';
+const entryCount = projectIssues.length;
+const entryLabel = entryCount === 1 ? 'Entry' : 'Entries';
+const latestUpdate = project.data['Latest Update']
+	? stripMarkdown(cleanUpdateText(project.data['Latest Update']))
+	: '';
+const updateDate = formatDate(project.data['Latest Update Date'] || project.data['Updated At']);
+const descFirstParagraph = project.data.Description
+	? (project.data.Description.split('\n\n')[0]?.trim() || '')
+	: '';
+const descRemainder = project.data.Description
+	? project.data.Description.slice(descFirstParagraph.length).trim()
+	: '';
+const descRemainderHtml = descRemainder ? (marked.parse(descRemainder) as string) : '';
+const metadataBits = [
+	statusLabel,
+	project.data.Priority && project.data.Priority !== 'No priority' ? project.data.Priority : '',
+	project.data.Initiatives || '',
+	updateDate,
+].filter(Boolean);
+
+const projectAbstract = stripMarkdown(
+	project.data.Summary || descFirstParagraph || project.data.Name,
+);
+
+const quickIssueEntries = projectIssues.map((issue, index) => {
+	const sl = issueStatusLabel(issue.data.Status as string | undefined);
+	return {
+		index: String(index + 1).padStart(3, '0'),
+		title: issue.data.Title,
+		href: `#${toIssueAnchorId(issue.data.ID, index)}`,
+		archivalId: `${issue.data.ID} // ${String(issue.data.Priority ?? 'No priority')}`,
+		status: issue.data['Blocked by'] ? `Blocked by ${issue.data['Blocked by']}` : sl,
+		statusTone: (issue.data['Blocked by'] ? 'restricted' : 'default') as const,
+	};
+});
+---
+
+<BaseLayout
+	title={project.data.Name}
+	description={stripMarkdown(project.data.Summary || project.data.Description || project.data.Name)}
+>
+	<BroadsheetArticleView
+		client:load
+		title={project.data.Name.toUpperCase()}
+		subtitle={`${shortRef} // ${statusLabel.toUpperCase()} // ${updateDate.toUpperCase()}`}
+		abstract={projectAbstract}
+	>
+		<div class="project-dossier">
+			{latestUpdate ? (
+				<div class="editorial-block editorial-block--tight">
+					<AnalystCallout
+						label={`${shortRef} // ${updateDate || statusLabel}`}
+						text={latestUpdate}
+					/>
+				</div>
+			) : null}
+
+			{descRemainderHtml ? (
+				<section id="summary" class="editorial-section">
+					<div class="editorial-prose" set:html={descRemainderHtml} />
+				</section>
+			) : null}
+
+			{quickIssueEntries.length > 0 ? (
+				<section class="editorial-section archive-section">
+					<div class="editorial-container archive-section__grid">
+						<div class="archive-section__intro">
+							<h2 class="archive-section__title">{entryCount} {entryLabel}</h2>
+							<p class="archive-section__eyebrow">{project.data.Name}</p>
+						</div>
+
+						<div class="archive-section__list project-dossier__archive-list">
+							{quickIssueEntries.map((entry) => <ArchiveEntry {...entry} />)}
+						</div>
+					</div>
+				</section>
+			) : null}
+
+			<section id="entries" class="editorial-section">
+				{projectIssues.length > 0 ? (
+					<ol class="project-dossier__entries">
+						{
+							projectIssues.map((issue, index) => {
+								const sl = issueStatusLabel(issue.data.Status as string | undefined);
+								const issueId = toIssueAnchorId(issue.data.ID, index);
+								const issueHtml = issue.data.Description
+									? (marked.parse(issue.data.Description) as string)
+									: '';
+
+								return (
+									<li id={issueId} class="project-dossier__entry">
+										<div class="project-dossier__entry-header">
+											<div>
+												<p class="project-dossier__entry-index">
+													{String(index + 1).padStart(2, '0')} // {issue.data.ID}
+												</p>
+												<h2 class="project-dossier__entry-title">{issue.data.Title}</h2>
+											</div>
+
+											<div class="project-dossier__entry-meta">
+												<span
+													class:list={{
+														'project-dossier__entry-status': true,
+														'is-active': sl === 'Active',
+														'is-filed': sl === 'Filed',
+														'is-review': sl === 'In Review',
+														'is-closed': sl === 'Closed',
+													}}
+												>
+													{sl}
+												</span>
+												{issue.data.Priority ? (
+													<span class="project-dossier__entry-pill">
+														{String(issue.data.Priority)}
+													</span>
+												) : null}
+											</div>
+										</div>
+
+										{issueHtml ? (
+											<div class="editorial-note__copy" set:html={issueHtml} />
+										) : null}
+
+										<div class="project-dossier__entry-footer">
+											{issue.data['Blocked by'] ? (
+												<span class="project-dossier__entry-linkage">
+													Blocked by {issue.data['Blocked by']}
+												</span>
+											) : null}
+											{issue.data.Updated ? (
+												<span class="project-dossier__entry-linkage">
+													{formatDate(issue.data.Updated)}
+												</span>
+											) : null}
+										</div>
+									</li>
+								);
+							})
+						}
+					</ol>
+				) : (
+					<div class="editorial-prose">
+						{project.data.Summary ? <p>{project.data.Summary}</p> : null}
+					</div>
+				)}
+			</section>
+		</div>
+	</BroadsheetArticleView>
+</BaseLayout>
+
+<style>
+	.project-dossier__archive-list {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.project-dossier__entries {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0;
+	}
+
+	.project-dossier__entry {
+		padding: 2rem 0;
+		border-top: 1px solid rgba(28, 27, 27, 0.12);
+	}
+
+	.project-dossier__entry:first-child {
+		padding-top: 0;
+		border-top: 0;
+	}
+
+	.project-dossier__entry-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+		margin-bottom: 1.25rem;
+	}
+
+	.project-dossier__entry-index,
+	.project-dossier__entry-linkage,
+	.project-dossier__entry-pill {
+		font-family: var(--font-label);
+		font-size: 0.64rem;
+		font-weight: 800;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	.project-dossier__entry-index {
+		margin: 0;
+		color: var(--editorial-secondary);
+	}
+
+	.project-dossier__entry-title {
+		margin: 0.35rem 0 0;
+		font-family: var(--font-display);
+		font-size: clamp(1.5rem, 4vw, 2.5rem);
+		font-weight: 900;
+		letter-spacing: -0.05em;
+		line-height: 0.95;
+	}
+
+	.project-dossier__entry-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		align-items: center;
+	}
+
+	.project-dossier__entry-status,
+	.project-dossier__entry-pill {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.45rem 0.7rem;
+		background: var(--editorial-surface-high);
+	}
+
+	.project-dossier__entry-status.is-active {
+		background: var(--editorial-secondary);
+		color: #fff;
+	}
+
+	.project-dossier__entry-status.is-filed {
+		background: var(--editorial-success);
+		color: #fff;
+	}
+
+	.project-dossier__entry-status.is-review {
+		background: var(--editorial-accent);
+		color: #fff;
+	}
+
+	.project-dossier__entry-status.is-closed {
+		background: rgba(28, 27, 27, 0.22);
+	}
+
+	.project-dossier__entry-footer {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.9rem 1.25rem;
+		margin-top: 1.25rem;
+	}
+
+	.project-dossier__entry-linkage {
+		color: rgba(28, 27, 27, 0.5);
+	}
+
+	@media (min-width: 64rem) {
+		.project-dossier__archive-list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+</style>

@@ -1,0 +1,16 @@
+.iso-tide-background {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	pointer-events: none;
+	background: var(--tidelands-paper);
+}
+
+.iso-tide-background svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}

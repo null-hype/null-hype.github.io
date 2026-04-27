@@ -1,0 +1,16 @@
+[     119ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     119ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     119ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     121ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     121ms] Identifier 'injectIntoGlobalHook' has already been declared
+[     107ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4321/node_modules/.vite/deps/astro___aria-query.js?v=502acb5a:0
+[     107ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4321/node_modules/.vite/deps/astro___axobject-query.js?v=502acb5a:0
+[     127ms] Failed to fetch dynamically imported module: http://localhost:4321/node_modules/astro/dist/runtime/client/dev-toolbar/apps/audit/index.js?v=46126377
+[   38268ms] Identifier 'injectIntoGlobalHook' has already been declared
+[   38268ms] Identifier 'injectIntoGlobalHook' has already been declared
+[   38268ms] Identifier 'injectIntoGlobalHook' has already been declared
+[   38270ms] Identifier 'injectIntoGlobalHook' has already been declared
+[   38270ms] Identifier 'injectIntoGlobalHook' has already been declared
+[   38264ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4321/node_modules/.vite/deps/astro___aria-query.js?v=502acb5a:0
+[   38264ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4321/node_modules/.vite/deps/astro___axobject-query.js?v=502acb5a:0
+[   38270ms] Failed to fetch dynamically imported module: http://localhost:4321/node_modules/astro/dist/runtime/client/dev-toolbar/apps/audit/index.js?v=46126377

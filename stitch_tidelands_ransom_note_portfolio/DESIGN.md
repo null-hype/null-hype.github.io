@@ -1,0 +1,80 @@
+# Design System Strategy: The Investigative Dossier
+
+## 1. Overview & Creative North Star
+**The Creative North Star: "The Curated Forensic"**
+
+This design system rejects the "hacker" clichés of terminal green and digital rain. Instead, it adopts the persona of a high-end, investigative editorial—think *Ray Gun* magazine meets a classified intelligence briefing. It is raw, sophisticated, and intentionally human.
+
+We achieve a "signature" look by leveraging a **Deconstructed Grid**. While the underlying structure is rigid, we break it through intentional "errors": baseline shifts in headers, overlapping containers, and asymmetrical color accents. The goal is to make the digital screen feel like a physical desk covered in rare, high-quality paper and ink-heavy documents. We are moving away from "UI components" and toward "information artifacts."
+
+---
+
+## 2. Colors & Surface Logic
+
+The palette is rooted in the tactile world. The background is not white; it is a warm, aged paper. The primary "ink" is a deep charcoal.
+
+### Palette Highlights
+- **Surface (#fcf9f8):** The base paper. All layouts start here.
+- **On-Surface (#1c1b1b):** The ink. Used for all primary reading.
+- **Accents:** Cobalt Blue (`primary_container`), Safety Red (`secondary_container`), and Deep Green (`tertiary_container`) are used as "highlighter" or "stamped" accents.
+
+### The "No-Line" Rule
+**Prohibit 1px solid borders for sectioning.** To define a new content area, use a tonal shift. Use `surface_container_low` for a subtle recessed feel or `surface_container_highest` to suggest a thicker sheet of paper stacked on top. Boundaries are felt through value changes, not drawn with lines.
+
+### Glass & Texture
+For floating elements or "top-secret" overlays, use **Glassmorphism**. Apply `surface_container_lowest` at 70% opacity with a `24px` backdrop-blur. This simulates a semi-translucent vellum paper, allowing the underlying "dossier" content to bleed through.
+
+---
+
+## 3. Typography: Rule-Breaking Hierarchy
+
+The tension between the utilitarian **Noto Serif** and the expressive **Epilogue** creates the "Editorial" feel.
+
+- **Display & Headlines (Epilogue):** These are your "rule-breakers." Headlines should utilize selective color shifts (e.g., the first word in `on_surface`, the second in `primary`). Encourage **Baseline Shifts**: move specific characters up or down by `2px` to mimic manual typesetting errors.
+- **Body Text (Noto Serif):** The "Voice of Reason." Use `body-lg` (1rem) for all long-form copy. The serif provides the "dossier" authority and ensures high readability against the warm paper background.
+- **Labels (Space Grotesk):** Used for technical metadata, timestamps, and classification markers. These should be treated as "stamps"—often set in `secondary` (Safety Red) or `tertiary` (Deep Green) to denote status.
+
+---
+
+## 4. Elevation & Depth: Tonal Layering
+
+We do not use Material-style drop shadows. Depth is an environmental effect, not a light-source effect.
+
+- **The Layering Principle:** Stack `surface-container` tiers. A "Project Card" should be `surface_container_highest` sitting on a `surface` background. The contrast in warmth/value creates the lift.
+- **Ambient Shadows:** If an element must "float" (like a modal), use a shadow with a `48px` blur, `0%` spread, and `6%` opacity using the `on_surface` color. It should feel like a soft glow of ink rather than a harsh shadow.
+- **The "Ghost Border" Fallback:** If a boundary is visually required for accessibility, use the `outline_variant` token at **15% opacity**. It should be barely perceptible—a "hint" of an edge.
+
+---
+
+## 5. Components & Artifacts
+
+### Buttons (The "Markings")
+- **Primary:** Rectangular, sharp `0px` corners. Background: `primary` (#00327d), Text: `on_primary`. No gradients.
+- **Secondary:** `outline` token at 20% opacity. Text in `on_surface`.
+- **States:** On hover, shift the background to `primary_container` and apply a slight "jitter" (a 1px offset) to mimic a physical stamp hit.
+
+### Input Fields (The "Forms")
+- **Style:** No boxes. Use a single bottom-heavy underline (2px) using `outline`.
+- **Labels:** Always `label-sm` in `on_surface_variant`, placed inside the "line" area to look like a printed form.
+
+### Cards & Lists (The "Entries")
+- **Constraint:** **Zero Dividers.** Separate list items using the Spacing Scale (e.g., `8` or `3rem` gaps).
+- **Asymmetry:** For card layouts, vary the padding on the left and right (e.g., `pl-8`, `pr-4`) to break the "perfect" digital grid.
+
+### Specialty Component: The "Redaction"
+For sensitive portfolio data (offensive security context), use a block of `on_surface` (charcoal) over text that reveals the content on hover. This reinforces the "dossier" narrative.
+
+---
+
+## 6. Do’s and Don’ts
+
+### Do:
+- **Use "Ink Bleed" Accents:** Use the cobalt or red accents as small, asymmetrical blocks of color that "bleed" off the edge of the screen.
+- **Embrace White Space:** Use the `20` (7rem) and `24` (8.5rem) spacing tokens generously. Sophistication comes from the "void."
+- **Mix Case:** Use `label-md` in all-caps for technical data, but keep `title-lg` in sentence case for a high-end editorial feel.
+
+### Don’t:
+- **No Rounded Corners:** `0px` is the absolute rule. Any radius breaks the "raw" aesthetic.
+- **No Standard Grids:** Avoid centering everything. Align text to the left but place secondary imagery or metadata on the far right of the grid to create tension.
+- **No Cliches:** Absolutely no green "code" fonts or terminal windows. The sophistication is in the *result* of the work, not the *tools* of the work.
+- **No Purple:** Adhere strictly to the Cobalt/Red/Yellow/Green accent palette.

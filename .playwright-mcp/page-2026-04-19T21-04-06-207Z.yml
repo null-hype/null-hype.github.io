@@ -1,0 +1,1713 @@
+- generic [ref=e2]:
+  - heading "0 notifications" [level=2] [ref=e406]
+  - generic [ref=e407]:
+    - generic:
+      - button [ref=e408] [cursor=pointer]:
+        - generic [ref=e410]: Skip to main content
+      - button [ref=e411] [cursor=pointer]:
+        - img [ref=e413]
+    - generic [ref=e415]:
+      - banner [ref=e417]:
+        - generic [ref=e420]:
+          - button "LinkedIn" [ref=e421] [cursor=pointer]:
+            - img "LinkedIn" [ref=e422]
+          - search [ref=e425]:
+            - generic [ref=e426]:
+              - img [ref=e428]
+              - textbox "Search" [ref=e430]
+          - generic [ref=e432]:
+            - figure [ref=e437]
+            - navigation [ref=e440]:
+              - list [ref=e441]:
+                - listitem [ref=e442]:
+                  - button "Home, 1 new notification" [ref=e443] [cursor=pointer]:
+                    - img [ref=e445]
+                    - generic [ref=e449]: Home
+                - listitem [ref=e450]:
+                  - link "My Network, 0 new notifications" [ref=e451] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork
+                    - img [ref=e453]
+                    - generic [ref=e456]: My Network
+                - listitem [ref=e457]:
+                  - link "Jobs, 0 new notifications" [ref=e458] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/
+                    - img [ref=e460]
+                    - generic [ref=e463]: Jobs
+                - listitem [ref=e464]:
+                  - link "Messaging, 0 new notifications" [ref=e465] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/
+                    - img [ref=e467]
+                    - generic [ref=e470]: Messaging
+                - listitem [ref=e471]:
+                  - link "Notifications, 15 new notifications" [ref=e472] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/
+                    - generic [ref=e473]:
+                      - img [ref=e474]
+                      - generic [ref=e476]: "15"
+                    - generic [ref=e478]: Notifications
+                - listitem [ref=e479]:
+                  - button "Me" [ref=e480] [cursor=pointer]:
+                    - figure [ref=e482]
+                    - generic [ref=e484]:
+                      - text: Me
+                      - img [ref=e485]
+            - navigation [ref=e489]:
+              - list [ref=e490]:
+                - listitem [ref=e491]:
+                  - button "For Business" [ref=e492] [cursor=pointer]:
+                    - img [ref=e494]
+                    - generic [ref=e497]:
+                      - text: For Business
+                      - img [ref=e498]
+                - listitem [ref=e500]:
+                  - link "0 new notifications" [ref=e501] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts/
+                    - img [ref=e503]
+                    - generic [ref=e507]: Advertise
+      - main [ref=e508]:
+        - generic [ref=e509]:
+          - toolbar [ref=e510]:
+            - generic [ref=e514]:
+              - link "Nate Airulla" [ref=e515] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/nate-airulla/
+                - generic "Nate Airulla" [ref=e516]:
+                  - figure [ref=e517]
+                  - generic [ref=e518]:
+                    - paragraph [ref=e519]: Nate Airulla
+                    - paragraph [ref=e521]: Principal Global Talent Acquisition Specialist at Accuris
+              - generic [ref=e522]:
+                - button "More" [ref=e524] [cursor=pointer]:
+                  - generic [ref=e526]: More
+                - link "Message" [ref=e528] [cursor=pointer]:
+                  - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&recipient=ACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                  - generic [ref=e529]:
+                    - img [ref=e530]
+                    - generic [ref=e532]: Message
+                - button "Follow Nate Airulla" [ref=e536] [cursor=pointer]:
+                  - generic [ref=e537]:
+                    - img [ref=e538]
+                    - generic [ref=e541]: Follow
+          - main [ref=e542]:
+            - generic [ref=e544]:
+              - generic [ref=e547]:
+                - generic [ref=e552]:
+                  - generic [ref=e553]:
+                    - link [ref=e556] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/nate-airulla/overlay/background-photo/
+                      - figure [ref=e557]:
+                        - img "Cover photo" [ref=e558]
+                    - link "Profile photo" [ref=e559] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/nate-airulla/
+                      - generic "Profile photo" [ref=e560]:
+                        - figure [ref=e561]
+                    - link "Nate is a Premium member" [ref=e564] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/nate-airulla/
+                      - img "Nate is a Premium member" [ref=e565]
+                  - generic [ref=e567]:
+                    - generic [ref=e568]:
+                      - generic [ref=e570]:
+                        - generic [ref=e571]:
+                          - link "Nate Airulla View Nate’s verifications" [ref=e574] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/in/nate-airulla/
+                            - generic [ref=e576]:
+                              - heading "Nate Airulla" [level=2] [ref=e577]
+                              - img "View Nate’s verifications" [ref=e578]
+                          - paragraph [ref=e580]: · 3rd
+                        - paragraph [ref=e581]: Principal Global Talent Acquisition Specialist at Accuris
+                        - generic [ref=e582]:
+                          - paragraph [ref=e583]: Denver, Colorado, United States
+                          - paragraph [ref=e584]: ·
+                          - paragraph [ref=e585]:
+                            - link "Contact info" [ref=e586] [cursor=pointer]:
+                              - /url: https://www.linkedin.com/in/nate-airulla/overlay/contact-info/
+                      - generic [ref=e588]:
+                        - button "Accuris" [ref=e589] [cursor=pointer]:
+                          - generic [ref=e590]:
+                            - figure [ref=e591]
+                            - paragraph [ref=e595]: Accuris
+                        - button "University of Arizona" [ref=e596] [cursor=pointer]:
+                          - generic [ref=e597]:
+                            - figure [ref=e598]
+                            - paragraph [ref=e602]: University of Arizona
+                    - generic [ref=e603]:
+                      - paragraph [ref=e604]: 6,534 followers
+                      - paragraph [ref=e605]: ·
+                      - paragraph [ref=e606]: 500+
+                      - paragraph [ref=e607]: connections
+                    - generic [ref=e611]:
+                      - button "Follow Nate Airulla" [ref=e615] [cursor=pointer]:
+                        - generic [ref=e616]:
+                          - img [ref=e617]
+                          - generic [ref=e620]: Follow
+                      - link "Message" [ref=e622] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&recipient=ACoAABafj6AB1cinguv17dS29lsillZ0BDJf_4U&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay&lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3B9ZHiemnORPiB%2FX%2BFFCB81A%3D%3D
+                        - generic [ref=e623]:
+                          - img [ref=e624]
+                          - generic [ref=e626]: Message
+                      - button "More" [ref=e628] [cursor=pointer]:
+                        - generic [ref=e630]: More
+                - generic [ref=e638]:
+                  - heading "About" [level=2] [ref=e640]
+                  - paragraph [ref=e642]:
+                    - generic [ref=e643]: I lead recruiting for Accuris.
+                - generic [ref=e649]:
+                  - generic [ref=e650]:
+                    - generic [ref=e651]:
+                      - heading "Activity" [level=2] [ref=e652]
+                      - paragraph [ref=e654]: 6,534 followers
+                    - button "Follow Nate Airulla" [ref=e657] [cursor=pointer]:
+                      - generic [ref=e658]:
+                        - img [ref=e659]
+                        - generic [ref=e662]: Follow
+                  - generic [ref=e663]:
+                    - radio "Posts" [checked] [ref=e664] [cursor=pointer]:
+                      - generic [ref=e665]:
+                        - checkbox "Posts" [checked]
+                        - generic [ref=e666]: Posts
+                    - radio "Comments" [ref=e667] [cursor=pointer]:
+                      - generic [ref=e668]:
+                        - checkbox "Comments"
+                        - generic [ref=e669]: Comments
+                  - generic [ref=e671]:
+                    - generic [ref=e677]:
+                      - list [ref=e678]:
+                        - list [ref=e679]:
+                          - listitem [ref=e680]:
+                            - listitem [ref=e682]:
+                              - generic [ref=e683]:
+                                - generic [ref=e684]:
+                                  - link [ref=e685] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - figure [ref=e686]:
+                                      - img "View Nate Airulla’s profile" [ref=e687]
+                                  - 'link "Nate Airulla Premium Profile 3rd+ Principal Global Talent Acquisition Specialist at Accuris 1w • Visibility: Global" [ref=e688] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e689]:
+                                      - generic "Nate Airulla Premium Profile 3rd+" [ref=e690]:
+                                        - paragraph [ref=e693]: Nate Airulla
+                                        - paragraph [ref=e695]:
+                                          - img [ref=e697]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e700]: Principal Global Talent Acquisition Specialist at Accuris
+                                      - paragraph [ref=e702]:
+                                        - text: 1w •
+                                        - 'img "Visibility: Global" [ref=e703]'
+                                  - button "Open control menu for post by Nate Airulla" [ref=e705] [cursor=pointer]:
+                                    - img [ref=e707]
+                                - link "Tyler is the manager for this role!" [ref=e709] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7447405140686581760/?originTrackingId=FJmnNn7bdqCKkehjwsT8Rg%3D%3D
+                                  - paragraph [ref=e710]:
+                                    - generic [ref=e711]: Tyler is the manager for this role!
+                                - generic [ref=e712]:
+                                  - generic [ref=e713]:
+                                    - link [ref=e714] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/tyler-pemble/
+                                      - figure [ref=e715]:
+                                        - img "View Tyler Pemble’s profile, hiring" [ref=e716]
+                                    - 'link "Tyler Pemble, Hiring Premium Profile 3rd+ Human Resources Leader 1w • Edited • Visibility: Global" [ref=e717] [cursor=pointer]':
+                                      - /url: https://www.linkedin.com/in/tyler-pemble/
+                                      - generic [ref=e718]:
+                                        - generic "Tyler Pemble, Hiring Premium Profile 3rd+" [ref=e719]:
+                                          - paragraph [ref=e722]: Tyler Pemble
+                                          - paragraph [ref=e724]:
+                                            - img [ref=e726]
+                                            - text: • 3rd+
+                                        - paragraph [ref=e729]: Human Resources Leader
+                                        - paragraph [ref=e731]:
+                                          - text: 1w • Edited •
+                                          - 'img "Visibility: Global" [ref=e732]'
+                                  - 'link "I’m #hiring a HR Business Partner to join our Denver HR team. If you or someone you know is interested, please reach out or apply below." [ref=e734] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:ugcPost:7447401971042660352/?originTrackingId=FJmnNn7bdqCKkehjwsT8Rg%3D%3D
+                                    - paragraph [ref=e735]:
+                                      - generic [ref=e736]:
+                                        - text: I’m
+                                        - link "#hiring" [ref=e737]:
+                                          - /url: https://www.linkedin.com/search/results/all/?keywords=%23hiring&origin=HASH_TAG_FROM_FEED
+                                          - strong [ref=e739]: "#hiring"
+                                        - text: a HR Business Partner to join our Denver HR team.
+                                        - text: If you or someone you know is interested, please reach out or apply below.
+                                        - button:
+                                          - generic [ref=e742]: … more
+                                  - link "Accuris Denver, CO (Hybrid) View job $80K/yr - $100K/yr • Medical, Vision, Dental, 401(k), +2 benefits" [ref=e743] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/jobs/view/4396735432/?trackingId=UbVuG0drTX6Hlq5x6iU3Bg%3D%3D&isJobSearch=false
+                                    - generic [ref=e745]:
+                                      - figure [ref=e746]
+                                      - generic [ref=e747]:
+                                        - generic [ref=e748]:
+                                          - generic [ref=e750]:
+                                            - paragraph [ref=e752]:
+                                              - generic [ref=e754]:
+                                                - text: HR Business Partner
+                                                - img [ref=e756]
+                                            - paragraph [ref=e759]: Accuris
+                                            - paragraph [ref=e760]: Denver, CO (Hybrid)
+                                          - link "View job" [ref=e762]:
+                                            - /url: https://www.linkedin.com/jobs/view/4396735432/?trackingId=UbVuG0drTX6Hlq5x6iU3Bg%3D%3D&isJobSearch=false
+                                            - generic [ref=e764]: View job
+                                        - generic [ref=e766]:
+                                          - paragraph [ref=e768]: $80K/yr - $100K/yr
+                                          - paragraph [ref=e770]: •
+                                          - paragraph [ref=e772]: Medical, Vision, Dental, 401(k), +2 benefits
+                              - generic [ref=e773]:
+                                - link "10 reactions" [ref=e775] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/in/nate-airulla/
+                                  - generic [ref=e776]:
+                                    - img [ref=e777]
+                                    - img [ref=e783]
+                                    - paragraph [ref=e795]:
+                                      - generic [ref=e796]: 10 reactions
+                                      - text: "10"
+                                - generic [ref=e797]:
+                                  - generic [ref=e798]:
+                                    - 'button "Reaction button state: no reaction" [ref=e801] [cursor=pointer]':
+                                      - generic [ref=e802]:
+                                        - img [ref=e803]
+                                        - generic [ref=e805]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e807] [cursor=pointer]
+                                  - link "Comment" [ref=e809] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7447405140686581760/
+                                    - generic [ref=e810]:
+                                      - img [ref=e811]
+                                      - generic [ref=e813]: Comment
+                                  - button "Repost" [ref=e814] [cursor=pointer]:
+                                    - generic [ref=e815]:
+                                      - img [ref=e816]
+                                      - generic [ref=e818]: Repost
+                                  - link "Send" [ref=e819] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e820]:
+                                      - img [ref=e821]
+                                      - generic [ref=e823]: Send
+                          - listitem [ref=e824]:
+                            - listitem [ref=e826]:
+                              - generic [ref=e827]:
+                                - generic [ref=e828]:
+                                  - link [ref=e829] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - figure [ref=e830]:
+                                      - img "View Nate Airulla’s profile" [ref=e831]
+                                  - 'link "Nate Airulla Premium Profile 3rd+ Principal Global Talent Acquisition Specialist at Accuris 1w • Visibility: Global" [ref=e832] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e833]:
+                                      - generic "Nate Airulla Premium Profile 3rd+" [ref=e834]:
+                                        - paragraph [ref=e837]: Nate Airulla
+                                        - paragraph [ref=e839]:
+                                          - img [ref=e841]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e844]: Principal Global Talent Acquisition Specialist at Accuris
+                                      - paragraph [ref=e846]:
+                                        - text: 1w •
+                                        - 'img "Visibility: Global" [ref=e847]'
+                                  - button "Open control menu for post by Nate Airulla" [ref=e849] [cursor=pointer]:
+                                    - img [ref=e851]
+                                - link "Accuris is looking for an HR Business Partner in Denver, CO! - Hybrid/Remote 3x week - $75,000 - $110,000 base salary + bonus + equity - Access to the most cutting-edge AI tools on the market! If you are interested, please apply and then feel free to reach out to our recruiter Jack F. about this role. https://lnkd.in/gEH8A-Hp" [ref=e853] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7447402690399186944/?originTrackingId=PiwSVgXQbZghXgLCDX6PrQ%3D%3D
+                                  - paragraph [ref=e854]:
+                                    - generic [ref=e855]:
+                                      - link "Accuris" [ref=e856]:
+                                        - /url: https://www.linkedin.com/company/accurisco/
+                                        - strong [ref=e858]: Accuris
+                                      - text: is looking for an HR Business Partner in Denver, CO!
+                                      - text: "- Hybrid/Remote 3x week"
+                                      - text: "- $75,000 - $110,000 base salary + bonus + equity"
+                                      - text: "- Access to the most cutting-edge AI tools on the market!"
+                                      - text: If you are interested, please apply and then feel free to reach out to our recruiter
+                                      - link "Jack F." [ref=e860]:
+                                        - /url: https://www.linkedin.com/in/c-jack-fogarty/
+                                        - strong [ref=e862]: Jack F.
+                                      - text: about this role.
+                                      - link "https://lnkd.in/gEH8A-Hp" [ref=e863]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2FgEH8A-Hp&urlhash=8IWm&mt=KG3DSiZAw6KI0xxEnwqk5RncNPxF3A1RWZGI35QcG88GxLg1zRVQngCx50GzHsKwrbLiPdSuDaG9zorf3ZZyI0GVBHJbrIWFz2giCfFt57Uf5kkdReslR4t6qw&isSdui=true
+                                        - strong [ref=e865]: https://lnkd.in/gEH8A-Hp
+                                      - button:
+                                        - generic [ref=e867]: … more
+                                - link "Accuris hiring HR Business Partner in Denver, CO | LinkedIn linkedin.com" [ref=e868] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/jobs/view/hr-business-partner-at-accuris-4396735432/
+                                  - generic [ref=e870]:
+                                    - paragraph [ref=e872]:
+                                      - generic [ref=e873]: Accuris hiring HR Business Partner in Denver, CO | LinkedIn
+                                      - text: Accuris hiring HR Business Partner in Denver, CO | LinkedIn
+                                    - paragraph [ref=e875]: linkedin.com
+                              - generic [ref=e876]:
+                                - generic [ref=e877]:
+                                  - link "27 reactions" [ref=e878] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e879]:
+                                      - img [ref=e880]
+                                      - img [ref=e886]
+                                      - img [ref=e892]
+                                      - paragraph [ref=e904]:
+                                        - generic [ref=e905]: 27 reactions
+                                        - text: "27"
+                                  - generic [ref=e906]:
+                                    - link "1 comment" [ref=e907] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/feed/update/urn:li:activity:7447402690399186944/
+                                      - paragraph [ref=e908]:
+                                        - generic [ref=e909]: 1 comment
+                                        - generic [ref=e910]: 1 comment
+                                    - paragraph [ref=e911]: •
+                                    - link "2 reposts" [ref=e912] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - paragraph [ref=e913]:
+                                        - generic [ref=e914]: 2 reposts
+                                        - generic [ref=e915]: 2 reposts
+                                - generic [ref=e916]:
+                                  - generic [ref=e917]:
+                                    - 'button "Reaction button state: no reaction" [ref=e920] [cursor=pointer]':
+                                      - generic [ref=e921]:
+                                        - img [ref=e922]
+                                        - generic [ref=e924]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e926] [cursor=pointer]
+                                  - link "Comment" [ref=e928] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7447402690399186944/
+                                    - generic [ref=e929]:
+                                      - img [ref=e930]
+                                      - generic [ref=e932]: Comment
+                                  - button "Repost" [ref=e933] [cursor=pointer]:
+                                    - generic [ref=e934]:
+                                      - img [ref=e935]
+                                      - generic [ref=e937]: Repost
+                                  - link "Send" [ref=e938] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e939]:
+                                      - img [ref=e940]
+                                      - generic [ref=e942]: Send
+                          - listitem [ref=e943]:
+                            - listitem [ref=e945]:
+                              - generic [ref=e946]:
+                                - generic [ref=e947]:
+                                  - generic [ref=e948]:
+                                    - link [ref=e949] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - figure [ref=e950]:
+                                        - img "View Nate Airulla’s profile" [ref=e951]
+                                    - paragraph [ref=e953]:
+                                      - link "Nate Airulla" [ref=e954] [cursor=pointer]:
+                                        - /url: https://www.linkedin.com/in/nate-airulla/
+                                        - strong [ref=e955]: Nate Airulla
+                                      - text: reposted this
+                                  - button "Open control menu for post by Lindsay Neff, MBA" [ref=e956] [cursor=pointer]:
+                                    - img [ref=e958]
+                                - generic [ref=e960]:
+                                  - link [ref=e961] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/lindsay-neff/
+                                    - figure [ref=e962]:
+                                      - img "View Lindsay Neff, MBA’s profile" [ref=e963]
+                                  - 'link "Lindsay Neff, MBA Verified Profile 3rd+ Product Marketing Leader | B2B & B2C SaaS | Revenue Driver | AI Advocate 1mo • Visibility: Global" [ref=e964] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/lindsay-neff/
+                                    - generic [ref=e965]:
+                                      - generic "Lindsay Neff, MBA Verified Profile 3rd+" [ref=e966]:
+                                        - paragraph [ref=e969]: Lindsay Neff, MBA
+                                        - paragraph [ref=e971]:
+                                          - img [ref=e973]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e976]: Product Marketing Leader | B2B & B2C SaaS | Revenue Driver | AI Advocate
+                                      - paragraph [ref=e978]:
+                                        - text: 1mo •
+                                        - 'img "Visibility: Global" [ref=e979]'
+                                - 'link "I’m hiring for a Marketing Specialist role to help drive growth for our Supply Chain division, focused on electronics manufacturing. We’re in a season of building, launching, refining, and scaling like never before. It’s an exciting time to come in and make real impact. I’m looking for someone who is: • Resourceful and proactive • Gritty and resilient • Adaptable in a fast-moving environment • Energized by growth and building If you (or someone you know) thrives in dynamic environments and wants to be part of a team that’s pushing forward in supply chain intelligence, I’d love to connect." [ref=e981] [cursor=pointer]':
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440498196491100160/?originTrackingId=w4Ms5Cz4035hjTOyFf6bOw%3D%3D
+                                  - paragraph [ref=e982]:
+                                    - generic [ref=e983]:
+                                      - text: "I’m hiring for a Marketing Specialist role to help drive growth for our Supply Chain division, focused on electronics manufacturing. We’re in a season of building, launching, refining, and scaling like never before. It’s an exciting time to come in and make real impact. I’m looking for someone who is: • Resourceful and proactive • Gritty and resilient • Adaptable in a fast-moving environment • Energized by growth and building If you (or someone you know) thrives in dynamic environments and wants to be part of a team that’s pushing forward in supply chain intelligence, I’d love to connect."
+                                      - button:
+                                        - generic [ref=e985]: … more
+                                - link "Accuris Denver, CO (Remote) View job $60K/yr - $70K/yr • 6 benefits" [ref=e986] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/jobs/view/4374658312/?trackingId=KKF58h%2BCSJKFEZ%2F%2BTOA7Uw%3D%3D&isJobSearch=false
+                                  - generic [ref=e988]:
+                                    - figure [ref=e989]
+                                    - generic [ref=e990]:
+                                      - generic [ref=e991]:
+                                        - generic [ref=e993]:
+                                          - paragraph [ref=e995]:
+                                            - generic [ref=e997]:
+                                              - text: Marketing Specialist
+                                              - img [ref=e999]
+                                          - paragraph [ref=e1002]: Accuris
+                                          - paragraph [ref=e1003]: Denver, CO (Remote)
+                                        - link "View job" [ref=e1005]:
+                                          - /url: https://www.linkedin.com/jobs/view/4374658312/?trackingId=KKF58h%2BCSJKFEZ%2F%2BTOA7Uw%3D%3D&isJobSearch=false
+                                          - generic [ref=e1007]: View job
+                                      - generic [ref=e1009]:
+                                        - paragraph [ref=e1011]: $60K/yr - $70K/yr
+                                        - paragraph [ref=e1013]: •
+                                        - paragraph [ref=e1015]: 6 benefits
+                              - generic [ref=e1016]:
+                                - generic [ref=e1017]:
+                                  - link "54 reactions" [ref=e1018] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1019]:
+                                      - img [ref=e1020]
+                                      - img [ref=e1026]
+                                      - img [ref=e1032]
+                                      - paragraph [ref=e1047]:
+                                        - generic [ref=e1048]: 54 reactions
+                                        - text: "54"
+                                  - generic [ref=e1049]:
+                                    - link "1 comment" [ref=e1050] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440498196491100160/
+                                      - paragraph [ref=e1051]:
+                                        - generic [ref=e1052]: 1 comment
+                                        - generic [ref=e1053]: 1 comment
+                                    - paragraph [ref=e1054]: •
+                                    - link "8 reposts" [ref=e1055] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - paragraph [ref=e1056]:
+                                        - generic [ref=e1057]: 8 reposts
+                                        - generic [ref=e1058]: 8 reposts
+                                - generic [ref=e1059]:
+                                  - generic [ref=e1060]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1063] [cursor=pointer]':
+                                      - generic [ref=e1064]:
+                                        - img [ref=e1065]
+                                        - generic [ref=e1067]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1069] [cursor=pointer]
+                                  - link "Comment" [ref=e1071] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440498196491100160/
+                                    - generic [ref=e1072]:
+                                      - img [ref=e1073]
+                                      - generic [ref=e1075]: Comment
+                                  - button "Repost" [ref=e1076] [cursor=pointer]:
+                                    - generic [ref=e1077]:
+                                      - img [ref=e1078]
+                                      - generic [ref=e1080]: Repost
+                                  - link "Send" [ref=e1081] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1082]:
+                                      - img [ref=e1083]
+                                      - generic [ref=e1085]: Send
+                          - listitem [ref=e1086]:
+                            - listitem [ref=e1088]:
+                              - generic [ref=e1089]:
+                                - generic [ref=e1090]:
+                                  - link [ref=e1091] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - figure [ref=e1092]:
+                                      - img "View Nate Airulla’s profile" [ref=e1093]
+                                  - 'link "Nate Airulla Premium Profile 3rd+ Principal Global Talent Acquisition Specialist at Accuris 1mo • Visibility: Global" [ref=e1094] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1095]:
+                                      - generic "Nate Airulla Premium Profile 3rd+" [ref=e1096]:
+                                        - paragraph [ref=e1099]: Nate Airulla
+                                        - paragraph [ref=e1101]:
+                                          - img [ref=e1103]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e1106]: Principal Global Talent Acquisition Specialist at Accuris
+                                      - paragraph [ref=e1108]:
+                                        - text: 1mo •
+                                        - 'img "Visibility: Global" [ref=e1109]'
+                                  - button "Open control menu for post by Nate Airulla" [ref=e1111] [cursor=pointer]:
+                                    - img [ref=e1113]
+                                - link "I am hiring an Agentic AI Engineer here at Accuris! - 6 month contract - Remote - $120.00 - $144.00/hr Please apply and message me if you are interested https://lnkd.in/gy3i4_Sc" [ref=e1115] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440497785117958144/?originTrackingId=FQASU8tYTxgoOycpgcUiWw%3D%3D
+                                  - paragraph [ref=e1116]:
+                                    - generic [ref=e1117]:
+                                      - text: I am hiring an Agentic AI Engineer here at
+                                      - link "Accuris" [ref=e1118]:
+                                        - /url: https://www.linkedin.com/company/accurisco/
+                                        - strong [ref=e1120]: Accuris
+                                      - text: "!"
+                                      - text: "- 6 month contract"
+                                      - text: "- Remote"
+                                      - text: "- $120.00 - $144.00/hr"
+                                      - text: Please apply and message me if you are interested
+                                      - link "https://lnkd.in/gy3i4_Sc" [ref=e1122]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2Fgy3i4_Sc&urlhash=Ln2Z&mt=Qs-RwJ8loZc3jSAnZZw18VC7o3_SpoRJgn4v7pqY_bKckNVkx36FmAXOFz-UWLZCz-YIauanWW0LlM7Ln8OP7ycwHCXfhFSQ41hlkyHuBgjE4BHy23HYqHRMLw&isSdui=true
+                                        - strong [ref=e1124]: https://lnkd.in/gy3i4_Sc
+                                      - button:
+                                        - generic [ref=e1126]: … more
+                                - link "Accuris United States (Remote) View job" [ref=e1127] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/jobs/view/4387736691/?trackingId=M397PhDdTxittGeCZaAbEQ%3D%3D&isJobSearch=false
+                                  - generic [ref=e1129]:
+                                    - figure [ref=e1130]
+                                    - generic [ref=e1132]:
+                                      - generic [ref=e1134]:
+                                        - paragraph [ref=e1136]:
+                                          - generic [ref=e1138]:
+                                            - text: Agentic AI Engineer (Remote, 6-Month Contract)
+                                            - img [ref=e1140]
+                                        - paragraph [ref=e1143]: Accuris
+                                        - paragraph [ref=e1144]: United States (Remote)
+                                      - link "View job" [ref=e1146]:
+                                        - /url: https://www.linkedin.com/jobs/view/4387736691/?trackingId=M397PhDdTxittGeCZaAbEQ%3D%3D&isJobSearch=false
+                                        - generic [ref=e1148]: View job
+                              - generic [ref=e1150]:
+                                - generic [ref=e1151]:
+                                  - link "51 reactions" [ref=e1152] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1153]:
+                                      - img [ref=e1154]
+                                      - img [ref=e1160]
+                                      - paragraph [ref=e1172]:
+                                        - generic [ref=e1173]: 51 reactions
+                                        - text: "51"
+                                  - link "5 comments" [ref=e1175] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440497785117958144/
+                                    - paragraph [ref=e1176]:
+                                      - generic [ref=e1177]: 5 comments
+                                      - generic [ref=e1178]: 5 comments
+                                - generic [ref=e1179]:
+                                  - generic [ref=e1180]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1183] [cursor=pointer]':
+                                      - generic [ref=e1184]:
+                                        - img [ref=e1185]
+                                        - generic [ref=e1187]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1189] [cursor=pointer]
+                                  - link "Comment" [ref=e1191] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440497785117958144/
+                                    - generic [ref=e1192]:
+                                      - img [ref=e1193]
+                                      - generic [ref=e1195]: Comment
+                                  - button "Repost" [ref=e1196] [cursor=pointer]:
+                                    - generic [ref=e1197]:
+                                      - img [ref=e1198]
+                                      - generic [ref=e1200]: Repost
+                                  - link "Send" [ref=e1201] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1202]:
+                                      - img [ref=e1203]
+                                      - generic [ref=e1205]: Send
+                          - listitem [ref=e1206]:
+                            - listitem [ref=e1208]:
+                              - generic [ref=e1209]:
+                                - generic [ref=e1210]:
+                                  - link [ref=e1211] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - figure [ref=e1212]:
+                                      - img "View Nate Airulla’s profile" [ref=e1213]
+                                  - 'link "Nate Airulla Premium Profile 3rd+ Principal Global Talent Acquisition Specialist at Accuris 1mo • Edited • Visibility: Global" [ref=e1214] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1215]:
+                                      - generic "Nate Airulla Premium Profile 3rd+" [ref=e1216]:
+                                        - paragraph [ref=e1219]: Nate Airulla
+                                        - paragraph [ref=e1221]:
+                                          - img [ref=e1223]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e1226]: Principal Global Talent Acquisition Specialist at Accuris
+                                      - paragraph [ref=e1228]:
+                                        - text: 1mo • Edited •
+                                        - 'img "Visibility: Global" [ref=e1229]'
+                                  - button "Open control menu for post by Nate Airulla" [ref=e1231] [cursor=pointer]:
+                                    - img [ref=e1233]
+                                - 'link "Accuris is hiring a #SDR here in Denver! - Solid comp plan - Inbound Leads - Hybrid/remote schedule (1 day in-office per week) - Fast track to AE role https://lnkd.in/geXuECC2" [ref=e1235] [cursor=pointer]':
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440421722274713600/?originTrackingId=b8MYpV3Q2ksxZE3vjF8knQ%3D%3D
+                                  - paragraph [ref=e1236]:
+                                    - generic [ref=e1237]:
+                                      - link "Accuris" [ref=e1238]:
+                                        - /url: https://www.linkedin.com/company/accurisco/
+                                        - strong [ref=e1240]: Accuris
+                                      - text: is hiring a
+                                      - link "#SDR" [ref=e1241]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23sdr&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1243]: "#SDR"
+                                      - text: here in Denver!
+                                      - text: "- Solid comp plan"
+                                      - text: "- Inbound Leads"
+                                      - text: "- Hybrid/remote schedule (1 day in-office per week)"
+                                      - text: "- Fast track to AE role"
+                                      - link "https://lnkd.in/geXuECC2" [ref=e1245]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2FgeXuECC2&urlhash=stPi&mt=C74KPSb9KdEgrwumIVt1rt9Su00xluWUlu8rZV6jh_i0NIVCFa4y39i9oUQ3rmB4fdHHvSTGplRJXaP62XcicNtbeDqgCNsLbgh6ElL5ne0YeUzdWTwRNkMysQ&isSdui=true
+                                        - strong [ref=e1247]: https://lnkd.in/geXuECC2
+                                      - button:
+                                        - generic [ref=e1249]: … more
+                                - link "Accuris Colorado, United States (Hybrid) View job 401(k) benefit" [ref=e1250] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/jobs/view/4385070656/?trackingId=B1hEVD3QRvq7f8Y7OfJY9A%3D%3D&isJobSearch=false
+                                  - generic [ref=e1252]:
+                                    - figure [ref=e1253]
+                                    - generic [ref=e1254]:
+                                      - generic [ref=e1255]:
+                                        - generic [ref=e1257]:
+                                          - paragraph [ref=e1259]:
+                                            - generic [ref=e1261]:
+                                              - text: Sales Development Representative (Hybrid)
+                                              - img [ref=e1263]
+                                          - paragraph [ref=e1266]: Accuris
+                                          - paragraph [ref=e1267]: Colorado, United States (Hybrid)
+                                        - link "View job" [ref=e1269]:
+                                          - /url: https://www.linkedin.com/jobs/view/4385070656/?trackingId=B1hEVD3QRvq7f8Y7OfJY9A%3D%3D&isJobSearch=false
+                                          - generic [ref=e1271]: View job
+                                      - paragraph [ref=e1275]: 401(k) benefit
+                              - generic [ref=e1276]:
+                                - generic [ref=e1277]:
+                                  - link "27 reactions" [ref=e1278] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1279]:
+                                      - img [ref=e1280]
+                                      - img [ref=e1286]
+                                      - paragraph [ref=e1293]:
+                                        - generic [ref=e1294]: 27 reactions
+                                        - text: "27"
+                                  - generic [ref=e1295]:
+                                    - link "2 comments" [ref=e1296] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440421722274713600/
+                                      - paragraph [ref=e1297]:
+                                        - generic [ref=e1298]: 2 comments
+                                        - generic [ref=e1299]: 2 comments
+                                    - paragraph [ref=e1300]: •
+                                    - link "3 reposts" [ref=e1301] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - paragraph [ref=e1302]:
+                                        - generic [ref=e1303]: 3 reposts
+                                        - generic [ref=e1304]: 3 reposts
+                                - generic [ref=e1305]:
+                                  - generic [ref=e1306]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1309] [cursor=pointer]':
+                                      - generic [ref=e1310]:
+                                        - img [ref=e1311]
+                                        - generic [ref=e1313]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1315] [cursor=pointer]
+                                  - link "Comment" [ref=e1317] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7440421722274713600/
+                                    - generic [ref=e1318]:
+                                      - img [ref=e1319]
+                                      - generic [ref=e1321]: Comment
+                                  - button "Repost" [ref=e1322] [cursor=pointer]:
+                                    - generic [ref=e1323]:
+                                      - img [ref=e1324]
+                                      - generic [ref=e1326]: Repost
+                                  - link "Send" [ref=e1327] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1328]:
+                                      - img [ref=e1329]
+                                      - generic [ref=e1331]: Send
+                          - listitem [ref=e1332]:
+                            - listitem [ref=e1334]:
+                              - generic [ref=e1335]:
+                                - generic [ref=e1336]:
+                                  - link [ref=e1337] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - figure [ref=e1338]:
+                                      - img "View Nate Airulla’s profile" [ref=e1339]
+                                  - 'link "Nate Airulla Premium Profile 3rd+ Principal Global Talent Acquisition Specialist at Accuris 1mo • Visibility: Global" [ref=e1340] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1341]:
+                                      - generic "Nate Airulla Premium Profile 3rd+" [ref=e1342]:
+                                        - paragraph [ref=e1345]: Nate Airulla
+                                        - paragraph [ref=e1347]:
+                                          - img [ref=e1349]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e1352]: Principal Global Talent Acquisition Specialist at Accuris
+                                      - paragraph [ref=e1354]:
+                                        - text: 1mo •
+                                        - 'img "Visibility: Global" [ref=e1355]'
+                                  - button "Open control menu for post by Nate Airulla" [ref=e1357] [cursor=pointer]:
+                                    - img [ref=e1359]
+                                - 'link "We are looking for a new #Sales Director here at #Accuris for the Supply Chain side of our business. Pay is very competitive, message me for more details! https://lnkd.in/gsqpivb6" [ref=e1361] [cursor=pointer]':
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7439364427541368833/?originTrackingId=dfsnl%2B6evMnPOuTIYQK5EQ%3D%3D
+                                  - paragraph [ref=e1362]:
+                                    - generic [ref=e1363]:
+                                      - text: We are looking for a new
+                                      - link "#Sales" [ref=e1364]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23sales&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1366]: "#Sales"
+                                      - text: Director here at
+                                      - link "#Accuris" [ref=e1367]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23accuris&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1369]: "#Accuris"
+                                      - text: for the Supply Chain side of our business. Pay is very competitive, message me for more details!
+                                      - link "https://lnkd.in/gsqpivb6" [ref=e1370]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2Fgsqpivb6&urlhash=4XZV&mt=08AeLHRkmY6rMYyEIiybPxGW3GPf8w_piVQYhRYVWBehmYQRUWWeAmhrFcgwb9FG989FgPj4l1MJk-uo_mtFKAz2Cby0ISshNHe0JEZMllV2xS31r3YhVswKLQ&isSdui=true
+                                        - strong [ref=e1372]: https://lnkd.in/gsqpivb6
+                                      - button:
+                                        - generic [ref=e1374]: … more
+                                - link "Accuris United States (Remote) View job 401(k) benefit" [ref=e1375] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/jobs/view/4382710131/?trackingId=qsrBqxQ%2BRUamhN6AN%2Fr5gA%3D%3D&isJobSearch=false
+                                  - generic [ref=e1377]:
+                                    - figure [ref=e1378]
+                                    - generic [ref=e1379]:
+                                      - generic [ref=e1380]:
+                                        - generic [ref=e1382]:
+                                          - paragraph [ref=e1384]:
+                                            - generic [ref=e1386]:
+                                              - text: Sales Director
+                                              - img [ref=e1388]
+                                          - paragraph [ref=e1391]: Accuris
+                                          - paragraph [ref=e1392]: United States (Remote)
+                                        - link "View job" [ref=e1394]:
+                                          - /url: https://www.linkedin.com/jobs/view/4382710131/?trackingId=qsrBqxQ%2BRUamhN6AN%2Fr5gA%3D%3D&isJobSearch=false
+                                          - generic [ref=e1396]: View job
+                                      - paragraph [ref=e1400]: 401(k) benefit
+                              - generic [ref=e1401]:
+                                - generic [ref=e1402]:
+                                  - link "29 reactions" [ref=e1403] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1404]:
+                                      - img [ref=e1405]
+                                      - img [ref=e1411]
+                                      - paragraph [ref=e1423]:
+                                        - generic [ref=e1424]: 29 reactions
+                                        - text: "29"
+                                  - link "1 repost" [ref=e1426] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - paragraph [ref=e1427]:
+                                      - generic [ref=e1428]: 1 repost
+                                      - generic [ref=e1429]: 1 repost
+                                - generic [ref=e1430]:
+                                  - generic [ref=e1431]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1434] [cursor=pointer]':
+                                      - generic [ref=e1435]:
+                                        - img [ref=e1436]
+                                        - generic [ref=e1438]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1440] [cursor=pointer]
+                                  - link "Comment" [ref=e1442] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7439364427541368833/
+                                    - generic [ref=e1443]:
+                                      - img [ref=e1444]
+                                      - generic [ref=e1446]: Comment
+                                  - button "Repost" [ref=e1447] [cursor=pointer]:
+                                    - generic [ref=e1448]:
+                                      - img [ref=e1449]
+                                      - generic [ref=e1451]: Repost
+                                  - link "Send" [ref=e1452] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1453]:
+                                      - img [ref=e1454]
+                                      - generic [ref=e1456]: Send
+                          - listitem [ref=e1457]:
+                            - listitem [ref=e1459]:
+                              - generic [ref=e1460]:
+                                - generic [ref=e1461]:
+                                  - generic [ref=e1462]:
+                                    - link [ref=e1463] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - figure [ref=e1464]:
+                                        - img "View Nate Airulla’s profile" [ref=e1465]
+                                    - paragraph [ref=e1467]:
+                                      - link "Nate Airulla" [ref=e1468] [cursor=pointer]:
+                                        - /url: https://www.linkedin.com/in/nate-airulla/
+                                        - strong [ref=e1469]: Nate Airulla
+                                      - text: reposted this
+                                  - button "Open control menu for post by Brian Wallace" [ref=e1470] [cursor=pointer]:
+                                    - img [ref=e1472]
+                                - generic [ref=e1474]:
+                                  - link [ref=e1475] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/bdwallace/
+                                    - figure [ref=e1476]:
+                                      - img "View Brian Wallace’s profile" [ref=e1477]
+                                  - 'link "Brian Wallace Premium Profile 3rd+ I’m a growth-driven Chief Marketing Officer who helps transform technology companies into category leaders | Specializes in Private Equity Backed Companies. 1mo • Edited • Visibility: Global" [ref=e1478] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/bdwallace/
+                                    - generic [ref=e1479]:
+                                      - generic "Brian Wallace Premium Profile 3rd+" [ref=e1480]:
+                                        - paragraph [ref=e1483]: Brian Wallace
+                                        - paragraph [ref=e1485]:
+                                          - img [ref=e1487]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e1490]: I’m a growth-driven Chief Marketing Officer who helps transform technology companies into category leaders | Specializes in Private Equity Backed Companies.
+                                      - paragraph [ref=e1492]:
+                                        - text: 1mo • Edited •
+                                        - 'img "Visibility: Global" [ref=e1493]'
+                                - link [ref=e1495] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7435109714608295936/?originTrackingId=HInzbgXoUFnlW3%2FW6G%2BhcA%3D%3D
+                                  - paragraph [ref=e1496]:
+                                    - generic [ref=e1497]:
+                                      - text: If you’re like me, you’re probably moving from ChatGPT to Claude – for reasons...
+                                      - text: Sharing a helpful tip that has made a big difference for my team and me.
+                                      - text: It takes maybe 20–30 minutes to set up, but the improvement in AI output is significant.
+                                      - text: Unlike ChatGPT, which can sometimes remember details from prior conversations, Claude generally treats each interaction more independently.
+                                      - text: That means if we want Claude to produce high-quality outputs consistently, you need to give it structured context about our role, our work, and the problems you’re solving.
+                                      - text: As you know, every time you start using a new AI, you’re basically starting from zero.
+                                      - text: "It doesn’t know:"
+                                      - text: • who you are
+                                      - text: • what company you work for
+                                      - text: • your product or market
+                                      - text: • your strategic priorities
+                                      - text: • how you communicate
+                                      - text: • who your audience is
+                                      - text: So if you just start prompting, the output often sounds generic. That’s why many people still see AI mostly as a tool for quick drafts or summaries.
+                                      - text: What I’ve found works much better is creating a small set of Markdown (.md) context files that you can give the AI at the start of a conversation.
+                                      - text: Think of them as a briefing packet for the AI.
+                                      - text: "These files provide structured context about things like:"
+                                      - text: • your role and responsibilities
+                                      - text: • your company and market
+                                      - text: • your communication style
+                                      - text: • your target audiences (internal and external)
+                                      - text: • your strategic priorities
+                                      - text: • the types of problems you typically work on
+                                      - text: Once the AI understands those things, the quality of the output changes dramatically.
+                                      - text: It stops acting like a generic chatbot and starts behaving more like a thinking partner.
+                                      - text: "It can still help with execution - writing, editing, summarizing - but it also becomes much more useful for:"
+                                      - text: • strategy development
+                                      - text: • interrogating assumptions
+                                      - text: • pressure-testing ideas
+                                      - text: • synthesizing information
+                                      - text: • even acting as a kind of digital twin to challenge your thinking
+                                      - text: "If you want to try this, a simple way to start is creating just a few .md files:"
+                                      - text: "-"
+                                      - link "context.md" [ref=e1499]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=http%3A%2F%2Fcontext%2Emd&urlhash=uPIW&mt=0eMYQiwvv_GF5IehQT-QiLPO979v2xBFgzfDti2aPciTvsI66-b4Tbi7vtmaGqqv196t_3w6JcDf9iKVWwB8x-5cJs4X0zzVkG_0yq8hnU_bhw35PzoLQ6eFZw&isSdui=true
+                                        - strong [ref=e1501]: context.md
+                                      - text: — your role, company, and responsibilities
+                                      - text: "-"
+                                      - link "working_style.md" [ref=e1502]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=http%3A%2F%2Fworking_style%2Emd&urlhash=votj&mt=CHlnORTCxDqpDHn8SyBceChgnHCH4x2W748jaGHONBYLMxOiRw4Om1uNb3pQyXzILfPhm9uC_b1NNKDsmT5iMkNmFez-H6rynaartZYDJJWP-2hU1lbxAYzzKg&isSdui=true
+                                        - strong [ref=e1504]: working_style.md
+                                      - text: — how you like information structured
+                                      - text: "-"
+                                      - link "problem_space.md" [ref=e1505]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=http%3A%2F%2Fproblem_space%2Emd&urlhash=-y7G&mt=Ak0BJ1sGpNOTMGNLGBWbIGBx0nCmzsYwtINjINKi-ttRj1Ha4u9tq9bzSULbOYeyMr4qMR_nO9i69fdMc-3m834EftElnjcEwkAq9_SewUN56UuPELAJ9OMGPQ&isSdui=true
+                                        - strong [ref=e1507]: problem_space.md
+                                      - text: — the types of problems you ask AI to help with
+                                      - text: Or if you like do what I did and have ChatGPT do most of this for you ;-)
+                                      - button:
+                                        - generic [ref=e1509]: … more
+                                - link [ref=e1511] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7435109714608295936/
+                                  - figure [ref=e1512]:
+                                    - img "View image" [ref=e1513]
+                              - generic [ref=e1514]:
+                                - generic [ref=e1515]:
+                                  - link "60 reactions" [ref=e1516] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1517]:
+                                      - img [ref=e1518]
+                                      - img [ref=e1524]
+                                      - img [ref=e1532]
+                                      - paragraph [ref=e1539]:
+                                        - generic [ref=e1540]: 60 reactions
+                                        - text: "60"
+                                  - generic [ref=e1541]:
+                                    - link "14 comments" [ref=e1542] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/feed/update/urn:li:activity:7435109714608295936/
+                                      - paragraph [ref=e1543]:
+                                        - generic [ref=e1544]: 14 comments
+                                        - generic [ref=e1545]: 14 comments
+                                    - paragraph [ref=e1546]: •
+                                    - link "7 reposts" [ref=e1547] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - paragraph [ref=e1548]:
+                                        - generic [ref=e1549]: 7 reposts
+                                        - generic [ref=e1550]: 7 reposts
+                                - generic [ref=e1551]:
+                                  - generic [ref=e1552]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1555] [cursor=pointer]':
+                                      - generic [ref=e1556]:
+                                        - img [ref=e1557]
+                                        - generic [ref=e1559]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1561] [cursor=pointer]
+                                  - link "Comment" [ref=e1563] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7435109714608295936/
+                                    - generic [ref=e1564]:
+                                      - img [ref=e1565]
+                                      - generic [ref=e1567]: Comment
+                                  - button "Repost" [ref=e1568] [cursor=pointer]:
+                                    - generic [ref=e1569]:
+                                      - img [ref=e1570]
+                                      - generic [ref=e1572]: Repost
+                                  - link "Send" [ref=e1573] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1574]:
+                                      - img [ref=e1575]
+                                      - generic [ref=e1577]: Send
+                          - listitem [ref=e1578]:
+                            - listitem [ref=e1580]:
+                              - generic [ref=e1581]:
+                                - generic [ref=e1582]:
+                                  - generic [ref=e1583]:
+                                    - link [ref=e1584] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - figure [ref=e1585]:
+                                        - img "View Nate Airulla’s profile" [ref=e1586]
+                                    - paragraph [ref=e1588]:
+                                      - link "Nate Airulla" [ref=e1589] [cursor=pointer]:
+                                        - /url: https://www.linkedin.com/in/nate-airulla/
+                                        - strong [ref=e1590]: Nate Airulla
+                                      - text: reposted this
+                                  - button "Open control menu for post by Chris Nugteren" [ref=e1591] [cursor=pointer]:
+                                    - img [ref=e1593]
+                                - generic [ref=e1595]:
+                                  - link [ref=e1596] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/chrisnugteren/
+                                    - figure [ref=e1597]:
+                                      - img "View Chris Nugteren’s profile" [ref=e1598]
+                                  - 'link "Chris Nugteren Premium Profile 3rd+ Managing Director @ EC1 Partners | Fintech Recruitment | Search & Rescue | Fly Fishing Guide | I find things 1mo • Visibility: Global" [ref=e1599] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/chrisnugteren/
+                                    - generic [ref=e1600]:
+                                      - generic "Chris Nugteren Premium Profile 3rd+" [ref=e1601]:
+                                        - paragraph [ref=e1604]: Chris Nugteren
+                                        - paragraph [ref=e1606]:
+                                          - img [ref=e1608]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e1611]: Managing Director @ EC1 Partners | Fintech Recruitment | Search & Rescue | Fly Fishing Guide | I find things
+                                      - paragraph [ref=e1613]:
+                                        - text: 1mo •
+                                        - 'img "Visibility: Global" [ref=e1614]'
+                                - 'link "Job opportunity! Sales Executive - Sell-Side Clients - #UnitedStates. https://lnkd.in/gnzWb2x8 EC1 Partners is partnering with an established financial technology provider delivering advanced data and workflow solutions to global investment banks and broker-dealers. The organisation has built a strong reputation supporting capital markets participants through innovative technology and long-standing client relationships. To apply, please click the link #sales #technology #investment" [ref=e1616] [cursor=pointer]':
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7435038613463056384/?originTrackingId=x4NvNturt90g4M7Zkgnb2A%3D%3D
+                                  - paragraph [ref=e1617]:
+                                    - generic [ref=e1618]:
+                                      - text: Job opportunity! Sales Executive - Sell-Side Clients -
+                                      - link "#UnitedStates" [ref=e1619]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23unitedstates&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1621]: "#UnitedStates"
+                                      - text: .
+                                      - link "https://lnkd.in/gnzWb2x8" [ref=e1623]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2FgnzWb2x8&urlhash=G-sE&mt=RFeE9Vyr_C_1yruiBTIRrZHQc4ZxHCL5oRXoLH4DKjlKAZaJkg2L6eEJCAQiPIcQ71xuZT4dqYW2IQi7TKBc01MTBalzDa1KCU5TRnR2iLEwsBkKG0R2Dm-_cA&isSdui=true
+                                        - strong [ref=e1625]: https://lnkd.in/gnzWb2x8
+                                      - link "EC1 Partners" [ref=e1626]:
+                                        - /url: https://www.linkedin.com/company/ec1-partners-ltd/
+                                        - strong [ref=e1628]: EC1 Partners
+                                      - text: is partnering with an established financial technology provider delivering advanced data and workflow solutions to global investment banks and broker-dealers. The organisation has built a strong reputation supporting capital markets participants through innovative technology and long-standing client relationships.
+                                      - text: To apply, please click the link
+                                      - link "#sales" [ref=e1629]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23sales&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1631]: "#sales"
+                                      - link "#technology" [ref=e1632]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23technology&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1634]: "#technology"
+                                      - link "#investment" [ref=e1635]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23investment&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1637]: "#investment"
+                                      - button:
+                                        - generic [ref=e1639]: … more
+                                - link [ref=e1641] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7435038613463056384/
+                                  - figure [ref=e1642]:
+                                    - img "View image" [ref=e1643]
+                              - generic [ref=e1644]:
+                                - generic [ref=e1645]:
+                                  - link "15 reactions" [ref=e1646] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1647]:
+                                      - img [ref=e1648]
+                                      - paragraph [ref=e1655]:
+                                        - generic [ref=e1656]: 15 reactions
+                                        - text: "15"
+                                  - link "1 repost" [ref=e1658] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - paragraph [ref=e1659]:
+                                      - generic [ref=e1660]: 1 repost
+                                      - generic [ref=e1661]: 1 repost
+                                - generic [ref=e1662]:
+                                  - generic [ref=e1663]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1666] [cursor=pointer]':
+                                      - generic [ref=e1667]:
+                                        - img [ref=e1668]
+                                        - generic [ref=e1670]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1672] [cursor=pointer]
+                                  - link "Comment" [ref=e1674] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7435038613463056384/
+                                    - generic [ref=e1675]:
+                                      - img [ref=e1676]
+                                      - generic [ref=e1678]: Comment
+                                  - button "Repost" [ref=e1679] [cursor=pointer]:
+                                    - generic [ref=e1680]:
+                                      - img [ref=e1681]
+                                      - generic [ref=e1683]: Repost
+                                  - link "Send" [ref=e1684] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1685]:
+                                      - img [ref=e1686]
+                                      - generic [ref=e1688]: Send
+                          - listitem [ref=e1689]:
+                            - listitem [ref=e1691]:
+                              - generic [ref=e1692]:
+                                - generic [ref=e1693]:
+                                  - generic [ref=e1694]:
+                                    - link [ref=e1695] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - figure [ref=e1696]:
+                                        - img "View Nate Airulla’s profile" [ref=e1697]
+                                    - paragraph [ref=e1699]:
+                                      - link "Nate Airulla" [ref=e1700] [cursor=pointer]:
+                                        - /url: https://www.linkedin.com/in/nate-airulla/
+                                        - strong [ref=e1701]: Nate Airulla
+                                      - text: reposted this
+                                  - button "Open control menu for post by Chris Nugteren" [ref=e1702] [cursor=pointer]:
+                                    - img [ref=e1704]
+                                - generic [ref=e1706]:
+                                  - link [ref=e1707] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/chrisnugteren/
+                                    - figure [ref=e1708]:
+                                      - img "View Chris Nugteren’s profile" [ref=e1709]
+                                  - 'link "Chris Nugteren Premium Profile 3rd+ Managing Director @ EC1 Partners | Fintech Recruitment | Search & Rescue | Fly Fishing Guide | I find things 1mo • Visibility: Global" [ref=e1710] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/chrisnugteren/
+                                    - generic [ref=e1711]:
+                                      - generic "Chris Nugteren Premium Profile 3rd+" [ref=e1712]:
+                                        - paragraph [ref=e1715]: Chris Nugteren
+                                        - paragraph [ref=e1717]:
+                                          - img [ref=e1719]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e1722]: Managing Director @ EC1 Partners | Fintech Recruitment | Search & Rescue | Fly Fishing Guide | I find things
+                                      - paragraph [ref=e1724]:
+                                        - text: 1mo •
+                                        - 'img "Visibility: Global" [ref=e1725]'
+                                - 'link "ATTENTION RECRUITMENT NETWORK: I am excited to be hiring for a key role at EC1 Partners in the US. We are looking for the founding member of our Sourcing and Research team, someone who wants real ownership and the opportunity to help shape and build a function that will be central to our growth. If you are a strong sourcer and/or researcher who wants to build, not just execute, I would love to connect. Jake Gottlieb Jamie Cole Sadie Sirlin Brandon DiCroce Morgan Davidofsky Simon Eglise https://lnkd.in/g2yUM6gk" [ref=e1727] [cursor=pointer]':
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7432143204885516288/?originTrackingId=suGEkT8XaY5%2Bz5EzscA52w%3D%3D
+                                  - paragraph [ref=e1728]:
+                                    - generic [ref=e1729]:
+                                      - text: "ATTENTION RECRUITMENT NETWORK: I am excited to be hiring for a key role at EC1 Partners in the US."
+                                      - text: We are looking for the founding member of our Sourcing and Research team, someone who wants real ownership and the opportunity to help shape and build a function that will be central to our growth.
+                                      - text: If you are a strong sourcer and/or researcher who wants to build, not just execute, I would love to connect.
+                                      - link "Jake Gottlieb" [ref=e1730]:
+                                        - /url: https://www.linkedin.com/in/jake-gottlieb-19bb687/
+                                        - strong [ref=e1732]: Jake Gottlieb
+                                      - link "Jamie Cole" [ref=e1733]:
+                                        - /url: https://www.linkedin.com/in/jamiecole123/
+                                        - strong [ref=e1735]: Jamie Cole
+                                      - link "Sadie Sirlin" [ref=e1736]:
+                                        - /url: https://www.linkedin.com/in/sadiesirlin/
+                                        - strong [ref=e1738]: Sadie Sirlin
+                                      - link "Brandon DiCroce" [ref=e1739]:
+                                        - /url: https://www.linkedin.com/in/brandon-dicroce-7924907b/
+                                        - strong [ref=e1741]: Brandon DiCroce
+                                      - link "Morgan Davidofsky" [ref=e1742]:
+                                        - /url: https://www.linkedin.com/in/morgan-davidofsky-0ab438268/
+                                        - strong [ref=e1744]: Morgan Davidofsky
+                                      - link "Simon Eglise" [ref=e1745]:
+                                        - /url: https://www.linkedin.com/in/simon-eglise-415293/
+                                        - strong [ref=e1747]: Simon Eglise
+                                      - link "https://lnkd.in/g2yUM6gk" [ref=e1748]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2Fg2yUM6gk&urlhash=byyw&mt=HfG-i0SQF930DOwRU4VAh-KJ_1sI9dG-R_s1M6KVVvaQgUBEGq7WN9iB0f9qxlqinAakVMW2xfWH_Gvm71hGPw8X49I3Dvh-LdEhcIr5PJQboPV0CVdqARF6wA&isSdui=true
+                                        - strong [ref=e1750]: https://lnkd.in/g2yUM6gk
+                                      - button:
+                                        - generic [ref=e1752]: … more
+                                - link "EC1 Partners New York, United States (Hybrid) View job $50K/yr - $90K/yr • 5 benefits" [ref=e1753] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/jobs/view/4372610571/?trackingId=Ad6gTdGnTkmPsq1xylszHQ%3D%3D&isJobSearch=false
+                                  - generic [ref=e1755]:
+                                    - figure [ref=e1756]
+                                    - generic [ref=e1757]:
+                                      - generic [ref=e1758]:
+                                        - generic [ref=e1760]:
+                                          - paragraph [ref=e1762]: Recruitment Sourcer
+                                          - paragraph [ref=e1765]: EC1 Partners
+                                          - paragraph [ref=e1766]: New York, United States (Hybrid)
+                                        - link "View job" [ref=e1768]:
+                                          - /url: https://www.linkedin.com/jobs/view/4372610571/?trackingId=Ad6gTdGnTkmPsq1xylszHQ%3D%3D&isJobSearch=false
+                                          - generic [ref=e1770]: View job
+                                      - generic [ref=e1772]:
+                                        - paragraph [ref=e1774]: $50K/yr - $90K/yr
+                                        - paragraph [ref=e1776]: •
+                                        - paragraph [ref=e1778]: 5 benefits
+                              - generic [ref=e1779]:
+                                - generic [ref=e1780]:
+                                  - link "28 reactions" [ref=e1781] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1782]:
+                                      - img [ref=e1783]
+                                      - img [ref=e1789]
+                                      - paragraph [ref=e1804]:
+                                        - generic [ref=e1805]: 28 reactions
+                                        - text: "28"
+                                  - generic [ref=e1806]:
+                                    - link "1 comment" [ref=e1807] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/feed/update/urn:li:activity:7432143204885516288/
+                                      - paragraph [ref=e1808]:
+                                        - generic [ref=e1809]: 1 comment
+                                        - generic [ref=e1810]: 1 comment
+                                    - paragraph [ref=e1811]: •
+                                    - link "2 reposts" [ref=e1812] [cursor=pointer]:
+                                      - /url: https://www.linkedin.com/in/nate-airulla/
+                                      - paragraph [ref=e1813]:
+                                        - generic [ref=e1814]: 2 reposts
+                                        - generic [ref=e1815]: 2 reposts
+                                - generic [ref=e1816]:
+                                  - generic [ref=e1817]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1820] [cursor=pointer]':
+                                      - generic [ref=e1821]:
+                                        - img [ref=e1822]
+                                        - generic [ref=e1824]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1826] [cursor=pointer]
+                                  - link "Comment" [ref=e1828] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7432143204885516288/
+                                    - generic [ref=e1829]:
+                                      - img [ref=e1830]
+                                      - generic [ref=e1832]: Comment
+                                  - button "Repost" [ref=e1833] [cursor=pointer]:
+                                    - generic [ref=e1834]:
+                                      - img [ref=e1835]
+                                      - generic [ref=e1837]: Repost
+                                  - link "Send" [ref=e1838] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1839]:
+                                      - img [ref=e1840]
+                                      - generic [ref=e1842]: Send
+                          - listitem [ref=e1843]:
+                            - listitem [ref=e1845]:
+                              - generic [ref=e1846]:
+                                - generic [ref=e1847]:
+                                  - link [ref=e1848] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - figure [ref=e1849]:
+                                      - img "View Nate Airulla’s profile" [ref=e1850]
+                                  - 'link "Nate Airulla Premium Profile 3rd+ Principal Global Talent Acquisition Specialist at Accuris 2mo • Edited • Visibility: Global" [ref=e1851] [cursor=pointer]':
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1852]:
+                                      - generic "Nate Airulla Premium Profile 3rd+" [ref=e1853]:
+                                        - paragraph [ref=e1856]: Nate Airulla
+                                        - paragraph [ref=e1858]:
+                                          - img [ref=e1860]
+                                          - text: • 3rd+
+                                      - paragraph [ref=e1863]: Principal Global Talent Acquisition Specialist at Accuris
+                                      - paragraph [ref=e1865]:
+                                        - text: 2mo • Edited •
+                                        - 'img "Visibility: Global" [ref=e1866]'
+                                  - button "Open control menu for post by Nate Airulla" [ref=e1868] [cursor=pointer]:
+                                    - img [ref=e1870]
+                                - 'link "Check out this article from our Chief Product Officer, Duane Newman, on how #AI is transforming the Energy Sector. Accuris is growing in 2026 and Duane''s team is looking to #hire a few key roles here in #Denver! Send me a message if you are interested: Sr. Director of Software Engineering - https://lnkd.in/gGKhGCWn Principal Software Engineer (Team Lead) - https://lnkd.in/gP5-AjfB https://lnkd.in/gptM5j3v" [ref=e1872] [cursor=pointer]':
+                                  - /url: https://www.linkedin.com/feed/update/urn:li:activity:7421966467375587329/?originTrackingId=PSJEHNWFMaxersNlHmO5lg%3D%3D
+                                  - paragraph [ref=e1873]:
+                                    - generic [ref=e1874]:
+                                      - text: Check out this article from our Chief Product Officer, Duane Newman, on how
+                                      - link "#AI" [ref=e1875]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23ai&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1877]: "#AI"
+                                      - text: is transforming the Energy Sector.
+                                      - text: Accuris is growing in 2026 and Duane's team is looking to
+                                      - link "#hire" [ref=e1878]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23hire&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1880]: "#hire"
+                                      - text: a few key roles here in
+                                      - link "#Denver" [ref=e1881]:
+                                        - /url: https://www.linkedin.com/search/results/all/?keywords=%23denver&origin=HASH_TAG_FROM_FEED
+                                        - strong [ref=e1883]: "#Denver"
+                                      - text: "! Send me a message if you are interested:"
+                                      - text: Sr. Director of Software Engineering -
+                                      - link "https://lnkd.in/gGKhGCWn" [ref=e1884]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2FgGKhGCWn&urlhash=5hlm&mt=DPd1_r0ms9Tn_Jm66ZF4KZlrOT4hzOkU9ggtgxCmPZNmGx7nXB7sS4tDT0q7ejoOZc1iOd_QSvyRN8tQx_RYkT7RayCv6VFbN-tUMefVC57b-H7GtZw4_BlxyQ&isSdui=true
+                                        - strong [ref=e1886]: https://lnkd.in/gGKhGCWn
+                                      - text: Principal Software Engineer (Team Lead) -
+                                      - link "https://lnkd.in/gP5-AjfB" [ref=e1887]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2FgP5-AjfB&urlhash=fFGu&mt=TD625ro99x9phCBUlcZ9AMjNI1QDTlONA6vmhs68QNduWoKdzVpMTdNHu98V4CuzHiYCDWJUWiOhzuG6xYDXAWdoL8isd4vLWULG-umLG9kxTISsF9sZOjj0YQ&isSdui=true
+                                        - strong [ref=e1889]: https://lnkd.in/gP5-AjfB
+                                      - link "https://lnkd.in/gptM5j3v" [ref=e1890]:
+                                        - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Flnkd%2Ein%2FgptM5j3v&urlhash=yUBY&mt=w8h5pOA1-4Zly4aceBTlDh2kS06vKJPfIiH6nLHNGqYkQjLPQnPk6eHYkQvljhwCKPmpAnrSCOm_7LdPv73dUoVbVOcLo-nfv7Q2C37HtdacELhi5B-dVFYLXw&isSdui=true
+                                        - strong [ref=e1892]: https://lnkd.in/gptM5j3v
+                                      - button:
+                                        - generic [ref=e1894]: … more
+                                - link "How AI Is Reshaping Engineering Capacity in the Energy Sector tdworld.com" [ref=e1895] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/safety/go/?url=https%3A%2F%2Fwww%2Etdworld%2Ecom%2Felectric-utility-operations%2Farticle%2F55341746%2Fhow-ai-is-reshaping-engineering-capacity-in-the-energy-sector%3Fblaid%3D8286706&urlhash=peKM&mt=kqsb0nkHvVAf6tm_hNVw87rwAy0uqoyAI5YirIe6Bgi_DtNysGeZQSPuUyJY0jeys8fdcL-rE_f2BZfzCCLqgFfhE5CHVvuvb0qKwW9uFYyAa_RXAoufT-F13A&isSdui=true
+                                  - generic [ref=e1896]:
+                                    - figure [ref=e1897]
+                                    - generic [ref=e1898]:
+                                      - paragraph [ref=e1900]:
+                                        - generic [ref=e1901]: How AI Is Reshaping Engineering Capacity in the Energy Sector
+                                        - text: How AI Is Reshaping Engineering Capacity in the Energy Sector
+                                      - paragraph [ref=e1903]: tdworld.com
+                              - generic [ref=e1904]:
+                                - link "12 reactions" [ref=e1906] [cursor=pointer]:
+                                  - /url: https://www.linkedin.com/in/nate-airulla/
+                                  - generic [ref=e1907]:
+                                    - img [ref=e1908]
+                                    - img [ref=e1914]
+                                    - img [ref=e1928]
+                                    - paragraph [ref=e1935]:
+                                      - generic [ref=e1936]: 12 reactions
+                                      - text: "12"
+                                - generic [ref=e1937]:
+                                  - generic [ref=e1938]:
+                                    - 'button "Reaction button state: no reaction" [ref=e1941] [cursor=pointer]':
+                                      - generic [ref=e1942]:
+                                        - img [ref=e1943]
+                                        - generic [ref=e1945]: Like
+                                    - button "Open reactions menu":
+                                      - img [ref=e1947] [cursor=pointer]
+                                  - link "Comment" [ref=e1949] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/feed/update/urn:li:activity:7421966467375587329/
+                                    - generic [ref=e1950]:
+                                      - img [ref=e1951]
+                                      - generic [ref=e1953]: Comment
+                                  - button "Repost" [ref=e1954] [cursor=pointer]:
+                                    - generic [ref=e1955]:
+                                      - img [ref=e1956]
+                                      - generic [ref=e1958]: Repost
+                                  - link "Send" [ref=e1959] [cursor=pointer]:
+                                    - /url: https://www.linkedin.com/in/nate-airulla/
+                                    - generic [ref=e1960]:
+                                      - img [ref=e1961]
+                                      - generic [ref=e1963]: Send
+                      - button "Next" [ref=e1964] [cursor=pointer]:
+                        - img [ref=e1966]
+                    - link "Show all" [ref=e1969] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/in/nate-airulla/recent-activity/all/
+                      - generic [ref=e1970]:
+                        - img [ref=e1971]
+                        - generic [ref=e1973]: Show all
+              - generic [ref=e1994]:
+                - iframe [ref=e1997]:
+                  - main "Work With Us Container" [ref=f16e3]:
+                    - generic [ref=f16e4]:
+                      - img [ref=f16e6]
+                      - generic [ref=f16e7]:
+                        - img "Richard" [ref=f16e8]
+                        - link "IOR" [ref=f16e9] [cursor=pointer]:
+                          - /url: https://www.linkedin.com/li/tscp/sct?destinationUrl=http%3A%2F%2Fwww.linkedin.com%2Fcompany%2F3604705%2Flife&trackingEvent=%5B%7B%22eventInfo%22%3A%7B%22appId%22%3A%22com.linkedin.ads.rendering.d_web%22%2C%22eventName%22%3A%22SponsoredRightRailContentActionEvent%22%2C%22topicName%22%3A%22SponsoredRightRailContentActionEvent%22%7D%2C%22eventBody%22%3A%7B%22sponsoredEventHeader%22%3A%7B%22encryptedTrackingData%22%3A%22CwEAAAGdp46OBHSv1ZkM2hCsy1D4n3SeYYHEJvAyDjO6AAag0CyRrYFcVbptUio_ovWV5GUUEltnYPx3qKP7g4zYXYKdUdM1ITP_TNPsGwc8X5BpDfZXN3hjdohjXuEO_AXvZiDy73gkOHLyMBA0d-bWejzOiyHDBexm8YA5V1ljeYYt7jETA56YON6_y2OQjcXvl1VVyFD99jk1VLaISkaXKG_e_5xMSFyLylvStvJo79tOMN0FlcySCn5KgZJ7MJMPJbR8-83BBO-R1W07bhsbwp6VEJ-t78z44OOuZyAryQXQ3oC53qdb7T9otqlg7M5vc4jVjZpJDml1tIbo4heUmul6KrLI9x7yVqRo0MRJsQCOz-_BHme23WyzLmJC6i_B5Pi5623DUBOtCudZ0ACf9WS9F9Uc87GYTNi5M_xJLBpcH69nLLoj8zqn8LDfUlyty_1DZeltft_qxW2MQInZ_Jg3SoMxseiOkwnGWWHy6DY_vRHmx6ki6p1_POuHgY9Q4UewqcCFEH-cmu9JVQxw6_nGN5rD-2-ixHubMZEI26__hNHOdeBKCrRnxjyThfSKd9qZJVkEJ6uNtLU5IE2TZupK5Ez1DC_4EIpkNJlpVOVZFXVDBekJDSeKi9kcEydcJyOQjDcOD-vUURqSHlKjslclpYd59yIaE52lMRAE-tnZto_vKJ4qBKGSQF0SLnQLJLM0m23UseTP4CXz5ZtNsRcDvdMyvNVaVUci4SDNFDqZZaHEAMJBu8mFtFz-3So8h7iQyIADmWE1RyTBaoyl5-u1Xuy7pJmn47M-V8OC4ku8fSHpdxFwRdlCc3EkRPwygzhvf0a1yYfT7NUEXfdXXrtPpHG8St3kniDItzLrG05lt1F36D8mMZy6nBwcMpVCSfiWNNPbNgt2uqoAE-xuhs92TmyqEj7hGqBBdFLuJKKR5lq9yi9CxN4pBy2Zc_wZfeiT1rpdDWkdj-k4NIo63NHCTFyNQ3zpr_8Z8r3EyTCQYy8irztU1OPD7OXiDzJpNjN6kMCshJexV0a146tETLLoOXAiiy2rGLRNDuieJDjLlhn-9k8-SlORFI-PJn5QT_2JP9_oQlOaZgW6chP2gtbgSpZp8WovFGQlEKxtFyPlGlrYcGXs4LksNWHKQb7rp_CXKiBYfsVyKvumwRNbswq1GyxGCSIS3B5hZ7jPMMQMOkmYAdxsZiWFGDj1wQIJyYnzLgkn%22%7D%2C%22header%22%3A%7B%22pageInstance%22%3A%7B%22pageUrn%22%3A%22urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%22%2C%22trackingId%22%3A%224218623a-d970-4805-b868-4ec1996c14cd%22%7D%2C%22time%22%3A1776632630762%2C%22version%22%3A%220.0.0%22%7D%2C%22requestHeader%22%3A%7B%22pageKey%22%3A%22d_flagship3_profile_view_base%22%2C%22interfaceLocale%22%3A%22en-US%22%7D%7D%7D%5D&csrfToken=ajax%3A7663274659791041878
+                          - img "IOR" [ref=f16e10]
+                    - generic [ref=f16e11]:
+                      - generic [ref=f16e12]:
+                        - paragraph [ref=f16e13]: Richard, explore relevant opportunities with IOR
+                        - paragraph [ref=f16e14]: Get the latest jobs and industry news
+                      - link "Follow" [ref=f16e15] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/li/tscp/sct?destinationUrl=http%3A%2F%2Fwww.linkedin.com%2Fcompany%2F3604705%2Flife%3FisFollowingPage%3Dtrue&trackingEvent=%5B%7B%22eventInfo%22%3A%7B%22appId%22%3A%22com.linkedin.ads.rendering.d_web%22%2C%22eventName%22%3A%22SponsoredRightRailContentActionEvent%22%2C%22topicName%22%3A%22SponsoredRightRailContentActionEvent%22%7D%2C%22eventBody%22%3A%7B%22sponsoredEventHeader%22%3A%7B%22encryptedTrackingData%22%3A%22CwEAAAGdp46OBKq0Dlr1P72xJtWjkBslFiqFK51KMIUcnf7B7-SUmS54-esaZP3EsJBrBLtyiGsxoePuPr0OJDhCmKYsBuT_TGhznt088xsr_3cc79YYgNZgOZ2cjx5EHnkE_is1hLs0Ny86HssaGiH5ejCbeDhuefD7HEDGRTkjVddzAyPZib9wwBgYHz0jEBk5g_KIzP--jmR55A2TES1KXgmEEbJuGv2713XPjOqr0lRzQnAESSgq0SJmo5nITIQ_YCTfxaBcgecCtwNr3FgJLNW2bhnDbI5EX_4B213i3Q1lwbnBJe4FAg5X5zMK4lECBw3iki1K7LWwNOiqD47BYjNyQHMkdZkmHiey9oF9NAlsn0VTZaJMJEOI9ygj0I8-xAgGgvuaDSOKwF198txvD27s24SjzdYQVtntSwgPyGkpXuS7XhLKzWS0oMKWa4pyHhywBPTxmmCv16ZRFVdnY5LsjxiybLq7lUIyaYk_kOWmTZxsf8NsGnQPmMvTffDm1dDEJSI1lSHoj22HBTN_vtel1zXZ52OPMYGHe9g4dWqPFUalY5xcYQZUsfmpXjiFQBoBp5nTFCnB-Wqg8SU7uUIpi-rpZLB1QGTD4oDyZ9lVdT_FZvPl1NdJm17dUHEBhYkrsbR0xhdcAZZon3O8q3L3ST0yhL5ytin8wbhAkdoiC-jOVwF-vPaMQS6YCzT_ghUf83_fxZLSbUpnNa2J8VZ0mX58CeNmgc0RG8qCgxAY9PHiHc-SwuMmIIydavRg-d1Lt-4X5y5NYKQeQAyiZ9qI3SHApupvAwbmf_GoViSpuCTxL_erL-en3A8rd0Ub6vEAgUU9vcVhonB-e6nSq4MOTbLYrqf1U6KIK9RKT0del1eAGc4Pmh_dPfxnnK4XN9Nf6XWFuKcPRUaZxgL3mVrq0nlrYeCKz0N97aqz1wF86pgV8sSq4bEdSM4VUznfdH9pEKc-NMxNSYGHr3cFisSHPkNxoil6BhTG6Lbz5_9OWnDs1NB9NKYKkUCs9ROM5NWkdh1FkiYcd5SKHvNKSnCXHzqQqTZUhn9sXO7WzczrI4sQ6ACkMz4Fy6mkNFK72xBLAAZ3cBQQG1ALyCixX6b4WxQWplNCUk7m_2gSqTYsNT2pKNMQBJdIfHZ14sXPnGyx4Ju79TjNqATYKVjwVjNOICob_6tFOszr0KpPwMIdlbzFOapT-hisRlyUHU9HSyG2Gi7Jy7CMdUlYISvSL2WsjCNsjpC-0bxIgJPa_hsyolNd3VE%22%7D%2C%22header%22%3A%7B%22pageInstance%22%3A%7B%22pageUrn%22%3A%22urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%22%2C%22trackingId%22%3A%223196edc3-a752-4323-8da8-9d703fb3804f%22%7D%2C%22time%22%3A1776632630762%2C%22version%22%3A%220.0.0%22%7D%2C%22requestHeader%22%3A%7B%22pageKey%22%3A%22d_flagship3_profile_view_base%22%2C%22interfaceLocale%22%3A%22en-US%22%7D%7D%7D%5D&csrfToken=ajax%3A7663274659791041878
+                    - generic [ref=f16e16]:
+                      - paragraph [ref=f16e17]: Promoted
+                      - button "Ad Options" [ref=f16e18] [cursor=pointer]:
+                        - img [ref=f16e19]
+                        - generic [ref=f16e23]: Ad Options
+                - generic [ref=e2002]:
+                  - heading "More profiles for you" [level=3] [ref=e2006]
+                  - generic [ref=e2008]:
+                    - generic [ref=e2010]:
+                      - link "Jack F. Premium · 3rd Talent Acquisition" [ref=e2013] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/c-jack-fogarty/
+                        - generic [ref=e2014]:
+                          - figure [ref=e2015]
+                          - generic [ref=e2016]:
+                            - generic [ref=e2017]:
+                              - paragraph [ref=e2019]:
+                                - link "Jack F. Premium" [ref=e2020]:
+                                  - /url: https://www.linkedin.com/in/c-jack-fogarty/
+                                  - text: Jack F.
+                                  - img "Premium" [ref=e2021]:
+                                    - img [ref=e2022]
+                              - paragraph [ref=e2024]: · 3rd
+                            - paragraph [ref=e2026]: Talent Acquisition
+                      - link "Message" [ref=e2030] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAACaSusgB2sj6Hvz2yd6p8xx6zpXU99cYxEk&recipient=ACoAACaSusgB2sj6Hvz2yd6p8xx6zpXU99cYxEk&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e2031]:
+                          - img [ref=e2032]
+                          - generic [ref=e2034]: Message
+                    - generic [ref=e2036]:
+                      - link "Shruti Chakravarty Verified · 3rd Human Resources & Talent Acquisition Specialist- APAC & EMEA @Accuris (Previously IHS-Markit/S&P Global) | Psychologist | Published Researcher | Mental Health Blogger | 2X Gold Medalist" [ref=e2039] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/shruti-chakravarty-49a593192/
+                        - generic [ref=e2040]:
+                          - figure [ref=e2041]
+                          - generic [ref=e2042]:
+                            - generic [ref=e2043]:
+                              - paragraph [ref=e2045]:
+                                - link "Shruti Chakravarty Verified" [ref=e2046]:
+                                  - /url: https://www.linkedin.com/in/shruti-chakravarty-49a593192/
+                                  - text: Shruti Chakravarty
+                                  - img "Verified" [ref=e2047]:
+                                    - img [ref=e2048]
+                              - paragraph [ref=e2050]: · 3rd
+                            - paragraph [ref=e2052]: Human Resources & Talent Acquisition Specialist- APAC & EMEA @Accuris (Previously IHS-Markit/S&P Global) | Psychologist | Published Researcher | Mental Health Blogger | 2X Gold Medalist
+                      - button "Follow Shruti Chakravarty" [ref=e2058] [cursor=pointer]:
+                        - generic [ref=e2059]:
+                          - img [ref=e2060]
+                          - generic [ref=e2063]: Follow
+                    - generic [ref=e2065]:
+                      - 'link "Claude Pumilia Premium · 3rd CEO and Chairman at Accuris | Board Member at TD SYNNEX (NYSE: SNX)" [ref=e2068] [cursor=pointer]':
+                        - /url: https://www.linkedin.com/in/claude-pumilia-23679b2/
+                        - generic [ref=e2069]:
+                          - figure [ref=e2070]
+                          - generic [ref=e2071]:
+                            - generic [ref=e2072]:
+                              - paragraph [ref=e2074]:
+                                - link "Claude Pumilia Premium" [ref=e2075]:
+                                  - /url: https://www.linkedin.com/in/claude-pumilia-23679b2/
+                                  - text: Claude Pumilia
+                                  - img "Premium" [ref=e2076]:
+                                    - img [ref=e2077]
+                              - paragraph [ref=e2079]: · 3rd
+                            - paragraph [ref=e2081]: "CEO and Chairman at Accuris | Board Member at TD SYNNEX (NYSE: SNX)"
+                      - button "Follow Claude Pumilia" [ref=e2087] [cursor=pointer]:
+                        - generic [ref=e2088]:
+                          - img [ref=e2089]
+                          - generic [ref=e2092]: Follow
+                    - generic [ref=e2094]:
+                      - link "Narasimha Bhat · 3rd HR Director - APAC" [ref=e2097] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/narasimha-bhat-27585310a/
+                        - generic [ref=e2098]:
+                          - figure [ref=e2099]
+                          - generic [ref=e2100]:
+                            - generic [ref=e2101]:
+                              - paragraph [ref=e2103]:
+                                - link "Narasimha Bhat" [ref=e2104]:
+                                  - /url: https://www.linkedin.com/in/narasimha-bhat-27585310a/
+                              - paragraph [ref=e2105]: · 3rd
+                            - paragraph [ref=e2107]: HR Director - APAC
+                      - link "Message" [ref=e2111] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAABuIqrkBb1x-mwWNga9qFu7Vkcd-NOuQCtM&recipient=ACoAABuIqrkBb1x-mwWNga9qFu7Vkcd-NOuQCtM&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e2112]:
+                          - img [ref=e2113]
+                          - generic [ref=e2115]: Message
+                    - generic [ref=e2117]:
+                      - link "Tyler Pemble Premium · 3rd Human Resources Leader" [ref=e2120] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/tyler-pemble/
+                        - generic [ref=e2121]:
+                          - figure [ref=e2122]
+                          - generic [ref=e2123]:
+                            - generic [ref=e2124]:
+                              - paragraph [ref=e2126]:
+                                - link "Tyler Pemble Premium" [ref=e2127]:
+                                  - /url: https://www.linkedin.com/in/tyler-pemble/
+                                  - text: Tyler Pemble
+                                  - img "Premium" [ref=e2128]:
+                                    - img [ref=e2129]
+                              - paragraph [ref=e2131]: · 3rd
+                            - paragraph [ref=e2133]: Human Resources Leader
+                      - link "Message" [ref=e2137] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAB2WUDMBlMabVu04y2Cvnxsu4qalxaS6hrU&recipient=ACoAAB2WUDMBlMabVu04y2Cvnxsu4qalxaS6hrU&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e2138]:
+                          - img [ref=e2139]
+                          - generic [ref=e2141]: Message
+                  - link "Show all more profiles for you" [ref=e2143] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/in/nate-airulla/overlay/browsemap-recommendations/
+                    - generic [ref=e2144]:
+                      - img [ref=e2145]
+                      - generic [ref=e2147]: Show all
+                - generic [ref=e2150]:
+                  - heading "Explore Premium profiles" [level=2] [ref=e2152]
+                  - generic [ref=e2154]:
+                    - generic [ref=e2156]:
+                      - link "Tochukwu Muoneme Premium · 3rd Service Operations Engineer & Analyst @ Australian Securities and Investment Commision" [ref=e2159] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                        - generic [ref=e2160]:
+                          - figure [ref=e2161]
+                          - generic [ref=e2162]:
+                            - generic [ref=e2163]:
+                              - paragraph [ref=e2165]:
+                                - link "Tochukwu Muoneme Premium" [ref=e2166]:
+                                  - /url: https://www.linkedin.com/in/tochukwu-muoneme-820356334/
+                                  - text: Tochukwu Muoneme
+                                  - img "Premium" [ref=e2167]:
+                                    - img [ref=e2168]
+                              - paragraph [ref=e2170]: · 3rd
+                            - paragraph [ref=e2172]: Service Operations Engineer & Analyst @ Australian Securities and Investment Commision
+                      - link "Message" [ref=e2176] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAFQOphgBRCqx1_nLsFkOxrnYdZdgUg1VYDI&recipient=ACoAAFQOphgBRCqx1_nLsFkOxrnYdZdgUg1VYDI&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e2177]:
+                          - img [ref=e2178]
+                          - generic [ref=e2180]: Message
+                    - generic [ref=e2182]:
+                      - link "Anantha Kandiah Premium · 3rd Engineering Director and Co-founder at Teron Labs" [ref=e2185] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                        - generic [ref=e2186]:
+                          - figure [ref=e2187]
+                          - generic [ref=e2188]:
+                            - generic [ref=e2189]:
+                              - paragraph [ref=e2191]:
+                                - link "Anantha Kandiah Premium" [ref=e2192]:
+                                  - /url: https://www.linkedin.com/in/anantha-kandiah-15668530/
+                                  - text: Anantha Kandiah
+                                  - img "Premium" [ref=e2193]:
+                                    - img [ref=e2194]
+                              - paragraph [ref=e2196]: · 3rd
+                            - paragraph [ref=e2198]: Engineering Director and Co-founder at Teron Labs
+                      - link "Message" [ref=e2202] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAAaBspIB-o5kWmkKAI3BHvjKXN7MaCdapSk&recipient=ACoAAAaBspIB-o5kWmkKAI3BHvjKXN7MaCdapSk&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e2203]:
+                          - img [ref=e2204]
+                          - generic [ref=e2206]: Message
+                    - generic [ref=e2208]:
+                      - link "Suresh Kharel Premium · 3rd Software QA Engineer at Greenbeam" [ref=e2211] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/suresh-kharel/
+                        - generic [ref=e2212]:
+                          - figure [ref=e2213]
+                          - generic [ref=e2214]:
+                            - generic [ref=e2215]:
+                              - paragraph [ref=e2217]:
+                                - link "Suresh Kharel Premium" [ref=e2218]:
+                                  - /url: https://www.linkedin.com/in/suresh-kharel/
+                                  - text: Suresh Kharel
+                                  - img "Premium" [ref=e2219]:
+                                    - img [ref=e2220]
+                              - paragraph [ref=e2222]: · 3rd
+                            - paragraph [ref=e2224]: Software QA Engineer at Greenbeam
+                      - link "Message" [ref=e2228] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAACFEyz8B4lirq12cBJDDd2xZK3Yww3KD5ik&recipient=ACoAACFEyz8B4lirq12cBJDDd2xZK3Yww3KD5ik&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e2229]:
+                          - img [ref=e2230]
+                          - generic [ref=e2232]: Message
+                    - generic [ref=e2234]:
+                      - link "Derek H. Premium · 3rd DevOps / Cloud Engineer" [ref=e2237] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/in/derek-h-2559926/
+                        - generic [ref=e2238]:
+                          - figure [ref=e2239]
+                          - generic [ref=e2240]:
+                            - generic [ref=e2241]:
+                              - paragraph [ref=e2243]:
+                                - link "Derek H. Premium" [ref=e2244]:
+                                  - /url: https://www.linkedin.com/in/derek-h-2559926/
+                                  - text: Derek H.
+                                  - img "Premium" [ref=e2245]:
+                                    - img [ref=e2246]
+                              - paragraph [ref=e2248]: · 3rd
+                            - paragraph [ref=e2250]: DevOps / Cloud Engineer
+                      - link "Message" [ref=e2254] [cursor=pointer]:
+                        - /url: /messaging/compose/?profileUrn=urn%3Ali%3Afsd_profile%3AACoAAAE2c-EBX0zFAmv3ZcjxZ7WWiZApraoUYAs&recipient=ACoAAAE2c-EBX0zFAmv3ZcjxZ7WWiZApraoUYAs&screenContext=NON_SELF_PROFILE_VIEW&interop=msgOverlay
+                        - generic [ref=e2255]:
+                          - img [ref=e2256]
+                          - generic [ref=e2258]: Message
+              - generic [ref=e2262]:
+                - generic [ref=e2263]:
+                  - navigation [ref=e2264]:
+                    - link "About" [ref=e2265] [cursor=pointer]:
+                      - /url: https://about.linkedin.com/
+                      - paragraph [ref=e2266]: About
+                    - link "Accessibility" [ref=e2267] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/accessibility/
+                      - paragraph [ref=e2268]: Accessibility
+                    - link "Talent Solutions" [ref=e2269] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/talent-solutions?trk=flagship_nav&veh=li-footer-lts-control&src=li-footer
+                      - paragraph [ref=e2270]: Talent Solutions
+                    - link "Community Guidelines" [ref=e2271] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/legal/professional-community-policies/
+                      - paragraph [ref=e2272]: Community Guidelines
+                    - link "Careers" [ref=e2273] [cursor=pointer]:
+                      - /url: https://careers.linkedin.com/
+                      - paragraph [ref=e2274]: Careers
+                    - link "Marketing Solutions" [ref=e2275] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/advertise?trk=n_nav_lms_f&src=li-footer
+                      - paragraph [ref=e2276]: Marketing Solutions
+                    - button "Privacy & Terms" [ref=e2277] [cursor=pointer]:
+                      - generic [ref=e2278]:
+                        - paragraph [ref=e2279]: Privacy & Terms
+                        - img [ref=e2280]
+                    - link "Ad Choices" [ref=e2282] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/help/linkedin/answer/62931/
+                      - paragraph [ref=e2283]: Ad Choices
+                    - link "Advertising" [ref=e2284] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/ad/start/?trk=n_nav_ads_rr
+                      - paragraph [ref=e2285]: Advertising
+                    - link "Sales Solutions" [ref=e2286] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/sales-solutions?trk=flagship_nav&veh=li-footer-lss-control&src=li-footer
+                      - paragraph [ref=e2287]: Sales Solutions
+                    - link "Mobile" [ref=e2288] [cursor=pointer]:
+                      - /url: https://mobile.linkedin.com/
+                      - paragraph [ref=e2289]: Mobile
+                    - link "Small Business" [ref=e2290] [cursor=pointer]:
+                      - /url: https://business.linkedin.com/grow?src=li-footer
+                      - paragraph [ref=e2291]: Small Business
+                    - link "Safety Center" [ref=e2292] [cursor=pointer]:
+                      - /url: https://safety.linkedin.com/
+                      - paragraph [ref=e2293]: Safety Center
+                  - paragraph [ref=e2295]: LinkedIn Corporation © 2026
+                - generic [ref=e2296]:
+                  - list [ref=e2297]:
+                    - listitem [ref=e2298]:
+                      - generic [ref=e2299]:
+                        - img [ref=e2300]
+                        - generic [ref=e2302]:
+                          - link "Questions?" [ref=e2303] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/help/linkedin/
+                            - paragraph [ref=e2304]: Questions?
+                          - paragraph [ref=e2305]: Visit our Help Center.
+                    - listitem [ref=e2306]:
+                      - generic [ref=e2307]:
+                        - img [ref=e2308]
+                        - generic [ref=e2310]:
+                          - link "Manage your account and privacy" [ref=e2311] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/mypreferences/d/
+                            - paragraph [ref=e2312]: Manage your account and privacy
+                          - paragraph [ref=e2313]: Go to your Settings.
+                    - listitem [ref=e2314]:
+                      - generic [ref=e2315]:
+                        - img [ref=e2316]
+                        - generic [ref=e2318]:
+                          - link "Recommendation transparency" [ref=e2319] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/help/linkedin/answer/a1339724/
+                            - paragraph [ref=e2320]: Recommendation transparency
+                          - paragraph [ref=e2321]: Learn more about Recommended Content.
+                  - generic [ref=e2323]:
+                    - paragraph [ref=e2325]: Select language
+                    - generic [ref=e2326]:
+                      - combobox "Select language" [ref=e2327] [cursor=pointer]:
+                        - option "العربية (Arabic)"
+                        - option "বাংলা (Bangla)"
+                        - option "Čeština (Czech)"
+                        - option "Dansk (Danish)"
+                        - option "Deutsch (German)"
+                        - option "Ελληνικά (Greek)"
+                        - option "English (English)" [selected]
+                        - option "Español (Spanish)"
+                        - option "فارسی (Persian)"
+                        - option "Suomi (Finnish)"
+                        - option "Français (French)"
+                        - option "हिंदी (Hindi)"
+                        - option "Magyar (Hungarian)"
+                        - option "Bahasa Indonesia (Indonesian)"
+                        - option "Italiano (Italian)"
+                        - option "עברית (Hebrew)"
+                        - option "日本語 (Japanese)"
+                        - option "한국어 (Korean)"
+                        - option "मराठी (Marathi)"
+                        - option "Bahasa Malaysia (Malay)"
+                        - option "Nederlands (Dutch)"
+                        - option "Norsk (Norwegian)"
+                        - option "ਪੰਜਾਬੀ (Punjabi)"
+                        - option "Polski (Polish)"
+                        - option "Português (Portuguese)"
+                        - option "Română (Romanian)"
+                        - option "Русский (Russian)"
+                        - option "Svenska (Swedish)"
+                        - option "తెలుగు (Telugu)"
+                        - option "ภาษาไทย (Thai)"
+                        - option "Tagalog (Tagalog)"
+                        - option "Türkçe (Turkish)"
+                        - option "Українська (Ukrainian)"
+                        - option "Tiếng Việt (Vietnamese)"
+                        - option "简体中文 (Chinese (Simplified))"
+                        - option "正體中文 (Chinese (Traditional))"
+                      - img
+  - generic [active]:
+    - generic:
+      - generic:
+        - generic:
+          - complementary:
+            - generic [ref=e2328]:
+              - generic [ref=e2329]:
+                - generic [ref=e2331] [cursor=pointer]:
+                  - generic [ref=e2332]:
+                    - img "Richard Anthony" [ref=e2333]
+                    - generic [ref=e2335]: Status is online
+                  - button "You are on the messaging overlay. Press enter to open the list of conversations." [ref=e2336]:
+                    - generic [ref=e2337]:
+                      - generic [ref=e2338]: Messaging
+                      - generic [ref=e2339]: You are on the messaging overlay. Press enter to open the list of conversations.
+                - generic [ref=e2340]:
+                  - button "Open messenger dropdown menu" [ref=e2342] [cursor=pointer]:
+                    - img "Open messenger dropdown menu" [ref=e2343]
+                  - button "Compose message" [ref=e2346] [cursor=pointer]:
+                    - img [ref=e2347]
+                    - generic [ref=e2349]: Compose message
+                  - button "You are on the messaging overlay. Press enter to open the list of conversations." [ref=e2350] [cursor=pointer]:
+                    - img [ref=e2351]
+                    - generic [ref=e2353]: You are on the messaging overlay. Press enter to open the list of conversations.
+              - link "Mr. Frundles picture Mr. Frundles" [ref=e2354] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/82159361/admin/inbox
+                - img "Mr. Frundles picture" [ref=e2355]
+                - generic [ref=e2356]: Mr. Frundles
+                - img [ref=e2357]
+            - dialog "Messaging" [ref=e2360]:
+              - generic [ref=e2361]:
+                - generic [ref=e2362] [cursor=pointer]:
+                  - heading "New message" [level=2] [ref=e2367]
+                  - generic [ref=e2368]:
+                    - button "Minimize your conversation" [expanded] [ref=e2369]:
+                      - img [ref=e2370]
+                      - generic [ref=e2372]: Minimize your conversation
+                    - button "Close your draft conversation" [ref=e2373]:
+                      - img [ref=e2374]
+                      - generic [ref=e2376]: Close your draft conversation
+                - generic [ref=e2381]:
+                  - generic [ref=e2382]:
+                    - link "Nate Airulla" [ref=e2383] [cursor=pointer]:
+                      - /url: /in/nate-airulla/
+                      - img "Nate Airulla" [ref=e2386]
+                    - generic [ref=e2387]:
+                      - link "Nate Airulla" [ref=e2389] [cursor=pointer]:
+                        - /url: /in/nate-airulla/
+                      - generic [ref=e2390]: Principal Global Talent Acquisition Specialist at Accuris
+                  - generic [ref=e2392]:
+                    - generic [ref=e2393]:
+                      - generic [ref=e2394]: Premium InMail composer
+                      - img "Premium" [ref=e2395]:
+                        - img [ref=e2396]
+                      - paragraph [ref=e2398]:
+                        - text: Free message |
+                        - strong [ref=e2399]:
+                          - link "Why?" [ref=e2400] [cursor=pointer]:
+                            - /url: https://www.linkedin.com/help/linkedin/answer/139
+                    - generic "Add a subject to your message to convey what your message is about" [ref=e2402]:
+                      - textbox "Subject (optional)" [ref=e2404]
+                    - generic [ref=e2405]:
+                      - generic [ref=e2407]:
+                        - textbox "Write a message…" [ref=e2408]:
+                          - paragraph [ref=e2409]
+                        - text: Write a message…
+                      - button [disabled] [ref=e2410]:
+                        - img
+                    - generic [ref=e2411]:
+                      - button "Write with AI" [ref=e2413] [cursor=pointer]:
+                        - generic [ref=e2415]:
+                          - img [ref=e2416]
+                          - text: Write with AI
+                      - generic [ref=e2418]:
+                        - button "Attach an image" [ref=e2420] [cursor=pointer]:
+                          - img [ref=e2421]
+                          - generic [ref=e2423]: Attach an image
+                        - button "Attach a file" [ref=e2425] [cursor=pointer]:
+                          - img [ref=e2426]
+                          - generic [ref=e2428]: Attach a file
+                        - button "Open Emoji Keyboard" [ref=e2431] [cursor=pointer]:
+                          - img
+                          - generic [ref=e2432]: Open Emoji Keyboard
+          - complementary "AI-powered assistant to get help with your career, jobs etc"
+  - iframe [ref=e2359]:
+    - generic [active] [ref=f17e1]:
+      - generic:
+        - region "Toast message":
+          - heading "0 notifications total" [level=2] [ref=f17e3]
+          - alert
+      - generic [ref=f17e4]:
+        - generic [ref=f17e6]:
+          - button "Skip to search" [ref=f17e7] [cursor=pointer]:
+            - generic [ref=f17e8]: Skip to search
+          - button "Skip to main content" [ref=f17e9] [cursor=pointer]:
+            - generic [ref=f17e10]: Skip to main content
+          - button "Keyboard shortcuts" [ref=f17e11] [cursor=pointer]:
+            - generic [ref=f17e12]: Keyboard shortcuts
+          - button "Close jump menu" [ref=f17e13] [cursor=pointer]:
+            - img [ref=f17e14]
+            - generic [ref=f17e16]: Close jump menu
+        - banner "Global Navigation" [ref=f17e17]:
+          - generic [ref=f17e18]:
+            - link "LinkedIn" [ref=f17e19] [cursor=pointer]:
+              - /url: https://www.linkedin.com/feed/?nis=true
+              - img "LinkedIn" [ref=f17e22]:
+                - img [ref=f17e23]
+            - generic [ref=f17e27]:
+              - combobox "Search" [ref=f17e28]
+              - generic:
+                - img
+            - navigation "Primary Navigation" [ref=f17e29]:
+              - list [ref=f17e30]:
+                - listitem [ref=f17e31]:
+                  - link "new feed updates notifications Home" [ref=f17e32] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/feed/
+                    - generic [ref=f17e33]:
+                      - generic [ref=f17e36]: new feed updates notifications
+                      - img [ref=f17e40]
+                    - generic "Home" [ref=f17e42]
+                - listitem [ref=f17e43]:
+                  - link "My Network" [ref=f17e44] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/mynetwork/?
+                    - img [ref=f17e48]
+                    - generic "My Network" [ref=f17e50]
+                - listitem [ref=f17e51]:
+                  - link "Jobs" [ref=f17e52] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/jobs/?
+                    - img [ref=f17e56]
+                    - generic "Jobs" [ref=f17e58]
+                - listitem [ref=f17e59]:
+                  - link "Messaging" [ref=f17e60] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/messaging/?
+                    - img [ref=f17e64]
+                    - generic "Messaging" [ref=f17e66]
+                - listitem [ref=f17e67]:
+                  - link "15 new notifications Notifications" [ref=f17e68] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/notifications/?
+                    - generic [ref=f17e69]:
+                      - generic [ref=f17e70]:
+                        - generic [ref=f17e71]: "15"
+                        - generic [ref=f17e72]: 15 new notifications
+                      - img [ref=f17e76]
+                    - generic "Notifications" [ref=f17e78]
+                - listitem [ref=f17e79]:
+                  - button "Richard Anthony Me" [ref=f17e81] [cursor=pointer]:
+                    - img "Richard Anthony" [ref=f17e82]
+                    - generic [ref=f17e83]:
+                      - text: Me
+                      - img [ref=f17e84]
+                - listitem [ref=f17e86]:
+                  - button "For Business" [ref=f17e88] [cursor=pointer]:
+                    - img [ref=f17e92]
+                    - generic "For Business" [ref=f17e94]:
+                      - text: For Business
+                      - img [ref=f17e95]
+                - listitem [ref=f17e97]:
+                  - link "Advertise" [ref=f17e98] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/campaignmanager/accounts?
+                    - img [ref=f17e102]
+                    - generic "Advertise" [ref=f17e105]
+      - region [ref=f17e121]
