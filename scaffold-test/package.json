@@ -1,0 +1,13 @@
+{
+  "name": "scaffold-test",
+  "type": "module",
+  "version": "1.0.0",
+  "dependencies": {
+    "@astrojs/react": "^4.2.0",
+    "@tutorialkit/astro": "^1.6.0",
+    "@tutorialkit/react": "^1.6.0",
+    "astro": "^4.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

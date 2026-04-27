@@ -1,126 +1,101 @@
-import type { TidelaneListItem, TidelaneListSection } from '../components/TidelaneList';
-import type { NowPageData } from './linearNowPage';
-import { createUnavailableNowPageData } from './linearNowPage';
-import { generateTidelaneNodes, type TidelaneNode } from './tidelane';
+import type { ProjectLandingItem, ProjectLandingSectionData } from '../components/ProjectLandingSection';
+import type { NowPageData } from './nowPageData';
+import { createUnavailableNowPageData } from './nowPageData';
 
-interface FixtureEntry {
-	readonly title: string;
-	readonly body: string;
-	readonly references: string;
-}
+export const australianMcpFieldNotesDigest: ProjectLandingItem = {
+	title: 'Australian MCP Field Notes',
+	body: 'Public field notes and dispatches on the emerging Australian MCP and agentic infrastructure scene, derived from LinkedIn reconnaissance and production work.',
+	href: '/projects/australian-mcp-field-notes',
+	projectId: '2861F9CC',
+	status: 'In Progress',
+	issueCount: 5,
+	priority: 'High',
+	updatedAt: 'April 2, 2026',
+	updatedAtIso: '2026-04-02T20:28:46.000Z',
+	latestUpdate:
+		'I spent two weeks mapping the Australian MCP and agentic AI scene — who is building, who is hiring, and where the gaps are between what companies need and what job titles say.',
+};
 
-const NOW_PAGE_TIDELANE_SEED = 26;
-const tidelaneNodes = generateTidelaneNodes(NOW_PAGE_TIDELANE_SEED);
+export const sixDomainsOneStackDigest: ProjectLandingItem = {
+	title: 'Six Domains, One Stack',
+	body: 'The Grammar as Protocol thesis applied across six domains — SAT math, German grammar, music theory, security scanning, operational scheduling, and argumentation — showing the same four-layer architecture in each.',
+	href: '/projects/six-domains-one-stack',
+	projectId: '4741BDC2',
+	status: 'In Progress',
+	issueCount: 2,
+	priority: 'High',
+	updatedAt: 'April 3, 2026',
+	updatedAtIso: '2026-04-03T04:19:32.770Z',
+	latestUpdate:
+		'Grammars are compiled expertise. An expensive model writes the rules once. A cheap model enforces them forever.',
+};
 
-const nowItemsBase: readonly FixtureEntry[] = [
-	{
-		title: 'Turn the essay into the artifact',
-		body:
-			'I am composing the Storybook editorial components into the live Astro reading experience and replacing placeholder copy with the v3.5 dossier text from PLAN-26.',
-		references: 'Linear: PLAN-163 / jungle.roaring.wave / In Progress',
-	},
-	{
-		title: 'Finish the reusable component layer',
-		body:
-			'I am keeping the component library coherent enough that this site is not a one-off build. The point is an editorial system that can carry later essays without starting over.',
-		references: 'Linear: PLAN-142 / jungle.roaring.wave / In Progress',
-	},
-	{
-		title: 'Make publication boring',
-		body:
-			'I am lining up the deployment path early so the site can move cleanly from local build to preview and then to the canonical URL without a last-minute packaging scramble.',
-		references: 'Linear: PLAN-167 / jungle.roaring.wave / Backlog',
-	},
-	{
-		title: 'Protect the wider editorial platform',
-		body:
-			'I am keeping one eye on the Falada stress tests and production-pipeline notes, but only enough to preserve momentum. They are supporting work, not permission to drift away from shipping this essay.',
-		references: 'Linear: PLAN-18 / Planning / Backlog',
-	},
-] as const;
+export const confirmedFindingsDigest: ProjectLandingItem = {
+	title: 'Confirmed Findings',
+	body: 'Vulnerability disclosures from production security research — confirmed, responsibly disclosed, and written up for a technical audience.',
+	href: '/projects/confirmed-findings',
+	projectId: '78EA8AFA',
+	status: 'In Progress',
+	issueCount: 1,
+	priority: 'High',
+	updatedAt: 'April 8, 2026',
+	updatedAtIso: '2026-04-08T03:05:24.512Z',
+	latestUpdate:
+		'We are currently waiting for WeWork to respond regarding the inactive accounts password reset issue.',
+};
 
-const recentlyDoneItemsBase: readonly FixtureEntry[] = [
-	{
-		title: 'The first full editorial prototype exists',
-		body:
-			'The Stitch prototype is done. That means the open questions are no longer about vague layout direction. They are now about implementation fidelity, argument quality, and integration.',
-		references: 'Linear: PLAN-137 / jungle.roaring.wave / Done',
-	},
-] as const;
+export const buildingTidelandsDigest: ProjectLandingItem = {
+	title: 'Building tidelands.dev',
+	body: 'How tidelands.dev went from an empty domain to a deployed smallweb origin with Terraform, Dagger, and Cloudflare — and why the decision log matters more than the code.',
+	href: '/projects/building-tidelands-dev',
+	projectId: 'C24E45B0',
+	status: 'In Progress',
+	issueCount: 3,
+	priority: 'High',
+	updatedAt: 'April 3, 2026',
+	updatedAtIso: '2026-04-03T04:18:08.896Z',
+	latestUpdate:
+		'tidelands.dev started as an empty domain and a constraint: no manual SSH, no console clicks, one command to deploy everything.',
+};
 
-const notNowItemsBase: readonly FixtureEntry[] = [
-	{
-		title: 'Collecting more parallel projects for their own sake',
-		body:
-			'I am not trying to turn the site, the backlog, the component library, and the essay into four separate hobbies. The useful job is convergence.',
-		references: 'Linear: PLAN-21 / Planning / Backlog',
-	},
-	{
-		title: 'Pretending the argument is already proven',
-		body:
-			'I am not trying to publish a grand unified theory of hidden coordination. The current standard is smaller and harder: define what would make the pattern stronger, weaker, or obviously overfit.',
-		references: 'Linear: PLAN-20 / Planning / Backlog',
-	},
-] as const;
+export const cyberFarmDispatchesSection: ProjectLandingSectionData = {
+	id: 'the-cyber-farm-dispatches',
+	title: 'The Cyber Farm Dispatches',
+	items: [australianMcpFieldNotesDigest],
+};
 
-function projectItemsToPhase(
-	items: readonly FixtureEntry[],
-	phaseName: TidelaneNode['phase']['name'],
-): TidelaneListItem[] {
-	const phaseNodes = tidelaneNodes.filter((node) => node.phase.name === phaseName);
+export const grammarAsProtocolSection: ProjectLandingSectionData = {
+	id: 'grammar-as-protocol',
+	title: 'Grammar as Protocol',
+	items: [sixDomainsOneStackDigest],
+};
 
-	return items.map((item, index) => {
-		const node = phaseNodes[index];
+export const securityResearchSection: ProjectLandingSectionData = {
+	id: 'security-research',
+	title: 'Security Research',
+	items: [confirmedFindingsDigest],
+};
 
-		if (!node) {
-			throw new Error(`Missing tidelane node at index ${index} for phase "${phaseName}"`);
-		}
-
-		return {
-			...item,
-			lane: {
-				slug: node.slug,
-				w3w: node.w3w,
-				moon: node.moon,
-				phase: node.phase,
-			},
-		};
-	});
-}
+export const infrastructureSection: ProjectLandingSectionData = {
+	id: 'infrastructure',
+	title: 'Infrastructure',
+	items: [buildingTidelandsDigest],
+};
 
 export const mockNowPageData: NowPageData = {
 	meta: {
-		lastUpdated: 'March 24, 2026',
-		title: 'What Robin Jordan is doing now',
-		intro: [
-			"Robin Jordan's assigned work is being pulled directly from Linear. The story fixture keeps the composition stable while the live Astro page swaps in real issue data.",
-			'The useful constraint is that everything has to cash out in the same place: Storybook components, Astro composition, and a current snapshot of the assigned issue set.',
-		],
-		footer:
-			'This fixture is only for Storybook. The Astro page uses a Linear-backed data loader at render time.',
+		lastUpdated: 'April 8, 2026',
+		title: 'Projects',
+		intro: [],
+		footer: '4 in-progress projects',
 	},
 	sections: [
-		{
-			id: 'now',
-			title: 'Now',
-			summary: 'Started + unstarted assignments currently in flight. Showing 4 of 4 issues.',
-			items: projectItemsToPhase(nowItemsBase, 'full'),
-		},
-		{
-			id: 'recently-done',
-			title: 'Recently done',
-			summary: 'Most recent completed assignments. Showing 1 of 1 issue.',
-			items: projectItemsToPhase(recentlyDoneItemsBase, 'waning'),
-		},
-		{
-			id: 'not-now',
-			title: 'Not now',
-			summary: 'Backlog and triage work parked outside the active lane. Showing 2 of 2 issues.',
-			items: projectItemsToPhase(notNowItemsBase, 'waxing'),
-		},
-	] satisfies readonly TidelaneListSection[],
+		cyberFarmDispatchesSection,
+		grammarAsProtocolSection,
+		securityResearchSection,
+		infrastructureSection,
+	] satisfies readonly ProjectLandingSectionData[],
+	isFavorited: true,
 };
 
-export const mockUnavailableNowPageData = createUnavailableNowPageData(
-	new Date('2026-03-25T00:00:00.000Z'),
-);
+export const mockUnavailableNowPageData = createUnavailableNowPageData();

@@ -1,0 +1,12 @@
+sync:
+  defaults:
+    mode: "one-way-replica"
+    ignore:
+      vcs: true
+      paths:
+        - ".smallweb-root/.smallweb/config.json"
+        - ".smallweb-root/admin/.env"
+        - ".smallweb-root/jules/.env"
+        - ".smallweb-root/jules/data"
+        - ".smallweb-root/linear-agent/.env"
+        - ".smallweb-root/linear-agent/data"

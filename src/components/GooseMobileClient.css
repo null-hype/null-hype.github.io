@@ -1,0 +1,123 @@
+.goose-mobile-shell {
+	box-sizing: border-box;
+	min-height: 100vh;
+	margin: 0;
+	padding: 14px;
+	background: #fff;
+	color: #000;
+	font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+	font-size: 16px;
+	line-height: 1.35;
+	letter-spacing: 0;
+	cursor: text;
+}
+
+.goose-mobile-shell *,
+.goose-mobile-shell *::before,
+.goose-mobile-shell *::after {
+	box-sizing: border-box;
+}
+
+.goose-mobile-terminal {
+	position: relative;
+	min-height: calc(100vh - 28px);
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.goose-mobile-terminal-lines {
+	display: block;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.goose-mobile-terminal-line,
+.goose-mobile-terminal-input-line {
+	display: block;
+	min-height: 1.35em;
+	margin: 0;
+	padding: 0;
+}
+
+.goose-mobile-terminal-line-system {
+	color: #000;
+}
+
+.goose-mobile-terminal-input-line {
+	position: relative;
+}
+
+.goose-mobile-terminal-command {
+	white-space: pre-wrap;
+}
+
+.goose-mobile-block-cursor {
+	display: inline-block;
+	width: 0.68em;
+	height: 1.08em;
+	margin-left: 1px;
+	vertical-align: -0.17em;
+	background: #000;
+	animation: goose-mobile-blink 1s steps(2, start) infinite;
+}
+
+.goose-mobile-terminal-input {
+	position: absolute;
+	inset: 0 auto auto 0;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	border: 0;
+	opacity: 0;
+}
+
+.goose-mobile-permission {
+	display: flex;
+	align-items: center;
+	gap: 1ch;
+	margin: 0 0 1.35em;
+	color: #000;
+}
+
+.goose-mobile-permission p {
+	margin: 0;
+}
+
+.goose-mobile-permission-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 1ch;
+}
+
+.goose-mobile-permission button {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #000;
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.goose-mobile-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+@keyframes goose-mobile-blink {
+	50% {
+		opacity: 0;
+	}
+}

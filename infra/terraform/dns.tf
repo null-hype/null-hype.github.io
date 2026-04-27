@@ -34,6 +34,7 @@ resource "cloudflare_record" "wildcard_a" {
 # Keep this DNS-only so a Cloudflare load balancer can target the origin
 # directly without creating a proxy loop.
 resource "cloudflare_record" "slot_origin_a" {
+  count   = var.manage_slot_origin_dns_record ? 1 : 0
   zone_id = var.cloudflare_zone_id
   name    = "${var.deployment_slot}-origin"
   type    = "A"

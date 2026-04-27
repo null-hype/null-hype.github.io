@@ -1,0 +1,9 @@
+[build]
+  command = "cd tutorial-app && npm install && npm run build"
+  publish = "tutorial-app/dist"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Opener-Policy = "same-origin"

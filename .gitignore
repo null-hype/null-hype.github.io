@@ -16,6 +16,8 @@ pnpm-debug.log*
 .smallweb-cache/
 .smallweb-data/
 .smallweb-root/.vscode/
+.smallweb-root/admin/.env
+.smallweb-root/admin/data/
 .smallweb-root/linear-agent/.env
 .smallweb-root/linear-agent/data/
 .smallweb-root/jules/.env
@@ -29,6 +31,7 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+!infra/.env
 
 # macOS-specific files
 .DS_Store
@@ -54,3 +57,4 @@ infra/terraform/prod.tfvars
 # Bootstrap-generated deploy key (written by `dagger call bootstrap`)
 infra/.deploy-key.json
 infra/tidelanes-deploy.json
+.playwright-cli/console-2026-04-20T21-05-46-109Z.log

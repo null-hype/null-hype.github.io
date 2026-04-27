@@ -1,0 +1,18 @@
+<slot name="title" />
+<slot name="links" />
+<slot name="meta" />
+
+<script is:inline src="/coi-serviceworker.js"></script>
+
+<style is:global>
+  [data-panel-id='previews-opened'] [data-panel] > .panel-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-panel-id='previews-opened'] [data-panel] > .panel-container > :last-child {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+</style>

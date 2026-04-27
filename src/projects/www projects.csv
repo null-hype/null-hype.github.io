@@ -1,0 +1,23 @@
+"ID","Name","URL","Summary","Description","Status","Priority","Milestones","Creator","Lead","Members","Start Date (Start)","Start Date (End)","Target Date (Start)","Target Date (End)","Created At","Started At","Updated At","Completed At","Canceled At","Archived At","Teams","Initiatives","Health","Latest Update","Latest Update Date","Customer Count","Customer Revenue","Blocking","Blocked by","Labels","Initiative IDs"
+"2c1a2e60-06e8-4b64-a5d7-cb77eac66df2","Post 1 — The Hypothesis","https://linear.app/tidelands-dev/project/post-1-the-hypothesis-8d87c875b9b3/overview","","**Article project: ""Grammar as Protocol — How Formal Constraints Enable Agentic Security Research""**
+
+A 2,000–2,500 word thought-leadership article composed as a Linear issue graph and exported via the Broadsheet publishing pipeline. Each issue body in this project is a section of prose; reading order is determined by within-milestone blocking relations.
+
+**Thesis:** Formal grammars (specifically Pkl as constraint language) serve as universal protocol layers that enable reliable agent-to-agent coordination in high-stakes security research workflows, where traditional prompt engineering fails due to precision requirements.
+
+**Audience:** Security researchers + agent-platform builders + soft contractor-pipeline signal.
+
+**Substrate docs:** Agents on Rails (Pkl), Self-Reinforcing Cybernetic Loop, Operationalizing Autonomous Cyber-Physical Systems, Secure Agent Evaluation Platform Engineering.
+
+**Parent scope:** Slice of the [Grammar as Protocol](<https://linear.app/tidelands-dev/project/grammar-as-protocol-9e59d728cfc6>) project. XState, Tree-sitter, Argo, and multi-vertical applicability live in the parent, not in this article.
+
+**Publish gates:** [PLAN-213](https://linear.app/tidelands-dev/issue/PLAN-213/openai-codex-vs-code-extension-ctrlcmdclick-bypasses-link-confirmation) and [PLAN-78](https://linear.app/tidelands-dev/issue/PLAN-78/gemini-cli-predictable-temp-file-path-in-projectregistry-potential) disclosure or aging-out; pre-publish anonymization sufficiency check.
+
+---
+
+## **Editorial history:** Pre-conversion editorial decisions, source-mapping synthesis from Robin Jordan, and the ""Decisions Resolved"" comment thread live on the now-archived original [PLAN-100](https://linear.app/tidelands-dev/issue/PLAN-100/write-grammar-as-protocol-how-formal-constraints-enable-agentic) issue. See [PLAN-100](https://linear.app/tidelands-dev/issue/PLAN-100/write-grammar-as-protocol-how-formal-constraints-enable-agentic) for provenance.","In Progress","No priority","Introduction[next],Part I — The Verbosity Problem[unstarted],Part II — From Style to Structure[unstarted],Part III — The Replication Design[done],Conclusion — The Hypothesis[unstarted],Publish (DEPRECATED — delete manually)[unstarted]","Robin Jordan","","","2026-04-11T14:00:00.000Z",,,,"2026-04-08T05:01:00.286Z","2026-04-12T21:26:52.682Z","2026-04-13T01:09:31.984Z",,,,"Planning","Grammar as Protocol","On track","🟢 On track | Robin Jordan posted an update on Apr 13
+
+**Update the article project description** to reflect Version B replication scope and the \~2,800 word target. Same reason.
+
+**Status**: In Progress
+**Start date** set to Apr 12th","2026-04-13T01:11:20.955Z",,,"Broadsheet2 (In Progress)","","","6d66d799-219a-4d87-ba8f-35df0640dc90"

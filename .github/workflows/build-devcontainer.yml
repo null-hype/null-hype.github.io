@@ -1,0 +1,51 @@
+name: Build Dev Workstation Image
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".devcontainer/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: build-devcontainer
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install devcontainer CLI
+        run: npm install -g @devcontainers/cli
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build devcontainer image
+        run: |
+          devcontainer build \
+            --workspace-folder . \
+            --image-name ghcr.io/null-hype/dev-workstation:latest \
+            --image-name ghcr.io/null-hype/dev-workstation:${{ github.sha }}
+
+      - name: Push image
+        run: |
+          docker push ghcr.io/null-hype/dev-workstation:latest
+          docker push ghcr.io/null-hype/dev-workstation:${{ github.sha }}

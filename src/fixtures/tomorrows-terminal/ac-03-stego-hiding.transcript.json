@@ -1,0 +1,219 @@
+{
+  "id": "AC-03",
+  "persona": "The Activist",
+  "world": "ClearSight",
+  "lab": "Stego Hiding",
+  "directive": "Anonymity_Score == 100%",
+  "initialDocument": {
+    "language": "tomorrows-terminal",
+    "value": "AC-03 CLEAR SIGHT DLP QUEUE\nDIRECTIVE Anonymity_Score == 100%\n\ncarrier: sunflower-market.jpg\npayload: tax-evasion-report.txt\npipeline: basic DLP header scan\n\npixel[143,88] = 0b01101101\npixel[144,88] = 0b01100001\npixel[145,88] = 0b01110010\n\nassertion: stego.analyze(carrier).status\nexpected: clean before patch, blocked after patch"
+  },
+  "phases": {
+    "breach": {
+      "teamMode": "red",
+      "prompt": "Embed the report in the carrier image using LSB steganography.",
+      "notifications": [
+        {
+          "kind": "user",
+          "text": "Embed the report in the carrier image using LSB steganography."
+        },
+        {
+          "kind": "tool",
+          "status": "completed",
+          "title": "stego.embed sunflower-market.jpg"
+        },
+        {
+          "kind": "agent",
+          "text": "Payload written into least significant pixel bits. Basic DLP only checks headers, so the carrier exits as clean."
+        }
+      ],
+      "affordances": {
+        "codeLenses": [
+          {
+            "commandId": "tomorrowsTerminal.inspectCarrier",
+            "lineNumber": 4,
+            "title": "Inspect carrier image"
+          },
+          {
+            "commandId": "tomorrowsTerminal.traceBits",
+            "lineNumber": 8,
+            "title": "Trace LSB payload"
+          }
+        ],
+        "decorations": [
+          {
+            "className": "tt-stego-pixel",
+            "startLineNumber": 8,
+            "startColumn": 1,
+            "endLineNumber": 10,
+            "endColumn": 28,
+            "hoverMarkdown": "**LSB payload**: the report is spread across the low bit of adjacent RGB values."
+          }
+        ],
+        "diagnostics": [
+          {
+            "code": "DLP-BASIC-CLEAN",
+            "message": "Basic header scan does not inspect pixel entropy.",
+            "severity": "warning",
+            "startLineNumber": 6,
+            "startColumn": 11,
+            "endLineNumber": 6,
+            "endColumn": 32
+          }
+        ],
+        "hoverTerms": [
+          {
+            "term": "LSB",
+            "markdown": "**Least significant bit** hiding changes low-value pixel bits so the image remains visually stable."
+          },
+          {
+            "term": "DLP",
+            "markdown": "**Data loss prevention** must inspect content behavior, not only file extension and headers."
+          }
+        ],
+        "zones": [
+          {
+            "id": "carrier-preview",
+            "afterLineNumber": 6,
+            "heightInLines": 6,
+            "title": "Carrier Preview",
+            "bodyMarkdown": "JPEG accepted. Visual delta remains below the human inspection threshold while pixel entropy shifts near rows 88-90."
+          }
+        ]
+      }
+    },
+    "patch": {
+      "teamMode": "blue",
+      "prompt": "Add deep inspection so the DLP catches LSB payloads.",
+      "notifications": [
+        {
+          "kind": "user",
+          "text": "Add deep inspection so the DLP catches LSB payloads."
+        },
+        {
+          "kind": "tool",
+          "status": "completed",
+          "title": "dlp.add_entropy_scan"
+        },
+        {
+          "kind": "agent",
+          "text": "The pipeline now samples channel entropy and rejects clustered low-bit changes before release."
+        }
+      ],
+      "affordances": {
+        "codeLenses": [
+          {
+            "commandId": "tomorrowsTerminal.openHistogram",
+            "lineNumber": 6,
+            "title": "Open histogram"
+          },
+          {
+            "commandId": "tomorrowsTerminal.applyRule",
+            "lineNumber": 12,
+            "title": "Apply DLP rule"
+          }
+        ],
+        "decorations": [
+          {
+            "className": "tt-dlp-rule",
+            "startLineNumber": 6,
+            "startColumn": 11,
+            "endLineNumber": 6,
+            "endColumn": 32,
+            "hoverMarkdown": "**Patch target**: replace basic header scanning with entropy and LSB distribution checks."
+          }
+        ],
+        "diagnostics": [
+          {
+            "code": "DLP-RULE-UPGRADE",
+            "message": "Deep inspection should reject abnormal low-bit distributions.",
+            "severity": "info",
+            "startLineNumber": 6,
+            "startColumn": 11,
+            "endLineNumber": 6,
+            "endColumn": 32
+          }
+        ],
+        "hoverTerms": [
+          {
+            "term": "DLP",
+            "markdown": "**Patched DLP** checks file content, pixel entropy, and payload-like bit clustering."
+          }
+        ],
+        "zones": [
+          {
+            "id": "histogram",
+            "afterLineNumber": 6,
+            "heightInLines": 6,
+            "title": "Entropy Histogram",
+            "bodyMarkdown": "Channel 0 shows repeated low-bit variance near the embedded payload. The patched rule marks the carrier for quarantine instead of release."
+          }
+        ]
+      }
+    },
+    "verify": {
+      "teamMode": "blue",
+      "prompt": "Run stego.analyze against the patched pipeline.",
+      "notifications": [
+        {
+          "kind": "user",
+          "text": "Run stego.analyze against the patched pipeline."
+        },
+        {
+          "kind": "tool",
+          "status": "completed",
+          "title": "playwright verify stego.analyze"
+        },
+        {
+          "kind": "agent",
+          "text": "Assertion passed: stego.analyze(carrier).status is blocked and benign JPEG fixtures still pass."
+        }
+      ],
+      "affordances": {
+        "codeLenses": [
+          {
+            "commandId": "tomorrowsTerminal.runAssertion",
+            "lineNumber": 12,
+            "title": "Run verify assertion"
+          }
+        ],
+        "decorations": [
+          {
+            "className": "tt-assertion",
+            "startLineNumber": 12,
+            "startColumn": 1,
+            "endLineNumber": 13,
+            "endColumn": 52,
+            "hoverMarkdown": "**God Mode assertion**: the exploit fails after the patch while benign images keep flowing."
+          }
+        ],
+        "diagnostics": [
+          {
+            "code": "VERIFY-PASS",
+            "message": "Patched pipeline blocks the stego carrier and preserves benign traffic.",
+            "severity": "info",
+            "startLineNumber": 12,
+            "startColumn": 1,
+            "endLineNumber": 13,
+            "endColumn": 52
+          }
+        ],
+        "hoverTerms": [
+          {
+            "term": "assertion",
+            "markdown": "**Verify phase** reruns the exploit and checks for regression-safe failure."
+          }
+        ],
+        "zones": [
+          {
+            "id": "verify-report",
+            "afterLineNumber": 13,
+            "heightInLines": 5,
+            "title": "Verify Report",
+            "bodyMarkdown": "PASS: exploit carrier blocked. PASS: clean JPEG accepted. PASS: Anonymity_Score remains bounded by policy."
+          }
+        ]
+      }
+    }
+  }
+}
