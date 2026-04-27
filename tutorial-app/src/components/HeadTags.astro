@@ -19,9 +19,9 @@
   /* Fix transparent navigation dropdown and components */
   [class*='_NavContainer_'],
   [class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'],
-  header nav[class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'] {
-    background-color: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  header nav {
+    background-color: var(--tk-background-primary, #ffffff) !important;
+    border: 1px solid var(--tk-border-primary, rgba(0, 0, 0, 0.1)) !important;
     border-radius: 8px !important;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
     z-index: 100 !important;
@@ -29,42 +29,48 @@
 
   [data-theme='dark'] [class*='_NavContainer_'],
   [data-theme='dark'] [class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'],
-  [data-theme='dark'] header nav[class*='bg-tk-elements-breadcrumbs-dropdown-backgroundColor'] {
-    background-color: #1f2937 !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+  [data-theme='dark'] header nav {
+    background-color: var(--tk-background-primary, #1f2937) !important;
+    border-color: var(--tk-border-primary, rgba(255, 255, 255, 0.1)) !important;
   }
 
   [class*='_ToggleButton_'] {
     background-color: transparent !important;
-    color: #111827 !important;
+    color: var(--tk-text-primary, #111827) !important;
     padding: 0.75rem 1rem !important;
   }
 
   [data-theme='dark'] [class*='_ToggleButton_'] {
-    color: #f9fafb !important;
+    color: var(--tk-text-primary, #f9fafb) !important;
   }
 
-  [class*='_NavList_'] {
+  [class*='_NavList_'],
+  [class*='_NavList_'] ul {
     padding: 0.5rem !important;
-    background-color: transparent !important;
+    background-color: var(--tk-background-primary, #ffffff) !important;
+  }
+
+  [data-theme='dark'] [class*='_NavList_'],
+  [data-theme='dark'] [class*='_NavList_'] ul {
+    background-color: var(--tk-background-primary, #1f2937) !important;
   }
 
   [class*='_NavListItem_'] {
-    color: #374151 !important;
+    color: var(--tk-text-secondary, #374151) !important;
     border-radius: 6px !important;
     margin: 2px 0 !important;
     background-color: transparent !important;
   }
 
   [class*='_NavListItem_']:hover {
-    background-color: rgba(0, 0, 0, 0.05) !important;
+    background-color: var(--tk-background-secondary, rgba(0, 0, 0, 0.05)) !important;
   }
 
   [data-theme='dark'] [class*='_NavListItem_'] {
-    color: #f9fafb !important;
+    color: var(--tk-text-secondary, #f9fafb) !important;
   }
 
   [data-theme='dark'] [class*='_NavListItem_']:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: var(--tk-background-secondary, rgba(255, 255, 255, 0.1)) !important;
   }
 </style>
