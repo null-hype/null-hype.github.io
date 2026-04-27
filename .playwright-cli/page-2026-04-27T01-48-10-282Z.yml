@@ -1,0 +1,128 @@
+- generic [ref=e1]:
+  - iframe [ref=e118]:
+    - generic [active] [ref=f3e1]:
+      - main [ref=f3e2]:
+        - code [ref=f3e4]:
+          - generic [ref=f3e5]:
+            - textbox "Editor content" [ref=f3e6]
+            - textbox [ref=f3e7]
+            - generic [ref=f3e10]:
+              - generic [ref=f3e11]:
+                - generic [ref=f3e13] [cursor=pointer]: 
+                - generic [ref=f3e14]: "1"
+              - generic [ref=f3e16]: "2"
+              - generic [ref=f3e18]: "3"
+            - generic [ref=f3e24]:
+              - generic [ref=f3e26]: "#region trace otel.opentrader.place_order blocked"
+              - generic [ref=f3e28]: "note: solve the grammar rule to replay the warm log"
+              - generic [ref=f3e30]: "#endregion"
+      - generic [ref=f3e32]:
+        - alert
+        - alert
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - button "Toggle Theme" [active] [ref=e11] [cursor=pointer]
+    - generic [ref=e13]:
+      - generic [ref=e15]:
+        - button "Schadenfreude" [ref=e17] [cursor=pointer]:
+          - strong [ref=e19]: Schadenfreude
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - heading "Schadenfreude" [level=1] [ref=e22]
+            - paragraph [ref=e23]: Lesson 1 introduces the preservation move and then blocks it.
+            - paragraph [ref=e24]:
+              - text: Start in
+              - code [ref=e25]: translation.en
+              - text: . A paraphrase still squiggles. If you switch the English text to
+              - code [ref=e26]: Schadenfreude
+              - text: ", the squiggle stays for a new reason: the word is not yet admitted into"
+              - code [ref=e27]: PersonalVocabulary.pkl
+              - text: .
+            - heading "The Task" [level=3] [ref=e28]
+            - list [ref=e29]:
+              - listitem [ref=e30]:
+                - text: Edit
+                - code [ref=e31]: translation.en
+                - text: .
+              - listitem [ref=e32]: Hover the squiggle to inspect the same four structural-loss axes.
+              - listitem [ref=e33]:
+                - text: Type
+                - code [ref=e34]: Schadenfreude
+                - text: directly and notice that the lesson still stays blocked.
+              - listitem [ref=e35]:
+                - text: Locate
+                - code [ref=e36]: PersonalVocabulary.pkl
+                - text: in the file tree on the left and open it.
+              - listitem [ref=e37]:
+                - text: Add the loanword
+                - code [ref=e38]: Schadenfreude
+                - text: to the
+                - code [ref=e39]: entries
+                - text: mapping.
+              - listitem [ref=e40]:
+                - text: "When validation passes, the preview should say:"
+                - code [ref=e41]: you solved this by amending vocabulary, not by refining the gloss
+                - text: .
+            - heading "What you are seeing" [level=3] [ref=e42]
+            - list [ref=e43]:
+              - listitem [ref=e44]:
+                - strong [ref=e45]:
+                  - code [ref=e46]: LoanwordRules.pkl
+                - text: ": The authoring source for the structural-loss rule."
+              - listitem [ref=e47]:
+                - strong [ref=e48]:
+                  - code [ref=e49]: loanword-runtime.json
+                - text: ": The runtime artifact the browser uses for validation."
+              - listitem [ref=e50]:
+                - strong [ref=e51]:
+                  - code [ref=e52]: PersonalVocabulary.pkl
+                - text: ": A type-safe configuration file for admitted loanwords. Using Pkl ensures that our vocabulary list isn’t just a text file, but a validated data structure."
+              - listitem [ref=e53]:
+                - strong [ref=e54]:
+                  - code [ref=e55]: warm-log-story.json
+                - text: ": The static warm-log fixture rendered in Monaco."
+          - link "Fingerspitzengefühl" [ref=e59] [cursor=pointer]:
+            - /url: /part-1/chapter-1/lesson-2
+            - generic [ref=e60]: Fingerspitzengefühl
+          - link "Powered by WebContainers" [ref=e61] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e65]:
+        - generic [ref=e67]:
+          - generic [ref=e100]:
+            - generic [ref=e102]: Files
+            - generic [ref=e103]:
+              - button "LoanwordRules.pkl" [ref=e68] [cursor=pointer]:
+                - generic [ref=e69]: LoanwordRules.pkl
+              - button "PersonalVocabulary.pkl" [ref=e70] [cursor=pointer]:
+                - generic [ref=e71]: PersonalVocabulary.pkl
+              - button "loanword-runtime.json" [ref=e72] [cursor=pointer]:
+                - generic [ref=e73]: loanword-runtime.json
+              - button "translation.en" [pressed] [ref=e74] [cursor=pointer]:
+                - generic [ref=e75]: translation.en
+              - button "warm-log-story.json" [ref=e76] [cursor=pointer]:
+                - generic [ref=e77]: warm-log-story.json
+          - separator
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - generic [ref=e104]: translation.en
+              - button "Solve" [ref=e105] [cursor=pointer]: Solve
+            - generic [ref=e107]:
+              - generic [ref=e109]:
+                - generic [ref=e110]: "1"
+                - generic [ref=e111]: "2"
+              - textbox "Editor" [ref=e114]:
+                - generic [ref=e115]: malicious joy
+        - separator
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - button "Reload Preview"
+            - text: Warm Log
+          - button "Toggle Terminal" [ref=e143] [cursor=pointer]: Toggle Terminal
+        - separator
+        - tablist [ref=e98]
+  - button [ref=e117]

@@ -1,0 +1,178 @@
+- generic [ref=e1]:
+  - iframe [ref=e97]:
+    - generic [active] [ref=f3e1]:
+      - main [ref=f3e2]:
+        - code [ref=f3e4]:
+          - generic [ref=f3e5]:
+            - textbox "Editor content" [ref=f3e6]
+            - textbox [ref=f3e7]
+            - generic [ref=f3e10]:
+              - generic [ref=f3e11]:
+                - generic [ref=f3e13] [cursor=pointer]: 
+                - generic [ref=f3e14]: "1"
+              - generic [ref=f3e16]: "2"
+              - generic [ref=f3e18]: "3"
+              - generic [ref=f3e20]: "4"
+              - generic [ref=f3e21]:
+                - generic [ref=f3e22] [cursor=pointer]: 
+                - generic [ref=f3e23]: "5"
+              - generic [ref=f3e24]:
+                - generic [ref=f3e25] [cursor=pointer]: 
+                - generic [ref=f3e26]: "16"
+              - generic [ref=f3e27]:
+                - generic [ref=f3e28] [cursor=pointer]: 
+                - generic [ref=f3e29]: "27"
+              - generic [ref=f3e30]:
+                - generic [ref=f3e31] [cursor=pointer]: 
+                - generic [ref=f3e32]: "38"
+              - generic [ref=f3e34]: "49"
+            - generic [ref=f3e56]:
+              - generic [ref=f3e58]: "#region trace lexeme.schadenfreude.translation -> loss"
+              - generic [ref=f3e60]: "source.lexeme: Schadenfreude"
+              - generic [ref=f3e62]: "attempt.en: malicious joy"
+              - generic [ref=f3e64]: "result: paraphrase loses required structure before it reaches English"
+              - generic [ref=f3e66]:
+                - text: "#region span lexicalization -> collapsed"
+                - generic [ref=f3e67]: ⋯
+              - generic [ref=f3e69]:
+                - text: "#region span Gefühl register -> flattened"
+                - generic [ref=f3e70]: ⋯
+              - generic [ref=f3e72]:
+                - text: "#region span Spitzen valence -> blunted"
+                - generic [ref=f3e73]: ⋯
+              - generic [ref=f3e75]:
+                - text: "#region span lineage -> erased"
+                - generic [ref=f3e76]: ⋯
+              - generic [ref=f3e78]: "#endregion"
+      - generic [ref=f3e80]:
+        - alert
+        - alert
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic:
+        - link:
+          - /url: /
+      - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - button "Toggle Theme" [ref=e100] [cursor=pointer]
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - button "Schadenfreude" [active] [ref=e14] [cursor=pointer]:
+            - strong [ref=e16]: Schadenfreude
+          - navigation [ref=e101]:
+            - list [ref=e102]:
+              - listitem [ref=e103]:
+                - 'button "Part 1: Grammar & Security Protocol" [expanded] [ref=e104] [cursor=pointer]':
+                  - generic [ref=e105]: "Part 1: Grammar & Security Protocol"
+                - 'region "Part 1: Grammar & Security Protocol" [ref=e106]':
+                  - list [ref=e107]:
+                    - listitem [ref=e108]:
+                      - button "Lexical Irreducibles" [expanded] [ref=e109] [cursor=pointer]:
+                        - generic [ref=e110]: Lexical Irreducibles
+                      - region "Lexical Irreducibles" [ref=e111]:
+                        - list [ref=e112]:
+                          - listitem [ref=e113]:
+                            - link "Schadenfreude" [ref=e114] [cursor=pointer]:
+                              - /url: /part-1/chapter-1/lesson-1
+                          - listitem [ref=e115]:
+                            - link "Fingerspitzengefühl" [ref=e116] [cursor=pointer]:
+                              - /url: /part-1/chapter-1/lesson-2
+                    - listitem [ref=e117]:
+                      - button "Authorization Capstone" [ref=e118] [cursor=pointer]:
+                        - generic [ref=e119]: Authorization Capstone
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - heading "Schadenfreude" [level=1] [ref=e19]
+            - paragraph [ref=e20]: Lesson 1 introduces the preservation move and then blocks it.
+            - paragraph [ref=e21]:
+              - text: Start in
+              - code [ref=e22]: translation.en
+              - text: . A paraphrase still squiggles. If you switch the English text to
+              - code [ref=e23]: Schadenfreude
+              - text: ", the squiggle stays for a new reason: the word is not yet admitted into"
+              - code [ref=e24]: PersonalVocabulary.pkl
+              - text: .
+            - heading "The Task" [level=3] [ref=e25]
+            - list [ref=e26]:
+              - listitem [ref=e27]:
+                - text: Edit
+                - code [ref=e28]: translation.en
+                - text: .
+              - listitem [ref=e29]: Hover the squiggle to inspect the same four structural-loss axes.
+              - listitem [ref=e30]:
+                - text: Type
+                - code [ref=e31]: Schadenfreude
+                - text: directly and notice that the lesson still stays blocked.
+              - listitem [ref=e32]:
+                - text: Locate
+                - code [ref=e33]: PersonalVocabulary.pkl
+                - text: in the file tree on the left and open it.
+              - listitem [ref=e34]:
+                - text: Add the loanword
+                - code [ref=e35]: Schadenfreude
+                - text: to the
+                - code [ref=e36]: entries
+                - text: mapping.
+              - listitem [ref=e37]:
+                - text: "When validation passes, the preview should say:"
+                - code [ref=e38]: you solved this by amending vocabulary, not by refining the gloss
+                - text: .
+            - heading "What you are seeing" [level=3] [ref=e39]
+            - list [ref=e40]:
+              - listitem [ref=e41]:
+                - strong [ref=e42]:
+                  - code [ref=e43]: LoanwordRules.pkl
+                - text: ": The authoring source for the structural-loss rule."
+              - listitem [ref=e44]:
+                - strong [ref=e45]:
+                  - code [ref=e46]: loanword-runtime.json
+                - text: ": The runtime artifact the browser uses for validation."
+              - listitem [ref=e47]:
+                - strong [ref=e48]:
+                  - code [ref=e49]: PersonalVocabulary.pkl
+                - text: ": A type-safe configuration file for admitted loanwords. Using Pkl ensures that our vocabulary list isn’t just a text file, but a validated data structure."
+              - listitem [ref=e50]:
+                - strong [ref=e51]:
+                  - code [ref=e52]: warm-log-story.json
+                - text: ": The static warm-log fixture rendered in Monaco."
+          - link "Fingerspitzengefühl" [ref=e56] [cursor=pointer]:
+            - /url: /part-1/chapter-1/lesson-2
+            - generic [ref=e57]: Fingerspitzengefühl
+          - link "Powered by WebContainers" [ref=e58] [cursor=pointer]:
+            - /url: https://webcontainers.io/
+      - generic [ref=e62]:
+        - generic [ref=e64]:
+          - generic [ref=e120]:
+            - generic [ref=e122]: Files
+            - generic [ref=e123]:
+              - button "LoanwordRules.pkl" [ref=e65] [cursor=pointer]:
+                - generic [ref=e66]: LoanwordRules.pkl
+              - button "PersonalVocabulary.pkl" [ref=e67] [cursor=pointer]:
+                - generic [ref=e68]: PersonalVocabulary.pkl
+              - button "loanword-runtime.json" [ref=e69] [cursor=pointer]:
+                - generic [ref=e70]: loanword-runtime.json
+              - button "translation.en" [pressed] [ref=e71] [cursor=pointer]:
+                - generic [ref=e72]: translation.en
+              - button "warm-log-story.json" [ref=e73] [cursor=pointer]:
+                - generic [ref=e74]: warm-log-story.json
+          - separator
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e124]: translation.en
+              - button "Solve" [ref=e125] [cursor=pointer]: Solve
+            - generic [ref=e127]:
+              - generic [ref=e129]:
+                - generic [ref=e130]: "1"
+                - generic [ref=e131]: "2"
+              - textbox "Editor" [ref=e134]:
+                - generic [ref=e135]: malicious joy
+        - separator
+        - generic [ref=e140]:
+          - generic [ref=e141]:
+            - button "Reload Preview"
+            - text: Warm Log
+          - button "Toggle Terminal" [ref=e142] [cursor=pointer]: Toggle Terminal
+        - separator
+        - tablist [ref=e95]
+  - button [ref=e144]

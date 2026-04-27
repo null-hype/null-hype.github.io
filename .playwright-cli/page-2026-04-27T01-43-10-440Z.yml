@@ -1,0 +1,99 @@
+- main [ref=e2]:
+  - navigation [ref=e3]:
+    - generic:
+      - link:
+        - /url: /
+    - button "Open in StackBlitz" [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - button "Schadenfreude" [ref=e14] [cursor=pointer]:
+        - strong [ref=e16]: Schadenfreude
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - heading "Schadenfreude" [level=1] [ref=e19]
+          - paragraph [ref=e20]: Lesson 1 introduces the preservation move and then blocks it.
+          - paragraph [ref=e21]:
+            - text: Start in
+            - code [ref=e22]: translation.en
+            - text: . A paraphrase still squiggles. If you switch the English text to
+            - code [ref=e23]: Schadenfreude
+            - text: ", the squiggle stays for a new reason: the word is not yet admitted into"
+            - code [ref=e24]: PersonalVocabulary.pkl
+            - text: .
+          - heading "The Task" [level=3] [ref=e25]
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - text: Edit
+              - code [ref=e28]: translation.en
+              - text: .
+            - listitem [ref=e29]: Hover the squiggle to inspect the same four structural-loss axes.
+            - listitem [ref=e30]:
+              - text: Type
+              - code [ref=e31]: Schadenfreude
+              - text: directly and notice that the lesson still stays blocked.
+            - listitem [ref=e32]:
+              - text: Locate
+              - code [ref=e33]: PersonalVocabulary.pkl
+              - text: in the file tree on the left and open it.
+            - listitem [ref=e34]:
+              - text: Add the loanword
+              - code [ref=e35]: Schadenfreude
+              - text: to the
+              - code [ref=e36]: entries
+              - text: mapping.
+            - listitem [ref=e37]:
+              - text: "When validation passes, the preview should say:"
+              - code [ref=e38]: you solved this by amending vocabulary, not by refining the gloss
+              - text: .
+          - heading "What you are seeing" [level=3] [ref=e39]
+          - list [ref=e40]:
+            - listitem [ref=e41]:
+              - strong [ref=e42]:
+                - code [ref=e43]: LoanwordRules.pkl
+              - text: ": The authoring source for the structural-loss rule."
+            - listitem [ref=e44]:
+              - strong [ref=e45]:
+                - code [ref=e46]: loanword-runtime.json
+              - text: ": The runtime artifact the browser uses for validation."
+            - listitem [ref=e47]:
+              - strong [ref=e48]:
+                - code [ref=e49]: PersonalVocabulary.pkl
+              - text: ": A type-safe configuration file for admitted loanwords. Using Pkl ensures that our vocabulary list isn’t just a text file, but a validated data structure."
+            - listitem [ref=e50]:
+              - strong [ref=e51]:
+                - code [ref=e52]: warm-log-story.json
+              - text: ": The static warm-log fixture rendered in Monaco."
+        - link "Fingerspitzengefühl" [ref=e56] [cursor=pointer]:
+          - /url: /part-1/chapter-1/lesson-2
+          - generic [ref=e57]: Fingerspitzengefühl
+        - link "Powered by WebContainers" [ref=e58] [cursor=pointer]:
+          - /url: https://webcontainers.io/
+    - generic [ref=e62]:
+      - generic [ref=e64]:
+        - generic:
+          - generic:
+            - generic: Files
+          - generic:
+            - button "LoanwordRules.pkl" [ref=e65] [cursor=pointer]:
+              - generic [ref=e66]: LoanwordRules.pkl
+            - button "PersonalVocabulary.pkl" [ref=e67] [cursor=pointer]:
+              - generic [ref=e68]: PersonalVocabulary.pkl
+            - button "loanword-runtime.json" [ref=e69] [cursor=pointer]:
+              - generic [ref=e70]: loanword-runtime.json
+            - button "translation.en" [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]: translation.en
+            - button "warm-log-story.json" [ref=e73] [cursor=pointer]:
+              - generic [ref=e74]: warm-log-story.json
+        - separator
+        - button "Reset" [disabled] [ref=e77]: Reset
+      - separator
+      - generic [ref=e82]:
+        - generic [ref=e84]: Preparing Environment
+        - list [ref=e86]:
+          - listitem [ref=e87]:
+            - generic [ref=e88]: npm install
+          - listitem [ref=e89]:
+            - generic [ref=e90]: npm run dev
+      - separator
+      - tablist [ref=e95]

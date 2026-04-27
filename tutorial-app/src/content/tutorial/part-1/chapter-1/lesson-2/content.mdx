@@ -10,7 +10,7 @@ previews:
   - [4173, "Warm Log"]
 terminal: false
 editor:
-  fileTree: true
+  fileTree: false
 custom:
   loanwordArc:
     lessonId: fingerspitzengefuhl
@@ -23,22 +23,6 @@ custom:
 
 import LoanwordArcBridge from '../../../../../components/LoanwordArcBridge';
 
-# Fingerspitzengefühl
-
 <LoanwordArcBridge client:load />
 
-Lesson 2 resolves by preserving the German surface inside English.
-
-Start in `translation.en` and replace the failed gloss. The squiggle stays until the English file itself becomes `Fingerspitzengefühl`.
-
-### The Task
-1. Edit `translation.en`.
-2. Hover the squiggle to inspect the structural-loss rule.
-3. Read the static warm log in the preview. Each loss axis folds to the relevant rule region.
-4. Type `Fingerspitzengefühl` directly in the English file.
-5. When validation passes, the preview should say: `you solved this by preserving the word, not paraphrasing it`.
-
-### What you are seeing
-- **`LoanwordRules.pkl`**: The source of truth for structural-loss detection. It formalizes the linguistics into a validation engine.
-- **`loanword-runtime.json`**: The optimized runtime artifact used by the browser to provide real-time feedback.
-- **`warm-log-story.json`**: A mocked observability fixture that demonstrates how linguistic drift mirrors system telemetry.
+How do you say 'Fingerspitzengefühl' in English?

@@ -95,6 +95,22 @@ export default function LoanwordArcBridge({
         return;
       }
 
+      // If it's the fingerspitzengefuhl lesson, we want to keep the squiggle even if solved.
+      if (resolvedConfig.lessonId === 'fingerspitzengefuhl' && result.solved) {
+        result.diagnostics.push({
+          code: 'loanword-unadmitted',
+          filePath: resolvedConfig.translationFile,
+          message: "This word isn't part of English yet.",
+          data: { peek: runtime.peek.translation },
+          range: {
+            start: { line: 0, character: 0 },
+            end: { line: 0, character: translationText.trim().length || 1 },
+          },
+          severity: 'warning',
+          source: 'Loanword Protocol',
+        });
+      }
+
       setProtocolState({
         ...result,
         revision,
