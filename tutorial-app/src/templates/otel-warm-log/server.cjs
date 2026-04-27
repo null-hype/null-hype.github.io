@@ -159,12 +159,12 @@ function renderPage() {
         },
       };
       const fallbackLoanwordStory = {
-        scenario: 'fingerspitzengefuhl-preservation',
+        scenario: 'schadenfreude-admission',
         states: {
           idle: {
             lines: ['note: type an English attempt in translation.en'],
             spans: [],
-            title: 'trace lexeme.fingerspitzengefuhl.translation idle',
+            title: 'trace lexeme.loanword.translation idle',
           },
           'loanword-pending-admission': {
             lines: [
@@ -177,21 +177,21 @@ function renderPage() {
           },
           'paraphrase-loss': {
             lines: [
-              'source.lexeme: Fingerspitzengefühl',
-              'attempt.en: tact',
+              'source.lexeme: loanword',
+              'attempt.en: gloss',
               'result: paraphrase loses required structure before it reaches English',
             ],
             spans: [],
-            title: 'trace lexeme.fingerspitzengefuhl.translation -> loss',
+            title: 'trace lexeme.loanword.translation -> loss',
           },
           completed: {
             lines: [
               'status: translation.en preserved source surface',
-              'surface: Fingerspitzengefühl',
+              'surface: loanword',
               'move: you solved this by preserving the word, not paraphrasing it',
             ],
             spans: [],
-            title: 'loanword(Fingerspitzengefühl) -> preserved',
+            title: 'loanword(loanword) -> preserved',
           },
         },
       };

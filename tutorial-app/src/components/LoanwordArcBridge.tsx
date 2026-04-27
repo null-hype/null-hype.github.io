@@ -75,7 +75,7 @@ export default function LoanwordArcBridge({
     : '';
   const runtimeText = valueToText(documents[resolvedConfig.runtimeFile]?.value);
   const runtime = useMemo(() => parseLoanwordRuntime(runtimeText), [runtimeText]);
-  const revisionRef = useRef(0);
+  const revisionRef = useRef(Date.now());
   const [protocolState, setProtocolState] = useState<LoanwordLessonState | null>(null);
 
   useEffect(() => {
@@ -127,7 +127,7 @@ export default function LoanwordArcBridge({
       source: 'tk-loanword-arc-bridge',
       type: 'lesson-state',
     };
-    const delays = [0, 300, 900, 1600, 3200];
+    const delays = [300, 900, 1600, 3200, 6400];
     const timeoutIds = delays.map((delay) =>
       window.setTimeout(() => {
         for (const frame of getPreviewFrames()) {
@@ -166,9 +166,7 @@ export default function LoanwordArcBridge({
 }
 
 function getPreviewFrames() {
-  return Array.from(document.querySelectorAll('#previews-container iframe')).filter((frame) => {
-    return !frame.classList.contains('hidden');
-  });
+  return Array.from(document.querySelectorAll('#previews-container iframe, .previews-container iframe')) as HTMLIFrameElement[];
 }
 
 function installLoanwordOverlay(diagnostics: LoanwordDiagnostic[], documentText: string) {
