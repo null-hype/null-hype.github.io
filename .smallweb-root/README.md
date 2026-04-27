@@ -8,8 +8,9 @@ webhooks and turns delegation events into Jules sessions.
 It also includes a private `jules` app that proxies authenticated dispatch and
 session requests into the Jules REST API.
 
-It also includes public `www` and `null-hype` apps that serve the built Astro
-site from the repo `dist/` directory.
+It also includes a public `www` app that serves the built Astro site from the
+repo `dist/` directory, plus a public `null-hype` app that serves the tutorial
+site from `tutorial-app/dist/`.
 
 Files:
 
@@ -38,8 +39,8 @@ Files:
   Jules session ids, created on first dispatch
 - `www/smallweb.json`: points the `www` app at the built Astro output in
   `../../dist`
-- `null-hype/smallweb.json`: points the `null-hype` subdomain at the built Astro
-  output in `../../dist`
+- `null-hype/smallweb.json`: points the `null-hype` subdomain at the tutorial
+  app output in `../../tutorial-app/dist`
 
 For a real deploy, override the placeholder allowlist in
 `.smallweb/config.json`:
@@ -94,6 +95,7 @@ Local smoke test shape:
 
 ```sh
 npm run build
+npm --prefix tutorial-app run build
 npm run smallweb:start
 ```
 
@@ -113,8 +115,8 @@ Expected behavior:
   Smallweb runtime only grants app write access under `data/`
 - `http://www.localhost:7777` serves the same built Astro content as
   `dist/index.html`
-- `http://null-hype.localhost:7777` serves the same built Astro content as
-  `dist/index.html`
+- `http://null-hype.localhost:7777` serves the tutorial app content from
+  `tutorial-app/dist/index.html`
 
 The Astro homepage is the Goose terminal client. For production builds where
 the static site is served from `www` or `null-hype` but the Goose bridge remains

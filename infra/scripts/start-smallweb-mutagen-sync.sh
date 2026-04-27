@@ -200,6 +200,7 @@ build_bundle() {
   mkdir -p "$bundle_dir"
   rsync -a --delete --exclude='.vscode/' "$REPO_ROOT/.smallweb-root/" "$bundle_dir/.smallweb-root/"
   rsync -a --delete "$REPO_ROOT/dist/" "$bundle_dir/dist/"
+  rsync -a --delete "$REPO_ROOT/tutorial-app/dist/" "$bundle_dir/tutorial-app/dist/"
 
   if [[ -z "$AUTHORIZED_EMAILS" ]]; then
     return
