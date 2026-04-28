@@ -1,63 +1,35 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { BroadsheetDispatchView } from './BroadsheetDispatchView';
-import ProjectDigest from './ProjectDigest';
-import { getNowPageDataFromCollections } from '../data/nowPageData';
-import { dummySlots } from '../data/broadsheetData';
+import NowPageView from './NowPageView';
+import {
+	createUnavailableNowPageData,
+	getNowPageDataFromCollections,
+} from '../data/nowPageData';
 import '../styles/editorial.css';
+import '../styles/now-page.css';
 
-const pageData = await getNowPageDataFromCollections();
+let pageData = createUnavailableNowPageData();
 
-// Split projects into "Dispatches" (Editorial/Content) and "Platforms" (Infrastructure/Systems)
-const allProjects = pageData.sections.flatMap(section => section.items);
-
-const dispatches = allProjects.filter(p => 
-	p.title.includes('Broadsheet') || 
-	p.title.includes('Notes') || 
-	p.title.includes('Stack') || 
-	p.title.includes('Grammar') ||
-    p.title.includes('Dossier')
-);
-
-const platforms = allProjects.filter(p => !dispatches.includes(p));
+try {
+	pageData = await getNowPageDataFromCollections();
+} catch (error) {
+	const detail = error instanceof Error ? error.message : 'Unknown Linear content error';
+	pageData = {
+		...createUnavailableNowPageData(),
+		warning: `Unable to load the Planning-team publishing view. ${detail}`,
+	};
+}
 ---
 
 <BaseLayout
-	title="TIDELANDS // Dispatch"
-	description="Autonomous security research and agentic infrastructure platform."
+	title="tidelands.dev | Projects"
+	description="Planning-team project index derived from the Linear `www` view."
 >
-	<BroadsheetDispatchView 
+	<NowPageView
 		client:load
-		fleetSlots={dummySlots}
-	>
-		<section className="broadsheet-dispatch-col">
-			<h2 className="dispatch-col-title">DISPATCHES</h2>
-			<div className="dispatch-list">
-				{dispatches.map((d) => (
-					<ProjectDigest 
-						key={d.title} 
-						title={d.title}
-						body={d.body}
-						href={d.href}
-						latestUpdate={d.latestUpdate}
-					/>
-				))}
-			</div>
-		</section>
-
-		<section className="broadsheet-dispatch-col">
-			<h2 className="dispatch-col-title">PLATFORMS</h2>
-			<div className="platform-list">
-				{platforms.map((p) => (
-					<ProjectDigest 
-						key={p.title} 
-						title={p.title}
-						body={p.body}
-						href={p.href}
-						latestUpdate={p.latestUpdate}
-					/>
-				))}
-			</div>
-		</section>
-	</BroadsheetDispatchView>
+		meta={pageData.meta}
+		sections={pageData.sections}
+		warning={pageData.warning}
+		isFavorited={pageData.isFavorited}
+	/>
 </BaseLayout>

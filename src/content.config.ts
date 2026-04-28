@@ -2,6 +2,12 @@ import { readFile } from 'node:fs/promises';
 
 import { defineCollection, z } from 'astro:content';
 
+import {
+	loadPlanningCompletedIssuesForProjects,
+	loadPlanningProjectsFromPublicView,
+	shouldUseLiveLinearContent,
+} from './lib/linear-content';
+
 // Simple CSV parser that handles quotes and newlines within fields
 function parseCSV(csvText: string) {
   const rows: string[][] = [];
@@ -106,10 +112,21 @@ function withProjectSlugs(entries: Record<string, string>[]) {
 }
 
 async function loadProjectsCollection() {
+	if (shouldUseLiveLinearContent()) {
+		const { rows } = await loadPlanningProjectsFromPublicView();
+		return withProjectSlugs(rows);
+	}
+
 	return withProjectSlugs(await readCollectionFromCsv('src/projects/www projects.csv'));
 }
 
 async function loadIssuesCollection() {
+	if (shouldUseLiveLinearContent()) {
+		const { rows: projectRows } = await loadPlanningProjectsFromPublicView();
+		const projectIds = projectRows.map((row) => row.ID).filter(Boolean);
+		return withDefaultIds(await loadPlanningCompletedIssuesForProjects(projectIds));
+	}
+
 	return withDefaultIds(await readCollectionFromCsv('src/issues/null-hype issues.csv'));
 }
 
@@ -143,8 +160,10 @@ const issues = defineCollection({
     "Project ID": z.string().optional(),
     Project: z.string().optional(),
     Assignee: z.string().optional(),
+    Created: z.string().optional(),
     Updated: z.string().optional(),
     "Blocked by": z.string().optional(),
+    UUID: z.string().optional(),
   }),
 });
 

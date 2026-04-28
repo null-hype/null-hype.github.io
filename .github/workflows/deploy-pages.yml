@@ -1,4 +1,4 @@
-name: Deploy Tutorial App to GitHub Pages
+name: Deploy Storybook to GitHub Pages
 
 on:
   push:
@@ -29,20 +29,15 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: |
-          cd tutorial-app && npm ci
+        run: npm ci
 
-      - name: Build Tutorial App
-        run: |
-          cd tutorial-app && npm run build
-
-      - name: Debug - List dist directory
-        run: ls -R tutorial-app/dist
+      - name: Build Storybook
+        run: npm run build-storybook
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./tutorial-app/dist
+          path: ./storybook-static
 
   deploy:
     needs: build

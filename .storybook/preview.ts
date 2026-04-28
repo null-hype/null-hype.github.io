@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react-vite'
 import '../src/styles/editorial.css'
+import '../src/styles/now-page.css'
 
 const preview: Preview = {
   tags: ['autodocs'],

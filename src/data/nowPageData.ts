@@ -2,11 +2,16 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 import type { NowPageMeta } from '../components/NowPageView';
 import type { ProjectLandingSectionData } from '../components/ProjectLandingSection';
+import {
+	getPlanningProjectDiagnostics,
+	shouldUseLiveLinearContent,
+} from '../lib/linear-content';
 
 export interface NowPageData {
 	readonly meta: NowPageMeta;
 	readonly sections: readonly ProjectLandingSectionData[];
 	readonly isFavorited: boolean;
+	readonly warning?: string;
 }
 
 function isPublishedMode() {
@@ -18,7 +23,7 @@ function normalizeStatus(value: string | undefined) {
 }
 
 function normalizeHealth(value: string | undefined) {
-	return (value ?? '').trim().toLowerCase();
+	return (value ?? '').trim().toLowerCase().replace(/\s+/g, '');
 }
 
 function getVisibleProjects(projectEntries: readonly CollectionEntry<'projects'>[]) {
@@ -26,8 +31,8 @@ function getVisibleProjects(projectEntries: readonly CollectionEntry<'projects'>
 		const status = normalizeStatus(project.data.Status);
 		const health = normalizeHealth(project.data.Health);
 
-		if (isPublishedMode()) {
-			return status === 'in progress' && health === 'on track';
+		if (isPublishedMode() || shouldUseLiveLinearContent()) {
+			return status === 'in progress' && health === 'ontrack';
 		}
 
 		return status !== 'completed' && status !== 'archived' && status !== 'canceled';
@@ -127,7 +132,7 @@ function buildSections(
 ): readonly ProjectLandingSectionData[] {
 	if (activeProjects.length === 0) {
 		const emptyMessage = isPublishedMode()
-			? 'No release-ready projects are currently in this snapshot.'
+			? 'The `www` view currently selects no on-track Planning projects.'
 			: 'No working projects are currently available in this snapshot.';
 
 		return [
@@ -186,11 +191,16 @@ export async function getNowPageDataFromCollections(): Promise<NowPageData> {
 	const projectEntries = await getCollection('projects');
 	const issueEntries = await getCollection('issues');
 	const activeProjects = getVisibleProjects(projectEntries);
+	const warning =
+		shouldUseLiveLinearContent() && activeProjects.length === 0
+			? (await getPlanningProjectDiagnostics()).warning
+			: undefined;
 
 	return {
 		meta: buildMeta(activeProjects),
 		sections: buildSections(activeProjects, issueEntries),
 		isFavorited: true,
+		warning,
 	};
 }
 
@@ -211,5 +221,6 @@ export function createUnavailableNowPageData(): NowPageData {
 			},
 		],
 		isFavorited: false,
+		warning: 'The project index is currently unavailable.',
 	};
 }

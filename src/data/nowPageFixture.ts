@@ -3,17 +3,15 @@ import type { NowPageData } from './nowPageData';
 import { createUnavailableNowPageData } from './nowPageData';
 
 export const australianMcpFieldNotesDigest: ProjectLandingItem = {
-	title: 'Australian MCP Field Notes',
-	body: 'Public field notes and dispatches on the emerging Australian MCP and agentic infrastructure scene, derived from LinkedIn reconnaissance and production work.',
-	href: '/projects/australian-mcp-field-notes',
-	projectId: '2861F9CC',
+	title: 'Broadsheet2',
+	body: 'Article publishing pipeline — steganography content engine, article-from-linear skill, and editorial production.',
+	href: '/projects/broadsheet2',
+	projectId: 'D24FC8B9',
 	status: 'In Progress',
-	issueCount: 5,
+	issueCount: 0,
 	priority: 'High',
-	updatedAt: 'April 2, 2026',
-	updatedAtIso: '2026-04-02T20:28:46.000Z',
-	latestUpdate:
-		'I spent two weeks mapping the Australian MCP and agentic AI scene — who is building, who is hiring, and where the gaps are between what companies need and what job titles say.',
+	updatedAt: 'April 12, 2026',
+	updatedAtIso: '2026-04-12T21:56:28.318Z',
 };
 
 export const sixDomainsOneStackDigest: ProjectLandingItem = {
@@ -61,7 +59,9 @@ export const buildingTidelandsDigest: ProjectLandingItem = {
 export const cyberFarmDispatchesSection: ProjectLandingSectionData = {
 	id: 'the-cyber-farm-dispatches',
 	title: 'The Cyber Farm Dispatches',
-	items: [australianMcpFieldNotesDigest],
+	emptyMessage:
+		'The `www` view currently selects no on-track Planning projects for this initiative.',
+	items: [],
 };
 
 export const grammarAsProtocolSection: ProjectLandingSectionData = {
@@ -87,12 +87,11 @@ export const mockNowPageData: NowPageData = {
 		lastUpdated: 'April 8, 2026',
 		title: 'Projects',
 		intro: [],
-		footer: '4 in-progress projects',
+		footer: '3 in-progress projects',
 	},
 	sections: [
 		cyberFarmDispatchesSection,
 		grammarAsProtocolSection,
-		securityResearchSection,
 		infrastructureSection,
 	] satisfies readonly ProjectLandingSectionData[],
 	isFavorited: true,

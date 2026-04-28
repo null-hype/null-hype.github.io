@@ -21,30 +21,9 @@ const { project } = Astro.props;
 const allIssues = await getCollection('issues');
 let projectIssues = allIssues.filter(
 	(issue) =>
-		issue.data.Project === project.data.Name || issue.data['Project ID'] === project.data.ID,
+		(issue.data.Project === project.data.Name || issue.data['Project ID'] === project.data.ID) &&
+		String(issue.data.Status ?? '').trim().toLowerCase() === 'done',
 );
-
-const priorityRank: Record<string, number> = {
-	Urgent: 1,
-	High: 2,
-	Medium: 3,
-	Low: 4,
-	'No priority': 5,
-};
-
-projectIssues.sort((a, b) => {
-	const rankA = priorityRank[String(a.data.Priority ?? 'No priority')] ?? 5;
-	const rankB = priorityRank[String(b.data.Priority ?? 'No priority')] ?? 5;
-	if (rankA !== rankB) return rankA - rankB;
-
-	const aBlockedBy = a.data['Blocked by'] || '';
-	const bBlockedBy = b.data['Blocked by'] || '';
-	if (aBlockedBy.includes(b.data.ID)) return 1;
-	if (bBlockedBy.includes(a.data.ID)) return -1;
-	if (aBlockedBy && !bBlockedBy) return 1;
-	if (!aBlockedBy && bBlockedBy) return -1;
-	return 0;
-});
 
 function issueStatusLabel(status: string | undefined): string {
 	if (!status) return 'Active';
@@ -55,6 +34,63 @@ function issueStatusLabel(status: string | undefined): string {
 	if (status === 'Backlog') return 'Queued';
 	return status;
 }
+
+function parseBlockedBy(value: string | undefined) {
+	return (value ?? '')
+		.split(',')
+		.map((identifier) => identifier.trim())
+		.filter(Boolean);
+}
+
+function compareIssueTimestamps(
+	left: (typeof projectIssues)[number],
+	right: (typeof projectIssues)[number],
+) {
+	const leftCreated = Date.parse(String(left.data.Created ?? left.data.Updated ?? ''));
+	const rightCreated = Date.parse(String(right.data.Created ?? right.data.Updated ?? ''));
+
+	if (Number.isFinite(leftCreated) && Number.isFinite(rightCreated) && leftCreated !== rightCreated) {
+		return leftCreated - rightCreated;
+	}
+
+	return String(left.data.ID).localeCompare(String(right.data.ID));
+}
+
+function orderProjectIssues(issues: typeof projectIssues) {
+	const pending = new Map(
+		issues.map((issue) => [
+			issue.data.ID,
+			{
+				issue,
+				blockedBy: new Set(parseBlockedBy(issue.data['Blocked by'])),
+			},
+		]),
+	);
+	const ordered: typeof issues = [];
+
+	while (pending.size > 0) {
+		const ready = [...pending.values()]
+			.filter(({ blockedBy }) =>
+				[...blockedBy].every((identifier) => !pending.has(identifier)),
+			)
+			.map(({ issue }) => issue)
+			.sort(compareIssueTimestamps);
+
+		if (ready.length === 0) {
+			ordered.push(...[...pending.values()].map(({ issue }) => issue).sort(compareIssueTimestamps));
+			break;
+		}
+
+		for (const issue of ready) {
+			ordered.push(issue);
+			pending.delete(issue.data.ID);
+		}
+	}
+
+	return ordered;
+}
+
+projectIssues = orderProjectIssues(projectIssues);
 
 function cleanUpdateText(text: string): string {
 	return text.replace(/^[^\n]*\|\s*[^\n]*\n\n/, '').trim();
@@ -119,9 +155,7 @@ const metadataBits = [
 	updateDate,
 ].filter(Boolean);
 
-const projectAbstract = stripMarkdown(
-	project.data.Summary || descFirstParagraph || project.data.Name,
-);
+const projectAbstract = stripMarkdown(project.data.Name);
 
 const quickIssueEntries = projectIssues.map((issue, index) => {
 	const sl = issueStatusLabel(issue.data.Status as string | undefined);
@@ -154,12 +188,6 @@ const quickIssueEntries = projectIssues.map((issue, index) => {
 						text={latestUpdate}
 					/>
 				</div>
-			) : null}
-
-			{descRemainderHtml ? (
-				<section id="summary" class="editorial-section">
-					<div class="editorial-prose" set:html={descRemainderHtml} />
-				</section>
 			) : null}
 
 			{quickIssueEntries.length > 0 ? (
