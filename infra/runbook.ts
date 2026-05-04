@@ -1,43 +1,24 @@
 /**
  * Dagger Runbook
- * 
+ *
  * A zx-style task runner for tidelane infrastructure.
- * Uses dax (Deno's zx alternative) to bridge pass-cli and dagger.
- * 
+ * Delegates secret resolution + Dagger invocation to infra/scripts/dagger.sh.
+ *
  * Usage:
  *   deno run -A infra/runbook.ts [plan|deploy|outputs|destroy|verify]
  */
 
 import $ from "https://deno.land/x/dax@0.39.2/mod.ts";
 
-const MOD = "infra/";
-const ENV_FILE = "infra/.env";
-
-// Canonical secret/config mapping from environment variables
-const flags = [
-  "--cloudflare-token=env:CLOUDFLARE_API_TOKEN",
-  "--ssh-private-key=env:SSH_PRIVATE_KEY",
-  "--ssh-public-key=env:SSH_PUBLIC_KEY",
-  "--openrouter-api-key=env:OPENROUTER_API_KEY",
-  "--gcp-credentials=env:GCP_CREDENTIALS_JSON",
-  // Map non-secret config from env for clarity/masking
-  "--backend-bucket=env:BACKEND_BUCKET",
-  "--backend-prefix=env:BACKEND_PREFIX",
-  "--gcp-project=env:GCP_PROJECT",
-  "--cloudflare-zone-id=env:CLOUDFLARE_ZONE_ID",
-  "--deployment-slot=env:DEPLOYMENT_SLOT",
-  "--admin-authorized-emails=env:ADMIN_AUTHORIZED_EMAILS",
-];
+const WRAPPER = "./infra/scripts/dagger.sh";
 
 /**
- * Execute a dagger command wrapped in pass-cli
+ * Execute a Dagger command through the Proton Pass wrapper.
  */
 async function runDagger(cmd: string, extraArgs: string[] = []) {
   console.log(`\n🚀 Running ${cmd}...\n`);
-  
-  // pass-cli run handles environment injection from our .env file
-  // dagger call then ingests those via the env: prefix
-  await $`pass-cli run --env-file ${ENV_FILE} -- dagger -m ${MOD} call ${cmd} ${flags} ${extraArgs}`;
+
+  await $`${WRAPPER} ${cmd} ${extraArgs}`;
 }
 
 /**

@@ -117,11 +117,51 @@ git check-ignore -v infra/.env
 It should print nothing (not ignored). If it does match, the `!infra/.env`
 negation in `.gitignore` should fix it.
 
-### Running dagger via pass-cli
+### Running dagger via Proton Pass CLI
 
 The Dagger module reads all secrets and config from environment variables when
 they are not passed explicitly. `pass-cli run` resolves the vault references
 in `infra/.env` and injects them before dagger starts.
+
+Before first use, install and authenticate the CLI once:
+
+```sh
+curl -fsSL https://proton.me/download/pass-cli/install.sh | bash
+pass-cli login
+```
+
+If `pass-cli` prints an error like `there is no session` or `This operation
+requires an authenticated client`, your Proton Pass login session has expired
+or is missing. Re-run `pass-cli login` before invoking the wrapper.
+
+The repo includes a wrapper that maps the resolved env vars into the module's
+explicit Dagger args:
+
+```sh
+./infra/scripts/dagger.sh plan
+./infra/scripts/dagger.sh deploy
+./infra/scripts/dagger.sh outputs
+./infra/scripts/dagger.sh destroy
+./infra/scripts/dagger.sh verify --domain tidelands.dev
+```
+
+### Running dagger with a Proton Pass PAT
+
+The module also supports a wrapper-free path where Dagger receives a single
+Proton Pass PAT and resolves the required `pass://...` references from
+`infra/.env` itself.
+
+Create a PAT, grant it access to the `tidelands.dev` vault, then run:
+
+```sh
+dagger call -m infra/ plan --proton-pass-pat env:PROTON_PASS_PAT
+dagger call -m infra/ deploy --proton-pass-pat env:PROTON_PASS_PAT
+```
+
+This path still reads non-secret config like `BACKEND_BUCKET`,
+`BACKEND_PREFIX`, `GCP_PROJECT`, `CLOUDFLARE_ZONE_ID`, and `DEPLOYMENT_SLOT`
+from `infra/.env`, but the module resolves the secret references internally
+via `pass-cli login --pat`.
 
 **Interactive session (enter once, call any function):**
 
@@ -170,7 +210,7 @@ needed — the reference stays the same, only the resolved value changes.
 
 Preview what Terraform would change. Safe to run at any time.
 
-With env loaded via `pass-cli run --env-file infra/.env`:
+With env loaded via `pass-cli run --env-file infra/.env` or `./infra/scripts/dagger.sh`:
 
 ```sh
 dagger call -m infra/ plan
@@ -216,6 +256,43 @@ Outputs JSON from `terraform output` on success, then builds the Astro site,
 uploads the Smallweb bundle, configures Goose, and starts Smallweb behind Caddy.
 Use `--manage-direct-dns-records=true` only for the slot that should receive
 live Cloudflare apex/wildcard traffic.
+
+### Consumer-friendly entrypoints
+
+For use from another repository or as a toolchain, prefer the explicit
+infrastructure and bundle lifecycle functions instead of the monorepo
+convenience wrapper:
+
+```sh
+# Build a deployable bundle from an app repo plus a Smallweb root.
+dagger call -m infra/ build-bundle \
+  --repo ./path/to/app-repo \
+  --smallweb-root ./path/to/.smallweb-root
+
+# Apply infrastructure only and return Terraform outputs JSON.
+dagger call -m infra/ apply \
+  --src ./path/to/infra
+
+# Assemble a bundle from already-built artifacts.
+dagger call -m infra/ smallweb-bundle-from-artifacts \
+  --smallweb-root ./path/to/.smallweb-root \
+  --dist ./path/to/dist \
+  --tutorial-dist ./path/to/tutorial-app/dist
+
+# Upload a prebuilt bundle to an existing host and configure runtime.
+dagger call -m infra/ deploy-bundle-to-host \
+  --src ./path/to/infra \
+  --bundle ./path/to/exported-bundle \
+  --host 203.0.113.10
+
+# Convenience composition: apply Terraform and deploy an already-built bundle.
+dagger call -m infra/ deploy-bundle \
+  --src ./path/to/infra \
+  --bundle ./path/to/exported-bundle
+```
+
+`deploy` remains available, but it assumes this repository's sibling-path
+layout for `repo`, `.smallweb-root`, and build outputs.
 
 ### Verify (non-mutating)
 
