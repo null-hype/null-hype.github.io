@@ -22,6 +22,17 @@ type SmallwebRootConfig = {
   [key: string]: unknown
 }
 
+type ModuleConfig = {
+  adminAuthorizedEmails: string
+  backendBucket: string
+  backendPrefix: string
+  cloudflareZoneId: string
+  deploymentSlot: string
+  gcpProject: string
+}
+
+const protonPassEnvCache = new Map<string, Promise<Record<string, string>>>()
+
 /**
  * Dagger is the operator entrypoint; Terraform owns infrastructure state.
  */
@@ -52,6 +63,7 @@ export class TidelaneInfra {
   @func()
   async plan(
     @argument({ defaultPath: "." }) src: Directory,
+    protonPassPat?: Secret,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
     backendBucket?: string,
@@ -67,14 +79,15 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
-    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
-    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
-    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
-    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
-    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
+    const moduleConfig = await this.resolveModuleConfig(src)
+    const bucket = backendBucket ?? moduleConfig.backendBucket
+    const prefix = backendPrefix ?? moduleConfig.backendPrefix
+    const project = gcpProject ?? moduleConfig.gcpProject
+    const zoneId = cloudflareZoneId ?? moduleConfig.cloudflareZoneId
+    const slot = deploymentSlot ?? moduleConfig.deploymentSlot ?? "blue"
 
-    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
-    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = await this.resolveSecretInput(src, protonPassPat, sshPublicKey, "SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
       backendBucket: bucket,
       backendPrefix: prefix,
@@ -89,7 +102,7 @@ export class TidelaneInfra {
       manageZoneSettings,
     })
 
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), token, pubKey, config)
+    return this.tfInit(src, await this.resolveGcpCredentials(src, protonPassPat, gcpCredentials), token, pubKey, config)
       .withExec(["terraform", "plan", ...this.tfVars(config)])
       .stdout()
   }
@@ -100,6 +113,7 @@ export class TidelaneInfra {
   @func()
   async outputs(
     @argument({ defaultPath: "." }) src: Directory,
+    protonPassPat?: Secret,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
     backendBucket?: string,
@@ -115,14 +129,15 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
-    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
-    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
-    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
-    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
-    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
+    const moduleConfig = await this.resolveModuleConfig(src)
+    const bucket = backendBucket ?? moduleConfig.backendBucket
+    const prefix = backendPrefix ?? moduleConfig.backendPrefix
+    const project = gcpProject ?? moduleConfig.gcpProject
+    const zoneId = cloudflareZoneId ?? moduleConfig.cloudflareZoneId
+    const slot = deploymentSlot ?? moduleConfig.deploymentSlot ?? "blue"
 
-    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
-    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = await this.resolveSecretInput(src, protonPassPat, sshPublicKey, "SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
       backendBucket: bucket,
       backendPrefix: prefix,
@@ -137,26 +152,75 @@ export class TidelaneInfra {
       manageZoneSettings,
     })
 
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), token, pubKey, config)
+    return this.tfInit(src, await this.resolveGcpCredentials(src, protonPassPat, gcpCredentials), token, pubKey, config)
       .withExec(["terraform", "output", "-json"])
       .stdout()
   }
 
   /**
-   * deploy — production-mutating. Applies Terraform, builds the public sites,
-   * uploads the Smallweb bundle, and configures runtime services on the VM.
+   * apply — production-mutating. Applies Terraform and returns output JSON.
+   * Prefer this from external consumers that want explicit infrastructure
+   * lifecycle steps separate from bundle deployment.
    */
   @func()
-  async deploy(
+  async apply(
     @argument({ defaultPath: "." }) src: Directory,
+    protonPassPat?: Secret,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
-    sshPrivateKey?: Secret,
-    openrouterApiKey?: Secret,
     backendBucket?: string,
     backendPrefix?: string,
     gcpProject?: string,
     cloudflareZoneId?: string,
+    deploymentSlot?: string,
+    manageDirectDnsRecords = true,
+    manageSlotOriginDnsRecord = true,
+    manageZoneSettings = false,
+    gcpZone = "us-central1-a",
+    domain = "tidelands.dev",
+    instanceName = "tidelane-smallweb",
+    gcpCredentials?: Secret,
+  ): Promise<string> {
+    const moduleConfig = await this.resolveModuleConfig(src)
+    const bucket = backendBucket ?? moduleConfig.backendBucket
+    const prefix = backendPrefix ?? moduleConfig.backendPrefix
+    const project = gcpProject ?? moduleConfig.gcpProject
+    const zoneId = cloudflareZoneId ?? moduleConfig.cloudflareZoneId
+    const slot = deploymentSlot ?? moduleConfig.deploymentSlot ?? "blue"
+
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = await this.resolveSecretInput(src, protonPassPat, sshPublicKey, "SSH_PUBLIC_KEY", "ssh-public-key")
+    const config = this.deploymentConfig({
+      backendBucket: bucket,
+      backendPrefix: prefix,
+      cloudflareZoneId: zoneId,
+      deploymentSlot: slot,
+      domain,
+      gcpProject: project,
+      gcpZone,
+      instanceName,
+      manageDirectDnsRecords,
+      manageSlotOriginDnsRecord,
+      manageZoneSettings,
+    })
+
+    return this.applyAndOutput(
+      src,
+      await this.resolveGcpCredentials(src, protonPassPat, gcpCredentials),
+      token,
+      pubKey,
+      config,
+    )
+  }
+
+  /**
+   * deploy — production-mutating. Applies Terraform, builds the public sites,
+   * uploads the Smallweb bundle, and configures runtime services on the VM.
+   * This is a convenience entrypoint for this repository's current layout.
+   */
+  @func()
+  async deploy(
+    @argument({ defaultPath: "." }) src: Directory,
     @argument({ defaultPath: "..", ignore: [
       ".git",
       ".tmp-smallweb-mutagen",
@@ -170,6 +234,15 @@ export class TidelaneInfra {
       "tutorial-app/node_modules",
     ] }) repo: Directory,
     @argument({ defaultPath: "../.smallweb-root", ignore: [".vscode/"] }) smallwebRoot: Directory,
+    protonPassPat?: Secret,
+    cloudflareToken?: Secret,
+    sshPublicKey?: Secret,
+    sshPrivateKey?: Secret,
+    openrouterApiKey?: Secret,
+    backendBucket?: string,
+    backendPrefix?: string,
+    gcpProject?: string,
+    cloudflareZoneId?: string,
     adminAuthorizedEmails?: string,
     deploymentSlot?: string,
     manageDirectDnsRecords = true,
@@ -181,17 +254,18 @@ export class TidelaneInfra {
     publicGooseSessionApiUrl = "",
     gcpCredentials?: Secret,
   ): Promise<string> {
-    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
-    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
-    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
-    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
-    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
-    const authorizedEmails = adminAuthorizedEmails ?? process.env.ADMIN_AUTHORIZED_EMAILS ?? ""
+    const moduleConfig = await this.resolveModuleConfig(src)
+    const bucket = backendBucket ?? moduleConfig.backendBucket
+    const prefix = backendPrefix ?? moduleConfig.backendPrefix
+    const project = gcpProject ?? moduleConfig.gcpProject
+    const zoneId = cloudflareZoneId ?? moduleConfig.cloudflareZoneId
+    const slot = deploymentSlot ?? moduleConfig.deploymentSlot ?? "blue"
+    const authorizedEmails = adminAuthorizedEmails ?? moduleConfig.adminAuthorizedEmails
 
-    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
-    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
-    const privKey = sshPrivateKey ?? this.resolveSecret("SSH_PRIVATE_KEY", "ssh-private-key")
-    const openrouterKey = openrouterApiKey ?? this.resolveSecret("OPENROUTER_API_KEY", "openrouter-api-key")
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = await this.resolveSecretInput(src, protonPassPat, sshPublicKey, "SSH_PUBLIC_KEY", "ssh-public-key")
+    const privKey = await this.resolveSecretInput(src, protonPassPat, sshPrivateKey, "SSH_PRIVATE_KEY", "ssh-private-key")
+    const openrouterKey = await this.resolveSecretInput(src, protonPassPat, openrouterApiKey, "OPENROUTER_API_KEY", "openrouter-api-key")
     const config = this.deploymentConfig({
       backendBucket: bucket,
       backendPrefix: prefix,
@@ -206,20 +280,89 @@ export class TidelaneInfra {
       manageZoneSettings,
     })
     const sessionApiUrl = publicGooseSessionApiUrl || `https://admin.${config.domain}/api/goose-sessions`
+    const bundle = await this.buildBundle(repo, smallwebRoot, authorizedEmails, sessionApiUrl)
 
-    const applyNonce = new Date().toISOString()
-    const outputsJson = await this.tfInit(
+    return this.deployBundle(
       src,
-      this.resolveGcpCredentials(gcpCredentials),
+      bundle,
+      protonPassPat,
+      token,
+      pubKey,
+      privKey,
+      openrouterKey,
+      bucket,
+      prefix,
+      project,
+      zoneId,
+      slot,
+      manageDirectDnsRecords,
+      manageSlotOriginDnsRecord,
+      manageZoneSettings,
+      gcpZone,
+      config.domain,
+      instanceName,
+      await this.resolveGcpCredentials(src, protonPassPat, gcpCredentials) ?? undefined,
+    )
+  }
+
+  /**
+   * deployBundle — production-mutating. Applies Terraform and deploys a
+   * prebuilt Smallweb bundle. Prefer this entrypoint from other repositories.
+   */
+  @func()
+  async deployBundle(
+    @argument({ defaultPath: "." }) src: Directory,
+    bundle: Directory,
+    protonPassPat?: Secret,
+    cloudflareToken?: Secret,
+    sshPublicKey?: Secret,
+    sshPrivateKey?: Secret,
+    openrouterApiKey?: Secret,
+    backendBucket?: string,
+    backendPrefix?: string,
+    gcpProject?: string,
+    cloudflareZoneId?: string,
+    deploymentSlot?: string,
+    manageDirectDnsRecords = true,
+    manageSlotOriginDnsRecord = true,
+    manageZoneSettings = false,
+    gcpZone = "us-central1-a",
+    domain = "tidelands.dev",
+    instanceName = "tidelane-smallweb",
+    gcpCredentials?: Secret,
+  ): Promise<string> {
+    const moduleConfig = await this.resolveModuleConfig(src)
+    const bucket = backendBucket ?? moduleConfig.backendBucket
+    const prefix = backendPrefix ?? moduleConfig.backendPrefix
+    const project = gcpProject ?? moduleConfig.gcpProject
+    const zoneId = cloudflareZoneId ?? moduleConfig.cloudflareZoneId
+    const slot = deploymentSlot ?? moduleConfig.deploymentSlot ?? "blue"
+
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = await this.resolveSecretInput(src, protonPassPat, sshPublicKey, "SSH_PUBLIC_KEY", "ssh-public-key")
+    const privKey = await this.resolveSecretInput(src, protonPassPat, sshPrivateKey, "SSH_PRIVATE_KEY", "ssh-private-key")
+    const openrouterKey = await this.resolveSecretInput(src, protonPassPat, openrouterApiKey, "OPENROUTER_API_KEY", "openrouter-api-key")
+    const config = this.deploymentConfig({
+      backendBucket: bucket,
+      backendPrefix: prefix,
+      cloudflareZoneId: zoneId,
+      deploymentSlot: slot,
+      domain,
+      gcpProject: project,
+      gcpZone,
+      instanceName,
+      manageDirectDnsRecords,
+      manageSlotOriginDnsRecord,
+      manageZoneSettings,
+    })
+
+    const outputsJson = await this.applyAndOutput(
+      src,
+      await this.resolveGcpCredentials(src, protonPassPat, gcpCredentials),
       token,
       pubKey,
       config,
     )
-      .withEnvVariable("DAGGER_TERRAFORM_APPLY_NONCE", applyNonce)
-      .withExec(["terraform", "apply", "-auto-approve", ...this.tfVars(config)])
-      .withExec(["terraform", "apply", "-refresh-only", "-auto-approve", ...this.tfVars(config)])
-      .withExec(["terraform", "output", "-json"])
-      .stdout()
 
     const outputs = JSON.parse(outputsJson) as Record<string, { value: string }>
     const ipv4 = outputs["instance_ipv4"]?.value
@@ -227,13 +370,11 @@ export class TidelaneInfra {
       throw new Error(`terraform outputs missing instance_ipv4: ${outputsJson}`)
     }
 
-    const dist = this.buildAstroDist(repo, sessionApiUrl)
-    const tutorialDist = this.buildTutorialDist(repo)
-    const bundle = await this.smallwebBundle(smallwebRoot, dist, tutorialDist, authorizedEmails)
-    const runtimeLog = await this.deployRuntime(
+    const runtimeLog = await this.deployBundleToHost(
+      src,
       bundle,
-      src.file("scripts/bootstrap.sh"),
       ipv4,
+      protonPassPat,
       config.domain,
       privKey,
       token,
@@ -249,6 +390,7 @@ export class TidelaneInfra {
   @func()
   async destroy(
     @argument({ defaultPath: "." }) src: Directory,
+    protonPassPat?: Secret,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
     backendBucket?: string,
@@ -264,14 +406,15 @@ export class TidelaneInfra {
     instanceName = "tidelane-smallweb",
     gcpCredentials?: Secret,
   ): Promise<string> {
-    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
-    const prefix = backendPrefix ?? process.env.BACKEND_PREFIX ?? ""
-    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
-    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
-    const slot = deploymentSlot ?? process.env.DEPLOYMENT_SLOT ?? "blue"
+    const moduleConfig = await this.resolveModuleConfig(src)
+    const bucket = backendBucket ?? moduleConfig.backendBucket
+    const prefix = backendPrefix ?? moduleConfig.backendPrefix
+    const project = gcpProject ?? moduleConfig.gcpProject
+    const zoneId = cloudflareZoneId ?? moduleConfig.cloudflareZoneId
+    const slot = deploymentSlot ?? moduleConfig.deploymentSlot ?? "blue"
 
-    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
-    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = await this.resolveSecretInput(src, protonPassPat, sshPublicKey, "SSH_PUBLIC_KEY", "ssh-public-key")
     const config = this.deploymentConfig({
       backendBucket: bucket,
       backendPrefix: prefix,
@@ -286,7 +429,7 @@ export class TidelaneInfra {
       manageZoneSettings,
     })
 
-    return this.tfInit(src, this.resolveGcpCredentials(gcpCredentials), token, pubKey, config)
+    return this.tfInit(src, await this.resolveGcpCredentials(src, protonPassPat, gcpCredentials), token, pubKey, config)
       .withEnvVariable("DAGGER_TERRAFORM_DESTROY_NONCE", new Date().toISOString())
       .withExec(["terraform", "destroy", "-auto-approve", ...this.tfVars(config)])
       .stdout()
@@ -354,6 +497,7 @@ echo "Results: $PASS passed, $FAIL failed"
   @func()
   async check(
     @argument({ defaultPath: "." }) src: Directory,
+    protonPassPat?: Secret,
     cloudflareToken?: Secret,
     sshPublicKey?: Secret,
     backendBucket?: string,
@@ -363,14 +507,15 @@ echo "Results: $PASS passed, $FAIL failed"
     preserveOnFailure = false,
     gcpCredentials?: Secret,
   ): Promise<string> {
-    const bucket = backendBucket ?? process.env.BACKEND_BUCKET ?? ""
-    const project = gcpProject ?? process.env.GCP_PROJECT ?? ""
-    const zoneId = cloudflareZoneId ?? process.env.CLOUDFLARE_ZONE_ID ?? ""
-    const prefixRoot = backendPrefixRoot ?? process.env.BACKEND_PREFIX_ROOT ?? "tidelands-test"
+    const moduleConfig = await this.resolveModuleConfig(src)
+    const bucket = backendBucket ?? moduleConfig.backendBucket
+    const project = gcpProject ?? moduleConfig.gcpProject
+    const zoneId = cloudflareZoneId ?? moduleConfig.cloudflareZoneId
+    const prefixRoot = backendPrefixRoot ?? "tidelands-test"
 
-    const token = cloudflareToken ?? this.resolveSecret("CLOUDFLARE_API_TOKEN", "cloudflare-token")
-    const pubKey = sshPublicKey ?? this.resolveSecret("SSH_PUBLIC_KEY", "ssh-public-key")
-    const resolvedGcpCredentials = this.resolveGcpCredentials(gcpCredentials)
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const pubKey = await this.resolveSecretInput(src, protonPassPat, sshPublicKey, "SSH_PUBLIC_KEY", "ssh-public-key")
+    const resolvedGcpCredentials = await this.resolveGcpCredentials(src, protonPassPat, gcpCredentials)
     let ctr = dag.container()
       .from("golang:1.22-bookworm")
       .withDirectory("/workspace", src)
@@ -415,7 +560,7 @@ echo "Results: $PASS passed, $FAIL failed"
    * moduleCheck — preview-safe Dagger module build and smoke test.
    */
   @func()
-  async moduleCheck(src: Directory): Promise<string> {
+  async moduleCheck(@argument({ defaultPath: "." }) src: Directory): Promise<string> {
     return dag.container()
       .from("node:22-bookworm")
       .withDirectory("/workspace", src)
@@ -427,13 +572,78 @@ echo "Results: $PASS passed, $FAIL failed"
   }
 
   /**
-   * smallwebBundle — creates a deployable bundle from Smallweb root + public site builds.
+   * deployBundleToHost — production-mutating. Uploads a prebuilt bundle to an
+   * existing host and configures runtime services there. Prefer this from
+   * external consumers that want explicit runtime deployment after infra apply.
+   */
+  @func()
+  async deployBundleToHost(
+    @argument({ defaultPath: "." }) src: Directory,
+    bundle: Directory,
+    host: string,
+    protonPassPat?: Secret,
+    domain = "tidelands.dev",
+    sshPrivateKey?: Secret,
+    cloudflareToken?: Secret,
+    openrouterApiKey?: Secret,
+  ): Promise<string> {
+    const privKey = await this.resolveSecretInput(src, protonPassPat, sshPrivateKey, "SSH_PRIVATE_KEY", "ssh-private-key")
+    const token = await this.resolveSecretInput(src, protonPassPat, cloudflareToken, "CLOUDFLARE_API_TOKEN", "cloudflare-token")
+    const openrouterKey = await this.resolveSecretInput(src, protonPassPat, openrouterApiKey, "OPENROUTER_API_KEY", "openrouter-api-key")
+
+    return this.deployRuntime(
+      bundle,
+      src.file("scripts/bootstrap.sh"),
+      host,
+      domain,
+      privKey,
+      token,
+      openrouterKey,
+    )
+  }
+
+  /**
+   * buildBundle — creates a deployable bundle from an app repository plus a
+   * Smallweb root directory. Prefer this from external consumers.
+   */
+  @func()
+  async buildBundle(
+    repo: Directory,
+    smallwebRoot: Directory,
+    adminAuthorizedEmails = "",
+    publicGooseSessionApiUrl = "",
+    domain = "tidelands.dev",
+  ): Promise<Directory> {
+    const sessionApiUrl = publicGooseSessionApiUrl || `https://admin.${domain}/api/goose-sessions`
+    const dist = this.buildAstroDist(repo, sessionApiUrl)
+    const tutorialDist = this.buildTutorialDist(repo)
+
+    return this.smallwebBundleFromArtifacts(smallwebRoot, dist, tutorialDist, adminAuthorizedEmails)
+  }
+
+  /**
+   * smallwebBundle — creates a deployable bundle from the current monorepo's
+   * default artifact locations. Kept for operator convenience.
    */
   @func()
   async smallwebBundle(
     @argument({ defaultPath: "../.smallweb-root", ignore: [".vscode/"] }) smallwebRoot: Directory,
     @argument({ defaultPath: "../dist" }) dist: Directory,
     @argument({ defaultPath: "../tutorial-app/dist" }) tutorialDist: Directory,
+    adminAuthorizedEmails = "",
+  ): Promise<Directory> {
+    return this.smallwebBundleFromArtifacts(smallwebRoot, dist, tutorialDist, adminAuthorizedEmails)
+  }
+
+  /**
+   * smallwebBundleFromArtifacts — creates a deployable bundle from explicit
+   * build artifacts. Prefer this from external consumers.
+   */
+  @func()
+  async smallwebBundleFromArtifacts(
+    smallwebRoot: Directory,
+    dist: Directory,
+    tutorialDist: Directory,
     adminAuthorizedEmails = "",
   ): Promise<Directory> {
     return dag.directory()
@@ -624,6 +834,23 @@ systemctl --user --no-pager --plain status smallweb | sed -n '1,20p'
 `
   }
 
+  private applyAndOutput(
+    src: Directory,
+    gcpCredentials: Secret | null,
+    cloudflareToken: Secret,
+    sshPublicKey: Secret,
+    config: DeploymentConfig,
+  ): Promise<string> {
+    const applyNonce = new Date().toISOString()
+
+    return this.tfInit(src, gcpCredentials, cloudflareToken, sshPublicKey, config)
+      .withEnvVariable("DAGGER_TERRAFORM_APPLY_NONCE", applyNonce)
+      .withExec(["terraform", "apply", "-auto-approve", ...this.tfVars(config)])
+      .withExec(["terraform", "apply", "-refresh-only", "-auto-approve", ...this.tfVars(config)])
+      .withExec(["terraform", "output", "-json"])
+      .stdout()
+  }
+
   private tfInit(
     src: Directory,
     gcpCredentials: Secret | null,
@@ -683,9 +910,147 @@ systemctl --user --no-pager --plain status smallweb | sed -n '1,20p'
     return dag.setSecret(name, val)
   }
 
-  private resolveGcpCredentials(gcpCredentials?: Secret): Secret | null {
+  private async resolveModuleConfig(src: Directory): Promise<ModuleConfig> {
+    const env = await this.loadEnvFile(src)
+
+    return {
+      adminAuthorizedEmails: env["ADMIN_AUTHORIZED_EMAILS"] ?? process.env.ADMIN_AUTHORIZED_EMAILS ?? "",
+      backendBucket: env["BACKEND_BUCKET"] ?? process.env.BACKEND_BUCKET ?? "",
+      backendPrefix: env["BACKEND_PREFIX"] ?? process.env.BACKEND_PREFIX ?? "",
+      cloudflareZoneId: env["CLOUDFLARE_ZONE_ID"] ?? process.env.CLOUDFLARE_ZONE_ID ?? "",
+      deploymentSlot: env["DEPLOYMENT_SLOT"] ?? process.env.DEPLOYMENT_SLOT ?? "blue",
+      gcpProject: env["GCP_PROJECT"] ?? process.env.GCP_PROJECT ?? "",
+    }
+  }
+
+  private async resolveSecretInput(
+    src: Directory,
+    protonPassPat: Secret | undefined,
+    provided: Secret | undefined,
+    envVar: string,
+    secretName: string,
+  ): Promise<Secret> {
+    if (provided) {
+      return provided
+    }
+
+    if (protonPassPat) {
+      const env = await this.loadEnvFile(src)
+      const resolved = await this.resolveProtonPassEnv(env, protonPassPat)
+      const plaintext = resolved[envVar]
+      if (plaintext === undefined) {
+        throw new Error(`${envVar} is not configured as a Proton Pass reference in .env`)
+      }
+      return dag.setSecret(secretName, plaintext)
+    }
+
+    return this.resolveSecret(envVar, secretName)
+  }
+
+  private async loadEnvFile(src: Directory): Promise<Record<string, string>> {
+    try {
+      const raw = await src.file(".env").contents()
+      return this.parseEnvFile(raw)
+    } catch {
+      return {}
+    }
+  }
+
+  private parseEnvFile(raw: string): Record<string, string> {
+    const env: Record<string, string> = {}
+
+    for (const line of raw.split(/\r?\n/)) {
+      const trimmed = line.trim()
+      if (trimmed === "" || trimmed.startsWith("#")) {
+        continue
+      }
+
+      const idx = line.indexOf("=")
+      if (idx === -1) {
+        continue
+      }
+
+      const key = line.slice(0, idx).trim()
+      const value = line.slice(idx + 1)
+      env[key] = value
+    }
+
+    return env
+  }
+
+  private async resolveProtonPassEnv(env: Record<string, string>, protonPassPat: Secret): Promise<Record<string, string>> {
+    const refs = Object.fromEntries(
+      Object.entries(env).filter(([, value]) => value.startsWith("pass://")),
+    )
+    const cacheKey = JSON.stringify(refs)
+
+    let pending = protonPassEnvCache.get(cacheKey)
+    if (!pending) {
+      pending = this.resolveProtonPassValues(refs, protonPassPat)
+      protonPassEnvCache.set(cacheKey, pending)
+    }
+
+    return pending
+  }
+
+  private async resolveProtonPassValues(refs: Record<string, string>, protonPassPat: Secret): Promise<Record<string, string>> {
+    if (Object.keys(refs).length === 0) {
+      return {}
+    }
+
+    const resolver = dag.container()
+      .from("node:22-bookworm")
+      .withSecretVariable("PROTON_PASS_PAT", protonPassPat)
+      .withNewFile("/workspace/resolve.mjs", `
+import { execFileSync } from "node:child_process"
+import { readFileSync, writeFileSync } from "node:fs"
+
+const refs = JSON.parse(readFileSync("/workspace/refs.json", "utf8"))
+const resolved = {}
+
+for (const [name, ref] of Object.entries(refs)) {
+  const value = execFileSync("pass-cli", ["item", "view", ref], { encoding: "utf8" })
+  resolved[name] = value.replace(/\\n$/, "")
+}
+writeFileSync("/workspace/resolved.json", JSON.stringify(resolved))
+`, { permissions: 0o755 })
+      .withNewFile("/workspace/refs.json", `${JSON.stringify(refs)}\n`)
+      .withExec([
+        "bash",
+        "-lc",
+        [
+          "set -euo pipefail",
+          "apt-get update",
+          "apt-get install -y --no-install-recommends bash ca-certificates curl jq",
+          "curl -fsSL https://proton.me/download/pass-cli/install.sh | bash",
+          "export PATH=\"$HOME/.local/bin:$PATH\"",
+          "export PROTON_PASS_KEY_PROVIDER=fs",
+          "export PROTON_PASS_SESSION_DIR=/workspace/.proton-pass-session",
+          "pass-cli login --pat \"$PROTON_PASS_PAT\" >/dev/null",
+          "node /workspace/resolve.mjs",
+        ].join(" && "),
+      ])
+
+    return JSON.parse(await resolver.file("/workspace/resolved.json").contents()) as Record<string, string>
+  }
+
+  private async resolveGcpCredentials(
+    src: Directory,
+    protonPassPat: Secret | undefined,
+    gcpCredentials?: Secret,
+  ): Promise<Secret | null> {
     if (gcpCredentials) {
       return gcpCredentials
+    }
+
+    if (protonPassPat) {
+      const env = await this.loadEnvFile(src)
+      const resolved = await this.resolveProtonPassEnv(env, protonPassPat)
+      const credentials = resolved["GCP_CREDENTIALS_JSON"]
+      if (credentials && credentials.trim() !== "") {
+        return dag.setSecret("gcp-credentials", credentials)
+      }
+      return null
     }
 
     const envCredentials = process.env.GCP_CREDENTIALS_JSON
