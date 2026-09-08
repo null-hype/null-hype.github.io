@@ -570,6 +570,7 @@ function renderPage() {
       }
 
       function onMessage(event) {
+        if (event.source !== window.parent) return;
         const message = event.data;
 
         if (
@@ -602,6 +603,10 @@ function renderPage() {
       }
 
       window.addEventListener('message', onMessage);
+      window.parent.postMessage({
+        type: 'lesson-preview-ready',
+        source: 'tk-warm-log-preview',
+      }, '*');
       window.addEventListener('beforeunload', () => {
         editor?.dispose();
         model?.dispose();
