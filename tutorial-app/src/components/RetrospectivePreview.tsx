@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
 export default function RetrospectivePreview() {
- const endpoint = import.meta.env.PUBLIC_RETRO_RUNTIME_URL || 'http://localhost:8812';
+ const endpoint = import.meta.env.PUBLIC_RETRO_RUNTIME_URL || (import.meta.env.DEV
+  ? 'http://localhost:8812' : 'https://retrospective-mcp.tidelands.dev');
  const inspector = `${endpoint}/inspector/?autoConnect=${encodeURIComponent(`${endpoint}/mcp`)}&tab=tools`;
  const [generation, setGeneration] = useState(0);
  return <section aria-label="Retrospective investigation" style={{marginTop:'1.5rem'}}>

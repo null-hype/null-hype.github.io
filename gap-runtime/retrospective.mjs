@@ -29,7 +29,10 @@ const schema = z.object({
  pair: z.enum([...pairs.keys()]).describe('Choose one exported before..after snapshot pair. Both snapshots belong to the original comparison.'),
  category: z.enum(['all','session','worktree','monitoring','other']).describe('Start with all. Categories are path heuristics, not judgments of progress.')
 }).strict();
-const server = new MCPServer({name:'restic-retrospective',version:'0.1.0',description:'Read-only investigation of exported restic evidence through native Dagger MCP.',allowedOrigins:['localhost','127.0.0.1'],cors:{origin:['http://localhost:6274','http://localhost:4322']}});
+const publicOrigin = process.env.RETRO_PUBLIC_ORIGIN;
+if (publicOrigin && new URL(publicOrigin).protocol !== 'https:') throw new Error('RETRO_PUBLIC_ORIGIN must use HTTPS.');
+const publicHosts = publicOrigin ? [new URL(publicOrigin).hostname] : [];
+const server = new MCPServer({name:'restic-retrospective',version:'0.1.0',description:'Read-only investigation of exported restic evidence through native Dagger MCP.',allowedHosts:publicHosts,allowedOrigins:['localhost','127.0.0.1',...publicHosts],cors:{origin:['http://localhost:6274','http://localhost:4322',...(publicOrigin ? [publicOrigin] : [])]}});
 // Serve the real Inspector alongside MCP so an authenticated deployment can
 // embed a single origin. This preserves Inspector itself rather than recreating it.
 server.app.all('/inspector/*', async c => {
@@ -44,7 +47,7 @@ server.app.all('/inspector/*', async c => {
  headers.set('cache-control','no-store');
  headers.set('cross-origin-embedder-policy','require-corp');
  headers.set('cross-origin-resource-policy','cross-origin');
- headers.set('content-security-policy',"frame-ancestors 'self' http://localhost:4322 https://null-hype.tidelands.dev");
+ headers.set('content-security-policy',"frame-ancestors 'self' http://localhost:4322 https://null-hype.tidelands.dev https://deploy-preview-38--null-hype.netlify.app");
  return new Response(upstream.body,{status:upstream.status,headers});
 });
 server.get('/inspector', c => c.redirect('/inspector/' + new URL(c.req.url).search));

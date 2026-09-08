@@ -15,8 +15,9 @@ Use `DOCKER_CONFIG` if your Dagger engine needs the existing public-image
 configuration. No restic credentials are required to read exported evidence.
 
 Start the tutorial app and open `/part-1/chapter-1/lesson-4/`. The preview
-uses `http://localhost:8812` by default. `PUBLIC_RETRO_RUNTIME_URL` configures
-the eventual authenticated endpoint; it must contain no credential.
+uses `http://localhost:8812` in development and
+`https://retrospective-mcp.tidelands.dev` in production. `PUBLIC_RETRO_RUNTIME_URL`
+overrides the endpoint; it must contain no credential.
 
 The bridge advertises existing snapshot pairs as schema enums and enforces
 pair/category choices. It does not expose native Dagger's generic tools,
@@ -35,8 +36,13 @@ from the evidence catalog and fixed categories; Pkl-driven editor hints are
 not implemented in this slice. The frontend stays suitable for static Netlify
 hosting, but the native process requires a VM and a supervised deployment.
 
-Public deployment is blocked by Cloudflare Access application creation
-returning HTTP 403 (CIT-66). No private endpoint was published. Configure
-Access before adding a public tunnel route, and verify sign-in plus iframe
-cookie behavior before shipping the authenticated preview. The current
-runtime is intentionally bound to loopback and only allows local origins.
+The legacy Cloudflare Access application and policy were repurposed for
+`retrospective-mcp.tidelands.dev` after the API token gained Access write
+permission (CIT-66). A dedicated tunnel routes to this VM's loopback port
+8812, protected by an email allow policy. The bridge and connector run under
+a local process supervisor. That supervisor survives terminal disconnects
+but is not installed as a boot service; its current deployment is under `/tmp`.
+Set `RETRO_PUBLIC_ORIGIN=https://retrospective-mcp.tidelands.dev` for the
+bridge's Host/Origin checks. The Inspector still binds to local port 6274.
+The public sign-in redirect has been checked; authenticated public calls and
+iframe cookie behavior require sign-in verification before merging this draft.
