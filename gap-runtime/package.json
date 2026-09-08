@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "retrospective": "node --env-file-if-exists=.env retrospective.mjs",
+    "test:retrospective": "node --test retrospective.test.mjs",
     "start": "node --env-file-if-exists=.env server.mjs",
     "test": "node --env-file-if-exists=.env --test tests/*.test.mjs",
     "test:dagger": "GAP_DAGGER_TEST=1 node --env-file-if-exists=.env --test tests/dagger.test.mjs",
     "inspector": "mcp-inspect --port 6274 --no-open"
   },
   "dependencies": {
+    "@modelcontextprotocol/client": "2.0.0",
     "mcp-use": "2.4.3",
     "zod": "4.3.6"
   },
