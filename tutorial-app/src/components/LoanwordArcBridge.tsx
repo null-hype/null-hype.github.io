@@ -8,6 +8,7 @@ import {
   valueToText,
 } from '../lib/loanwordArcProtocol';
 import type { LoanwordDiagnostic, LoanwordLessonState } from '../lib/loanwordArcProtocol';
+import './LoanwordArcBridge.css';
 
 type DocumentRecord = Record<
   string,
@@ -95,22 +96,6 @@ export default function LoanwordArcBridge({
         return;
       }
 
-      // If it's the fingerspitzengefuhl lesson, we want to keep the squiggle even if solved.
-      if (resolvedConfig.lessonId === 'fingerspitzengefuhl' && result.solved) {
-        result.diagnostics.push({
-          code: 'loanword-unadmitted',
-          filePath: resolvedConfig.translationFile,
-          message: "This word isn't part of English yet.",
-          data: { peek: runtime.peek.translation },
-          range: {
-            start: { line: 0, character: 0 },
-            end: { line: 0, character: translationText.trim().length || 1 },
-          },
-          severity: 'warning',
-          source: 'Loanword Protocol',
-        });
-      }
-
       setProtocolState({
         ...result,
         revision,
@@ -143,19 +128,21 @@ export default function LoanwordArcBridge({
       source: 'tk-loanword-arc-bridge',
       type: 'lesson-state',
     };
-    const delays = [300, 900, 1600, 3200, 6400];
-    const timeoutIds = delays.map((delay) =>
-      window.setTimeout(() => {
-        for (const frame of getPreviewFrames()) {
-          frame.contentWindow?.postMessage(message, '*');
-        }
-      }, delay),
-    );
+    const send = (frame: HTMLIFrameElement) => frame.contentWindow?.postMessage(message, '*');
+    const onReady = (event: MessageEvent) => {
+      if (event.data?.type !== 'lesson-preview-ready' || event.data?.source !== 'tk-warm-log-preview') {
+        return;
+      }
+      const frame = getPreviewFrames().find((frame) => frame.contentWindow === event.source);
+      if (frame) send(frame);
+    };
+    window.addEventListener('message', onReady);
+    // Existing frames receive edits immediately; newly started or reloaded
+    // previews request the latest state, regardless of WebContainer boot time.
+    getPreviewFrames().forEach(send);
 
     return () => {
-      for (const timeoutId of timeoutIds) {
-        window.clearTimeout(timeoutId);
-      }
+      window.removeEventListener('message', onReady);
     };
   }, [protocolState]);
 
@@ -178,7 +165,52 @@ export default function LoanwordArcBridge({
     return installLoanwordOverlay(diagnostics, documentText);
   }, [currentDocument?.filePath, currentDocument?.value, protocolState]);
 
-  return null;
+  const sourcePreserved = translationText.trim() === runtime.canonicalTranslation;
+  const state = protocolState?.previewState;
+  const feedback = state === 'completed'
+    ? 'Accepted by this lesson’s rules. The preview can now show the completion example.'
+    : state === 'loanword-pending-admission'
+      ? `The source form is preserved. Add its entry to ${resolvedConfig.vocabularyFile?.slice(1)} to pass the second check.`
+      : state === 'paraphrase-loss'
+        ? `This lesson requires the source form “${runtime.canonicalTranslation}”. Edit translation.en to preserve it.`
+        : 'Enter a proposal in translation.en to check it.';
+
+  return (
+    <section className="gap-check" aria-label="Lesson validation">
+      <div className="gap-check-heading">
+        <span className="gap-check-eyebrow">Proposal → rule → result</span>
+        <strong className="gap-check-badge" data-state={state}>
+          {state === 'completed' ? 'Accepted' : state && state !== 'idle' ? 'Blocked' : 'Awaiting input'}
+        </strong>
+      </div>
+      <p className="gap-check-proposal"><span>Your proposal</span> <code>{translationText.trim() || '…'}</code></p>
+      <ol className="gap-check-gates">
+        <li>
+          <span aria-hidden="true">{sourcePreserved ? '✓' : '○'}</span>
+          <span>Preserve the source form <code>{runtime.canonicalTranslation}</code></span>
+        </li>
+        {runtime.requiresVocabularyAdmission && <li>
+          <span aria-hidden="true">{protocolState?.solved ? '✓' : '○'}</span>
+          <span>Admit the word to your vocabulary</span>
+        </li>}
+      </ol>
+      <p role="status" aria-live="polite" className="gap-check-feedback">{feedback}</p>
+      <div className="gap-check-actions">
+        <button type="button" onClick={() => tutorialStore.setSelectedFile(resolvedConfig.translationFile)}>Edit proposal</button>
+        {runtime.requiresVocabularyAdmission && <button type="button" onClick={() => tutorialStore.setSelectedFile(resolvedConfig.vocabularyFile)}>Open vocabulary</button>}
+      </div>
+      <details className="gap-check-details">
+        <summary>Inspect the rule and runtime</summary>
+        <p><code>LoanwordRules.pkl</code> describes the rule. The browser reads <code>loanword-runtime.json</code> and checks your proposal against it.</p>
+        <div className="gap-check-actions">
+          <button type="button" onClick={() => tutorialStore.setSelectedFile('/LoanwordRules.pkl')}>View Pkl rule</button>
+          <button type="button" onClick={() => tutorialStore.setSelectedFile(resolvedConfig.runtimeFile)}>View runtime JSON</button>
+        </div>
+        <p>This prototype compares the source form and checks the vocabulary entry’s text. It does not run a Pkl evaluator or judge translation quality. Editing the Pkl rule does not regenerate the runtime JSON.</p>
+        <p>The Warm Log is a scripted illustration of the result, not a live agent execution trace.</p>
+      </details>
+    </section>
+  );
 }
 
 function getPreviewFrames() {
