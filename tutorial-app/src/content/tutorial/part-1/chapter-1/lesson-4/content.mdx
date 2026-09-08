@@ -1,0 +1,21 @@
+---
+type: lesson
+title: Investigate a snapshot pair
+editor: false
+terminal: false
+previews: false
+---
+
+import RetrospectivePreview from '../../../../../components/RetrospectivePreview';
+
+What changed between two backups of an agent workspace?
+
+This investigation uses evidence exported by our restic retrospective tool. Its native Dagger MCP method runs behind the Inspector embedded below. The available snapshot pairs are advertised as tool-schema choices, so a person or agent can discover valid inputs before making a call.
+
+<RetrospectivePreview client:load />
+
+Start with **all**. Read the category counts and changed paths, then repeat the call with **session**. A monitoring-log change is evidence of file activity; it does not establish that an agent made progress. An empty session result does not establish that no work occurred.
+
+The result identifies the before and after snapshots and carries the extractor's limitations. It reads an existing export, not a refreshed repository. Transcript text is not returned by this tool.
+
+This first slice restores the embedded investigation. Its schema choices come from the evidence catalog and a fixed category list. Pkl-derived editor hints are the next integration; they are not implemented here yet.
