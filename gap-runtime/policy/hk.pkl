@@ -1,0 +1,23 @@
+amends "package://github.com/jdx/hk/releases/download/v1.57.0/hk@1.57.0#/Config.pkl"
+import "admitted.pkl"
+import "unadmitted.pkl"
+// hk's bundled pklr evaluates policy expressions. Node only serializes values.
+env {
+  ["GAP_ADMITTED_CANONICAL"] = admitted.canonicalWord
+  ["GAP_ADMITTED_REQUIRES"] = admitted.requireVocabularyAdmission.toString()
+  ["GAP_ADMITTED_TOOL"] = admitted.allowedTool
+  ["GAP_ADMITTED_MAX"] = admitted.translationMaxLength.toString()
+  ["GAP_ADMITTED_MEMBER"] = admitted.vocabulary.contains(admitted.canonicalWord).toString()
+  ["GAP_UNADMITTED_CANONICAL"] = unadmitted.canonicalWord
+  ["GAP_UNADMITTED_REQUIRES"] = unadmitted.requireVocabularyAdmission.toString()
+  ["GAP_UNADMITTED_TOOL"] = unadmitted.allowedTool
+  ["GAP_UNADMITTED_MAX"] = unadmitted.translationMaxLength.toString()
+  ["GAP_UNADMITTED_MEMBER"] = unadmitted.vocabulary.contains(admitted.canonicalWord).toString()
+}
+hooks {
+  ["check"] {
+    steps {
+      ["compile-policy"] { check = "node write-compiled.cjs" }
+    }
+  }
+}

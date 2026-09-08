@@ -1,0 +1,6 @@
+module LoanwordRules
+canonicalWord: String = "Schadenfreude"
+requireVocabularyAdmission: Boolean = true
+allowedTool: String = "submitLoanword"
+translationMaxLength: Int = 120
+vocabulary: List<String> = List()
