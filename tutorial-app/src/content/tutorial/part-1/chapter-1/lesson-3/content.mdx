@@ -1,0 +1,25 @@
+---
+type: lesson
+title: From rule to action
+editor: false
+terminal: false
+previews: false
+---
+
+import ExecutableLoanword from '../../../../../components/ExecutableLoanword';
+
+The earlier exercises showed a validation result. Here, an accepted proposal changes something: it adds a word to a session glossary.
+
+An author defines the policy in Pkl. An hk hook uses its bundled evaluator inside Dagger to compile that source into JSON. The runtime uses the compiled policy to decide whether a proposal may proceed. The glossary changes only after acceptance.
+
+<ExecutableLoanword client:load />
+
+Try the same proposal under both policies:
+
+1. Start a session with the word unadmitted. Submit `malicious joy`, then `Schadenfreude`. Preserving the word satisfies only the first check.
+2. Choose the policy that admits `Schadenfreude` and start a fresh session. Submit the preserved word again. Check the glossary and the execution record.
+3. Open MCP Inspector for that session. Submit a paraphrase through the tool directly. The same server rule should reject it, and the glossary should retain its previously accepted entry.
+
+The two policies are authored examples. Choosing one starts a new experiment; the proposal itself cannot override its session’s policy. The author can edit the Pkl files, recompile them, and restart the runtime to try a different rule.
+
+This exercise enforces a chosen vocabulary policy. It does not measure translation quality. An agent could make the same proposal through the same MCP tool; the acceptance decision would still belong to the protocol.
