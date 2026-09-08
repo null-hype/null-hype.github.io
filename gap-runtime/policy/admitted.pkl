@@ -1,0 +1,2 @@
+amends "Rules.pkl"
+vocabulary = List("Fingerspitzengefühl", "Schadenfreude")

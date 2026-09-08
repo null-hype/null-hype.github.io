@@ -1,0 +1,23 @@
+.gap-execution { border: 1px solid #8b816c66; border-radius: 14px; padding: 1.25rem; margin: 1.5rem 0; display: grid; gap: 1.25rem; }
+.gap-execution-intro > span { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; opacity: .75; }
+.gap-execution h2, .gap-execution h3, .gap-execution p { margin: .5rem 0; }
+.gap-execution h2 { font-size: 1.35rem; }
+.gap-execution h3 { font-size: 1rem; }
+.gap-execution label { display: grid; gap: .4rem; font-size: .9rem; flex: 1; }
+.gap-execution input, .gap-execution select { border: 1px solid #8b816c88; background: transparent; color: inherit; padding: .65rem; border-radius: 6px; min-width: 0; width: 100%; }
+.gap-execution option { color: #171717; background: #fff; }
+.gap-execution button { border: 1px solid #8b816c88; border-radius: 6px; padding: .65rem .9rem; cursor: pointer; font-weight: 600; }
+.gap-execution button:disabled { opacity: .55; cursor: wait; }
+.gap-execution button:focus-visible, .gap-execution input:focus-visible, .gap-execution select:focus-visible, .gap-execution summary:focus-visible { outline: 2px solid #a77928; outline-offset: 3px; }
+.gap-execution form { display: flex; align-items: end; flex-wrap: wrap; gap: .7rem; }
+.gap-execution-policy { display: grid; gap: .65rem; }
+.gap-execution-policy button, .gap-execution-connection button { justify-self: start; margin-top: .6rem; }
+.gap-execution details { border-top: 1px solid #8b816c44; padding-top: .8rem; }
+.gap-execution summary { cursor: pointer; font-weight: 600; }
+.gap-execution pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow-y: auto; padding: .8rem; font-size: .75rem; background: #8b816c14; border-radius: 6px; }
+.gap-execution-decision { padding: .8rem; background: #8b816c14; border-left: 3px solid #8b816c; }
+.gap-execution-decision[data-accepted="true"] { border-color: #4a9963; }
+.gap-execution-decision[data-accepted="false"] { border-color: #b77737; }
+.gap-execution-records { display: grid; gap: 1rem; }
+.gap-execution-endpoint { overflow-wrap: anywhere; font-size: .8rem; }
+.gap-execution [role="alert"] { border-left: 3px solid #bd5f4b; padding-left: .8rem; }
