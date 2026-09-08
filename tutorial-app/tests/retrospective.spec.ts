@@ -1,9 +1,13 @@
 import { test, expect } from '@playwright/test';
+test.use({viewport:{width:1920,height:1080}});
 
-test('investigate real exported evidence inside the embedded MCP Inspector', async ({ page }) => {
+test('Live Preview tool calls add evidence files without replacing the plan', async ({ page }) => {
  await page.addInitScript(() => localStorage.setItem('MCP_USE_ANONYMIZED_TELEMETRY','false'));
  await page.goto('/part-1/chapter-1/lesson-4/');
- const preview = page.frameLocator('iframe[title="Embedded retrospective MCP Inspector"]');
+ const preview = page.frameLocator('#previews-container iframe[title="Live Preview — Investigation"]');
+ const editor = page.locator('.cm-content');
+ await expect(editor).toContainText('Investigate a snapshot pair');
+ await editor.fill('# My edited investigation\nKeep this interpretation.');
  await preview.getByTestId('tool-item-inspectSnapshotPair').click();
  await preview.getByRole('combobox',{name:'pair *',exact:true}).click();
  await preview.getByRole('option').first().click();
@@ -12,9 +16,17 @@ test('investigate real exported evidence inside the embedded MCP Inspector', asy
  await preview.getByTestId('tool-execution-execute-button').click();
  await expect(preview.getByText(/"returnedChanges":/)).toBeVisible();
  await expect(preview.getByText(/"limitations":/)).toBeVisible();
+ await expect(page.getByRole('status').filter({hasText:'Added 1 change metadata'})).toBeVisible();
+ await expect(editor).toContainText('"returnedChanges": 1');
+ await page.getByText('watch12049.log.metadata.json',{exact:true}).click();
+ await expect(editor).toContainText('"capturedContents": false');
  await preview.getByRole('combobox',{name:'category *',exact:true}).click();
  await preview.getByRole('option',{name:'session',exact:true}).click();
  await preview.getByTestId('tool-execution-execute-button').click();
  await expect(preview.getByText(/"category": "session"/)).toBeVisible();
- await expect(page.getByText(/Pkl-derived editor hints are the next integration/)).toBeVisible();
+ await expect(page.getByRole('status').filter({hasText:'Added 0 change metadata'})).toBeVisible();
+ await expect(editor).toContainText('"category": "session"');
+ await expect(page.getByRole('button',{name:'comparison.json',exact:true})).toHaveCount(2);
+ await page.getByRole('button',{name:'plan.md',exact:true}).click();
+ await expect(editor).toContainText('Keep this interpretation.');
 });
