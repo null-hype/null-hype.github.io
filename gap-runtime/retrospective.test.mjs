@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-async function rpc(method, params) {
- const r = await fetch('http://127.0.0.1:8812/mcp', {
+async function rpc(method, params, channel = '') {
+ const r = await fetch('http://127.0.0.1:8812/mcp' + (channel ? '?workspaceChannel='+channel : ''), {
   method:'POST',headers:{'content-type':'application/json',accept:'application/json, text/event-stream'},
   body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})
  });
@@ -32,4 +32,17 @@ test('real Dagger MCP exposes bounded evidence choices and rejects invalid propo
  const sessions = JSON.parse(filtered.result.content[0].text);
  assert.ok(sessions.changes.every(c=>c.category==='session'));
  assert.equal(sessions.totalChanges,evidence.totalChanges);
+});
+test('workspace channel receives only its own successful comparison results',async()=>{
+ const channel=crypto.randomUUID();
+ const other=crypto.randomUUID();
+ const events=async c=>(await (await fetch('http://127.0.0.1:8812/inspector/workspace-results?channel='+c)).json()).events;
+ const listed=await rpc('tools/list',{});
+ const pair=listed.result.tools[0].inputSchema.properties.pair.enum[0];
+ await rpc('tools/call',{name:'inspectSnapshotPair',arguments:{pair,category:'session'}},channel);
+ assert.equal((await events(channel)).length,1);
+ assert.equal((await events(channel))[0].result.category,'session');
+ assert.deepEqual(await events(other),[]);
+ await rpc('tools/call',{name:'inspectSnapshotPair',arguments:{pair,category:'invalid'}},channel);
+ assert.equal((await events(channel)).length,1);
 });
