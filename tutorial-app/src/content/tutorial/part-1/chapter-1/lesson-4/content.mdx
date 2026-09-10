@@ -1,0 +1,26 @@
+---
+type: lesson
+title: Investigate a snapshot pair
+template: retrospective
+focus: /plan.md
+mainCommand: node server.cjs
+editor:
+  fileTree: true
+terminal: false
+previews:
+  - [4174, "Live Preview — Investigation"]
+---
+
+import RetrospectivePreview from '../../../../../components/RetrospectivePreview';
+
+What changed between two backups of an agent workspace?
+
+Edit your investigation in **plan.md**. Run **inspectSnapshotPair** in **Live Preview**, choosing the available pair and category **all**. The native Dagger MCP method reads our exported restic evidence.
+
+<RetrospectivePreview client:load />
+
+Start with **all**. Read the category counts and changed paths, then repeat the call with **session**. A monitoring-log change is evidence of file activity; it does not establish that an agent made progress. An empty session result does not establish that no work occurred.
+
+Each successful comparison adds a new **evidence** directory to the editor's file tree: **comparison.json** and changed-path **.metadata.json** files. Select them to inspect the snapshot identities, changed paths, and limitations. These are metadata records, not captured file contents. Repeated calls create separate evidence directories and preserve your plan and previous edits.
+
+The tool reads an existing export, not a refreshed repository. Its schema choices come from the evidence catalog and a fixed category list. Pkl-derived editor hints and captured file reads are not implemented yet.
