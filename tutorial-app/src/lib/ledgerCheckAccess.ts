@@ -1,4 +1,4 @@
-import type { CapabilityGrant } from './evidence.pkl';
+import type { Grant } from './grant_state.pkl';
 
 export interface AccessVerdict {
   code: string;
@@ -6,26 +6,26 @@ export interface AccessVerdict {
 }
 
 /**
- * A TypeScript replay of capability-spike/pkl/Ledger.pkl's checkAccess()
- * (see that file's `Check.constraint` in a captured CapabilityTrace for the
- * verbatim Pkl source this mirrors). `grantsByFactId` must be built by
- * folding a trace's `policy-decision` transitions in order, keyed by
- * factId -- Ledger.pkl's real supervisor state is a Pkl
- * `Mapping<String, Grant>` (GrantState.pkl) that the Go side renders by
- * overwriting `current.ApprovedGrants[g.FactID] = &g`
- * (capability-spike/supervisor/state.go), so the most recently recorded
- * grant for a factId is the only one that governs -- never averaged or
- * accumulated.
+ * A TypeScript replay of capability-spike/pkl/Ledger.pkl's checkAccess() --
+ * open that file in the editor to the left to read the axiom this mirrors,
+ * verbatim, error messages included.
+ *
+ * `grantsByFactId` is Ledger.pkl's real supervisor state
+ * (`GrantState.pkl`'s `Mapping<String, Grant>`, generated to TypeScript as
+ * `grant_state.pkl.ts`'s `Grant`), keyed by factID exactly as
+ * `GrantState.approvedGrants` is.
  *
  * This function has no access to a Pkl evaluator; it is validated instead
- * by ledgerCheckAccess.spec.ts, which replays a real captured trace's
- * events through it and asserts the results match the verdicts
- * capability-spike's actual `pkl test` run recorded for the same events.
+ * by capabilityAcquisition.spec.ts, which checks its CAP_REJECTED verdict
+ * against the same (factID, vault) pair `worker/area51_site4.pkl` records
+ * a real `pkl test` failure for, and its passing (null) verdict against
+ * the pair `worker/flight_booking_area51.pkl` records a real `pkl test`
+ * pass for.
  */
 export function checkAccess(
   factId: string,
   vault: string,
-  grantsByFactId: ReadonlyMap<string, CapabilityGrant>,
+  grantsByFactId: ReadonlyMap<string, Grant>,
 ): AccessVerdict | null {
   const grant = grantsByFactId.get(factId);
   if (!grant) {
