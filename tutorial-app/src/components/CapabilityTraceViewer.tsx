@@ -1,8 +1,8 @@
 import { useStore } from '@nanostores/react';
 import { useMemo, useState } from 'react';
 import tutorialStore from 'tutorialkit:store';
-import type { CapabilityTrace, Transition } from '../lib/evidence.pkl.ts';
-import { runCapabilityTraceMock } from '../lib/capabilityTraceMock';
+import type { CapabilityGrant, CapabilityTrace, Check, Transition } from '../lib/evidence.pkl.ts';
+import { checkAccess } from '../lib/ledgerCheckAccess';
 import { valueToText } from '../lib/ruleTraceProtocol';
 import './CapabilityTraceViewer.css';
 
@@ -38,80 +38,141 @@ function parseTrace(text: string): CapabilityTrace | null {
   }
 }
 
+/** Grants recorded by policy-decision transitions up to and including `uptoIndex`, keyed by factId -- the most recent grant for a factId wins, mirroring GrantState.pkl's Mapping overwrite semantics. */
+function grantsAsOf(transitions: Transition[], uptoIndex: number): Map<string, CapabilityGrant> {
+  const grants = new Map<string, CapabilityGrant>();
+  for (const tr of transitions) {
+    if (tr.index > uptoIndex) break;
+    if (tr.kind === 'policy-decision' && tr.grant) {
+      grants.set(tr.grant.factId, tr.grant);
+    }
+  }
+  return grants;
+}
+
+/** The distinct (factId, vault) pairs this trace's evaluation transitions check against the axiom, in first-seen order. */
+function factsUnderEvaluation(transitions: Transition[]): Array<{ factId: string; vault: string }> {
+  const seen = new Map<string, { factId: string; vault: string }>();
+  for (const tr of transitions) {
+    if (tr.kind === 'evaluation' && tr.factId && tr.vault && !seen.has(tr.factId)) {
+      seen.set(tr.factId, { factId: tr.factId, vault: tr.vault });
+    }
+  }
+  return [...seen.values()];
+}
+
 /**
- * Renders a CapabilityTrace (CIT-147 slice 2) as steppable rule / observation
- * / evaluation cards -- never a flat JSON dump. Two adapters can supply the
- * trace through the exact same shape: the real one read from `traceFile`
- * (captured by capability-spike/cmd/trace-export via
- * tk-evidence-exporter's testdata/capability_trace_real.json) and an
- * in-browser mock (capabilityTraceMock.ts, "ordinary tests" reproducing the
- * same rules). The toggle below swaps which one this component renders,
- * which is the literal acceptance test for CIT-147 slice 2: swapping the
- * adapter must not change the interaction model, only the data and its
- * declared provenance.
+ * Renders one axiom (`CapabilityTrace.checks[0]`, capability-spike's
+ * pkl/Ledger.pkl `checkAccess()`) visibly connected to the facts it
+ * governs, the recorded execution's state at a chosen step, and this
+ * component's own live re-evaluation of that state -- not a linear replay
+ * of pre-baked per-transition labels. `checkAccess` (../lib/
+ * ledgerCheckAccess.ts) is called here fresh at every step; its fidelity
+ * to the real Pkl axiom is proven separately by ledgerCheckAccess.spec.ts
+ * (dev-time) and by this lesson's own WebContainer terminal, which runs
+ * that same spec for real via TutorialKit's `mainCommand` -- this
+ * component does not simulate that proof, it points at it.
  */
 export default function CapabilityTraceViewer({ traceFile = DEFAULT_TRACE_FILE }: Props) {
   const documents = useStore(tutorialStore.documents) as DocumentRecord;
   const lesson = tutorialStore.lesson as LessonRecord | undefined;
   const resolvedTraceFile = resolveTraceFile(lesson?.data?.custom, traceFile);
 
-  const [adapter, setAdapter] = useState<'real' | 'mock'>('real');
-  const [stepIndex, setStepIndex] = useState(0);
-
-  const realTraceText = valueToText(documents[resolvedTraceFile]?.value);
-  const realTrace = useMemo(() => parseTrace(realTraceText), [realTraceText]);
-  const mockTrace = useMemo(() => runCapabilityTraceMock(), []);
-
-  const trace = adapter === 'real' ? realTrace : mockTrace;
+  const traceText = valueToText(documents[resolvedTraceFile]?.value);
+  const trace = useMemo(() => parseTrace(traceText), [traceText]);
   const transitions = trace?.transitions ?? [];
-  const step: Transition | undefined = transitions[Math.min(stepIndex, transitions.length - 1)];
+  const check: Check | undefined = trace?.checks?.[0];
+  const facts = useMemo(() => factsUnderEvaluation(transitions), [transitions]);
+
+  const maxIndex = transitions.length > 0 ? transitions[transitions.length - 1].index : 0;
+  const [stepIndex, setStepIndex] = useState(0);
+  const [selectedFactId, setSelectedFactId] = useState<string | null>(null);
+
+  const grants = useMemo(() => grantsAsOf(transitions, stepIndex), [transitions, stepIndex]);
+  const activeFactId = selectedFactId ?? facts[0]?.factId ?? null;
+  const activeFact = facts.find((f) => f.factId === activeFactId);
+  const verdict = activeFact ? checkAccess(activeFact.factId, activeFact.vault, grants) : null;
+  const currentGrant = activeFactId ? grants.get(activeFactId) : undefined;
+
+  const relevantTransitions = transitions.filter(
+    (tr) => tr.index <= stepIndex && tr.factId === activeFactId,
+  );
+
+  if (!trace) {
+    return (
+      <section className="capability-trace" aria-label="Capability decision trace">
+        <p className="capability-trace-empty">Waiting on {resolvedTraceFile} to load in the editor's file tree…</p>
+      </section>
+    );
+  }
 
   return (
     <section className="capability-trace" aria-label="Capability decision trace">
-      <div className="capability-trace-provenance" data-source={trace?.source ?? 'unknown'}>
-        <strong>{trace ? trace.source : 'loading…'}</strong>
-        {trace && <span> — {trace.sourceRef}</span>}
+      <div className="capability-trace-provenance" data-source={trace.source}>
+        <strong>{trace.source}</strong>
+        <span> — {trace.sourceRef}</span>
       </div>
 
-      <div className="capability-trace-adapter-switch" role="group" aria-label="Execution adapter">
-        <button type="button" aria-pressed={adapter === 'real'} onClick={() => { setAdapter('real'); setStepIndex(0); }}>
-          Real capture
-        </button>
-        <button type="button" aria-pressed={adapter === 'mock'} onClick={() => { setAdapter('mock'); setStepIndex(0); }}>
-          WebContainer mock
-        </button>
-      </div>
-
-      {!trace && adapter === 'real' && (
-        <p className="capability-trace-empty">Waiting on {resolvedTraceFile} to load in the editor's file tree…</p>
+      {check && (
+        <article className="capability-trace-axiom">
+          <header>Governing axiom</header>
+          <p className="capability-trace-axiom-requirement">{check.requirement}</p>
+          <pre className="capability-trace-axiom-constraint">{check.constraint}</pre>
+          <p className="capability-trace-axiom-source">
+            {check.source} @ {check.sourceRef.slice(0, 12)}
+          </p>
+        </article>
       )}
 
-      {trace && step && (
-        <article className="capability-trace-step" data-kind={step.kind}>
-          <header>
-            <span className="capability-trace-step-index">
-              Step {stepIndex + 1} / {transitions.length}
-            </span>
-            <span className="capability-trace-step-kind">{step.kind}</span>
-          </header>
-          <h3>{step.label}</h3>
+      <div className="capability-trace-facts" role="group" aria-label="Facts under evaluation">
+        {facts.map((f) => {
+          const factVerdict = checkAccess(f.factId, f.vault, grants);
+          return (
+            <button
+              key={f.factId}
+              type="button"
+              aria-pressed={f.factId === activeFactId}
+              data-status={factVerdict ? 'blocked' : 'clear'}
+              onClick={() => setSelectedFactId(f.factId)}
+            >
+              {factVerdict ? '✗' : '✓'} {f.factId}
+            </button>
+          );
+        })}
+      </div>
 
+      {activeFact && (
+        <article className="capability-trace-fact-detail">
           <dl>
-            <dt>Governing rule</dt>
-            <dd>{step.governingRule ?? (step.kind === 'evaluation' && !step.fact ? '(no diagnostic — evaluation passed)' : '—')}</dd>
-
-            <dt>Observation</dt>
+            <dt>Fact</dt>
             <dd>
-              {step.fact && <code>{JSON.stringify(step.fact)}</code>}
-              {step.grant && <code>{JSON.stringify(step.grant)}</code>}
-              {step.observation && <code>{JSON.stringify(step.observation)}</code>}
-              {step.flag && <code>{JSON.stringify(step.flag)}</code>}
-              {!step.fact && !step.grant && !step.observation && !step.flag && '—'}
+              {activeFact.factId} (vault: {activeFact.vault})
             </dd>
 
-            <dt>Evaluation</dt>
-            <dd data-evaluation={step.fact || step.flag ? 'blocked' : 'clear'}>
-              {step.fact || step.flag ? 'A diagnostic/flag was recorded for this step' : 'No diagnostic or flag recorded'}
+            <dt>Required approval</dt>
+            <dd>
+              {currentGrant
+                ? `grant recorded: approved=${currentGrant.approved}, vault=${currentGrant.vault}`
+                : 'no grant recorded yet at this step'}
+            </dd>
+
+            <dt>Evaluation (recomputed live from state as of step {stepIndex})</dt>
+            <dd data-evaluation={verdict ? 'blocked' : 'clear'}>
+              {verdict ? `${verdict.code}: ${verdict.message}` : 'checkAccess() passes -- no diagnostic'}
+            </dd>
+
+            <dt>Supporting evidence recorded by step {stepIndex}</dt>
+            <dd>
+              {relevantTransitions.length === 0 && '—'}
+              <ul>
+                {relevantTransitions.map((tr) => (
+                  <li key={tr.index}>
+                    #{tr.index} {tr.label}
+                    {tr.fact && <> — diagnostic {tr.fact.code}</>}
+                    {tr.grant && <> — grant approved={String(tr.grant.approved)}</>}
+                  </li>
+                ))}
+              </ul>
             </dd>
           </dl>
         </article>
@@ -119,16 +180,22 @@ export default function CapabilityTraceViewer({ traceFile = DEFAULT_TRACE_FILE }
 
       <div className="capability-trace-nav">
         <button type="button" disabled={stepIndex <= 0} onClick={() => setStepIndex((i) => Math.max(0, i - 1))}>
-          ← Previous
+          ← Rewind
         </button>
-        <button
-          type="button"
-          disabled={stepIndex >= transitions.length - 1}
-          onClick={() => setStepIndex((i) => Math.min(transitions.length - 1, i + 1))}
-        >
-          Next →
+        <span className="capability-trace-step-label">
+          Recorded execution advanced through step {stepIndex} / {maxIndex}
+        </span>
+        <button type="button" disabled={stepIndex >= maxIndex} onClick={() => setStepIndex((i) => Math.min(maxIndex, i + 1))}>
+          Advance →
         </button>
       </div>
+
+      <p className="capability-trace-proof-note">
+        This panel recomputes <code>checkAccess()</code> in the browser; it does not replay a
+        pre-recorded verdict. The proof that this recomputation matches capability-spike's real{' '}
+        <code>pkl test</code> run is <code>ledgerCheckAccess.spec.ts</code>, run for real by this
+        lesson's own terminal below (TutorialKit's <code>mainCommand</code>), not simulated here.
+      </p>
     </section>
   );
 }

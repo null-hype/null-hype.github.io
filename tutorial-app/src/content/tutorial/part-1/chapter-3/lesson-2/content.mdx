@@ -1,10 +1,14 @@
 ---
 type: lesson
-title: "A model-driven capability trace"
+title: "One axiom, evaluated"
+template: capability-check
+prepareCommands:
+  - npm install
+mainCommand: npm test
+terminal: true
 editor:
   fileTree: true
-focus: /evidence/capability-trace.json
-terminal: false
+focus: /pkl/Ledger.pkl
 previews: false
 custom:
   capabilityTrace:
@@ -14,32 +18,47 @@ custom:
 import CapabilityTraceViewer from '../../../../../components/CapabilityTraceViewer';
 
 CIT-147's first lesson (previous chapter) browsed one exported CI run as static
-files. This lesson is different: it's driven by the same
-[Pkl-generated contract](https://github.com/null-hype/agent-plugins/tree/main/tk-evidence-exporter/pkl/Evidence.pkl)
-(`CapabilityTrace`/`Transition`), and it steps through
-[capability-spike](https://github.com/null-hype/agent-plugins/tree/main/capability-spike)'s
-real red → approve → green → materialize → reconcile sequence one transition
-at a time, showing three things per step instead of a field dump:
+files. The first version of this lesson stepped through a fixed, twelve-item
+array and called that "evaluation" -- it wasn't. Nothing was being checked
+against anything; the array's own labels were just being displayed in order,
+by two interchangeable data sources.
 
-- **Governing rule** — the real text a Pkl constraint or reconciliation
-  check produced (`Ledger.pkl`'s own thrown diagnostic, or a reconciliation
-  flag's detail string).
-- **Observation** — what was actually recorded at that step: a diagnostic,
-  a supervisor grant, a Proton Pass materialization, or a reconciliation
-  flag.
-- **Evaluation** — whether that step's observation was clear or blocked.
+This version has exactly one axiom:
+
+**`pkl/Ledger.pkl`'s `checkAccess(factID, vault)`** (open it in the editor to
+the left) -- a worker fact's capability request is granted only if the
+supervisor has recorded an approved grant for exactly this
+`(factID, vault)` pair.
 
 <CapabilityTraceViewer client:load />
 
-**Two adapters, one interaction model.** "Real capture" is
-`evidence/capability-trace.json` in the file tree to the left — the literal
-output of running `capability-spike`'s own demo
-(`go run . -trace-out=...`), evaluated for real against `Evidence.pkl`
-through `pkl-go` before being committed as a fixture. "WebContainer mock" is
-an ordinary TypeScript test
-([`capabilityTraceMock.ts`](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/capabilityTraceMock.ts))
-that reproduces the same rules without a Pkl evaluator, mirroring each
-governing-rule string verbatim from the Go source that produces it. Toggling
-between them swaps the data and its declared provenance (see the banner
-above the steps) without changing how you step through it — that's the
-acceptance test this lesson exists to demonstrate.
+**What's connected here, and how it's proven:**
+
+- **The axiom** is shown above verbatim -- not summarized, not reworded --
+  copied by `capability-spike/main.go`'s `loadApprovalCheck` straight out of
+  `pkl/Ledger.pkl` at export time (`CapabilityTrace.checks[0]`).
+- **The facts** it governs (`worker/flight_booking_area51.pkl` and a second,
+  explicitly-rejected fixture) are listed as buttons; selecting one shows its
+  current grant state and evidence.
+- **The evaluation** shown per fact is not read from the trace file --
+  it's computed live, in your browser, by
+  [`ledgerCheckAccess.ts`](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/ledgerCheckAccess.ts),
+  a TypeScript replay of `checkAccess()`'s control flow, called fresh against
+  whatever grant state the "Rewind"/"Advance" control has replayed up to.
+  Advance past step 3 and watch the selected fact's verdict flip from
+  `CAP_NO_GRANT` to clear the moment the supervisor's grant transition is
+  folded into state -- that's the axiom reacting to a state change, not a
+  new label being displayed.
+- **The proof that the browser's replay is faithful**, not just plausible,
+  is `ledgerCheckAccess.spec.ts` -- and it does not run only at build time.
+  This lesson's `template: capability-check` boots a real Node WebContainer,
+  `npm install`s a real `vitest`, and `npm test` runs that exact spec for
+  real in the terminal panel below the file tree, against the exact same
+  `evidence/capability-trace.json` this page reads. TutorialKit is running
+  the test, not this component.
+
+**Supporting files**, all real, all in the tree to the left: `pkl/Ledger.pkl`
+(the axiom's source), `worker/flight_booking_area51.pkl` (the fact under
+evaluation), and `evidence/capability-trace.json` (capability-spike's actual
+`pkl test` run, captured once and committed as a fixture -- see
+`capability-spike/main.go`'s `-trace-out` flag).
