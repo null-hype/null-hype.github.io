@@ -1,64 +1,93 @@
 ---
 type: lesson
-title: "One axiom, evaluated"
+title: "Fix the declaration"
 template: capability-check
 prepareCommands:
   - npm install
-mainCommand: npm test
+mainCommand: npx vitest
 terminal: true
 editor:
   fileTree: true
-focus: /pkl/Ledger.pkl
+focus: /declaredRequirement.ts
 previews: false
-custom:
-  capabilityTrace:
-    traceFile: /evidence/capability-trace.json
 ---
 
-import CapabilityTraceViewer from '../../../../../components/CapabilityTraceViewer';
+Earlier versions of this lesson only narrated a scenario -- nothing here was
+actually yours to change. This version has a real broken file: `npm test`
+below fails when this lesson boots, and fixing it is your job, not a script's.
 
-CIT-147's first lesson (previous chapter) browsed one exported CI run as static
-files. The first version of this lesson stepped through a fixed, twelve-item
-array and called that "evaluation" -- it wasn't. Nothing was being checked
-against anything; the array's own labels were just being displayed in order,
-by two interchangeable data sources.
+**Two real axioms govern whether a task gets what it needs, and they fail
+for different reasons:**
 
-This version has exactly one axiom:
+- **`pkl/Inventory.pkl`'s `missingItems(requirement, observed)`** -- does
+  the observed world actually have what's declared. This is the one
+  you can fix yourself.
+- **`pkl/Ledger.pkl`'s `checkAccess(factID, vault)`** -- did the supervisor
+  say yes. `Ledger.pkl`'s own header explains why this one is different: a
+  worker "cannot self-grant by editing state, only by asking [it] a
+  question it doesn't control the answer to."
 
-**`pkl/Ledger.pkl`'s `checkAccess(factID, vault)`** (open it in the editor to
-the left) -- a worker fact's capability request is granted only if the
-supervisor has recorded an approved grant for exactly this
-`(factID, vault)` pair.
+**`declaredRequirement.ts`** (open to the left) is the one file this lesson
+asks you to edit -- it declares `{ name: "tidelands.dev", items: ["claude"]
+}`. That used to be right. It isn't anymore:
+`.dagger/internal/devenv-base/pkl/Vaults.pkl`'s own header comment
+documents that "claude" moved to vault `anthropic.ai` directly in Proton
+Pass, with no commit ever recording the move -- exactly the kind of drift a
+declaration can go stale against without anyone noticing, until something
+checks it.
 
-<CapabilityTraceViewer client:load />
+**`observedInventory.ts`** is read-only, on purpose -- real observed state
+comes from `hk/capture-vault-inventory.sh` capturing the live account,
+never from someone hand-editing a fixture to make a check pass. Fix the
+declaration, not the observation.
 
-**What's connected here, and how it's proven:**
+1. `vitest` boots below in watch mode and runs once immediately. The first
+   test fails: `missingItems` reports `["claude"]` still missing, because
+   the declaration points at the vault the item used to live in.
+2. Open `declaredRequirement.ts` and change `name` from `"tidelands.dev"`
+   to `"anthropic.ai"` -- where `observedInventory.ts` shows the item
+   actually is. Save, and watch mode reruns the suite on its own.
+3. It passes now. Stuck? The help button next to the file tab applies the
+   real fix and lets you reset back to the broken state to try again.
+4. The second test is different in kind: `observedVaultNames` includes
+   `"api.linear.app"`, which has no `VaultSpec` in `Vaults.pkl` at all.
+   That's not a bug to fix -- `Vaults.pkl`'s own header says so: "This is a
+   decision, not a transcription of `pass-cli vault list` output." This
+   test is a `toMatchInlineSnapshot`, TypeScript's equivalent of
+   `pkl:test`'s `examples{}` block plus `Vaults.test.pkl-expected.pcf`: a
+   snapshot of what's really observed, accepted by committing it, not
+   asserted true or false. Observed state is always allowed to carry more
+   than any one declaration accounts for.
 
-- **The axiom** is shown above verbatim -- not summarized, not reworded --
-  copied by `capability-spike/main.go`'s `loadApprovalCheck` straight out of
-  `pkl/Ledger.pkl` at export time (`CapabilityTrace.checks[0]`).
-- **The facts** it governs (`worker/flight_booking_area51.pkl` and a second,
-  explicitly-rejected fixture) are listed as buttons; selecting one shows its
-  current grant state and evidence.
-- **The evaluation** shown per fact is not read from the trace file --
-  it's computed live, in your browser, by
-  [`ledgerCheckAccess.ts`](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/ledgerCheckAccess.ts),
-  a TypeScript replay of `checkAccess()`'s control flow, called fresh against
-  whatever grant state the "Rewind"/"Advance" control has replayed up to.
-  Advance past step 3 and watch the selected fact's verdict flip from
-  `CAP_NO_GRANT` to clear the moment the supervisor's grant transition is
-  folded into state -- that's the axiom reacting to a state change, not a
-  new label being displayed.
-- **The proof that the browser's replay is faithful**, not just plausible,
-  is `ledgerCheckAccess.spec.ts` -- and it does not run only at build time.
-  This lesson's `template: capability-check` boots a real Node WebContainer,
-  `npm install`s a real `vitest`, and `npm test` runs that exact spec for
-  real in the terminal panel below the file tree, against the exact same
-  `evidence/capability-trace.json` this page reads. TutorialKit is running
-  the test, not this component.
+**The other two tests show what fixing your declaration doesn't get you.**
+`worker/flight_booking_area51.pkl`'s `(factID, vault)` pair starts denied
+with `CAP_NO_GRANT` -- there is no file in this tree you could edit to fix
+that. It only clears once a real supervisor decision exists, which is
+exactly what `GrantState.pkl`'s `flight-booking:area51:vault-access` entry
+is: a real `supervisor.Decide` call
+(`capability-spike/supervisor/state.go`), not something this lesson lets
+you fake. That file is git-ignored and gets re-rendered by every local
+`go run .` / `go test ./...` in `capability-spike/` -- it isn't meant to
+persist between runs (see its own header comment), so this lesson's
+TypeScript scenario copies the grant's value as of the moment a real `pkl
+test worker/flight_booking_area51.pkl` run captured it, rather than
+re-reading that file live.
+
+Neither axiom can reach a live Pkl evaluator from the browser, so both are
+TypeScript replays --
+[`ledgerCheckAccess.ts`](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/ledgerCheckAccess.ts)
+and
+[`inventoryCheck.ts`](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/inventoryCheck.ts)
+-- typed against `inventory.pkl.ts`/`grant_state.pkl.ts`, both generated
+from the real Pkl modules by `@pkl-community/pkl-typescript`, not
+hand-typed. This lesson's `template: capability-check` boots a real Node
+WebContainer, `npm install`s a real `vitest`, and runs it in watch mode
+against `capabilityAcquisition.spec.ts` for real in the output panel below
+the file tree -- TutorialKit is running the test, not narrating it, and the
+help button's "solve"/"reset" swaps `declaredRequirement.ts` for the real
+fix or the real starting bug, not a scripted animation.
 
 **Supporting files**, all real, all in the tree to the left: `pkl/Ledger.pkl`
-(the axiom's source), `worker/flight_booking_area51.pkl` (the fact under
-evaluation), and `evidence/capability-trace.json` (capability-spike's actual
-`pkl test` run, captured once and committed as a fixture -- see
-`capability-spike/main.go`'s `-trace-out` flag).
+and `pkl/GrantState.pkl` (the approval axiom and its state), `pkl/Inventory.pkl`
+(the inventory axiom), and `worker/flight_booking_area51.pkl` (the real
+fact under evaluation).
