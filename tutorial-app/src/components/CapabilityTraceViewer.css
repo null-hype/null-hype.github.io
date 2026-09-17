@@ -1,0 +1,34 @@
+.capability-trace {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--tk-border-primary, #cbd5e1);
+  border-radius: 12px;
+  background: var(--tk-background-secondary, #f6f8f9);
+  color: inherit;
+  font-size: 0.9rem;
+}
+.capability-trace-provenance { font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.75rem; }
+.capability-trace-adapter-switch { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.capability-trace-adapter-switch button,
+.capability-trace-nav button {
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.capability-trace-adapter-switch button[aria-pressed="true"] { background: var(--tk-background-primary, white); font-weight: 600; }
+.capability-trace-step { border-left: 3px solid currentColor; padding-left: 0.9rem; margin: 0.75rem 0; }
+.capability-trace-step header { display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.75; }
+.capability-trace-step h3 { margin: 0.35rem 0 0.75rem; }
+.capability-trace-step dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 0.75rem; }
+.capability-trace-step dt { font-weight: 600; }
+.capability-trace-step dd { margin: 0; overflow-wrap: anywhere; }
+.capability-trace-step dd code { white-space: pre-wrap; }
+.capability-trace-step dd[data-evaluation="blocked"] { color: #b91c1c; }
+.capability-trace-step dd[data-evaluation="clear"] { color: #167344; }
+.capability-trace-nav { display: flex; gap: 0.5rem; margin-top: 1rem; }
+[data-theme="dark"] .capability-trace-step dd[data-evaluation="blocked"] { color: #fca5a5; }
+[data-theme="dark"] .capability-trace-step dd[data-evaluation="clear"] { color: #86efac; }
