@@ -1,0 +1,45 @@
+---
+type: lesson
+title: "A model-driven capability trace"
+editor:
+  fileTree: true
+focus: /evidence/capability-trace.json
+terminal: false
+previews: false
+custom:
+  capabilityTrace:
+    traceFile: /evidence/capability-trace.json
+---
+
+import CapabilityTraceViewer from '../../../../../components/CapabilityTraceViewer';
+
+CIT-147's first lesson (previous chapter) browsed one exported CI run as static
+files. This lesson is different: it's driven by the same
+[Pkl-generated contract](https://github.com/null-hype/agent-plugins/tree/main/tk-evidence-exporter/pkl/Evidence.pkl)
+(`CapabilityTrace`/`Transition`), and it steps through
+[capability-spike](https://github.com/null-hype/agent-plugins/tree/main/capability-spike)'s
+real red → approve → green → materialize → reconcile sequence one transition
+at a time, showing three things per step instead of a field dump:
+
+- **Governing rule** — the real text a Pkl constraint or reconciliation
+  check produced (`Ledger.pkl`'s own thrown diagnostic, or a reconciliation
+  flag's detail string).
+- **Observation** — what was actually recorded at that step: a diagnostic,
+  a supervisor grant, a Proton Pass materialization, or a reconciliation
+  flag.
+- **Evaluation** — whether that step's observation was clear or blocked.
+
+<CapabilityTraceViewer client:load />
+
+**Two adapters, one interaction model.** "Real capture" is
+`evidence/capability-trace.json` in the file tree to the left — the literal
+output of running `capability-spike`'s own demo
+(`go run . -trace-out=...`), evaluated for real against `Evidence.pkl`
+through `pkl-go` before being committed as a fixture. "WebContainer mock" is
+an ordinary TypeScript test
+([`capabilityTraceMock.ts`](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/capabilityTraceMock.ts))
+that reproduces the same rules without a Pkl evaluator, mirroring each
+governing-rule string verbatim from the Go source that produces it. Toggling
+between them swaps the data and its declared provenance (see the banner
+above the steps) without changing how you step through it — that's the
+acceptance test this lesson exists to demonstrate.
