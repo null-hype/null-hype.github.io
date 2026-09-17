@@ -3,6 +3,15 @@
   "scenario": "capability-spike red-approve-green-materialize-reconcile",
   "source": "capability-spike-demo",
   "sourceRef": "a5fa7e73d5251c140f0b9d782e632666238af8d5",
+  "checks": [
+    {
+      "id": "ledger.checkAccess",
+      "requirement": "A worker fact's capability request is granted only if the supervisor has recorded an approved grant for exactly this (factID, vault) pair.",
+      "constraint": "function checkAccess(factID: String, vault: String): Boolean =\n  let (grant = GrantState.approvedGrants.getOrNull(factID))\n  if (grant == null)\n    deny(\"CAP_NO_GRANT\", factID, vault, \"no grant has been recorded for this fact -- request pending supervisor review\")\n  else if (!grant.approved)\n    deny(\"CAP_REJECTED\", factID, vault, \"supervisor explicitly rejected this request\")\n  else if (grant.vault != vault)\n    deny(\"CAP_VAULT_MISMATCH\", factID, vault, \"supervisor approved this fact for vault \\(grant.vault), not \\(vault)\")\n  else\n    true",
+      "source": "capability-spike/pkl/Ledger.pkl",
+      "sourceRef": "a5fa7e73d5251c140f0b9d782e632666238af8d5"
+    }
+  ],
   "transitions": [
     {
       "index": 1,
@@ -114,7 +123,7 @@
         "vault": "thepentagon.com",
         "reason": "flight-booking:area51:vault-access",
         "operation": "pass-cli item view --vault-name thepentagon.com --item-title vault-access",
-        "recordedAt": "2026-09-17T06:21:42Z"
+        "recordedAt": "2026-09-17T06:44:52Z"
       },
       "flag": null
     },
