@@ -84,21 +84,6 @@ async function serveJsonFile(response, requestedPath) {
 
   try {
     const fileContents = await readFile(filePath, 'utf8');
-
-    // CIT-149's reason-log fixture is JSON Lines (one resolved-reason
-    // record per line), not a single JSON document -- the issue's own
-    // scope explicitly rules out inventing a new file format for this, so
-    // this validates line-by-line instead of adding a second endpoint.
-    if (extname(filePath) === '.jsonl') {
-      for (const line of fileContents.split('\n')) {
-        if (line.trim()) {
-          JSON.parse(line);
-        }
-      }
-      sendText(response, fileContents, 200, 'application/x-ndjson; charset=utf-8');
-      return;
-    }
-
     JSON.parse(fileContents);
     sendText(response, fileContents, 200, 'application/json; charset=utf-8');
   } catch (error) {
@@ -219,12 +204,13 @@ function renderPage() {
       let currentState = null;
       let storyCache = new Map();
 
-      // CIT-149: line -> the Diagnostic (severity, code, message) a
-      // reason-log record on that line carries. Populated by
-      // renderReasonLog, read by the hover provider registered below --
-      // both keyed by Monaco line number so the hover content always
-      // matches whatever setModelMarkers most recently underlined.
-      let reasonDiagnosticsByLine = {};
+      // CIT-149: line -> the full ResolvedReason record (raw,
+      // resolvedFactId, lossAxes, diagnostic) a reason-log line carries.
+      // Populated by renderReasonLog, read by the hover provider
+      // registered below -- both keyed by Monaco line number so the hover
+      // content always matches whatever setModelMarkers most recently
+      // underlined.
+      let reasonRecordsByLine = {};
       const REASON_LOG_MARKER_OWNER = 'reason-resolver';
 
       function loadMonaco() {
@@ -300,15 +286,39 @@ function renderPage() {
           // CIT-149: the underline (setModelMarkers) and the message on
           // hover (registerHoverProvider) -- additive to the tokenizer and
           // folding provider above, not a replacement for them. Both read
-          // reasonDiagnosticsByLine rather than taking data directly, so a
+          // reasonRecordsByLine rather than taking data directly, so a
           // single registration here keeps working across every
-          // renderReasonLog call that repopulates it.
+          // renderReasonLog call that repopulates it (including live
+          // updates pushed by ReasonResolverBridge as the learner edits
+          // governedVocabulary.json/grantState.json).
+          //
+          // The hover fires for every line with a record, not only a
+          // failing one: the raw statement, the mapped fact ID, and the
+          // loss annotations stay inspectable whether or not the line
+          // currently carries a diagnostic.
           monaco.languages.registerHoverProvider(languageId, {
             provideHover(hoverModel, position) {
-              const diagnostic = reasonDiagnosticsByLine[position.lineNumber];
+              const record = reasonRecordsByLine[position.lineNumber];
 
-              if (!diagnostic) {
+              if (!record) {
                 return null;
+              }
+
+              const contents = [
+                { value: '**raw:** ' + record.raw },
+                {
+                  value:
+                    '**resolvedFactId:** ' +
+                    (record.resolvedFactId || '_none_') +
+                    (record.lossAxes && record.lossAxes.length ? '\\n\\n**lossAxes:** ' + record.lossAxes.join(', ') : ''),
+                },
+              ];
+
+              if (record.diagnostic) {
+                contents.push({ value: '**' + record.diagnostic.code + '**' });
+                contents.push({ value: record.diagnostic.message });
+              } else {
+                contents.push({ value: '_resolved -- access granted_' });
               }
 
               return {
@@ -318,7 +328,7 @@ function renderPage() {
                   position.lineNumber,
                   hoverModel.getLineMaxColumn(position.lineNumber),
                 ),
-                contents: [{ value: '**' + diagnostic.code + '**' }, { value: diagnostic.message }],
+                contents,
               };
             },
           });
@@ -618,33 +628,16 @@ function renderPage() {
         }
       }
 
-      // CIT-149: a reason-log.jsonl fixture is an independent, static
-      // rendering path -- it does not go through applyLessonState/
-      // renderTrace or the lesson-state postMessage protocol those use,
-      // because this demo has no worker input loop to drive: the log is
-      // fixed, the point is what hovering an already-failed line shows.
-      // A lesson with no reason-log.jsonl (every existing chapter-1
-      // lesson) gets a 404 here and falls through to the fallback trace
-      // rendered above, unchanged.
-      async function loadReasonLog() {
-        try {
-          const response = await fetch('/__tk/file?path=/reason-log.jsonl', { cache: 'no-store' });
-
-          if (!response.ok) {
-            return null;
-          }
-
-          const text = await response.text();
-          return text
-            .split('\\n')
-            .map((line) => line.trim())
-            .filter(Boolean)
-            .map((line) => JSON.parse(line));
-        } catch (_error) {
-          return null;
-        }
-      }
-
+      // CIT-149: reason-resolver-log is a third previewMode, independent
+      // of the trace/span shapes applyLessonState/renderTrace otherwise
+      // handle. It is driven by ReasonResolverBridge, which recomputes
+      // resolveReasonLog every time the learner edits
+      // governedVocabulary.json or grantState.json and posts the result
+      // here -- so, unlike a fixed demo, the markers below genuinely
+      // respond to changing vocabulary/grant state, not just to a
+      // committed fixture. Until that bridge's first message arrives, a
+      // lesson using this mode shows the same blocked-trace fallback
+      // every other lesson does at boot (see renderIntoEditor below).
       async function renderReasonLog(records) {
         await ensureEditor();
 
@@ -654,19 +647,20 @@ function renderPage() {
 
         const lines = [];
         const markers = [];
-        reasonDiagnosticsByLine = {};
+        reasonRecordsByLine = {};
 
         records.forEach((record, index) => {
           const lineNumber = index + 1;
-          lines.push(typeof record.raw === 'string' ? record.raw : '');
+          const rawLine = typeof record.raw === 'string' ? record.raw : '';
+          lines.push(rawLine);
+          reasonRecordsByLine[lineNumber] = record;
 
           if (record.diagnostic) {
-            reasonDiagnosticsByLine[lineNumber] = record.diagnostic;
             markers.push({
               startLineNumber: lineNumber,
               startColumn: 1,
               endLineNumber: lineNumber,
-              endColumn: Math.max(2, lines[lines.length - 1].length + 1),
+              endColumn: Math.max(2, rawLine.length + 1),
               severity:
                 record.diagnostic.severity === 'error'
                   ? window.monaco.MarkerSeverity.Error
@@ -688,7 +682,7 @@ function renderPage() {
         if (
           !message ||
           message.type !== 'lesson-state' ||
-          !['tk-loanword-arc-bridge', 'tk-rule-trace-bridge'].includes(message.source)
+          !['tk-loanword-arc-bridge', 'tk-rule-trace-bridge', 'tk-reason-resolver-bridge'].includes(message.source)
         ) {
           return;
         }
@@ -704,6 +698,16 @@ function renderPage() {
           typeof currentRevision === 'number' &&
           payload.revision <= currentRevision
         ) {
+          return;
+        }
+
+        if (payload.previewMode === 'reason-resolver-log') {
+          currentRevision = typeof payload.revision === 'number' ? payload.revision : Date.now();
+          renderReasonLog(Array.isArray(payload.records) ? payload.records : []).catch((error) => {
+            if (model) {
+              model.setValue(String(error));
+            }
+          });
           return;
         }
 
@@ -734,12 +738,6 @@ function renderPage() {
         summary: fallbackStory.blocked.title,
       };
       renderIntoEditor().catch(() => {});
-
-      loadReasonLog().then((records) => {
-        if (records && records.length > 0) {
-          renderReasonLog(records).catch(() => {});
-        }
-      });
     </script>
   </body>
 </html>`;

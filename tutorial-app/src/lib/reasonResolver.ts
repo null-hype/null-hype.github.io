@@ -1,6 +1,7 @@
-import type { Grant } from './grant_state.pkl';
+import type { Grant, GrantState } from './grant_state.pkl';
 import type { AdmittedTerm } from './governedVocabulary.pkl';
 import { checkAccess } from './ledgerCheckAccess';
+import { FIXTURE_REASON, FIXTURE_REASON_GRANTED, FIXTURE_REASON_UNRESOLVED } from './reasonFixture';
 
 /**
  * The one new code CIT-149 adds alongside pkl/Ledger.pkl's existing
@@ -127,4 +128,73 @@ export function resolveReason(
     lossAxes: entry.lossAxes,
     diagnostic: null,
   };
+}
+
+/**
+ * The three real reasons the lesson's reason-log renders, in the fixed
+ * order every committed fixture (reason-log.jsonl, testdata/reason-log.jsonl
+ * on the Go side) uses: granted, admitted-but-ungranted, never-admitted.
+ */
+export const REASON_LOG_RAWS = [FIXTURE_REASON_GRANTED, FIXTURE_REASON, FIXTURE_REASON_UNRESOLVED] as const;
+
+function isAdmittedTerm(value: unknown): value is AdmittedTerm {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.phrase === 'string' &&
+    typeof candidate.factId === 'string' &&
+    typeof candidate.scope === 'string' &&
+    Array.isArray(candidate.lossAxes)
+  );
+}
+
+/**
+ * Parses ReasonResolverBridge's live `governedVocabulary.json` (an
+ * AdmittedTerm[], typed against governedVocabulary.pkl.ts the same way
+ * pkl-typescript-generated Pkl data is consumed everywhere else in this
+ * chapter) into the shape `resolveReason` expects. Defensive: a document
+ * that isn't a well-formed AdmittedTerm[] -- including mid-edit, before a
+ * closing bracket exists -- yields no admitted terms rather than crashing
+ * the bridge that reads it live on every keystroke.
+ */
+export function parseAdmittedTerms(value: unknown): AdmittedTerm[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter(isAdmittedTerm);
+}
+
+/**
+ * Parses ReasonResolverBridge's live `grantState.json` -- the same
+ * `{approvedGrants: Mapping<String, Grant>}` shape pkl/GrantState.pkl and
+ * grant_state.pkl.ts's GrantState both declare, and the same shape
+ * chapter-3/lesson-2's own grantState.json already uses -- into the
+ * ReadonlyMap<string, Grant> checkAccess expects. Defensive for the same
+ * reason parseAdmittedTerms is.
+ */
+export function parseGrantsByFactId(value: unknown): Map<string, Grant> {
+  if (!value || typeof value !== 'object') {
+    return new Map();
+  }
+  const approvedGrants = (value as Partial<GrantState>).approvedGrants;
+  if (!approvedGrants || typeof approvedGrants !== 'object') {
+    return new Map();
+  }
+  return new Map(Object.entries(approvedGrants as Record<string, Grant>));
+}
+
+/**
+ * ReasonResolverBridge's whole job: take the two live, learner-edited
+ * documents (already JSON-parsed, or `null` while the learner is
+ * mid-edit) and recompute all three fixed reasons against them. This is
+ * the function that makes the log's Monaco markers respond to editing
+ * `governedVocabulary.json`/`grantState.json`, instead of the log being a
+ * fixed recording of one already-resolved state.
+ */
+export function resolveReasonLog(admittedJson: unknown, grantStateJson: unknown): ResolvedReason[] {
+  const admitted = parseAdmittedTerms(admittedJson);
+  const grantsByFactId = parseGrantsByFactId(grantStateJson);
+  return REASON_LOG_RAWS.map((raw) => resolveReason(raw, admitted, grantsByFactId));
 }
