@@ -1,3 +1,7 @@
+// Vendored from tutorial-app/src/lib/toHaveVerdict.ts so this lesson's
+// WebContainer sandbox (a self-contained project, no import across the
+// _files boundary) can run the exact same code this terminal's own
+// `npm test` and the outer app both use.
 import { appendFileSync } from 'node:fs';
 import { expect } from 'vitest';
 import { axioms, type AxiomId } from './axioms';
