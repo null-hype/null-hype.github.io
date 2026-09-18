@@ -84,6 +84,21 @@ async function serveJsonFile(response, requestedPath) {
 
   try {
     const fileContents = await readFile(filePath, 'utf8');
+
+    // CIT-149's reason-log fixture is JSON Lines (one resolved-reason
+    // record per line), not a single JSON document -- the issue's own
+    // scope explicitly rules out inventing a new file format for this, so
+    // this validates line-by-line instead of adding a second endpoint.
+    if (extname(filePath) === '.jsonl') {
+      for (const line of fileContents.split('\n')) {
+        if (line.trim()) {
+          JSON.parse(line);
+        }
+      }
+      sendText(response, fileContents, 200, 'application/x-ndjson; charset=utf-8');
+      return;
+    }
+
     JSON.parse(fileContents);
     sendText(response, fileContents, 200, 'application/json; charset=utf-8');
   } catch (error) {
@@ -204,6 +219,14 @@ function renderPage() {
       let currentState = null;
       let storyCache = new Map();
 
+      // CIT-149: line -> the Diagnostic (severity, code, message) a
+      // reason-log record on that line carries. Populated by
+      // renderReasonLog, read by the hover provider registered below --
+      // both keyed by Monaco line number so the hover content always
+      // matches whatever setModelMarkers most recently underlined.
+      let reasonDiagnosticsByLine = {};
+      const REASON_LOG_MARKER_OWNER = 'reason-resolver';
+
       function loadMonaco() {
         if (monacoPromise) {
           return monacoPromise;
@@ -271,6 +294,32 @@ function renderPage() {
               }
 
               return ranges;
+            },
+          });
+
+          // CIT-149: the underline (setModelMarkers) and the message on
+          // hover (registerHoverProvider) -- additive to the tokenizer and
+          // folding provider above, not a replacement for them. Both read
+          // reasonDiagnosticsByLine rather than taking data directly, so a
+          // single registration here keeps working across every
+          // renderReasonLog call that repopulates it.
+          monaco.languages.registerHoverProvider(languageId, {
+            provideHover(hoverModel, position) {
+              const diagnostic = reasonDiagnosticsByLine[position.lineNumber];
+
+              if (!diagnostic) {
+                return null;
+              }
+
+              return {
+                range: new monaco.Range(
+                  position.lineNumber,
+                  1,
+                  position.lineNumber,
+                  hoverModel.getLineMaxColumn(position.lineNumber),
+                ),
+                contents: [{ value: '**' + diagnostic.code + '**' }, { value: diagnostic.message }],
+              };
             },
           });
 
@@ -569,6 +618,69 @@ function renderPage() {
         }
       }
 
+      // CIT-149: a reason-log.jsonl fixture is an independent, static
+      // rendering path -- it does not go through applyLessonState/
+      // renderTrace or the lesson-state postMessage protocol those use,
+      // because this demo has no worker input loop to drive: the log is
+      // fixed, the point is what hovering an already-failed line shows.
+      // A lesson with no reason-log.jsonl (every existing chapter-1
+      // lesson) gets a 404 here and falls through to the fallback trace
+      // rendered above, unchanged.
+      async function loadReasonLog() {
+        try {
+          const response = await fetch('/__tk/file?path=/reason-log.jsonl', { cache: 'no-store' });
+
+          if (!response.ok) {
+            return null;
+          }
+
+          const text = await response.text();
+          return text
+            .split('\\n')
+            .map((line) => line.trim())
+            .filter(Boolean)
+            .map((line) => JSON.parse(line));
+        } catch (_error) {
+          return null;
+        }
+      }
+
+      async function renderReasonLog(records) {
+        await ensureEditor();
+
+        if (!model) {
+          return;
+        }
+
+        const lines = [];
+        const markers = [];
+        reasonDiagnosticsByLine = {};
+
+        records.forEach((record, index) => {
+          const lineNumber = index + 1;
+          lines.push(typeof record.raw === 'string' ? record.raw : '');
+
+          if (record.diagnostic) {
+            reasonDiagnosticsByLine[lineNumber] = record.diagnostic;
+            markers.push({
+              startLineNumber: lineNumber,
+              startColumn: 1,
+              endLineNumber: lineNumber,
+              endColumn: Math.max(2, lines[lines.length - 1].length + 1),
+              severity:
+                record.diagnostic.severity === 'error'
+                  ? window.monaco.MarkerSeverity.Error
+                  : window.monaco.MarkerSeverity.Warning,
+              message: record.diagnostic.message,
+              code: record.diagnostic.code,
+            });
+          }
+        });
+
+        model.setValue(lines.join('\\n'));
+        window.monaco.editor.setModelMarkers(model, REASON_LOG_MARKER_OWNER, markers);
+      }
+
       function onMessage(event) {
         if (event.source !== window.parent) return;
         const message = event.data;
@@ -622,6 +734,12 @@ function renderPage() {
         summary: fallbackStory.blocked.title,
       };
       renderIntoEditor().catch(() => {});
+
+      loadReasonLog().then((records) => {
+        if (records && records.length > 0) {
+          renderReasonLog(records).catch(() => {});
+        }
+      });
     </script>
   </body>
 </html>`;
