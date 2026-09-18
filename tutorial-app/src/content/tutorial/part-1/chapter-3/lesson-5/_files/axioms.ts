@@ -1,3 +1,7 @@
+// Vendored from tutorial-app/src/lib/axioms.ts so this lesson's
+// WebContainer sandbox (a self-contained project, no import across the
+// _files boundary) can run the exact same code this terminal's own
+// `npm test` and the outer app both use.
 import type { Grant } from './grant_state.pkl';
 import type { ObservedInventory, VaultSpec } from './inventory.pkl';
 import type { FactFile, Observation } from './reconcile.pkl';

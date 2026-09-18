@@ -1,0 +1,224 @@
+---
+type: lesson
+title: "The wrong-way peninsula"
+template: capability-check
+prepareCommands:
+  - npm install
+mainCommand: npx vitest
+terminal: true
+editor:
+  fileTree: true
+focus: /statedReason.ts
+previews: false
+i18n:
+  solveButtonText: "Show the repair"
+  resetButtonText: "Undo"
+---
+
+Someone is in the back seat of a car explaining a thesis: that you can
+infer what a person is thinking from the traces left in what they say.
+Speech is evidence of a state you cannot observe directly. The argument
+goes well. Every example lands. Somewhere in the middle of it the
+passengers notice they have been driving down the peninsula in the wrong
+direction the whole time.
+
+Nobody misread a sign. Every local clue was interpreted correctly. The
+frame was wrong, and a wrong frame is not something more careful local
+reasoning fixes.
+
+This lesson is about building an environment where that failure has to
+leave a trace.
+
+## Back up and set the stage
+
+Astronomy has the same shape. We observe something we cannot reach; we
+build a model of what could produce that observation; we build a better
+instrument; the new observations constrain the model. Sean Carroll's
+habitual move before answering a question about any of it is to back up
+and set the stage — because the question usually smuggles in a frame, and
+improving the instrument inside a wrong frame just gets you more precise
+wrong answers.
+
+The three stories are one story:
+
+| | hidden state | trace | instrument | what a diagnostic means |
+|---|---|---|---|---|
+| cosmology | physical state we cannot reach | photons, redshift | telescope, simulation | the model needs revising |
+| another mind | what someone is thinking | what they say | inference from the traces | your reading of them was wrong |
+| an agent | its assumptions and reasons | its facts, its stated reasons, what it actually did | `pkl test`, `vitest`, the reconciliation pass | one of four things is wrong |
+
+## Facts are facts. Examples are axioms.
+
+The distinction this chapter runs on:
+
+- A **fact** records observed state. `worker/flight_booking_area51.pkl`
+  requesting a capability, `pkl/GrantState.pkl`'s recorded decision, the
+  Proton observation in `protonObservations.ts` — all facts, all just
+  records of what is.
+- An **example** states an expectation about what must follow *if the
+  model is right*. `pkl/Reconcile.pkl`'s `check()` is the axiom;
+  `Reconcile.test.pkl`'s `facts {}` and `examples {}` blocks are where
+  that expectation is written down.
+- **Execution** — Pkl, the compiler, vitest, Dagger — is what turns the
+  expectation into an **instrument**, and the instrument's output is a
+  **diagnostic**: a `Diagnostic{severity, code, message}`, not a boolean.
+
+Which is what makes an otherwise hidden state inspectable. You cannot
+read an agent's assumptions. You can arrange the environment so that a
+wrong assumption necessarily produces an observable divergence between
+things that would otherwise have agreed.
+
+## Four representations of one thing
+
+```text
+WORLD
+  ↓
+fact            what the worker asked for      worker/*.pkl
+  ↓
+model           what the agent says it is doing  statedReason.ts
+  ↓
+grant           what the supervisor decided    pkl/GrantState.pkl
+  ↓
+observation     what actually materialized     protonObservations.ts
+  ↓
+axiom           pkl/Reconcile.pkl's check()
+  ↓
+instrument      pkl test / vitest
+  ↓
+diagnostic      unapproved-materialization
+                missing-materialization
+                reason-mismatch
+                boundary-bypassed
+  ↓
+supervisor
+  ├── change the world
+  ├── change the model
+  ├── change the axiom
+  └── change the mapping
+```
+
+`pkl/Reconcile.pkl` is real and runs for real: `pkl test
+pkl/Reconcile.test.pkl` in
+[capability-spike](https://github.com/null-hype/agent-plugins/tree/main/capability-spike)
+needs no Go toolchain, no credentials and no state on disk, and it is
+wired as an `hk check` step. The browser cannot reach a Pkl evaluator, so
+what runs in the terminal below is
+[`reconcileCheck.ts`](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/reconcileCheck.ts),
+a TypeScript replay of it and of
+[`reconcile/reconcile.go`](https://github.com/null-hype/agent-plugins/blob/main/capability-spike/reconcile/reconcile.go)
+— same three inputs, same order of work, same detail strings. The first
+test in `frameCheck.spec.ts` is what keeps that honest: it asserts the
+replay reproduces `Reconcile.test.pkl-expected.pcf`'s four pinned
+diagnostics exactly, in order.
+
+## Two rows are red. They want different repairs.
+
+`npx vitest` is running below. Seven rows, two failing.
+
+### `reason-mismatch` — change the **model**
+
+`statedReason.ts` is open. It holds what the agent exports as
+`PROTON_PASS_AGENT_REASON`, and
+[`runtime.RecordMaterialization`](https://github.com/null-hype/agent-plugins/blob/main/capability-spike/runtime/proton.go)
+carries it into the observation ledger verbatim.
+
+Read the value before you change it. It is
+`area51:site4:black-budget-vault-access` — a real fact ID, currently
+recorded in `pkl/GrantState.pkl`, correctly shaped, and not this
+operation's fact. Every check you could run on the string *by itself*
+passes. This is the peninsula: locally coherent, globally wrong.
+
+Three repairs would turn the row green. Two are wrong:
+
+- Rewrite the observation's `reason` in `protonObservations.ts` — that is
+  editing the record of what happened so it agrees with the claim. The
+  ledger passes the stated reason through *unchanged* precisely so it can
+  be checked; normalize it on the way in and the check downstream only
+  ever compares the ledger against itself.
+- Loosen the axiom to accept any reason that names a known fact. The
+  starting value would satisfy that. You would have built an instrument
+  that cannot see the error it exists to see.
+- Fix `statedReason.ts`. Correct — it is what the agent said about
+  itself, it is the only one of the four the agent owns, and it is the
+  thing that was actually wrong.
+
+### `boundary-bypassed` — change the **fact**
+
+Open `worker/bypassed_gate.pkl`. It asserts `true`. It never imports
+`pkl/Ledger.pkl` and never calls `checkAccess`. `pkl test` **passes** on
+it — that is asserted by a committed Go test whose entire point is to
+say so, `TestBypassedGatePassesPklTestButFlaggedByReconciliation`. Its
+result is indistinguishable from `worker/flight_booking_area51.pkl`'s,
+which is governed and also green.
+
+So the supervisor's instinct — *the test is green, move on* — is the
+failure mode, and its mirror image — *the test is red, mutate the world
+until it passes* — is the same mistake pointed the other way. Both treat
+the test's colour as the evidence. The colour is evidence about the test.
+
+The repair is the one line that routes the assertion through the gate.
+Note what it does *not* touch: no grant is written, no observation is
+edited. The flag clears the moment the fact asks the question, whatever
+the supervisor then answers — because the flag was never about the
+answer. A rejected request that went through the gate is a governed
+outcome. An approved-looking one that never asked is not an outcome at
+all.
+
+**Show the repair** applies both edits if you want to compare. **Undo**
+puts the starting state back.
+
+## Four rows are green, and asserting a diagnostic
+
+These pass at boot and keep passing, because each one expects a *flag*,
+not a `PASS`:
+
+- **`unapproved-materialization`** — a vault operation recorded for a
+  fact nobody approved. There is no edit that aligns it. The world is
+  wrong, and the honest response is to change the world (revoke it, or
+  find out who did this), not the check.
+- **`reason-mismatch` on the vault** — the right reason, against a vault
+  the grant never covered. Approval for one vault is not approval for
+  another.
+- **`missing-materialization`** — approved, never used. Not an error;
+  every approval passes through this state. Which is exactly why it is a
+  flag to interpret rather than a test to make green.
+- The control row: `worker/flight_booking_area51.pkl`, whose `pkl test`
+  result is identical to the bypassed fact's, and which is not flagged.
+
+Making any of these four report `PASS` would mean editing
+`pkl/Reconcile.pkl`. The axiom is not wrong. Sometimes it is — the fourth
+repair in the diagram exists because an example really can encode the
+wrong expectation — but a check that fires when it should is not the case
+for it.
+
+## Alignment
+
+Not "the test is green." For this chapter:
+
+> **facts, reasons, and executable consequences admit the same
+> interpretation.**
+
+`reconcile.check`'s empty result is that condition made observable. And
+note what the axiom's own contract says about the shape of the claim:
+`PASS` for one fact means nothing diverged *for that fact*, never that
+the world is aligned. A caller that wants the second has to ask about
+every fact in it.
+
+This is the same discipline as the rest of the tutorial: the workspace
+models the code and the code models the workspace, and neither is treated
+as unquestionable reality. Their disagreement is the useful part. The
+question the architecture is built around is not "is the test green" but:
+
+> Can we construct the environment so that incorrect beliefs necessarily
+> leave observable traces?
+
+**Supporting files**, all real, in the tree to the left:
+`pkl/Reconcile.pkl` (the alignment axiom) and `pkl/Ledger.pkl` (the
+capability gate, unchanged from CIT-139), `pkl/GrantState.pkl` (the
+supervisor's recorded decisions), `worker/bypassed_gate.pkl` and
+`worker/flight_booking_area51.pkl` (the two facts whose `pkl test`
+results are identical), plus the TypeScript replays this browser lesson
+runs instead of a live Pkl evaluator — `reconcileCheck.ts`,
+`ledgerCheckAccess.ts`, and the fixtures in `protonObservations.ts`,
+every value in which is copied from `capability-spike/demo.go`'s own
+steps 3, 7 and 9.
