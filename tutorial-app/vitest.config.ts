@@ -10,9 +10,15 @@ import { configDefaults, defineConfig } from 'vitest/config';
 // deliberately wrong until a reader fixes it), and `_solution` is a
 // deliberately partial overlay meant to merge over `_files`, not stand on
 // its own. Neither is meant to pass this app's own `npm test`.
+// evaluations.jsonl is written by toHaveVerdict.ts's matcher, one record
+// per call; globalSetup truncates it once per run (see its own comment).
+// fileParallelism is off so two spec files' appends to that one file
+// can't interleave.
 export default defineConfig({
   test: {
     include: ['src/**/*.spec.ts'],
     exclude: [...configDefaults.exclude, '**/_files/**', '**/_solution/**'],
+    globalSetup: ['./vitest-global-setup.ts'],
+    fileParallelism: false,
   },
 });
