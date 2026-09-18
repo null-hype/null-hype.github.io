@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { Grant } from './grant_state.pkl';
+import './toHaveVerdict';
 import { requirement } from './declaredRequirement';
 import { observed, observedVaultNames } from './observedInventory';
-import { checkAccess } from './ledgerCheckAccess';
-import { missingItems } from './inventoryCheck';
+import type { Grant } from './grant_state.pkl';
+import grantState from './grantState.json';
 
 /**
  * Two real, separate axioms govern whether a task can get what it needs:
@@ -12,37 +12,62 @@ import { missingItems } from './inventoryCheck';
  * different reasons, and only one of those reasons is yours to fix.
  *
  * `declaredRequirement.ts` is the one file this scenario asks you to edit.
- * Its value here is correct; the lesson's `_files/declaredRequirement.ts`
- * starts with the stale value instead, so `missingItems` fails until it's
- * corrected -- the same drift `.dagger/internal/devenv-base/pkl/Vaults.pkl`'s
- * own header comment documents really happened ("claude" moved from vault
- * "tidelands.dev" to vault "anthropic.ai" directly in Proton Pass, no
- * commit recording it). `observedInventory.ts` is read-only, same as real
- * observed state is never hand-edited.
+ * `grantState.json` is the other: it starts empty and is rewritten by
+ * Solve-as-supervisor, not by hand -- see GrantState.pkl in the tree to
+ * the left, which starts empty for the same reason.
  *
  * Every literal value below is copied from a real committed Pkl fixture,
- * not invented for this test:
- *   - the drift scenario: Inventory.test.pkl's `staleDeclaration`/
- *     `correctedDeclaration`/`driftObserved` -- `pkl test
- *     pkl/Inventory.test.pkl` really passes both facts.
- *   - `observedVaultNames`: Vaults.test.pkl-expected.pcf's own "observed
- *     vault names" golden snapshot, copied verbatim.
- *   - `fact`/`vault` and the "approved" grant: worker/flight_booking_area51.pkl
- *     and GrantState.pkl's `flight-booking:area51:vault-access` entry --
- *     `pkl test worker/flight_booking_area51.pkl` really passes.
- *
- * GrantState.pkl is git-ignored and re-rendered by every local
- * `go run .`/`go test ./...` in capability-spike/ (see its own header
- * comment) -- this value is copied from a real `supervisor.Decide` run
- * captured once, not re-read from that file live, since it isn't meant to
- * persist between runs.
+ * not invented for this test: the drift scenario is Inventory.test.pkl's
+ * `staleDeclaration`/`correctedDeclaration`/`driftObserved`
+ * (`pkl test pkl/Inventory.test.pkl` really passes both facts);
+ * `observedVaultNames` is Vaults.test.pkl-expected.pcf's own golden
+ * snapshot, copied verbatim; the approved grant is
+ * worker/flight_booking_area51.pkl and GrantState.pkl's
+ * `flight-booking:area51:vault-access` entry, a real captured
+ * `supervisor.Decide` result (`capability-spike/supervisor/state.go`).
  */
-describe('a stale declaration is a bug you can fix yourself', () => {
-  it('1. the declaration is checked against real observed inventory', () => {
-    expect(missingItems(requirement, observed)).toEqual([]);
+const liveGrantsByFactId = new Map<string, Grant>(Object.entries(grantState.approvedGrants));
+
+/**
+ * Frozen by value, not read from grantState.json: this row demonstrates
+ * what happens when the *same* approved grant is checked against a
+ * different vault, so it must keep passing whether or not Solve has run.
+ */
+const frozenApprovedGrantsByFactId = new Map<string, Grant>([
+  [
+    'flight-booking:area51:vault-access',
+    { factID: 'flight-booking:area51:vault-access', vault: 'thepentagon.com', approved: true },
+  ],
+]);
+
+describe('acquiring the flight-booking:area51:vault-access capability', () => {
+  it.each([
+    {
+      name: 'a stale declaration is a bug you can fix yourself',
+      axiomId: 'inventory.missingItems' as const,
+      factId: 'inventory:claude',
+      world: { requirement, observed },
+      expectedCode: 'PASS',
+    },
+    {
+      name: 'only a real supervisor decision clears CAP_NO_GRANT -- not something this lesson lets you fake',
+      axiomId: 'ledger.checkAccess' as const,
+      factId: 'flight-booking:area51:vault-access',
+      world: { vault: 'thepentagon.com', grantsByFactId: liveGrantsByFactId },
+      expectedCode: 'PASS',
+    },
+    {
+      name: 'an approval for one vault does not carry over to another',
+      axiomId: 'ledger.checkAccess' as const,
+      factId: 'flight-booking:area51:vault-access',
+      world: { vault: 'site4.internal', grantsByFactId: frozenApprovedGrantsByFactId },
+      expectedCode: 'CAP_VAULT_MISMATCH',
+    },
+  ])('$name', ({ axiomId, factId, world, expectedCode }) => {
+    expect(factId).toHaveVerdict(axiomId, world, expectedCode);
   });
 
-  it('2. observed state carries more than any one declaration accounts for -- that is expected, not a bug', () => {
+  it('observed state carries more than any one declaration accounts for -- that is expected, not a bug', () => {
     // "api.linear.app" has no VaultSpec in Vaults.pkl at all. Per that
     // file's own header: "This is a decision, not a transcription of
     // `pass-cli vault list` output." This is the examples{}/.pkl-expected.pcf
@@ -58,21 +83,5 @@ describe('a stale declaration is a bug you can fix yourself', () => {
         "tidelands.dev",
       ]
     `);
-  });
-});
-
-describe('access is a different axiom -- you cannot fix this one yourself', () => {
-  const fact = 'flight-booking:area51:vault-access';
-  const vault = 'thepentagon.com';
-  const grantsByFactId = new Map<string, Grant>();
-
-  it('3. no grant recorded yet -- denied, with a specific diagnostic', () => {
-    expect(checkAccess(fact, vault, grantsByFactId)?.code).toBe('CAP_NO_GRANT');
-  });
-
-  it('4. only a real supervisor decision clears it', () => {
-    // GrantState.pkl's own entry, not invented for this test.
-    grantsByFactId.set(fact, { factID: fact, vault, approved: true });
-    expect(checkAccess(fact, vault, grantsByFactId)).toBeNull();
   });
 });

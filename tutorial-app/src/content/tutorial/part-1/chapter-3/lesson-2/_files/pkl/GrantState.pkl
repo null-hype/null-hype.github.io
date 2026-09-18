@@ -8,7 +8,7 @@ class Grant {
   approved: Boolean
 }
 
-approvedGrants: Mapping<String, Grant> = new {
-  ["area51:site4:black-budget-vault-access"] { factID = "area51:site4:black-budget-vault-access"; vault = "site4.internal"; approved = false }
-  ["flight-booking:area51:vault-access"] { factID = "flight-booking:area51:vault-access"; vault = "thepentagon.com"; approved = true }
-}
+// No decision has been recorded yet -- Solve-as-supervisor is what
+// populates this map (see grantState.json, the TypeScript mirror this
+// lesson's spec actually reads; this file is the display copy).
+approvedGrants: Mapping<String, Grant> = new {}
