@@ -1,0 +1,14 @@
+[
+  {
+    "phrase": "planting codeword in a fresh session",
+    "factId": "pass-cli:color:resume:plant-codeword",
+    "scope": "jin-91-resume-session",
+    "lossAxes": ["session-lifecycle-detail", "verb-tense"]
+  },
+  {
+    "phrase": "resuming restored session to read back the codeword",
+    "factId": "pass-cli:color:resume:read-codeword",
+    "scope": "jin-91-resume-session",
+    "lossAxes": ["session-lifecycle-detail", "restoration-provenance"]
+  }
+]
