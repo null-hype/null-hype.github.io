@@ -3,9 +3,17 @@ import { expect } from 'vitest';
 import { axioms, type AxiomId } from './axioms';
 
 function worldRef(axiomId: AxiomId, world: any): string {
-  return axiomId === 'ledger.checkAccess'
-    ? `vault=${world.vault} grants=${world.grantsByFactId.size}`
-    : `vault=${world.requirement.name} observedVaults=${world.observed.vaults.length}`;
+  switch (axiomId) {
+    case 'ledger.checkAccess':
+      return `vault=${world.vault} grants=${world.grantsByFactId.size}`;
+    case 'inventory.missingItems':
+      return `vault=${world.requirement.name} observedVaults=${world.observed.vaults.length}`;
+    case 'reconcile.check':
+      // No single vault to name: reconcile.check's world spans every
+      // grant, observation and fact file at once, so what identifies it
+      // is how much of each it was handed.
+      return `grants=${world.grantsByFactId.size} observations=${world.observations.length} factFiles=${world.factFiles.length}`;
+  }
 }
 
 /**

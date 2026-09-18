@@ -1,14 +1,16 @@
 import type { Grant } from './grant_state.pkl';
 import type { ObservedInventory, VaultSpec } from './inventory.pkl';
+import type { FactFile, Observation } from './reconcile.pkl';
 import { checkAccess } from './ledgerCheckAccess';
 import { missingItems } from './inventoryCheck';
+import { check } from './reconcileCheck';
 
 export interface Verdict {
   code: string;
   message: string;
 }
 
-export type AxiomId = 'ledger.checkAccess' | 'inventory.missingItems';
+export type AxiomId = 'ledger.checkAccess' | 'inventory.missingItems' | 'reconcile.check';
 
 export interface LedgerWorld {
   vault: string;
@@ -18,6 +20,12 @@ export interface LedgerWorld {
 export interface InventoryWorld {
   requirement: VaultSpec;
   observed: ObservedInventory;
+}
+
+export interface ReconcileWorld {
+  grantsByFactId: ReadonlyMap<string, Grant>;
+  observations: readonly Observation[];
+  factFiles: readonly FactFile[];
 }
 
 /**
@@ -36,5 +44,27 @@ export const axioms: Record<AxiomId, (fact: string, world: any) => Verdict> = {
     return missing.length === 0
       ? { code: 'PASS', message: 'all declared items are present in observed inventory' }
       : { code: 'INV_MISSING', message: `missing from vault "${world.requirement.name}": ${missing.join(', ')}` };
+  },
+  /**
+   * Unlike the two above, `reconcile.check` reports on every fact in the
+   * world it is handed, not just the one it was asked about -- so this
+   * narrows to `fact`'s own flags before reducing to a verdict. A
+   * consequence worth stating out loud: PASS here means "nothing
+   * diverged for this fact", never "this world is aligned". A caller
+   * that wants the second has to ask about every fact in it.
+   *
+   * Only the first flag becomes the verdict, because a verdict is one
+   * code; the rest stay visible in `message`. A fact can diverge in more
+   * than one way at once, and collapsing that to a single code is a
+   * property of this matcher, not of the axiom.
+   */
+  'reconcile.check': (fact, world: ReconcileWorld) => {
+    const flags = check(world.grantsByFactId, world.observations, world.factFiles).filter(
+      (flag) => flag.factID === fact,
+    );
+    if (flags.length === 0) {
+      return { code: 'PASS', message: `fact, grant and observed materialization agree for "${fact}"` };
+    }
+    return { code: flags[0].kind, message: flags.map((flag) => flag.detail).join('; ') };
   },
 };
