@@ -58,3 +58,7 @@ infra/terraform/prod.tfvars
 infra/.deploy-key.json
 infra/tidelanes-deploy.json
 .playwright-cli/console-2026-04-20T21-05-46-109Z.log
+
+# CIT-148: toHaveVerdict.ts's matcher writes one evaluation record per
+# axiom call here, truncated per vitest run by vitest-global-setup.ts.
+evaluations.jsonl

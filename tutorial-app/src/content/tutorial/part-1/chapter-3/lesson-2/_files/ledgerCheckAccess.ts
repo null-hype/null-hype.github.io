@@ -20,11 +20,10 @@ export interface AccessVerdict {
  * `GrantState.approvedGrants` is.
  *
  * This function has no access to a Pkl evaluator; it is validated instead
- * by capabilityAcquisition.spec.ts, which checks its CAP_REJECTED verdict
- * against the same (factID, vault) pair `worker/area51_site4.pkl` records
- * a real `pkl test` failure for, and its passing (null) verdict against
- * the pair `worker/flight_booking_area51.pkl` records a real `pkl test`
- * pass for.
+ * by capabilityAcquisition.spec.ts, which checks its passing (null)
+ * verdict against the (factID, vault) pair `worker/flight_booking_area51.pkl`
+ * records a real `pkl test` pass for, and its CAP_VAULT_MISMATCH verdict
+ * against that same factID requested for a different vault.
  */
 export function checkAccess(
   factId: string,
