@@ -225,7 +225,67 @@ function renderPage() {
       // both keyed by Monaco line number so the hover content always
       // matches whatever setModelMarkers most recently underlined.
       let reasonDiagnosticsByLine = {};
+      // CIT-152: line -> the same record's "related" evidence
+      // (EvidenceLocation[] -- role/uri/detail, reasonDiagnosticToGovernance's
+      // own output, committed verbatim into reason-log.jsonl and proven
+      // equal to it by reasonResolver.spec.ts). Hover reads this to show
+      // *why*, alongside the verdict reasonDiagnosticsByLine already
+      // carries; the CodeLens command below reads it to render the same
+      // evidence in a content widget under the line -- this bundled
+      // monaco-editor build's standalone "min" AMD bundle does not
+      // register the gotoSymbol/peek-definition contribution (checked
+      // directly: no editor.action.peekDefinition/revealDefinition action
+      // exists on a freshly created editor here), so a content widget --
+      // an API this build does have -- is what actually renders the
+      // "little embedded editor opens underneath" idea today, not
+      // Monaco's own Peek View.
+      let reasonRelatedByLine = {};
       const REASON_LOG_MARKER_OWNER = 'reason-resolver';
+      const PEEK_EVIDENCE_COMMAND = 'otel-warm-log.peekReasonEvidence';
+      const EVIDENCE_WIDGET_ID = 'otel-warm-log.evidenceWidget';
+      let evidenceWidgetLine = null;
+
+      function buildEvidenceDomNode(related) {
+        const node = document.createElement('div');
+        node.style.cssText =
+          'background:#1e1e1e;color:#d4d4d4;border:1px solid #454545;border-radius:3px;' +
+          'padding:6px 10px;font:12px "Roboto Mono",Menlo,Consolas,monospace;max-width:640px;white-space:pre-wrap;';
+
+        related.forEach((entry) => {
+          const row = document.createElement('div');
+          row.textContent = entry.role + ' (' + entry.uri + '): ' + entry.detail;
+          row.style.padding = '2px 0';
+          node.appendChild(row);
+        });
+
+        return node;
+      }
+
+      // Toggles a content widget (Monaco's own contentWidgets API, always
+      // available regardless of which language contributions this bundle
+      // registers) directly under "lineNumber", rendering that line's
+      // "related" evidence. Clicking the same line's lens again hides it.
+      function toggleEvidenceWidget(monacoEditor, lineNumber, related) {
+        if (evidenceWidgetLine !== null) {
+          monacoEditor.removeContentWidget({ getId: () => EVIDENCE_WIDGET_ID });
+          const wasShowingThisLine = evidenceWidgetLine === lineNumber;
+          evidenceWidgetLine = null;
+          if (wasShowingThisLine) {
+            return;
+          }
+        }
+
+        const domNode = buildEvidenceDomNode(related);
+        monacoEditor.addContentWidget({
+          getId: () => EVIDENCE_WIDGET_ID,
+          getDomNode: () => domNode,
+          getPosition: () => ({
+            position: { lineNumber, column: 1 },
+            preference: [window.monaco.editor.ContentWidgetPositionPreference.BELOW],
+          }),
+        });
+        evidenceWidgetLine = lineNumber;
+      }
 
       function loadMonaco() {
         if (monacoPromise) {
@@ -303,12 +363,24 @@ function renderPage() {
           // reasonDiagnosticsByLine rather than taking data directly, so a
           // single registration here keeps working across every
           // renderReasonLog call that repopulates it.
+          //
+          // CIT-152 widens the hover with reasonRelatedByLine: the
+          // governing vocabulary entry, grant, or fact file the verdict
+          // was actually computed from, not just the verdict's own code
+          // and message.
           monaco.languages.registerHoverProvider(languageId, {
             provideHover(hoverModel, position) {
               const diagnostic = reasonDiagnosticsByLine[position.lineNumber];
 
               if (!diagnostic) {
                 return null;
+              }
+
+              const related = reasonRelatedByLine[position.lineNumber] || [];
+              const contents = [{ value: '**' + diagnostic.code + '**' }, { value: diagnostic.message }];
+
+              for (const entry of related) {
+                contents.push({ value: '_' + entry.role + '_ (' + entry.uri + '): ' + entry.detail });
               }
 
               return {
@@ -318,8 +390,63 @@ function renderPage() {
                   position.lineNumber,
                   hoverModel.getLineMaxColumn(position.lineNumber),
                 ),
-                contents: [{ value: '**' + diagnostic.code + '**' }, { value: diagnostic.message }],
+                contents,
               };
+            },
+          });
+
+          // CIT-152: the CodeLens is the high-level verdict, clickable
+          // and visually separate from the underlined text itself --
+          // "Markers should represent actual disagreements... CodeLens is
+          // probably best for the high-level governance verdict" from
+          // this issue's own discussion. Its command toggles the same
+          // related evidence the hover above already exposes, rendered as
+          // a content widget under the line (see toggleEvidenceWidget's
+          // own comment for why that, and not Peek, is what actually
+          // shows here).
+          // configureMonaco only ever runs once per page load (loadMonaco
+          // caches it behind monacoPromise), so this command is
+          // registered exactly once -- Monaco throws on a duplicate
+          // registration.
+          monaco.editor.registerCommand(PEEK_EVIDENCE_COMMAND, (_accessor, lineNumber) => {
+            if (!editor) {
+              return;
+            }
+
+            const related = reasonRelatedByLine[lineNumber] || [];
+
+            if (related.length === 0) {
+              return;
+            }
+
+            editor.setPosition({ column: 1, lineNumber });
+            toggleEvidenceWidget(editor, lineNumber, related);
+          });
+
+          monaco.languages.registerCodeLensProvider(languageId, {
+            provideCodeLenses(lensModel) {
+              const lenses = [];
+
+              for (let lineNumber = 1; lineNumber <= lensModel.getLineCount(); lineNumber += 1) {
+                const diagnostic = reasonDiagnosticsByLine[lineNumber];
+
+                if (!diagnostic) {
+                  continue;
+                }
+
+                const relatedCount = (reasonRelatedByLine[lineNumber] || []).length;
+
+                lenses.push({
+                  range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+                  command: {
+                    id: PEEK_EVIDENCE_COMMAND,
+                    title: '✗ ' + diagnostic.code + ' · ' + relatedCount + ' related',
+                    arguments: [lineNumber],
+                  },
+                });
+              }
+
+              return { lenses, dispose() {} };
             },
           });
 
@@ -655,6 +782,12 @@ function renderPage() {
         const lines = [];
         const markers = [];
         reasonDiagnosticsByLine = {};
+        reasonRelatedByLine = {};
+
+        if (evidenceWidgetLine !== null) {
+          editor.removeContentWidget({ getId: () => EVIDENCE_WIDGET_ID });
+          evidenceWidgetLine = null;
+        }
 
         records.forEach((record, index) => {
           const lineNumber = index + 1;
@@ -674,6 +807,14 @@ function renderPage() {
               message: record.diagnostic.message,
               code: record.diagnostic.code,
             });
+
+            // CIT-152: "related" is reasonDiagnosticToGovernance's own
+            // output, committed into reason-log.jsonl and proven equal to
+            // it -- read by the hover provider and by the CodeLens
+            // command's evidence widget above.
+            if (Array.isArray(record.related) && record.related.length > 0) {
+              reasonRelatedByLine[lineNumber] = record.related;
+            }
           }
         });
 
