@@ -5,6 +5,7 @@ import type { Grant } from './grant_state.pkl';
 import { admitted } from './governedVocabulary';
 import { FIXTURE_REASON, FIXTURE_REASON_GRANTED, FIXTURE_REASON_UNRESOLVED } from './reasonFixture';
 import { CODE_TERM_UNRESOLVED, resolveReason } from './reasonResolver';
+import { reasonDiagnosticToGovernance } from './governanceDiagnostic';
 
 /**
  * The mirror image of capability-spike/resolver/resolver_test.go's cases
@@ -86,6 +87,11 @@ describe('reason resolver (CIT-149)', () => {
  * from what resolveReason actually produces for the same inputs: the
  * lesson's Monaco markers/hovers are provably the resolver's real output,
  * not hand-typed prose that happens to look right.
+ *
+ * CIT-152 widens each record with `related`/`evaluationId` --
+ * reasonDiagnosticToGovernance's own output -- so the peek/hover surface
+ * server.cjs now renders from those two fields is equally provable, not
+ * hand-typed alongside the fields that already were.
  */
 describe('chapter-3/lesson-4 reason-log.jsonl matches resolveReason', () => {
   const jsonlPath = fileURLToPath(
@@ -108,9 +114,20 @@ describe('chapter-3/lesson-4 reason-log.jsonl matches resolveReason', () => {
     expect(records.map((r) => r.raw)).toEqual([FIXTURE_REASON_GRANTED, FIXTURE_REASON, FIXTURE_REASON_UNRESOLVED]);
   });
 
-  it('every record equals resolveReason(record.raw, ...) exactly', () => {
+  it('every record equals resolveReason(record.raw, ...) exactly, aside from the related/evaluationId CIT-152 adds', () => {
     for (const record of records) {
-      expect(record).toEqual(resolveReason(record.raw, admitted, grantsByFactId));
+      const { related, evaluationId, ...resolved } = record;
+      expect(resolved).toEqual(resolveReason(record.raw, admitted, grantsByFactId));
+    }
+  });
+
+  it("every record's related/evaluationId equals reasonDiagnosticToGovernance's own output", () => {
+    for (const record of records) {
+      const resolved = resolveReason(record.raw, admitted, grantsByFactId);
+      const governance = reasonDiagnosticToGovernance(resolved, admitted, grantsByFactId);
+
+      expect(record.related).toEqual(governance?.related ?? []);
+      expect(record.evaluationId).toBe(governance?.evaluationId ?? null);
     }
   });
 });
