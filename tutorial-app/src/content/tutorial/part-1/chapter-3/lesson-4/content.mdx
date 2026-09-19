@@ -86,12 +86,38 @@ chapter 1 uses for its warm-log traces. That template already registered a
 Monarch tokenizer and a folding provider; this lesson is what adds
 `setModelMarkers` (the underline under the two failing lines) and
 `registerHoverProvider` (the message when you hover one). No new file
-format, no OTLP ingest, no peek-to-definition -- open the log, see one line
-underlined, hover it, read the reason it failed.
+format, no OTLP ingest -- open the log, see one line underlined, hover it,
+read the reason it failed.
+
+## The diagnostic is a language service, not a rendering
+
+[CIT-152](https://github.com/null-hype/null-hype.github.io/blob/main/tutorial-app/src/lib/governanceDiagnostic.ts)
+widens that same `{severity, code, message, factID, vault}` `Diagnostic`
+one step further: `reasonDiagnosticToGovernance` (in `governanceDiagnostic.ts`,
+alongside `reasonResolver.ts` in the tree to the left) reads the same
+`admitted`/`grantsByFactId` inputs `resolveReason` took and names the
+actual evidence a verdict rests on -- the admitted-vocabulary entry, the
+grant it found or didn't -- as a `related: EvidenceLocation[]` list, not
+just the verdict's own code and message. `reason-log.jsonl` carries that
+list for every record, and `reasonResolver.spec.ts` proves it can never
+drift from what the adapter itself produces.
+
+The preview renders that list two ways now: hovering a failing line shows
+the related evidence alongside the verdict, and each failing line also
+carries a CodeLens -- `✗ CAP_NO_GRANT · 2 related` -- that toggles a small
+panel underneath the line showing the same evidence, closer to
+`✗ CAP_NO_GRANT · supervisor never recorded a grant` sitting next to
+`Ledger.checkAccess(factID, requestedVault)` than to a log viewer. (This
+build's Monaco bundle doesn't register a `peek-definition` action to hang
+that panel off of -- checked directly, no `editor.action.peekDefinition`
+exists on a freshly created editor here -- so it's a Monaco content widget
+instead of the built-in Peek View; the shape of what's shown is the same
+either way.)
 
 **Supporting files**, all real, in the tree to the left:
 `pkl/GovernedVocabulary.pkl` (the admitted vocabulary) and `pkl/Ledger.pkl`
 (the capability gate, unchanged from CIT-139), plus the TypeScript replays
 this browser lesson runs instead of a live Pkl evaluator --
-`reasonResolver.ts`, `governedVocabulary.ts`, `ledgerCheckAccess.ts`, and
-the fixtures themselves in `reasonFixture.ts`.
+`reasonResolver.ts`, `governedVocabulary.ts`, `ledgerCheckAccess.ts`,
+`governanceDiagnostic.ts`, and the fixtures themselves in
+`reasonFixture.ts`.
