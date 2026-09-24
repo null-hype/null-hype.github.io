@@ -1,7 +1,14 @@
 ---
 type: tutorial
-title: Grammar as Protocol — A Tutorial
+title: Agent decisions, checked against evidence
+parts:
+  - part-0
+  - part-3
+  - part-2
+  - part-4
+  - part-1
 meta:
-  title: Grammar as Protocol — A Tutorial
-  description: Formal grammars are the protocol layer between human intent and agent execution. An interactive tutorial showing the same Pkl constraint engine across German linguistics, API authorization, and security vulnerability detection.
+  image: ""
+  title: Agent decisions, checked against evidence
+  description: Follow an agent proposal from confident answer to failed check and scoped approval. Inspect the rules, recorded decisions, and evidence behind each verdict.
 ---

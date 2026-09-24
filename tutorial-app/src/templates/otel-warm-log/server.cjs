@@ -84,6 +84,21 @@ async function serveJsonFile(response, requestedPath) {
 
   try {
     const fileContents = await readFile(filePath, 'utf8');
+
+    // CIT-149's reason-log fixture is JSON Lines (one resolved-reason
+    // record per line), not a single JSON document -- the issue's own
+    // scope explicitly rules out inventing a new file format for this, so
+    // this validates line-by-line instead of adding a second endpoint.
+    if (extname(filePath) === '.jsonl') {
+      for (const line of fileContents.split('\n')) {
+        if (line.trim()) {
+          JSON.parse(line);
+        }
+      }
+      sendText(response, fileContents, 200, 'application/x-ndjson; charset=utf-8');
+      return;
+    }
+
     JSON.parse(fileContents);
     sendText(response, fileContents, 200, 'application/json; charset=utf-8');
   } catch (error) {
@@ -204,6 +219,81 @@ function renderPage() {
       let currentState = null;
       let storyCache = new Map();
 
+      // CIT-149: line -> the Diagnostic (severity, code, message) a
+      // reason-log record on that line carries. Populated by
+      // renderReasonLog, read by the hover provider registered below --
+      // both keyed by Monaco line number so the hover content always
+      // matches whatever setModelMarkers most recently underlined.
+      let reasonDiagnosticsByLine = {};
+      // CIT-152: line -> the same record's "related" evidence
+      // (EvidenceLocation[] -- role/uri/detail, reasonDiagnosticToGovernance's
+      // own output, committed verbatim into reason-log.jsonl and proven
+      // equal to it by reasonResolver.spec.ts). Hover reads this to show
+      // *why*, alongside the verdict reasonDiagnosticsByLine already
+      // carries; the CodeLens command below reads it to render the same
+      // evidence in a content widget under the line -- this bundled
+      // monaco-editor build's standalone "min" AMD bundle does not
+      // register the gotoSymbol/peek-definition contribution (checked
+      // directly: no editor.action.peekDefinition/revealDefinition action
+      // exists on a freshly created editor here), so a content widget --
+      // an API this build does have -- is what actually renders the
+      // "little embedded editor opens underneath" idea today, not
+      // Monaco's own Peek View.
+      let reasonRelatedByLine = {};
+      const REASON_LOG_MARKER_OWNER = 'reason-resolver';
+      const PEEK_EVIDENCE_COMMAND = 'otel-warm-log.peekReasonEvidence';
+      const EVIDENCE_WIDGET_ID = 'otel-warm-log.evidenceWidget';
+      let evidenceWidgetLine = null;
+
+      function buildEvidenceDomNode(related) {
+        const node = document.createElement('div');
+        node.setAttribute('role', 'region');
+        node.setAttribute('aria-label', 'Diagnostic evidence');
+        node.className = 'evidence-widget';
+        node.style.cssText =
+          'background:#1e1e1e;color:#d4d4d4;border:1px solid #454545;border-radius:3px;' +
+          'padding:6px 10px;font:12px "Roboto Mono",Menlo,Consolas,monospace;width:600px;max-width:80vw;max-height:300px;overflow:auto;white-space:pre-wrap;';
+
+        related.forEach((entry) => {
+          const row = document.createElement('div');
+          // CIT-176: a revision-qualified location (same path, different
+          // content per revision) reads uri@revision:line.
+          const where =
+            entry.uri + (entry.revision ? '@' + entry.revision : '') + (entry.line ? ':' + entry.line : '');
+          row.textContent = entry.role + ' (' + where + '): ' + entry.detail;
+          row.style.padding = '2px 0';
+          node.appendChild(row);
+        });
+
+        return node;
+      }
+
+      // Toggles a content widget (Monaco's own contentWidgets API, always
+      // available regardless of which language contributions this bundle
+      // registers) directly under "lineNumber", rendering that line's
+      // "related" evidence. Clicking the same line's lens again hides it.
+      function toggleEvidenceWidget(monacoEditor, lineNumber, related) {
+        if (evidenceWidgetLine !== null) {
+          monacoEditor.removeContentWidget({ getId: () => EVIDENCE_WIDGET_ID });
+          const wasShowingThisLine = evidenceWidgetLine === lineNumber;
+          evidenceWidgetLine = null;
+          if (wasShowingThisLine) {
+            return;
+          }
+        }
+
+        const domNode = buildEvidenceDomNode(related);
+        monacoEditor.addContentWidget({
+          getId: () => EVIDENCE_WIDGET_ID,
+          getDomNode: () => domNode,
+          getPosition: () => ({
+            position: { lineNumber, column: 1 },
+            preference: [window.monaco.editor.ContentWidgetPositionPreference.BELOW],
+          }),
+        });
+        evidenceWidgetLine = lineNumber;
+      }
+
       function loadMonaco() {
         if (monacoPromise) {
           return monacoPromise;
@@ -271,6 +361,104 @@ function renderPage() {
               }
 
               return ranges;
+            },
+          });
+
+          // CIT-149: the underline (setModelMarkers) and the message on
+          // hover (registerHoverProvider) -- additive to the tokenizer and
+          // folding provider above, not a replacement for them. Both read
+          // reasonDiagnosticsByLine rather than taking data directly, so a
+          // single registration here keeps working across every
+          // renderReasonLog call that repopulates it.
+          //
+          // CIT-152 widens the hover with reasonRelatedByLine: the
+          // governing vocabulary entry, grant, or fact file the verdict
+          // was actually computed from, not just the verdict's own code
+          // and message.
+          monaco.languages.registerHoverProvider(languageId, {
+            provideHover(hoverModel, position) {
+              const diagnostic = reasonDiagnosticsByLine[position.lineNumber];
+
+              if (!diagnostic) {
+                return null;
+              }
+
+              const related = reasonRelatedByLine[position.lineNumber] || [];
+              const contents = [{ value: '**' + diagnostic.code + '**' }, { value: diagnostic.message }];
+
+              for (const entry of related) {
+                contents.push({ value: '_' + entry.role + '_ (' + entry.uri + '): ' + entry.detail });
+              }
+
+              return {
+                range: new monaco.Range(
+                  position.lineNumber,
+                  1,
+                  position.lineNumber,
+                  hoverModel.getLineMaxColumn(position.lineNumber),
+                ),
+                contents,
+              };
+            },
+          });
+
+          // CIT-152: the CodeLens is the high-level verdict, clickable
+          // and visually separate from the underlined text itself --
+          // "Markers should represent actual disagreements... CodeLens is
+          // probably best for the high-level governance verdict" from
+          // this issue's own discussion. Its command toggles the same
+          // related evidence the hover above already exposes, rendered as
+          // a content widget under the line (see toggleEvidenceWidget's
+          // own comment for why that, and not Peek, is what actually
+          // shows here).
+          // configureMonaco only ever runs once per page load (loadMonaco
+          // caches it behind monacoPromise), so this command is
+          // registered exactly once -- Monaco throws on a duplicate
+          // registration.
+          monaco.editor.registerCommand(PEEK_EVIDENCE_COMMAND, (_accessor, lineNumber) => {
+            if (!editor) {
+              return;
+            }
+
+            const related = reasonRelatedByLine[lineNumber] || [];
+
+            if (related.length === 0) {
+              return;
+            }
+
+            editor.setPosition({ column: 1, lineNumber });
+            toggleEvidenceWidget(editor, lineNumber, related);
+          });
+
+          monaco.languages.registerCodeLensProvider(languageId, {
+            provideCodeLenses(lensModel) {
+              const lenses = [];
+
+              for (let lineNumber = 1; lineNumber <= lensModel.getLineCount(); lineNumber += 1) {
+                const diagnostic = reasonDiagnosticsByLine[lineNumber];
+
+                if (!diagnostic) {
+                  continue;
+                }
+
+                const relatedCount = (reasonRelatedByLine[lineNumber] || []).length;
+                // CIT-226: the prefix follows severity (a warning is not a
+                // failure), and a record may carry a plain-language
+                // "lensTitle" in place of its technical code. Records
+                // without one render exactly as before.
+                const lensPrefix = diagnostic.severity === 'warning' ? '⚠ ' : '✗ ';
+
+                lenses.push({
+                  range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+                  command: {
+                    id: PEEK_EVIDENCE_COMMAND,
+                    title: lensPrefix + (diagnostic.lensTitle || diagnostic.code) + ' · ' + relatedCount + ' related',
+                    arguments: [lineNumber],
+                  },
+                });
+              }
+
+              return { lenses, dispose() {} };
             },
           });
 
@@ -569,9 +757,131 @@ function renderPage() {
         }
       }
 
+      // CIT-149: a reason-log.jsonl fixture is an independent, static
+      // rendering path -- it does not go through applyLessonState/
+      // renderTrace or the lesson-state postMessage protocol those use,
+      // because this demo has no worker input loop to drive: the log is
+      // fixed, the point is what hovering an already-failed line shows.
+      // A lesson with no reason-log.jsonl (every existing chapter-1
+      // lesson) gets a 404 here and falls through to the fallback trace
+      // rendered above, unchanged.
+      async function loadReasonLog() {
+        try {
+          const response = await fetch('/__tk/file?path=/reason-log.jsonl', { cache: 'no-store' });
+
+          if (!response.ok) {
+            return null;
+          }
+
+          const text = await response.text();
+          return text
+            .split('\\n')
+            .map((line) => line.trim())
+            .filter(Boolean)
+            .map((line) => JSON.parse(line));
+        } catch (_error) {
+          return null;
+        }
+      }
+
+      async function renderReasonLog(records) {
+        await ensureEditor();
+
+        if (!model) {
+          return;
+        }
+
+        const lines = [];
+        const markers = [];
+        reasonDiagnosticsByLine = {};
+        reasonRelatedByLine = {};
+
+        if (evidenceWidgetLine !== null) {
+          editor.removeContentWidget({ getId: () => EVIDENCE_WIDGET_ID });
+          evidenceWidgetLine = null;
+        }
+
+        records.forEach((record, index) => {
+          const lineNumber = index + 1;
+          lines.push(typeof record.raw === 'string' ? record.raw : '');
+
+          if (record.diagnostic) {
+            reasonDiagnosticsByLine[lineNumber] = record.diagnostic;
+            markers.push({
+              startLineNumber: lineNumber,
+              startColumn: 1,
+              endLineNumber: lineNumber,
+              endColumn: Math.max(2, lines[lines.length - 1].length + 1),
+              severity:
+                record.diagnostic.severity === 'error'
+                  ? window.monaco.MarkerSeverity.Error
+                  : window.monaco.MarkerSeverity.Warning,
+              message: record.diagnostic.message,
+              code: record.diagnostic.code,
+              // CIT-229: which channel raised it (static input check vs reconciliation).
+              source: record.diagnostic.source,
+            });
+
+            // CIT-152: "related" is reasonDiagnosticToGovernance's own
+            // output, committed into reason-log.jsonl and proven equal to
+            // it -- read by the hover provider and by the CodeLens
+            // command's evidence widget above.
+            if (Array.isArray(record.related) && record.related.length > 0) {
+              reasonRelatedByLine[lineNumber] = record.related;
+            }
+          }
+        });
+
+        // CIT-229: an editable log is echoed back by the parent, so only replace
+        // the text when it really differs, and keep the caret where the learner left it.
+        const nextText = lines.join('\\n');
+        if (model.getValue() !== nextText) {
+          const position = editor.getPosition();
+          applyingRecords = true;
+          model.setValue(nextText);
+          applyingRecords = false;
+          if (position && editor.getOption(window.monaco.editor.EditorOption.readOnly) === false) {
+            editor.setPosition(position);
+          }
+        }
+        window.monaco.editor.setModelMarkers(model, REASON_LOG_MARKER_OWNER, markers);
+      }
+
+      // CIT-229: a lesson may hand the page its records directly and make the
+      // log editable. Edits go back to the parent as text; the parent answers
+      // with the next records (same text, new markers).
+      let applyingRecords = false;
+      let editListening = false;
+
+      // Each edit is numbered; the parent echoes the number of the last edit its records
+      // were computed from. An answer to an edit older than the newest is stale: drop it
+      // (a newer one follows) rather than overwrite what the learner typed since.
+      let editSeq = 0;
+
+      async function applyRecords(message) {
+        if (message.editable === true && typeof message.seq === 'number' && message.seq < editSeq) {
+          return;
+        }
+        await renderReasonLog(message.records || []);
+        editor.updateOptions({ readOnly: message.editable !== true });
+        if (!editListening) {
+          editListening = true;
+          model.onDidChangeContent(() => {
+            if (applyingRecords) return;
+            editSeq += 1;
+            window.parent.postMessage({ type: 'warm-log-edit', source: 'tk-warm-log-preview', text: model.getValue(), seq: editSeq }, '*');
+          });
+        }
+      }
+
       function onMessage(event) {
         if (event.source !== window.parent) return;
         const message = event.data;
+
+        if (message && message.type === 'warm-log-records') {
+          applyRecords(message).catch(() => {});
+          return;
+        }
 
         if (
           !message ||
@@ -622,6 +932,12 @@ function renderPage() {
         summary: fallbackStory.blocked.title,
       };
       renderIntoEditor().catch(() => {});
+
+      loadReasonLog().then((records) => {
+        if (records && records.length > 0) {
+          renderReasonLog(records).catch(() => {});
+        }
+      });
     </script>
   </body>
 </html>`;

@@ -1,0 +1,31 @@
+---
+type: lesson
+title: Git merges the two branches
+template: acp-trace
+focus: /acp-trace.json
+terminal: false
+editor: true
+previews:
+  - - 4173
+    - Client
+  - - 4174
+    - Agent
+prepareCommands:
+  - npm install
+mainCommand: npm run dev
+---
+
+import AcpTraceBridge from '../../../../../components/AcpTraceBridge';
+
+<AcpTraceBridge client:load traceFile="/acp-trace.json" scenario="budget-authority-v1" />
+
+# A clean merge
+
+Select **Solve** to reveal the combination of `airfare 890` and `ground 400`.
+**Proposal P** now shows both costs and a tree ID identifying the merged content.
+**Merge** reads `clean · 0 conflicts`.
+
+Look at **Budget**: it still reads `not evaluated`.
+The changes combine successfully; the budget question is still unanswered.
+
+Continue to check the same proposal against the original 1200 limit.
