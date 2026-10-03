@@ -7,7 +7,7 @@
 
 ## Overview
 
-Agent capabilities and automated changes can merge cleanly and pass tests while violating the business and security rules they seem to satisfy. This project turns capability governance into inspectable, typed checks that evaluate proposals before acceptance, flag policy violations with their underlying evidence, and record human supervisor exceptions without overwriting audit history.
+Automated changes can each pass the same policy check and still violate it when merged cleanly. This project makes agent proposals reviewable through typed checks, linked evidence, and recorded supervisor exceptions that preserve prior verdicts.
 
 This repository hosts the interactive, in-browser TutorialKit walkthrough that allows engineers, security teams, and researchers to step through multi-agent merge anomalies and evidence reconciliation.
 
@@ -25,7 +25,7 @@ Browser (WebContainers / TutorialKit)
   │      ├── Git Merge Simulator (detects syntax vs semantic drift)
   │      └── Policy Evaluator (v1 baseline rules vs v2 scoped exceptions)
   │
-  └──► Immutable Audit Stream
+  └──► Retained Verdict Record
          └── Preserves original FAIL @ v1 alongside PASS @ v2
 ```
 
@@ -36,8 +36,9 @@ Browser (WebContainers / TutorialKit)
 Prerequisites: Node.js 18+
 
 ```bash
-# Install dependencies
-npm install
+# Run the tutorial subproject
+cd tutorial-app
+npm ci
 
 # Start local Astro/TutorialKit dev server
 npm run dev
@@ -56,10 +57,10 @@ npm run build
 The core interactive experience is the **Budget Authority Walkthrough** (`/part-3/proposal-p-against-the-budget`):
 
 1. **Jev types the answer:** Worker agent generates a travel proposal asserting compliance with travel policy.
-2. **Git merges the two branches:** Flight and hotel branches merge with zero textual conflicts (`clean · 0 conflicts`).
+2. **Git merges the two branches:** Airfare 890 and ground 400 branches merge with zero textual conflicts (`clean · 0 conflicts`).
 3. **Checks evaluate P under v1:** Semantic evaluation intercepts the proposal: total is **$1,290 against a policy cap of $1,200** (`FAIL @ v1`).
-4. **Supervisor grants exception:** A human supervisor grants a one-time override ($1,200 → $1,300) scoped strictly to Proposal P.
-5. **Checks re-evaluate P under v2:** Proposal re-evaluates as `PASS @ v2` while permanently preserving the prior `FAIL @ v1` on the audit record.
+4. **Supervisor grants exception:** A scripted supervisor turn records a one-time override ($1,200 → $1,300) scoped strictly to Proposal P.
+5. **Checks re-evaluate P under v2:** Proposal re-evaluates as `PASS @ v2` while retaining the prior `FAIL @ v1` on the evidence record.
 
 ---
 
