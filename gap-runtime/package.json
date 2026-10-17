@@ -1,0 +1,19 @@
+{
+  "name": "gap-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "test": "node --env-file-if-exists=.env --test tests/*.test.mjs",
+    "test:dagger": "GAP_DAGGER_TEST=1 node --env-file-if-exists=.env --test tests/dagger.test.mjs",
+    "inspector": "mcp-inspect --port 6274 --no-open"
+  },
+  "dependencies": {
+    "mcp-use": "2.4.3",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@mcp-use/inspector": "20.3.7"
+  }
+}

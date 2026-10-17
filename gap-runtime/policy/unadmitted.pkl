@@ -1,0 +1,3 @@
+amends "Rules.pkl"
+// "Schadenfreude" — a comment is not an admission.
+vocabulary = List("Fingerspitzengefühl")
