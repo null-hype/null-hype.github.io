@@ -1,0 +1,43 @@
+---
+type: lesson
+title: 'delta-zero: the summary dropped "do not deploy"'
+template: delta-zero
+prepareCommands:
+  - npm install
+mainCommand: npm run dev
+previews:
+  - [4173, "delta-zero"]
+terminal: false
+editor:
+  fileTree: true
+focus: /before/thread.pkl
+---
+
+**More difference, less inference.** An agent finished a task, and its thread
+was summarized to carry on from. The summary view keeps "Go ahead and implement
+it and add the tests" from message 3, and the thread ends with "the PR is open
+and CI is green, so it is ready for the next step." What the user actually wrote
+in message 3 also said *"Do not deploy this to production until I have reviewed
+the diff myself."* The summary dropped it, and "ready for the next step" now
+reads as permission.
+
+The preview is `before/thread.pkl`, the summarized thread as delta-zero
+converted it to Pkl, with each reported loss as an editor diagnostic. The
+underline on line 27 is message 3, and the CodeLens above it reads *message 3
+(user) dropped prose · 1 related*. **Click the lens** to open the lost text,
+quoted from its evidence file, under the line. Line 33 is a second loss, of
+test output; hover it for the message.
+
+Now press **Repaired**. The repaired version has the review condition put back
+into message 3 (line 30), so the line-27 finding disappears and only line 33
+remains. A loss that changes the next action is repaired before the agent acts;
+one that does not (the pytest log) is still reported, so the omission stays
+visible.
+
+**Evidence scope:** the findings are `findings.json` as delta-zero wrote it for
+one eight-message thread, with the evidence files beside it. A finding says a
+paragraph is missing from the summary. It does not judge which losses matter.
+
+This is the same move as the [Fingerspitzengefühl lesson](/part-1/chapter-1/lesson-2/):
+a gloss like "tact" drops named axes, and naming them makes the loss inspectable.
+A compacted summary is the same problem with higher stakes.

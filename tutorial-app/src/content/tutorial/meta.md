@@ -7,6 +7,7 @@ parts:
   - part-2
   - part-4
   - part-1
+  - part-5
 meta:
   image: ""
   title: Agent decisions, checked against evidence
